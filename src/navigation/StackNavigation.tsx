@@ -1,4 +1,10 @@
 import { createStackNavigator } from "@react-navigation/stack"
+import SplashScreen from "../Screens/SplashScreen";
+import LandingScreen from "../Screens/LandingScreen";
+import SignUpScreen from "../Screens/SignupScreen";
+import LoginScreen from "../Screens/LoginScreen";
+import { NavigationContainer } from "@react-navigation/native";
+import { View } from "react-native";
 
 export type StackParamsList = {
     'splash-screen': undefined,
@@ -10,15 +16,34 @@ export type StackParamsList = {
 const Stack = createStackNavigator<StackParamsList>();
 
 export default function StackNavigation(): React.JSX.Element {
+
     return (
-        <Stack.Navigator
-            initialRouteName="splash-screen"
-            screenOptions={{headerShown: false}}
-        >
-            <Stack.Screen name="splash-screen" component={() => <></>} />
-            <Stack.Screen name="landing-screen" component={() => <></>} />
-            <Stack.Screen name="login-screen" component={() => <></>} />
-            <Stack.Screen name="signup-screen" component={() => <></>} />
-        </Stack.Navigator>
+        <NavigationContainer>
+            <View style={{width: '100%', height: '100%', flex: 1}}>
+                <Stack.Navigator
+                    initialRouteName="splash-screen"
+                    screenOptions={{headerShown: false}}
+                >
+                    <Stack.Screen 
+                        name="splash-screen" 
+                        component={SplashScreen} 
+                        options={{
+                            animation: "scale_from_center"
+                        }}  
+                    />
+
+                    <Stack.Screen 
+                        name="landing-screen" 
+                        component={LandingScreen} 
+                        options={{
+                            animation: "scale_from_center"
+                        }} 
+                    />
+
+                    <Stack.Screen name="login-screen" component={LoginScreen} />
+                    <Stack.Screen name="signup-screen" component={SignUpScreen} />
+                </Stack.Navigator>
+            </View>
+        </NavigationContainer>
     )
 }
