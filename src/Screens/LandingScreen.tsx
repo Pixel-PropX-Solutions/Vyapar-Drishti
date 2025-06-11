@@ -1,4 +1,4 @@
-import { Image, View } from "react-native";
+import { View } from "react-native";
 import SafePaddingView from "../Components/SafeAreaView/SafePaddingView";
 import NormalButton from "../Components/Button/NormalButton";
 import TextTheme from "../Components/Text/TextTheme";
@@ -12,7 +12,7 @@ export default function LandingScreen(): React.JSX.Element {
     const navigation = useNavigation<StackNavigationProp<StackParamsList, 'landing-screen'>>()
 
     return (
-        <SafePaddingView style={{width: '100%', height: '100%', display: 'flex', justifyContent: 'space-between', paddingInline: 20, backgroundColor: 'black'}}>           
+        <View style={{width: '100%', height: '100%', display: 'flex', justifyContent: 'space-between', paddingInline: 20}}>           
             <View style={{position: 'relative', width: '100%', flexDirection: 'row', alignItems: 'center', gap: 12, paddingTop: 20}} >
                 <LogoImage size={56} borderRadius={50} />
                 <TextTheme style={{fontWeight: 900, fontSize: 32}} >Vyapar Drishti</TextTheme>
@@ -44,6 +44,6 @@ export default function LandingScreen(): React.JSX.Element {
                     onPress={() => navigation.navigate('login-screen')}
                 />
             </View>
-       </SafePaddingView>
+       </View>
     )
 }
