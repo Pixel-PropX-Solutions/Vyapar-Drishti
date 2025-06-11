@@ -4,17 +4,22 @@ import LandingScreen from "../Screens/LandingScreen";
 import SignUpScreen from "../Screens/SignUpScreen";
 import LoginScreen from "../Screens/LoginScreen";
 import { NavigationContainer } from "@react-navigation/native";
-import { View } from "react-native";
 import BottomTabNavigation from "./BottomTabNavigation";
 import SafePaddingView from "../Components/SafeAreaView/SafePaddingView";
 import { useTheme } from "../Contexts/ThemeProvider";
+import SettingScreen from "../Screens/SettingScreen";
+import NotificationScreen from "../Screens/NotificationScreen";
+import ProfileScreen from "../Screens/ProfileScreen";
 
 export type StackParamsList = {
     'splash-screen': undefined,
     'landing-screen': undefined,
     'login-screen': undefined,
     'signup-screen': undefined,
-    'tab-navigation': undefined
+    'tab-navigation': undefined,
+    'setting-screen': undefined,
+    'notification-screen': undefined,
+    'profile-screen': undefined
 }
 
 const Stack = createStackNavigator<StackParamsList>();
@@ -48,6 +53,10 @@ export default function StackNavigation(): React.JSX.Element {
 
                     <Stack.Screen name="login-screen" component={LoginScreen} />
                     <Stack.Screen name="signup-screen" component={SignUpScreen} />
+                    <Stack.Screen name="setting-screen" component={SettingScreen} />
+                    <Stack.Screen name="notification-screen" component={NotificationScreen} />
+                    <Stack.Screen name="profile-screen" component={ProfileScreen} />
+
                     <Stack.Screen name="tab-navigation" component={BottomTabNavigation} />
                 </Stack.Navigator>
             </SafePaddingView>
