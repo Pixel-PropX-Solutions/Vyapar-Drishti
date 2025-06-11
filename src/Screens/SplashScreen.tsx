@@ -13,7 +13,7 @@ export default function SplashScreen(): React.JSX.Element {
 
     useEffect(() => {
         const interval = setTimeout(() => {
-            navigation.navigate('landing-screen');
+            navigation.replace('landing-screen');
         }, 1500);
 
         return () => clearInterval(interval);

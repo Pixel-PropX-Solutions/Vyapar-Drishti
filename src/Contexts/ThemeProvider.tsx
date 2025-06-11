@@ -57,7 +57,7 @@ const themeColors: {
 
 export default function ThemeProvider ({children}: {children: React.ReactNode}): React.JSX.Element {
     
-    const appTheme: 'light' | 'dark' =  'dark'
+    const appTheme: 'light' | 'dark' =  'light'
 
     const [theme, setTheme] = useState<'light' | 'dark'>(appTheme);
     const [primaryColor, setPrimaryColor] = useState<string>(themeColors[appTheme]['primaryColor']);

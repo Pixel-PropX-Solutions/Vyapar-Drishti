@@ -1,7 +1,7 @@
 import { createStackNavigator } from "@react-navigation/stack"
 import SplashScreen from "../Screens/SplashScreen";
 import LandingScreen from "../Screens/LandingScreen";
-import SignUpScreen from "../Screens/SignupScreen";
+import SignUpScreen from "../Screens/SignUpScreen";
 import LoginScreen from "../Screens/LoginScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { View } from "react-native";

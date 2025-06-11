@@ -1,10 +1,11 @@
-import { View } from "react-native";
+import { Image, View } from "react-native";
 import SafePaddingView from "../Components/SafeAreaView/SafePaddingView";
 import NormalButton from "../Components/Button/NormalButton";
 import TextTheme from "../Components/Text/TextTheme";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamsList } from "../Navigation/StackNavigation";
+import LogoImage from "../Components/Image/LogoImage";
 
 export default function LandingScreen(): React.JSX.Element {
 
@@ -12,9 +13,12 @@ export default function LandingScreen(): React.JSX.Element {
 
     return (
         <SafePaddingView style={{width: '100%', height: '100%', display: 'flex', justifyContent: 'space-between', paddingInline: 20, backgroundColor: 'black'}}>           
-            <View></View>
+            <View style={{position: 'relative', width: '100%', flexDirection: 'row', alignItems: 'center', gap: 12, paddingTop: 20}} >
+                <LogoImage size={56} borderRadius={50} />
+                <TextTheme style={{fontWeight: 900, fontSize: 32}} >Vyapar Drishti</TextTheme>
+            </View>
             
-            <View style={{width: '100%', display: 'flex', gap: 6, paddingBottom: 10}}>
+            <View style={{width: '100%', display: 'flex', gap: 6, paddingBottom: 10, maxWidth: 640, alignSelf: 'center'}}>
 
                 <View style={{marginBottom: 14, paddingLeft: 6}}>
                     <TextTheme style={{fontWeight: 900, fontSize: 20, marginBottom: 4}} >
