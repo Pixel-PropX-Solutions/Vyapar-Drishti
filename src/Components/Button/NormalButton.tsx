@@ -1,6 +1,7 @@
 import { Text, TextStyle } from "react-native"
 import AnimateButton from "./AnimateButton"
 import { useTheme } from "../../Contexts/ThemeProvider"
+import React from "react"
 
 type Props = {
     text: string,
@@ -9,10 +10,11 @@ type Props = {
     textStyle?: TextStyle,
     color?: string,
     backgroundColor?: string,
-    height?: number
+    height?: number,
+    icon?: React.ReactNode
 }
 
-export default function NormalButton({text, isPrimary=true, onPress, color, backgroundColor, textStyle, height=44}: Props){
+export default function NormalButton({text, isPrimary=true, onPress, color, backgroundColor, textStyle, height=44, icon}: Props){
 
     const {primaryBackgroundColor, primaryColor} = useTheme();
 
@@ -31,6 +33,7 @@ export default function NormalButton({text, isPrimary=true, onPress, color, back
                 borderColor: isPrimary ? color : backgroundColor
             }}
         >
+            {icon}
             <Text style={[textStyle, { color: isPrimary ? color : backgroundColor }]}>
                 {text}
             </Text>

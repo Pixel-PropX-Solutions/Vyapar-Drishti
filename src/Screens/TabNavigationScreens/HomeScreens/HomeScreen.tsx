@@ -1,21 +1,18 @@
 import { ScrollView } from "react-native-gesture-handler";
-import TextTheme from "../../Components/Text/TextTheme";
-import BackgroundThemeView from "../../Components/View/BackgroundThemeView";
+import TextTheme from "../../../Components/Text/TextTheme";
+import BackgroundThemeView from "../../../Components/View/BackgroundThemeView";
 import { Text, View } from "react-native";
-import FeatherIcon from "../../Components/Icon/FeatherIcon";
-import AnimateButton from "../../Components/Button/AnimateButton";
-import { useTheme } from "../../Contexts/ThemeProvider";
+import FeatherIcon from "../../../Components/Icon/FeatherIcon";
+import AnimateButton from "../../../Components/Button/AnimateButton";
+import { useTheme } from "../../../Contexts/ThemeProvider";
 import { Pressable } from "react-native";
-import AnimatePingBall from "../../Components/View/AnimatePingBall";
-import { getMounthName } from "../../Functions/TimeOpration/timeByIndex";
-import ShowWhen from "../../Components/Other/ShowWhen";
-import { toCapital } from "../../Functions/StringOpations";
+import BillCard, { BillCardProps } from "../../../Components/Card/BillCard";
 
 export default function HomeScreen(): React.JSX.Element {
 
     const {primaryColor: color} = useTheme();
 
-    const dummyBillData: BillListRowProps[] = [
+    const dummyBillData: BillCardProps[] = [
         {
             id: "BL001",
             date: 10,
@@ -47,16 +44,6 @@ export default function HomeScreen(): React.JSX.Element {
             customerName: "Charlie Chaplin",
         },
         {
-            id: "BL004",
-            date: 1,
-            month: 1, // January
-            year: 2024,
-            payAmount: 1000,
-            totalAmount: 1000,
-            billNo: "INV-2024-004",
-            customerName: "Diana Prince",
-        },
-        {
             id: "BL005",
             date: 15,
             month: 3, // March
@@ -84,6 +71,8 @@ export default function HomeScreen(): React.JSX.Element {
 
             <BackgroundThemeView isPrimary={false} style={{width: '100%', height: '100%', padding: 20, borderTopLeftRadius: 36, borderTopRightRadius: 36, marginTop: 24}} >
 
+                <TextTheme style={{textAlign: 'center', fontSize: 16, marginBottom: 12, fontWeight: 900}} >Panding Bills</TextTheme>
+
                 <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingInline: 10, height: 40, borderRadius: 40, borderWidth: 2, borderColor: color}} >
                     <AnimateButton style={{borderRadius: 20, padding: 4}}>
                         <FeatherIcon name="chevron-left" size={20} />
@@ -101,7 +90,7 @@ export default function HomeScreen(): React.JSX.Element {
                 <View style={{marginBlock: 20}} >
                     {
                         dummyBillData.map(bill => (
-                            <BillListRow
+                            <BillCard
                                 key={bill.id}
                                 id={bill.id}
                                 date={bill.date} month={bill.month} year={bill.year}
@@ -194,70 +183,5 @@ function AvgInvoiceCard({avgAmount, totalBills, totalCustomers, totalPropducts}:
                 </AnimateButton>
             </View>
         </BackgroundThemeView>
-    )
-}
-
-
-type BillListRowProps = {
-    id: string,
-    date: number, month: number, year: number,
-    payAmount: number | string,
-    totalAmount: number | string,
-    billNo: string,
-    customerName: string
-}
-
-function BillListRow({id, date, month, year, totalAmount, payAmount, billNo, customerName}: BillListRowProps): React.JSX.Element {
-
-    const status: 'paid' | 'panding' = totalAmount === payAmount ? 'paid' : 'panding';
-    const statusColor = status === 'paid' ? 'rgb(50,200,150)' : 'rgb(250,150,50)';
-    const pandingAmount = Number(totalAmount) - Number(payAmount);
-
-    return (
-        <View style={{gap: 6, marginBlock: 12}}>
-            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', paddingInline: 8}} >
-                <TextTheme style={{fontSize: 20, fontWeight: 900}} >{getMounthName(month)} {date}</TextTheme>
-                <TextTheme style={{fontWeight: 900, fontSize: 16}} >{payAmount ?? '0.00'} INR</TextTheme>
-            </View>
-
-            <BackgroundThemeView style={{padding: 16, borderRadius: 16, display: 'flex', alignItems: 'flex-start', gap: 8}} >
-                <View style={{flexDirection: 'row', justifyContent: 'space-between', display: 'flex', alignItems: 'center', width: '100%'}}>
-                    <View style={{backgroundColor: statusColor, paddingInline: 12, borderRadius: 10, paddingBlock: 8, position: 'relative'}} >
-                        <Text style={{color: 'white', fontWeight: 900}} >{toCapital(status)}</Text>
-                        
-                        <ShowWhen when={status === 'panding'} >
-                            <BackgroundThemeView style={{position: 'absolute', top: 2, right: 2, width: 20, aspectRatio: 1, borderRadius: 20, transform: [{translateX: '50%'}, {translateY: '-50%'}], display: 'flex', alignItems: 'center', justifyContent: 'center'}} >
-                                <AnimatePingBall size={12} backgroundColor="rgb(250,150,50)" />
-                            </BackgroundThemeView>
-                        </ShowWhen>
-                    </View>
-
-                    <View style={{alignItems: 'flex-end'}} >
-                        <TextTheme style={{fontSize: 12}} iSPrimary={false} >#{billNo}</TextTheme>
-                        <TextTheme style={{fontSize: 12}} iSPrimary={false} >{date} {getMounthName(month)} {year}</TextTheme>
-                    </View>
-                </View>
-
-                <TextTheme style={{paddingLeft: 2, fontWeight: 600}} >{customerName}</TextTheme>
-
-                <View style={{display: 'flex', flexDirection: 'row', gap: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center'}} >
-                    <View style={{flexDirection: 'row', gap: 32}}>
-                        <View>
-                            <TextTheme style={{fontSize: 12}} >Total</TextTheme>
-                            <TextTheme style={{fontSize: 12}} >{totalAmount ?? '0.00'} INR</TextTheme>
-                        </View>
-
-                        <View>
-                            <TextTheme style={{fontSize: 12}} >Panding</TextTheme>
-                            <TextTheme style={{fontSize: 12}} >{pandingAmount ?? '0.00'} INR</TextTheme>
-                        </View>
-                    </View>
-
-                    <AnimateButton style={{padding: 8, borderRadius: 20}}>
-                        <FeatherIcon name="printer" size={20} />
-                    </AnimateButton>
-                </View>
-            </BackgroundThemeView>
-        </View>
     )
 }

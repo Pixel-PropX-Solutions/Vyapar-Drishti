@@ -10,6 +10,7 @@ import { useTheme } from "../Contexts/ThemeProvider";
 import SettingScreen from "../Screens/SettingScreen";
 import NotificationScreen from "../Screens/NotificationScreen";
 import ProfileScreen from "../Screens/ProfileScreen";
+import { Dimensions, UIManager } from "react-native";
 
 export type StackParamsList = {
     'splash-screen': undefined,
@@ -27,37 +28,26 @@ const Stack = createStackNavigator<StackParamsList>();
 export default function StackNavigation(): React.JSX.Element {
 
     const {primaryBackgroundColor: backgroundColor} = useTheme()
+    const {height, width} = Dimensions.get('screen')
 
     return (
         <NavigationContainer>
-            <SafePaddingView style={{width: '100%', height: '100%', flex: 1}}>
+            <SafePaddingView style={{width, height}}>
                 <Stack.Navigator
                     initialRouteName="splash-screen"
                     screenOptions={{headerShown: false, cardStyle: {backgroundColor}}}
                 >
-                    <Stack.Screen 
-                        name="splash-screen" 
-                        component={SplashScreen} 
-                        options={{
-                            animation: "scale_from_center"
-                        }}  
-                    />
-
-                    <Stack.Screen 
-                        name="landing-screen" 
-                        component={LandingScreen} 
-                        options={{
-                            animation: "scale_from_center"
-                        }} 
-                    />
-
                     <Stack.Screen name="login-screen" component={LoginScreen} />
                     <Stack.Screen name="signup-screen" component={SignUpScreen} />
                     <Stack.Screen name="setting-screen" component={SettingScreen} />
                     <Stack.Screen name="notification-screen" component={NotificationScreen} />
-                    <Stack.Screen name="profile-screen" component={ProfileScreen} />
 
-                    <Stack.Screen name="tab-navigation" component={BottomTabNavigation} />
+                    <Stack.Screen name="splash-screen" component={SplashScreen} options={{animation: "scale_from_center"}} />
+                    <Stack.Screen name="landing-screen" component={LandingScreen} options={{animation: "scale_from_center"}} />
+                    <Stack.Screen name="profile-screen" component={ProfileScreen} options={{animation: 'slide_from_left'}} />
+
+
+                    <Stack.Screen name="tab-navigation" component={BottomTabNavigation} options={{animation: 'scale_from_center'}} />
                 </Stack.Navigator>
             </SafePaddingView>
         </NavigationContainer>

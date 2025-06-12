@@ -6,13 +6,21 @@ type Props = {
     name: string,
     size: number,
     color?: string,
-    style?: ViewStyle
+    style?: ViewStyle,
+    isPrimary?: boolean,
+    useInversTheme?: boolean
 }
 
-export default function FeatherIcon({name, size, color, style}: Props) {
-    const {primaryColor} = useTheme();
+export default function FeatherIcon({name, size, color, style, isPrimary=true, useInversTheme=false}: Props) {
+    const {primaryColor, secondaryColor, primaryBackgroundColor, secondaryBackgroundColor} = useTheme();
     
-    color = color ?? primaryColor;
+    
+    if(useInversTheme && !color) {
+        color = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
+    } else if(!color) {
+        color = isPrimary ? primaryColor : secondaryColor;
+    }
+    
 
     return <FeatherIcons name={name} size={size} color={color} style={style} />
 }

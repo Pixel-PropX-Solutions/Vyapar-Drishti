@@ -1,10 +1,10 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
-import HomeScreen from "../Screens/TabNavigationScreens/HomeScreen";
-import ProductScreen from "../Screens/TabNavigationScreens/ProductScreen";
-import CustomerScreen from "../Screens/TabNavigationScreens/CustomerScreen";
-import BillScreen from "../Screens/TabNavigationScreens/BillScreen";
-import SettingScreen from "../Screens/TabNavigationScreens/MenuScreen";
+import HomeScreen from "../Screens/TabNavigationScreens/HomeScreens/HomeScreen";
+import ProductScreen from "../Screens/TabNavigationScreens/ProductScreens/ProductScreen";
+import CustomerScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerScreen";
+import BillScreen from "../Screens/TabNavigationScreens/BillScreens/BillScreen";
+import SettingScreen from "../Screens/TabNavigationScreens/MenuScreens/MenuScreen";
 import FeatherIcons from 'react-native-vector-icons/Feather'
 import { useTheme } from "../Contexts/ThemeProvider";
 import TabNavigationHeader from "../Components/Header/TabNavigationHeader";
@@ -30,6 +30,7 @@ export default function BottomTabNavigation(): React.JSX.Element {
         <View style={{width: '100%', height: '100%'}} >
             <TabNavigationHeader/>
             <Tab.Navigator
+                initialRouteName="product-screen"
                 screenOptions={{
                     headerShown: false, animation: 'shift', 
                     tabBarStyle: {backgroundColor},

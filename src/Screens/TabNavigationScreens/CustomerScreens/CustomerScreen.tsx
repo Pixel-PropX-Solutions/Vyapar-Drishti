@@ -1,5 +1,5 @@
 import { ScrollView } from "react-native-gesture-handler";
-import TextTheme from "../../Components/Text/TextTheme";
+import TextTheme from "../../../Components/Text/TextTheme";
 
 export default function CustomerScreen(): React.JSX.Element {
     return (

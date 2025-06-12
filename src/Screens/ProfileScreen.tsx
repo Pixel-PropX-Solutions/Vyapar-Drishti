@@ -1,10 +1,11 @@
 import { ScrollView } from "react-native-gesture-handler";
 import TextTheme from "../Components/Text/TextTheme";
+import StackNavigationHeader from "../Components/Header/StackNavigationHeader";
 
 export default function ProfileScreen(): React.JSX.Element {
     return (
         <ScrollView>
-            <TextTheme>Profile screen</TextTheme>
+            <StackNavigationHeader title="Profile" />
         </ScrollView>
     )
 }
