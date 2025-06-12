@@ -3,14 +3,15 @@ import TextTheme from "../Text/TextTheme";
 import AnimateButton from "../Button/AnimateButton";
 import FeatherIcon from "../Icon/FeatherIcon";
 import { useTheme } from "../../Contexts/ThemeProvider";
+import numberToString from "../../Functions/Numbers/numberToString";
 
 export type ProductCardProps = {
     id: string,
     productName: string,
     productsNo: string,
-    inStock: number | string,
-    price: number | string,
-    sell: number | string,
+    inStock: number,
+    price: number,
+    sell: number,
     unit?: string | 'Unit',
     isPrimary?: boolean
 }
@@ -37,7 +38,7 @@ export default function ProductCard({id, productName, productsNo, inStock, price
 
                     <View>
                         <TextTheme isPrimary={false} style={{fontSize: 12}} >Price</TextTheme>
-                        <TextTheme style={{fontSize: 12}} >{price} INR</TextTheme>
+                        <TextTheme style={{fontSize: 12}} >{numberToString(price)} INR</TextTheme>
                     </View>
 
                     <View>

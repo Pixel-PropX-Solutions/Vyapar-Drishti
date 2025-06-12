@@ -11,6 +11,7 @@ import SettingScreen from "../Screens/SettingScreen";
 import NotificationScreen from "../Screens/NotificationScreen";
 import ProfileScreen from "../Screens/ProfileScreen";
 import { Dimensions, UIManager } from "react-native";
+import CustomerInfoScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen";
 
 export type StackParamsList = {
     'splash-screen': undefined,
@@ -20,7 +21,9 @@ export type StackParamsList = {
     'tab-navigation': undefined,
     'setting-screen': undefined,
     'notification-screen': undefined,
-    'profile-screen': undefined
+    'profile-screen': undefined,
+
+    'customer-info-screen': undefined
 }
 
 const Stack = createStackNavigator<StackParamsList>();
@@ -41,6 +44,8 @@ export default function StackNavigation(): React.JSX.Element {
                     <Stack.Screen name="signup-screen" component={SignUpScreen} />
                     <Stack.Screen name="setting-screen" component={SettingScreen} />
                     <Stack.Screen name="notification-screen" component={NotificationScreen} />
+
+                    <Stack.Screen name="customer-info-screen" component={CustomerInfoScreen} />
 
                     <Stack.Screen name="splash-screen" component={SplashScreen} options={{animation: "scale_from_center"}} />
                     <Stack.Screen name="landing-screen" component={LandingScreen} options={{animation: "scale_from_center"}} />

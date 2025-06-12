@@ -17,16 +17,18 @@ const dummyBillData: BillCardProps[] = [
         totalAmount: 2000.50,
         billNo: "INV-2024-001",
         customerName: "Alice Wonderland",
+        pandingAmount: 0
     },
     {
         id: "BL002",
         date: 22,
         month: 4, // April
         year: 2024,
-        payAmount: "500", // Example with string payAmount
+        payAmount: 500, // Example with string payAmount
         totalAmount: 750.20,
         billNo: "INV-2024-002",
         customerName: "Bob The Builder",
+        pandingAmount: 0
     },
     {
         id: "BL003",
@@ -34,9 +36,10 @@ const dummyBillData: BillCardProps[] = [
         month: 6, // June
         year: 2024,
         payAmount: 300.00,
-        totalAmount: "300.00", // Example with string totalAmount
+        totalAmount: 300.00, // Example with string totalAmount
         billNo: "INV-2024-003",
         customerName: "Charlie Chaplin",
+        pandingAmount: 0
     },
     {
         id: "BL004",
@@ -47,6 +50,7 @@ const dummyBillData: BillCardProps[] = [
         totalAmount: 1000,
         billNo: "INV-2024-004",
         customerName: "Diana Prince",
+        pandingAmount: 0
     },
     {
         id: "BL005",
@@ -57,6 +61,7 @@ const dummyBillData: BillCardProps[] = [
         totalAmount: 1200.00,
         billNo: "INV-2024-005",
         customerName: "Ethan Hunt",
+        pandingAmount: 0
     },
 ];
 
@@ -100,6 +105,7 @@ export default function BillScreen(): React.JSX.Element {
                                 totalAmount={bill.totalAmount}
                                 payAmount={bill.payAmount}
                                 billNo={bill.billNo}
+                                pandingAmount={bill.totalAmount - bill.pandingAmount}
                             />
                         ))
                     }

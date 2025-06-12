@@ -7,6 +7,7 @@ import AnimateButton from "../../../Components/Button/AnimateButton";
 import { useTheme } from "../../../Contexts/ThemeProvider";
 import { Pressable } from "react-native";
 import BillCard, { BillCardProps } from "../../../Components/Card/BillCard";
+import DateSelector from "../../../Components/Other/DateSelector";
 
 export default function HomeScreen(): React.JSX.Element {
 
@@ -22,16 +23,18 @@ export default function HomeScreen(): React.JSX.Element {
             totalAmount: 2000.50,
             billNo: "INV-2024-001",
             customerName: "Alice Wonderland",
+            pandingAmount: 0
         },
         {
             id: "BL002",
             date: 22,
             month: 4, // April
             year: 2024,
-            payAmount: "500", // Example with string payAmount
+            payAmount: 500, // Example with string payAmount
             totalAmount: 750.20,
             billNo: "INV-2024-002",
             customerName: "Bob The Builder",
+            pandingAmount: 0
         },
         {
             id: "BL003",
@@ -39,9 +42,10 @@ export default function HomeScreen(): React.JSX.Element {
             month: 6, // June
             year: 2024,
             payAmount: 300.00,
-            totalAmount: "300.00", // Example with string totalAmount
+            totalAmount: 300.00, // Example with string totalAmount
             billNo: "INV-2024-003",
             customerName: "Charlie Chaplin",
+            pandingAmount: 0
         },
         {
             id: "BL005",
@@ -52,18 +56,19 @@ export default function HomeScreen(): React.JSX.Element {
             totalAmount: 1200.00,
             billNo: "INV-2024-005",
             customerName: "Ethan Hunt",
+            pandingAmount: 0
         },
     ];
 
     return (
         <ScrollView style={{marginTop: 12, width: '100%', height: '100%'}}>
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12, width: '100%', maxWidth: 500, paddingInline: 20}}>
-                <TopMoneyInfoCard type='revenue' amount={'0.00'} />
-                <TopMoneyInfoCard type='panding' amount={'0.00'} />
+                <TopMoneyInfoCard type='revenue' amount={0} />
+                <TopMoneyInfoCard type='panding' amount={0} />
             </View>
 
             <AvgInvoiceCard 
-                avgAmount={'0.00'} 
+                avgAmount={0} 
                 totalBills={dummyBillData.length} 
                 totalCustomers={0} 
                 totalPropducts={0} 
@@ -73,19 +78,7 @@ export default function HomeScreen(): React.JSX.Element {
 
                 <TextTheme style={{textAlign: 'center', fontSize: 16, marginBottom: 12, fontWeight: 900}} >Panding Bills</TextTheme>
 
-                <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingInline: 10, height: 40, borderRadius: 40, borderWidth: 2, borderColor: color}} >
-                    <AnimateButton style={{borderRadius: 20, padding: 4}}>
-                        <FeatherIcon name="chevron-left" size={20} />
-                    </AnimateButton>
-
-                    <Pressable>
-                        <TextTheme style={{fontSize: 16, fontWeight: 900}} >Jan, 2025</TextTheme>
-                    </Pressable>
-                    
-                    <AnimateButton style={{borderRadius: 20, padding: 4}}>
-                        <FeatherIcon name="chevron-right" size={20} />
-                    </AnimateButton>
-                </View>
+                <DateSelector/>
 
                 <View style={{marginBlock: 20}} >
                     {
@@ -98,6 +91,7 @@ export default function HomeScreen(): React.JSX.Element {
                                 totalAmount={bill.totalAmount}
                                 payAmount={bill.payAmount}
                                 billNo={bill.billNo}
+                                pandingAmount={bill.totalAmount - bill.payAmount}
                             />
                         ))
                     }
@@ -112,7 +106,7 @@ export default function HomeScreen(): React.JSX.Element {
 
 type TopMoneyInfoCardProps = {
     type: 'revenue' | 'panding',
-    amount: string | number
+    amount:  number
 }
 
 function TopMoneyInfoCard({type, amount}: TopMoneyInfoCardProps): React.JSX.Element {
@@ -139,7 +133,7 @@ function TopMoneyInfoCard({type, amount}: TopMoneyInfoCardProps): React.JSX.Elem
 
 
 type AvgInvoiceCardProps = {
-    avgAmount: number | string,
+    avgAmount: number,
     totalBills: number,
     totalCustomers: number,
     totalPropducts: number
