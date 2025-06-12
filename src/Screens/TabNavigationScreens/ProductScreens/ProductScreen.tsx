@@ -81,7 +81,7 @@ export default function ProductScreen(): React.JSX.Element {
                     />
 
                     <View style={{alignItems: 'flex-end'}} >
-                        <TextTheme style={{fontSize: 12}} iSPrimary={false} >Total Results</TextTheme>
+                        <TextTheme style={{fontSize: 12}} isPrimary={false} >Total Results</TextTheme>
                         <TextTheme>
                             <FeatherIcon name="package" size={16} />
                             {' '}
@@ -95,6 +95,7 @@ export default function ProductScreen(): React.JSX.Element {
                     {
                         dummyProductData.map(pro => (
                             <ProductCard
+                                key={pro.id}
                                 id={pro.id}
                                 productName={pro.productName}
                                 productsNo={pro.productsNo}

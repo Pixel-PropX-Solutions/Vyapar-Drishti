@@ -31,7 +31,7 @@ function EmptyNotificationScreen(): React.JSX.Element {
                 No Notifications
             </TextTheme>
 
-            <TextTheme iSPrimary={false} style={{ fontSize: 16, textAlign: 'center', marginTop: 10, lineHeight: 22 }}>
+            <TextTheme isPrimary={false} style={{ fontSize: 16, textAlign: 'center', marginTop: 10, lineHeight: 22 }}>
                 You're all caught up!{'\n'}Check back later for updates.
             </TextTheme>
         </View>

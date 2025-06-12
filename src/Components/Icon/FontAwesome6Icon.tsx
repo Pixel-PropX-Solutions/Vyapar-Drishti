@@ -1,4 +1,4 @@
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome6Icons from 'react-native-vector-icons/FontAwesome6';
 import { useTheme } from '../../Contexts/ThemeProvider';
 import { ViewStyle } from 'react-native';
 
@@ -11,7 +11,7 @@ type Props = {
     useInversTheme?: boolean
 }
 
-export default function MaterialIcon({name, size, color, style, isPrimary=true, useInversTheme=false}: Props) {
+export default function FontAwesome6Icon({name, size, color, style, isPrimary=true, useInversTheme=false}: Props) {
     const {primaryColor, secondaryColor, primaryBackgroundColor, secondaryBackgroundColor} = useTheme();
     
     
@@ -22,5 +22,5 @@ export default function MaterialIcon({name, size, color, style, isPrimary=true, 
     }
     
 
-    return <MaterialIcons name={name} size={size} color={color} style={style} />
+    return <FontAwesome6Icons name={name} size={size} color={color} style={style} />
 }

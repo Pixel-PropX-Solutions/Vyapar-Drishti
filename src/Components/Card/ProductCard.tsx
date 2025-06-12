@@ -25,23 +25,23 @@ export default function ProductCard({id, productName, productsNo, inStock, price
         >
             <View style={{justifyContent: 'space-between', alignItems: 'center', gap: 12, flexDirection: 'row', width: '100%'}} >
                 <TextTheme style={{paddingLeft: 2, fontWeight: 600}} >{productName}</TextTheme>
-                <TextTheme iSPrimary={false} style={{paddingLeft: 2, fontWeight: 600, fontSize: 12}} >#{productsNo}</TextTheme>
+                <TextTheme isPrimary={false} style={{paddingLeft: 2, fontWeight: 600, fontSize: 12}} >#{productsNo}</TextTheme>
             </View>
 
             <View style={{display: 'flex', flexDirection: 'row', gap: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center'}} >
                 <View style={{flexDirection: 'row', gap: 32}}>
                     <View>
-                        <TextTheme iSPrimary={false} style={{fontSize: 12}} >In Stock</TextTheme>
+                        <TextTheme isPrimary={false} style={{fontSize: 12}} >In Stock</TextTheme>
                         <TextTheme style={{fontSize: 12}} >{inStock} {unit}</TextTheme>
                     </View>
 
                     <View>
-                        <TextTheme iSPrimary={false} style={{fontSize: 12}} >Price</TextTheme>
+                        <TextTheme isPrimary={false} style={{fontSize: 12}} >Price</TextTheme>
                         <TextTheme style={{fontSize: 12}} >{price} INR</TextTheme>
                     </View>
 
                     <View>
-                        <TextTheme iSPrimary={false} style={{fontSize: 12}} >
+                        <TextTheme isPrimary={false} style={{fontSize: 12}} >
                             {'Sell '}
                             <FeatherIcon name="trending-up" size={12}/>
                         </TextTheme>

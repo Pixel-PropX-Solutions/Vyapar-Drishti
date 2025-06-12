@@ -23,7 +23,7 @@ export default function AnimateButton({children, style={}, duration=300, bubbleS
 
     const [pressPoints, setPressPoints] = useState<{x: number, y: number}>({x: -1, y: -1});
 
-    const opacityAnime = useRef<Animated.Value>(new Animated.Value(.8)).current;
+    const opacityAnime = useRef<Animated.Value>(new Animated.Value(.5)).current;
     const scaleAnime = useRef<Animated.Value>(new Animated.Value(0)).current;
     const button = useRef<View>(null);
     const timeout = useRef<NodeJS.Timeout>(null);
@@ -57,7 +57,7 @@ export default function AnimateButton({children, style={}, duration=300, bubbleS
             })
         ]).start(() => {
             scaleAnime.setValue(0);
-            opacityAnime.setValue(.8);
+            opacityAnime.setValue(.5);
         });
 
     }, [pressPoints])

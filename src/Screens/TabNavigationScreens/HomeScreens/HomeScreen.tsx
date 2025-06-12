@@ -163,7 +163,7 @@ function AvgInvoiceCard({avgAmount, totalBills, totalCustomers, totalPropducts}:
                         <FeatherIcon name="file-text" size={20} />
                         {`  ${totalBills}`}
                     </TextTheme>
-                    <TextTheme iSPrimary={false} style={{fontSize: 10}}>Total Bill</TextTheme>
+                    <TextTheme isPrimary={false} style={{fontSize: 10}}>Total Bill</TextTheme>
                 </AnimateButton>
 
                 <AnimateButton style={{paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor}}>
@@ -171,7 +171,7 @@ function AvgInvoiceCard({avgAmount, totalBills, totalCustomers, totalPropducts}:
                         <FeatherIcon name="users" size={20} />
                         {`  ${totalCustomers}`}
                     </TextTheme>
-                    <TextTheme iSPrimary={false} style={{fontSize: 10}}>Total Customer</TextTheme>
+                    <TextTheme isPrimary={false} style={{fontSize: 10}}>Total Customer</TextTheme>
                 </AnimateButton>
                 
                 <AnimateButton style={{paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor}}>
@@ -179,7 +179,7 @@ function AvgInvoiceCard({avgAmount, totalBills, totalCustomers, totalPropducts}:
                         <FeatherIcon name="package" size={20} />
                         {`  ${totalPropducts}`}
                     </TextTheme>
-                    <TextTheme iSPrimary={false} style={{fontSize: 10}}>Total Product</TextTheme>
+                    <TextTheme isPrimary={false} style={{fontSize: 10}}>Total Product</TextTheme>
                 </AnimateButton>
             </View>
         </BackgroundThemeView>

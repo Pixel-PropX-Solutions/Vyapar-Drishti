@@ -80,7 +80,7 @@ export default function BillScreen(): React.JSX.Element {
                     />
 
                     <View style={{alignItems: 'flex-end'}} >
-                        <TextTheme style={{fontSize: 12}} iSPrimary={false} >Total Results</TextTheme>
+                        <TextTheme style={{fontSize: 12}} isPrimary={false} >Total Results</TextTheme>
                         <TextTheme>
                             <FeatherIcon name="file-text" size={16} />
                             {' '}

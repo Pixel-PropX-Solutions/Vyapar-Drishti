@@ -3,19 +3,19 @@ import { useTheme } from "../../Contexts/ThemeProvider";
 
 type Props = TextProps & {
     color?: string,
-    iSPrimary?: boolean
+    isPrimary?: boolean
 }
 
-export default function TextTheme({style, children, numberOfLines, color, iSPrimary=true}: Props): React.JSX.Element {
+export default function TextTheme({style, children, numberOfLines, color, isPrimary=true}: Props): React.JSX.Element {
 
     let {primaryColor, secondaryColor} = useTheme();
 
-    color = color ? color : iSPrimary ? primaryColor : secondaryColor;
+    color = color ? color : isPrimary ? primaryColor : secondaryColor;
 
     return (
         <Text 
             numberOfLines={numberOfLines}  
-            style={[style, { color, opacity: iSPrimary ? 1 : 0.7}]} 
+            style={[style, { color, opacity: isPrimary ? 1 : 0.7}]} 
         >
             {children}
         </Text>

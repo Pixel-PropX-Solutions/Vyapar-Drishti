@@ -44,8 +44,8 @@ export default function BillCard({id, date, month, year, totalAmount, payAmount,
                     </View>
 
                     <View style={{alignItems: 'flex-end'}} >
-                        <TextTheme style={{fontSize: 12}} iSPrimary={false} >#{billNo}</TextTheme>
-                        <TextTheme style={{fontSize: 12}} iSPrimary={false} >{date} {getMounthName(month)} {year}</TextTheme>
+                        <TextTheme style={{fontSize: 12}} isPrimary={false} >#{billNo}</TextTheme>
+                        <TextTheme style={{fontSize: 12}} isPrimary={false} >{date} {getMounthName(month)} {year}</TextTheme>
                     </View>
                 </View>
 
