@@ -27,7 +27,13 @@ export default function CustomerCard({name, phoneNumber, createOn, onPress=()=>{
             onPress={onPress}
         >
             <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start'}} >
-                <TextTheme style={{fontSize: 18, fontWeight: 900}} >{name}</TextTheme>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                    <View style={{borderRadius: 50, aspectRatio: 1, width: 40, alignItems: 'center', justifyContent: 'center', borderWidth: 4, borderColor: 'rgba(50,150,250,0.4)', backgroundColor: 'rgb(50,150,250)'}} >
+                        <TextTheme color="white" style={{fontSize: 18, fontWeight: 900}} >{name[0]}</TextTheme>
+                    </View>
+                    
+                    <TextTheme style={{fontSize: 18, fontWeight: 900}} >{name}</TextTheme>
+                </View>
                 
                 <View style={{alignItems: 'flex-end'}} >
                     <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}} >

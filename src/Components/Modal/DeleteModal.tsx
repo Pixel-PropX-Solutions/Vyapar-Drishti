@@ -1,8 +1,9 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import BottomModal from "./BottomModal";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 import NoralTextInput from "../TextInput/NoralTextInput";
 import MaterialIcon from "../Icon/MaterialIcon";
+import { useAlert } from "../Alert/AlertProvider";
 
 
 type Props = {
@@ -10,25 +11,30 @@ type Props = {
     setVisible: Dispatch<SetStateAction<boolean>>,
     massage: string,
     passkey: string,
-    onDelete: () => void
+    handleDelete: () => void
 }
 
-export default function DeleteModal({visible, setVisible, massage, passkey, onDelete=()=>{}}: Props): React.JSX.Element {
+export default function DeleteModal({visible, setVisible, massage, passkey, handleDelete}: Props): React.JSX.Element {
 
     const [text, setText] = useState<string>('');
+    const {setAlert} = useAlert();
 
-    function handleDelete(){
-        if(text !== passkey) return;
-        onDelete();
+    function handleOnDelete(){
+        if(text !== passkey) return setAlert({
+            id: 'delete-modal', massage: 'to delete enter valid keyword !!!', type: 'error'
+        });
+
+        handleDelete();
     } 
 
     return (
         <BottomModal 
+            alertId="delete-modal"
             visible={visible} 
             setVisible={setVisible} 
             style={{padding: 20, gap: 8}} 
             actionButtons={[{
-                title: 'Delete', onPress: handleDelete, backgroundColor: 'rgb(200,50,50)', 
+                title: 'Delete', onPress: handleOnDelete, backgroundColor: 'rgb(200,50,50)', 
                 icon: <MaterialIcon name="delete" size={20} color="white" />
             }]}    
         >
@@ -41,6 +47,8 @@ export default function DeleteModal({visible, setVisible, massage, passkey, onDe
                 style={{borderWidth: 0, borderBottomWidth: 2, borderColor: 'rgb(200, 50, 50)', fontWeight: 900}}
                 color="rgb(200,50,50)"
             />
+
+            <View style={{minHeight: 40}} />
         </BottomModal>
     )
 }

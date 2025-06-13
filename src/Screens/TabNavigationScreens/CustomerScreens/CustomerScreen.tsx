@@ -6,7 +6,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamsList } from "../../../Navigation/StackNavigation";
 import { useEffect, useState } from "react";
 import RoundedPlusButton from "../../../Components/Button/RoundedPlusButton";
-import CreateCustomerModal from "../../../Components/Modal/CreateCustomerModal";
+import CreateCustomerModal from "../../../Components/Modal/Customer/CreateCustomerModal";
 import BottomModal from "../../../Components/Modal/BottomModal";
 
 const dummyCustomerData: CustomerCardProps[] = [

@@ -35,7 +35,7 @@ export default function BottomModal({visible, setVisible, children, style, backd
                 <View style={[styles.modalContener, {backgroundColor, borderColor: secondaryBackgroundColor} ,style]}>{children}</View>
 
                 <View style={[styles.bottomOpations, {backgroundColor, borderColor: secondaryBackgroundColor}, bottomOpationStyle]}>
-                    <TouchableOpacity style={[styles.closeBtn, {borderColor: secondaryBackgroundColor}]} onPress={() => {setVisible(false); onClose();}}>
+                    <TouchableOpacity style={[styles.closeBtn, {borderColor: secondaryBackgroundColor, backgroundColor}]} onPress={() => {setVisible(false); onClose();}}>
                         <FeatherIcons name="plus" size={16} color={color} style={{transform: 'rotate(45deg)'}} />
                     </TouchableOpacity>
                     
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderWidth: 1,
         borderBottomWidth: 0,
-        height: 24,
+        height: 32,
         width: '100%',
         paddingInline: 20
     },
@@ -112,6 +112,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 14,
         transform: 'translateY(-25%)',
-        position: 'relative'
+        position: 'relative',
     }
 })  

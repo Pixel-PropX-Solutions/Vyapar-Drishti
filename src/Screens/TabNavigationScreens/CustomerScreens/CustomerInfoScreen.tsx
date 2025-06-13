@@ -12,7 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamsList } from "../../../Navigation/StackNavigation";
 import { useState } from "react";
-import UpdateCustomerInfoModal from "../../../Components/Modal/UpdateCustomerInfoModal";
+import UpdateCustomerInfoModal from "../../../Components/Modal/Customer/UpdateCustomerInfoModal";
 import DeleteModal from "../../../Components/Modal/DeleteModal";
 
 
@@ -131,9 +131,9 @@ export default function CustomerInfoScreen(): React.JSX.Element {
             <UpdateCustomerInfoModal 
                 visible={isInfoUpdateModalOpen} 
                 setVisible={setInfoUpdateModalOpen} 
-                id="12"
                 name="Sneha Devi"
                 phoneNo="900303032"
+                handleUpdate={() => {setInfoUpdateModalOpen(false)}}
             />
         
             <DeleteModal 
@@ -141,7 +141,7 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                 setVisible={setDeleteModalOpen} 
                 massage="Did you want to delete the customer"
                 passkey="name"
-                onDelete={() => {}}
+                handleDelete={() => setDeleteModalOpen(false)}
             />
 
         </BackgroundThemeView>

@@ -37,17 +37,6 @@ export default function HomeScreen(): React.JSX.Element {
             pandingAmount: 0
         },
         {
-            id: "BL003",
-            date: 5,
-            month: 6, // June
-            year: 2024,
-            payAmount: 300.00,
-            totalAmount: 300.00, // Example with string totalAmount
-            billNo: "INV-2024-003",
-            customerName: "Charlie Chaplin",
-            pandingAmount: 0
-        },
-        {
             id: "BL005",
             date: 15,
             month: 3, // March

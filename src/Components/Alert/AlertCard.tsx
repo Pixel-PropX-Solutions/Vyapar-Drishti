@@ -1,10 +1,9 @@
 import { Animated, useAnimatedValue, View } from "react-native";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Text } from "react-native-gesture-handler";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAlert } from "./AlertProvider";
 
-type AlertType = 'error' | 'success' | 'info' | 'warning' | null;
 
 type AlertIconsInfoType = {
     iconName: string, backgroundColor: string
@@ -39,10 +38,18 @@ export default function AlertCard({duration=5000, id}: Props): React.JSX.Element
 
     const {iconName, backgroundColor} = alertIconsInfo[type];
 
+    const [isRuning, setRuning] = useState<boolean>(false);
+
     const widthTranstion = useAnimatedValue(0);
     const transtion0to1 = useAnimatedValue(0);
 
+    function reset() {
+        setAlert({type: null});
+        setRuning(false);
+    }
+
     function Animate() {
+        setRuning(true);
         Animated.sequence([
             Animated.timing(transtion0to1, {
                 toValue: 1, duration: 300, useNativeDriver: true
@@ -54,14 +61,16 @@ export default function AlertCard({duration=5000, id}: Props): React.JSX.Element
                 toValue: 0, duration: 300, useNativeDriver: true
             }),
         ]).start(() => {
-            setAlert({type: null})
             widthTranstion.setValue(0);
             transtion0to1.setValue(0);
+            reset();
         })
     }
 
 
     useEffect(() => {
+        if(isRuning) return;
+
         if(type && id === alertId) Animate();
     }, [alert]);
 

@@ -1,42 +1,122 @@
 import { ScrollView } from "react-native-gesture-handler";
-import TextTheme from "../Components/Text/TextTheme";
 import StackNavigationHeader from "../Components/Header/StackNavigationHeader";
-import { Switch, View, ViewStyle } from "react-native";
+import { View, ViewStyle } from "react-native";
 import AnimateButton from "../Components/Button/AnimateButton";
 import { useTheme } from "../Contexts/ThemeProvider";
 import FeatherIcon from "../Components/Icon/FeatherIcon";
+import SectionView, { SectionRowWithIcon } from "../Components/View/SectionView";
 
 export default function SettingScreen(): React.JSX.Element {
 
-    const {secondaryBackgroundColor, setTheme, theme} = useTheme()
+    const {setTheme, theme} = useTheme()
 
     return (
         <View style={{width: '100%', height: '100%'}} >
             <StackNavigationHeader title="Settings" />
-            <ScrollView style={{width: "100%", paddingInline: 20}} > 
 
-            <Container 
-                style={{marginBlock: 14}} 
-                backgroundColor={secondaryBackgroundColor}
-                onPress={() => setTheme((theme) => theme == 'dark' ? 'light' : 'dark')}
-            >
-                <View style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
-                    <View style={{gap: 16, alignItems: 'center', flexDirection: 'row'}}>
-                        <FeatherIcon name="moon" size={26} />
-                        <TextTheme style={{fontWeight: '900', fontSize: 16, color: 'white'}}>Dark Mode</TextTheme>
-                    </View>
-
-                    <Switch 
-                        style={{alignSelf: 'flex-end'}} 
-                        value={theme == 'dark'} 
-                        thumbColor={theme == 'dark' ? 'rgb(50,150,250)' : 'rgb(50,50,50)'}
-                        trackColor={{false: 'white', true: 'white'}}
-                        onValueChange={(value) => {setTheme(value ? 'dark' : 'light')}} 
+            <ScrollView style={{width: "100%", paddingInline: 20}} contentContainerStyle={{gap: 24}} > 
+               
+                <SectionView label="App Prefernces" style={{gap: 12}} >
+                    <SectionRowWithIcon
+                        label="Theme"
+                        icon={<FeatherIcon name={theme == 'dark' ? "moon" : 'sun'} size={20} />}
+                        text={`Click for trun on ${theme == 'dark' ? 'light' : 'dark'} mode.`}
+                        onPress={() => setTheme((pre) => pre == 'light' ? 'dark' : 'light')}
                     />
-                </View>
-            </Container>
+                   
+                    <SectionRowWithIcon
+                        hasArrow={true}
+                        label="Notification"
+                        text="Manage your Notification"
+                        icon={<FeatherIcon name="bell" size={20}/>}
+                        onPress={() => {}}
+                    />
+
+                    <SectionRowWithIcon
+                        label="Currency"
+                        icon={<FeatherIcon name={"dollar-sign"} size={20} />}
+                        text={"Customize currency"}
+                        onPress={() => {}}
+                    />
+                </SectionView>
+               
+                
+                
+                <SectionView label="Bill Setting" style={{gap: 12}} >
+                    <SectionRowWithIcon
+                        hasArrow={true}
+                        label="Bill Templates"
+                        icon={<FeatherIcon name={"file-text"} size={20} />}
+                        text={"Customize bill templates"}
+                        onPress={() => {}}
+                    />
+                    
+                    <SectionRowWithIcon
+                        label="Bill Prefix"
+                        icon={<FeatherIcon name={"hash"} size={20} />}
+                        text={"Customize your bill Prefix like #INV-001"}
+                        onPress={() => {}}
+                    />
+                </SectionView>
+
+                <SectionView label="Bussiness Details" style={{gap: 12}} >
+                    <SectionRowWithIcon
+                        hasArrow={true}
+                        label="Business Profile"
+                        icon={<FeatherIcon name={"user"} size={20} />}
+                        text={"Update your business profile information"}
+                        onPress={() => {}}
+                    />
+                </SectionView>
+                
+                <SectionView label="Help & Other" style={{gap: 12}} >
+                    <SectionRowWithIcon
+                        hasArrow={true}
+                        label="Help Center"
+                        icon={<FeatherIcon name={"help-circle"} size={20} />}
+                        text={"Access help documentation"}
+                        onPress={() => {}}
+                    />
+                    
+                    <SectionRowWithIcon
+                        hasArrow={true}
+                        label="Privacy Policy"
+                        icon={<FeatherIcon name={"file-minus"} size={20} />}
+                        text={"View privacy policy"}
+                        onPress={() => {}}
+                    />
+                    
+                    <SectionRowWithIcon
+                        hasArrow={true}
+                        label="Github"
+                        icon={<FeatherIcon name={"github"} size={20} />}
+                        text={"https://github.com/Mustak24/Vyapar-Drishti"}
+                        onPress={() => {}}
+                    />
+                </SectionView>
+
+                <SectionView label="Danger Zone" style={{gap: 12}} lableColor="red" >
+                    <SectionRowWithIcon
+                        color="white"
+                        backgroundColor="rgb(255,80,100)"
+                        label="Delete Data"
+                        icon={<FeatherIcon name={"alert-triangle"} size={20} color="red" />}
+                        text={"Remove all information"}
+                        onPress={() => {}}
+                    />
+                    
+                    <SectionRowWithIcon
+                        color="white"
+                        backgroundColor="rgb(255,50,80)"
+                        label="Delete Account"
+                        icon={<FeatherIcon name={"alert-circle"} size={20} color="red" />}
+                        text={"Delete account from database"}
+                        onPress={() => {}}
+                    />
+                </SectionView>
 
 
+                <View style={{minHeight: 40}} />
             </ScrollView>
         </View>
     )

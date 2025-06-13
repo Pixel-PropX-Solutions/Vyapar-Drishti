@@ -7,6 +7,9 @@ import AnimateButton from "../../../Components/Button/AnimateButton";
 import FeatherIcon from "../../../Components/Icon/FeatherIcon";
 import { useTheme } from "../../../Contexts/ThemeProvider";
 import NormalButton from "../../../Components/Button/NormalButton";
+import RoundedPlusButton from "../../../Components/Button/RoundedPlusButton";
+import { useState } from "react";
+import CreateProductModal from "../../../Components/Modal/Product/CreateProductModal";
 
 const dummyProductData: ProductCardProps[] = [
     {
@@ -60,57 +63,72 @@ export default function ProductScreen(): React.JSX.Element {
 
     const {primaryColor: color} = useTheme();
 
-    return (
-        <ScrollView style={{marginTop: 12, width: '100%', height: '100%'}}>
+    const [isCreateModalOpen, setCreateModalOpen] = useState<boolean>(false);
 
-            <SummaryCard
-                shopeName="Gen-I Store"
-                highStock={10}
-                lowStock={2}
-                totalValue={20300}
+    return (
+        <View  style={{width: '100%', height: '100%'}}>
+            <ScrollView style={{marginTop: 12, width: '100%', height: '100%'}}>
+
+                <SummaryCard
+                    shopeName="Gen-I Store"
+                    highStock={10}
+                    lowStock={2}
+                    totalValue={20300}
+                />
+
+                <BackgroundThemeView  isPrimary={false} style={{width: '100%', height: '100%', padding: 20, borderTopLeftRadius: 36, borderTopRightRadius: 32, marginTop: 24, gap: 20}} >
+
+                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBlock: 8}} >
+
+                        <NormalButton 
+                            text=" Filerts" 
+                            textStyle={{fontWeight: 800}}
+                            icon={<FeatherIcon name="filter" size={16} useInversTheme={true} />}
+                        />
+
+                        <View style={{alignItems: 'flex-end'}} >
+                            <TextTheme style={{fontSize: 12}} isPrimary={false} >Total Results</TextTheme>
+                            <TextTheme>
+                                <FeatherIcon name="package" size={16} />
+                                {' '}
+                                12
+                            </TextTheme>
+                        </View>
+                        
+                    </View>
+
+                    <View style={{gap: 16}} >
+                        {
+                            dummyProductData.map(pro => (
+                                <ProductCard
+                                    key={pro.id}
+                                    id={pro.id}
+                                    productName={pro.productName}
+                                    productsNo={pro.productsNo}
+                                    price={pro.price}
+                                    inStock={pro.inStock}
+                                    sell={pro.sell}
+                                    unit={pro.unit}
+                                />
+                            ))
+                        }
+                    </View>
+
+                    <View style={{minHeight: 80}} />
+                </BackgroundThemeView>
+            </ScrollView>
+
+            <View style={{position: 'absolute', right: 20, bottom: 20}} >
+                <RoundedPlusButton size={60} iconSize={24} onPress={() => setCreateModalOpen(true)} />
+            </View>
+
+            <CreateProductModal 
+                visible={isCreateModalOpen} 
+                setVisible={setCreateModalOpen} 
+                onCreate={() => setCreateModalOpen(false)}
             />
 
-            <BackgroundThemeView  isPrimary={false} style={{width: '100%', height: '100%', padding: 20, borderTopLeftRadius: 36, borderTopRightRadius: 32, marginTop: 24, gap: 20}} >
-
-                <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBlock: 8}} >
-
-                    <NormalButton 
-                        text=" Filerts" 
-                        textStyle={{fontWeight: 800}}
-                        icon={<FeatherIcon name="filter" size={16} useInversTheme={true} />}
-                    />
-
-                    <View style={{alignItems: 'flex-end'}} >
-                        <TextTheme style={{fontSize: 12}} isPrimary={false} >Total Results</TextTheme>
-                        <TextTheme>
-                            <FeatherIcon name="package" size={16} />
-                            {' '}
-                            12
-                        </TextTheme>
-                    </View>
-                    
-                </View>
-
-                <View style={{gap: 16}} >
-                    {
-                        dummyProductData.map(pro => (
-                            <ProductCard
-                                key={pro.id}
-                                id={pro.id}
-                                productName={pro.productName}
-                                productsNo={pro.productsNo}
-                                price={pro.price}
-                                inStock={pro.inStock}
-                                sell={pro.sell}
-                                unit={pro.unit}
-                            />
-                        ))
-                    }
-                </View>
-
-                <View style={{minHeight: 80}} />
-            </BackgroundThemeView>
-        </ScrollView>
+        </View>
     )
 }
 
