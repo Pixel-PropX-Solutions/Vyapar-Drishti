@@ -47,12 +47,12 @@ export function SectionRow({isPrimary=false, backgroundColor, onPress, children,
 
     return (
         <AnimateButton 
-            style={{padding: 20, borderRadius: 16, backgroundColor, width: '100%'}}
+            style={{padding: 12, borderRadius: 12, backgroundColor, width: '100%'}}
             onPress={onPress}
             bubbleScale={30}
         >
             <ShowWhen when={label !== ''}>
-                <TextTheme isPrimary={false} style={{fontWeight: '900', marginBottom: 16}}>{label ?? 'dsd'}</TextTheme>
+                <TextTheme isPrimary={false} style={{fontWeight: '900', marginBottom: 12}}>{label ?? 'dsd'}</TextTheme>
             </ShowWhen>
             <View style={[{flexDirection: 'row', alignItems: 'center'}, style]} >
                 {children}
@@ -100,10 +100,11 @@ type SectionRowWithIcon = {
     isPrimary?: boolean,
     hasArrow?: boolean,
     backgroundColor?: string,
-    color?: string
+    color?: string,
+    children?: React.ReactNode
 }
 
-export function SectionRowWithIcon({isPrimary=false, onPress, label, text, icon, hasArrow=false, backgroundColor='', color}: SectionRowWithIcon): React.JSX.Element {
+export function SectionRowWithIcon({isPrimary=false, onPress, label, text, icon, hasArrow=false, backgroundColor='', color, children}: SectionRowWithIcon): React.JSX.Element {
     const {secondaryBackgroundColor, primaryBackgroundColor} = useTheme();
    
     if(backgroundColor === ''){
@@ -117,20 +118,20 @@ export function SectionRowWithIcon({isPrimary=false, onPress, label, text, icon,
             bubbleScale={30}
             style={{padding: 12, borderRadius: 16, backgroundColor, width: '100%', alignItems: 'center', flexDirection: 'row', gap: 12, justifyContent: 'space-between'}}
         >
-            <View style={{alignItems: 'center', flexDirection: 'row', gap: 12}}>
+            <View style={{alignItems: 'center', flexDirection: 'row', gap: 12, flex: 1}}>
                 <BackgroundThemeView isPrimary={!isPrimary} style={{alignItems: 'center', justifyContent: 'center', width: 44, aspectRatio: 1, overflow: 'hidden', borderRadius: 12}} >
                     {icon}
                 </BackgroundThemeView>
 
-                <View>
+                <View style={{flex: 1}} >
                     <TextTheme color={color} style={{fontWeight: 900}} numberOfLines={1} >{label}</TextTheme>
                     <TextTheme color={color} isPrimary={false} style={{fontSize: 12, fontWeight: 900}} numberOfLines={2} >{text}</TextTheme>
                 </View>
             </View>
-
-            <ShowWhen when={hasArrow} >
+        
+            <ShowWhen when={hasArrow} otherwise={children} >
                 <FeatherIcon name="arrow-right" size={20} color={color} />
-            </ShowWhen>
+            </ShowWhen>  
         </AnimateButton>
     )
 }

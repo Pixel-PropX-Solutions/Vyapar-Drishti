@@ -12,6 +12,7 @@ import NotificationScreen from "../Screens/NotificationScreen";
 import ProfileScreen from "../Screens/ProfileScreen";
 import { Dimensions, UIManager } from "react-native";
 import CustomerInfoScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen";
+import CraeteBillScreen from "../Screens/TabNavigationScreens/BillScreens/CreateBillScreen";
 
 export type StackParamsList = {
     'splash-screen': undefined,
@@ -24,6 +25,8 @@ export type StackParamsList = {
     'profile-screen': undefined,
 
     'customer-info-screen': undefined
+
+    'create-bill-screen': {billType: string}
 }
 
 const Stack = createStackNavigator<StackParamsList>();
@@ -43,13 +46,14 @@ export default function StackNavigation(): React.JSX.Element {
                     <Stack.Screen name="login-screen" component={LoginScreen} />
                     <Stack.Screen name="signup-screen" component={SignUpScreen} />
                     <Stack.Screen name="setting-screen" component={SettingScreen} />
+                    <Stack.Screen name="profile-screen" component={ProfileScreen} />
                     <Stack.Screen name="notification-screen" component={NotificationScreen} />
 
                     <Stack.Screen name="customer-info-screen" component={CustomerInfoScreen} />
+                    <Stack.Screen name="create-bill-screen" component={CraeteBillScreen} />
 
                     <Stack.Screen name="splash-screen" component={SplashScreen} options={{animation: "scale_from_center"}} />
                     <Stack.Screen name="landing-screen" component={LandingScreen} options={{animation: "scale_from_center"}} />
-                    <Stack.Screen name="profile-screen" component={ProfileScreen} options={{animation: 'slide_from_left'}} />
 
 
                     <Stack.Screen name="tab-navigation" component={BottomTabNavigation} options={{animation: 'scale_from_center'}} />

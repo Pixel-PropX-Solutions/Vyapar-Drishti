@@ -3,17 +3,62 @@ import TextTheme from "../Components/Text/TextTheme";
 import StackNavigationHeader from "../Components/Header/StackNavigationHeader";
 import { View, Text } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { SectionRowWithIcon } from "../Components/View/SectionView";
+import FeatherIcon from "../Components/Icon/FeatherIcon";
+import ShowWhen from "../Components/Other/ShowWhen";
+
+
+type NotificationDataType = {type: string, title: string, message: string}
+
+const notificationData: NotificationDataType[] = [
+    {
+      "title": "Project Update",
+      "message": "Your project Dashboard Redesign has been approved",
+      "type": "success"
+    },
+    {
+      "title": "Task Reminder",
+      "message": "Complete the Q2 financial report by end of day.",
+      "type": "info"
+    },
+    {
+      "title": "System Alert",
+      "message": "Server maintenance scheduled for tomorrow at 2 AM IST.",
+      "type": "warning"
+    },
+    {
+      "title": "New Message",
+      "message": "You have 3 unread messages from Team Alpha.",
+      "type": "info"
+    },
+    {
+      "title": "Error Notification",
+      "message": "Failed to sync data with the cloud storage.",
+      "type": "error"
+    }
+]
+
 
 export default function NotificationScreen(): React.JSX.Element {
+
     return (
         <View style={{width: '100%', height: '100%', display: 'flex'}}>
             <StackNavigationHeader title="Notifications" />
             
-            <EmptyNotificationScreen/>
-
-            <ScrollView style={{width: '100%', height: '100%'}} >
-
-            </ScrollView>
+            <ShowWhen when={notificationData.length !== 0} otherwise={<EmptyNotificationScreen/>}>
+                <ScrollView style={{width: '100%', height: '100%', paddingHorizontal: 20}} contentContainerStyle={{gap: 12}} >
+                    {
+                        notificationData.map(info => (
+                            <SectionRowWithIcon
+                                label={info.title}
+                                text={info.message}
+                                icon={<FeatherIcon name='info' size={20} />}
+                                onPress={() => {}}
+                            />
+                        ))
+                    }
+                </ScrollView>
+            </ShowWhen>
         </View>
     )
 }

@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { TextStyle } from "react-native";
+import { KeyboardType, TextProps, TextStyle } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { useTheme } from "../../Contexts/ThemeProvider";
 
@@ -8,10 +8,13 @@ type Props = {
     onChangeText?: Dispatch<SetStateAction<string>>,
     style?: TextStyle,
     value?: string,
-    color?: string
+    color?: string,
+    keyboardType?: KeyboardType,
+    onFocus?: () => void,
+    onBlur?: () => void
 }
 
-export default function NoralTextInput({placeholder='', onChangeText=()=>{}, style={}, value='', color}: Props): React.JSX.Element {
+export default function NoralTextInput({placeholder='', onChangeText=()=>{}, style={}, value='', color, keyboardType, onFocus, onBlur}: Props): React.JSX.Element {
 
     const {primaryColor, secondaryColor} = useTheme();
 
@@ -29,7 +32,10 @@ export default function NoralTextInput({placeholder='', onChangeText=()=>{}, sty
             value={text}
             onChangeText={handleOnChangeText}
             placeholderTextColor={ color ?? secondaryColor}
+            keyboardType={keyboardType}
             style={[{color: color ?? primaryColor, opacity: text ? 1 : 0.6}, style]}
+            onFocus={onFocus}
+            onBlur={onBlur}
         />
     )
 }

@@ -5,10 +5,15 @@ import AnimateButton from "../Components/Button/AnimateButton";
 import { useTheme } from "../Contexts/ThemeProvider";
 import FeatherIcon from "../Components/Icon/FeatherIcon";
 import SectionView, { SectionRowWithIcon } from "../Components/View/SectionView";
+import TextTheme from "../Components/Text/TextTheme";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { StackParamsList } from "../Navigation/StackNavigation";
 
 export default function SettingScreen(): React.JSX.Element {
 
-    const {setTheme, theme} = useTheme()
+    const {setTheme, theme} = useTheme();
+    const navigation = useNavigation<StackNavigationProp<StackParamsList, 'setting-screen'>>();
 
     return (
         <View style={{width: '100%', height: '100%'}} >
@@ -37,7 +42,12 @@ export default function SettingScreen(): React.JSX.Element {
                         icon={<FeatherIcon name={"dollar-sign"} size={20} />}
                         text={"Customize currency"}
                         onPress={() => {}}
-                    />
+                    >
+                        <View style={{flexDirection: 'row', gap: 12, alignItems: 'center'}}>
+                            <TextTheme style={{fontWeight: 900, fontSize: 16}} >INR</TextTheme>
+                            <FeatherIcon name="chevron-right" size={20} />
+                        </View>
+                    </SectionRowWithIcon>
                 </SectionView>
                
                 
@@ -54,9 +64,14 @@ export default function SettingScreen(): React.JSX.Element {
                     <SectionRowWithIcon
                         label="Bill Prefix"
                         icon={<FeatherIcon name={"hash"} size={20} />}
-                        text={"Customize your bill Prefix like #INV-001"}
+                        text={"Customize your bill Prefix"}
                         onPress={() => {}}
-                    />
+                    >
+                        <View style={{flexDirection: 'row', gap: 12, alignItems: 'center'}}>
+                            <TextTheme style={{fontWeight: 900, fontSize: 16}} >#INV-001</TextTheme>
+                            <FeatherIcon name="chevron-right" size={20} />
+                        </View>
+                    </SectionRowWithIcon>
                 </SectionView>
 
                 <SectionView label="Bussiness Details" style={{gap: 12}} >
@@ -65,6 +80,14 @@ export default function SettingScreen(): React.JSX.Element {
                         label="Business Profile"
                         icon={<FeatherIcon name={"user"} size={20} />}
                         text={"Update your business profile information"}
+                        onPress={() => navigation.navigate('profile-screen')}
+                    />
+
+                    <SectionRowWithIcon
+                        hasArrow={true}
+                        label="Group & Types"
+                        icon={<FeatherIcon name={"inbox"} size={20} />}
+                        text={"Manage your all groups and types"}
                         onPress={() => {}}
                     />
                 </SectionView>

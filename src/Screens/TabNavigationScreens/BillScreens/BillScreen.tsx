@@ -9,6 +9,9 @@ import BillCard, { BillCardProps } from "../../../Components/Card/BillCard";
 import RoundedPlusButton from "../../../Components/Button/RoundedPlusButton";
 import { useState } from "react";
 import BottomModal from "../../../Components/Modal/BottomModal";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { StackParamsList } from "../../../Navigation/StackNavigation";
 
 const dummyBillData: BillCardProps[] = [
     {
@@ -68,7 +71,19 @@ const dummyBillData: BillCardProps[] = [
     },
 ];
 
+
+const dummayBillsType: string[] = [
+    "Sales Bill (Tax Invoice)",   // The primary document for sales, includes GST details
+    "Purchase Bill",              // The invoice your business receives from suppliers
+    "Proforma Invoice",           // An estimated bill, crucial for quotes and initial agreements
+    "Credit Note",                // For sales returns or reductions in previously billed amounts
+    "Debit Note",                 // For purchase returns or increases in previously billed amounts
+    "E-Way Bill",  
+]
+
 export default function BillScreen(): React.JSX.Element {
+
+    const navigation = useNavigation<StackNavigationProp<StackParamsList, 'tab-navigation'>>();
 
     const [isBillTypeSelectorModalVisible, setBillTypeSelectorModalVisible] = useState<boolean>(false);
 
@@ -132,8 +147,25 @@ export default function BillScreen(): React.JSX.Element {
             >
                 <TextTheme style={{fontSize: 20, fontWeight: 900, marginBottom: 20}} >Select Bill Type</TextTheme>
 
-                <NormalButton isPrimary={false} text="Purches Bill" textStyle={{fontWeight: 900}} />
-                <NormalButton text="Sell Bill" textStyle={{fontWeight: 900}} />
+                <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 12}} >
+                    {
+                        dummayBillsType.map(billType => (
+                            <AnimateButton 
+                                key={billType} 
+                                style={{
+                                    borderWidth: 2, borderRadius: 100, paddingInline: 16, borderColor: 'gray', paddingBlock: 10, flexDirection: 'row', alignItems: 'center', gap: 8,
+                                }}
+                                onPress={() => {
+                                    navigation.navigate('create-bill-screen', {billType})
+                                    setBillTypeSelectorModalVisible(false);
+                                }}
+                            >
+                                <TextTheme style={{fontWeight: 900, fontSize: 14}} >{billType}</TextTheme>
+                                <FeatherIcon name="arrow-right" size={14} />
+                            </AnimateButton>
+                        ))
+                    }
+                </View>
 
                 <View style={{minHeight: 32}} />
             </BottomModal>

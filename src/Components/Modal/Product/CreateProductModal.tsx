@@ -7,6 +7,7 @@ import NoralTextInput from "../../TextInput/NoralTextInput";
 import { useTheme } from "../../../Contexts/ThemeProvider";
 import MaterialIcon from "../../Icon/MaterialIcon";
 import { useAlert } from "../../Alert/AlertProvider";
+import AnimateButton from "../../Button/AnimateButton";
 
 type FromData = {
     name: string, productNo: string, price: string, unit: string
@@ -18,14 +19,29 @@ type Props = {
     onCreate: (data: FromData) => void
 }
 
+const unitsOfMeasurement: string[] = [
+  "Unit",
+  "Pcs",      // Pieces
+  "Kg",       // Kilograms
+  "Mtr",      // Meters
+  "Sq. Mtr",  // Square Meters
+  "Box",
+  "Pack",
+  "Doz",      // Dozen
+  "Pair",
+  "ML"        // Milliliters
+];
+
 export default function CreateProductModal({visible, setVisible, onCreate}: Props): React.JSX.Element {
 
-    const {primaryColor} = useTheme();
+    const {primaryColor, primaryBackgroundColor, secondaryBackgroundColor} = useTheme();
     const {setAlert} = useAlert();
+
+    const [isUnitModalVisible, setUnitModalVisible] = useState<boolean>(false);
 
     const [name, setName] = useState<string>('');
     const [price, setPrice] = useState<string>('');
-    const [unit, setUnit] = useState<string>('');
+    const [unit, setUnit] = useState<string>('Unit');
     const [productNo, setProductNo] = useState<string>('');
 
     function handleCreate() {
@@ -57,6 +73,7 @@ export default function CreateProductModal({visible, setVisible, onCreate}: Prop
                 <NoralTextInput
                     placeholder="Name"
                     style={{fontSize: 24, fontWeight: 900, flex: 1}}
+                    onChangeText={setName}
                 />
             </View>
 
@@ -66,16 +83,18 @@ export default function CreateProductModal({visible, setVisible, onCreate}: Prop
                     <NoralTextInput
                         placeholder="Price"
                         style={{fontSize: 24, fontWeight: 900, flex: 1}}
+                        onChangeText={setPrice}
+                        keyboardType="number-pad"
                     />
                 </View>
 
-                <View style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, width: 150}} >
-                    <MaterialIcon name="attach-money" size={28} />
-                    <NoralTextInput
-                        placeholder="Unit"
-                        style={{fontSize: 24, fontWeight: 900, flex: 1}}
-                    />
-                </View>
+                <AnimateButton 
+                    onPress={() => setUnitModalVisible(true)}
+                    style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, width: 150, paddingInline: 8}} 
+                >
+                    <TextTheme style={{fontSize: 24, fontWeight: 900, flex: 1}}>{unit}</TextTheme>
+                    <FeatherIcon name="arrow-right" size={24} />
+                </AnimateButton>
             </View>
 
             <View style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12}} >
@@ -83,10 +102,50 @@ export default function CreateProductModal({visible, setVisible, onCreate}: Prop
                 <NoralTextInput
                     placeholder="Product No"
                     style={{fontSize: 24, fontWeight: 900, flex: 1}}
+                    onChangeText={setProductNo}
                 />
             </View>
+           
+            <View style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12}} >
+                <FeatherIcon name="box" size={28} />
+                <NoralTextInput
+                    placeholder="Low Stock Level"
+                    style={{fontSize: 24, fontWeight: 900, flex: 1}}
+                    onChangeText={setProductNo}
+                    keyboardType="number-pad"
+                />
+            </View> 
 
             <View style={{minHeight: 40}} />
+
+            <BottomModal 
+                visible={isUnitModalVisible}
+                setVisible={setUnitModalVisible}
+                style={{paddingInline: 20, gap: 20}}
+            >
+                <TextTheme style={{fontWeight: 900, fontSize: 16}} >Customer Details</TextTheme>
+
+                <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 12}} >
+                    {
+                        unitsOfMeasurement.map(name => (
+                            <AnimateButton 
+                                key={name} 
+                                style={{
+                                    borderWidth: 2, borderRadius: 100, paddingInline: 16, borderColor: secondaryBackgroundColor, paddingBlock: 10, flexDirection: 'row', alignItems: 'center', gap: 8,
+                                    backgroundColor: name === unit ? secondaryBackgroundColor : primaryBackgroundColor
+                                }}
+                                onPress={() => {
+                                    setUnit(name)
+                                    setUnitModalVisible(false);
+                                }}
+                            >
+                                <TextTheme style={{fontWeight: 900, fontSize: 14}} >{name}</TextTheme>
+                                <FeatherIcon name="arrow-right" size={14} />
+                            </AnimateButton>
+                        ))
+                    }
+                </View>
+            </BottomModal>
         </BottomModal>
     )
 }

@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { StackParamsList } from "../Navigation/StackNavigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import LogoImage from "../Components/Image/LogoImage";
-import SafePaddingView from "../Components/SafeAreaView/SafePaddingView";
 import TextTheme from "../Components/Text/TextTheme";
 import { View } from "react-native";
 

@@ -133,6 +133,7 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                 setVisible={setInfoUpdateModalOpen} 
                 name="Sneha Devi"
                 phoneNo="900303032"
+                groupName="Assets"
                 handleUpdate={() => {setInfoUpdateModalOpen(false)}}
             />
         

@@ -4,6 +4,7 @@ import FeatherIcons from 'react-native-vector-icons/Feather';
 import { Text } from "react-native-gesture-handler";
 import { useTheme } from "../../Contexts/ThemeProvider";
 import AlertCard from "../Alert/AlertCard";
+import { Dimensions } from "react-native";
 
 type BottomModalProps = {
     visible: boolean,
@@ -17,12 +18,18 @@ type BottomModalProps = {
     closeOnBack?: boolean,
     animationType?: "none" | "slide" | "fade",
     onClose?: () => void,
-    alertId?: string
+    alertId?: string,
+    topMarginPrecentage?: number
 }
 
-export default function BottomModal({visible, setVisible, children, style, backdropColor='rgba(0, 0, 0, 0.50)', actionButtons, closeOnBack=true, animationType='slide', bottomOpationStyle={}, onClose=()=>{}, alertId}: BottomModalProps): React.JSX.Element {
+export default function BottomModal({visible, setVisible, children, style, backdropColor='rgba(0, 0, 0, 0.50)', actionButtons, closeOnBack=true, animationType='slide', bottomOpationStyle={}, onClose=()=>{}, alertId, topMarginPrecentage=0.25}: BottomModalProps): React.JSX.Element {
 
-    const {primaryColor: color, primaryBackgroundColor: backgroundColor, secondaryBackgroundColor} = useTheme()
+    const {primaryColor: color, primaryBackgroundColor: backgroundColor, secondaryBackgroundColor} = useTheme();
+
+    const {height} = Dimensions.get('screen');
+
+    const maxHeight = height - height*topMarginPrecentage;
+    
 
     return (
         <Modal backdropColor={backdropColor} animationType={animationType} visible={visible} onRequestClose={() => {setVisible(!closeOnBack); onClose();}}>
@@ -32,7 +39,9 @@ export default function BottomModal({visible, setVisible, children, style, backd
                     <View style={{width: '100%', flex: 1}}></View>
                 </TouchableWithoutFeedback>
 
-                <View style={[styles.modalContener, {backgroundColor, borderColor: secondaryBackgroundColor} ,style]}>{children}</View>
+                <View style={[styles.modalContener, {backgroundColor, borderColor: secondaryBackgroundColor, maxHeight} ,style]}>
+                    {children}
+                </View>
 
                 <View style={[styles.bottomOpations, {backgroundColor, borderColor: secondaryBackgroundColor}, bottomOpationStyle]}>
                     <TouchableOpacity style={[styles.closeBtn, {borderColor: secondaryBackgroundColor, backgroundColor}]} onPress={() => {setVisible(false); onClose();}}>

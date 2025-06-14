@@ -1,9 +1,10 @@
 
 type Props = {
+    when: boolean,
     children: React.ReactNode,
-    when: boolean
+    otherwise?: React.ReactNode | null
 }
 
-export default function ShowWhen({when, children}: Props): React.ReactNode | null {
-    return when ? children : null
+export default function ShowWhen({when, children, otherwise=null}: Props): React.ReactNode | null {
+    return when ? children : otherwise
 }

@@ -30,7 +30,7 @@ export default function BottomTabNavigation(): React.JSX.Element {
         <View style={{width: '100%', height: '100%'}} >
             <TabNavigationHeader/>
             <Tab.Navigator
-                initialRouteName="customer-screen"
+                initialRouteName="home-screen"
                 screenOptions={{
                     headerShown: false, animation: 'shift', 
                     tabBarStyle: {backgroundColor},

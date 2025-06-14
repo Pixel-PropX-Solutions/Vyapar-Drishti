@@ -6,11 +6,15 @@ import FeatherIcon from "../../Icon/FeatherIcon";
 import NoralTextInput from "../../TextInput/NoralTextInput";
 import { useTheme } from "../../../Contexts/ThemeProvider";
 import { useAlert } from "../../Alert/AlertProvider";
+import { SectionRow } from "../../View/SectionView";
+import ShowWhen from "../../Other/ShowWhen";
+import AnimateButton from "../../Button/AnimateButton";
 
 
 type Data = {
     name: string,
-    phoneNo: string
+    phoneNo: string,
+    groupName: string
 }
 
 type Props = {
@@ -18,16 +22,22 @@ type Props = {
     setVisible: Dispatch<SetStateAction<boolean>>,
     name: string,
     phoneNo: string,
+    groupName: string
     handleUpdate: (data: Data) => void
 }
 
-export default function UpdateCustomerInfoModal({visible, setVisible, name: oldName, phoneNo: oldPhoneNo, handleUpdate}: Props): React.JSX.Element {
+const GroupNames: string[] = ["Assets", "Liabilities", "Equity", "Revenue", "Income", "Expenses"]
 
-    const {primaryColor} = useTheme();
+export default function UpdateCustomerInfoModal({visible, setVisible, name: oldName, phoneNo: oldPhoneNo, groupName: oldGroupName,handleUpdate}: Props): React.JSX.Element {
+
+    const {primaryColor, primaryBackgroundColor, secondaryBackgroundColor} = useTheme();
     const {setAlert} = useAlert();
+
+    const [isGroupModalVisible, setGroupModalVisible] = useState<boolean>(false);
 
     const [name, setName] = useState<string>(oldName);
     const [phoneNo, setPhoneNo] = useState<string>(oldPhoneNo);
+    const [groupName, setGroupName] = useState<string>(oldGroupName);
 
     function handleOnPressUpdate() {
         if(!(name && phoneNo)) {
@@ -38,7 +48,7 @@ export default function UpdateCustomerInfoModal({visible, setVisible, name: oldN
             });
         }
 
-        handleUpdate({name, phoneNo});
+        handleUpdate({name, phoneNo, groupName});
     }
 
     return (
@@ -71,6 +81,46 @@ export default function UpdateCustomerInfoModal({visible, setVisible, name: oldN
                     style={{fontSize: 24, fontWeight: 900, flex: 1}}
                 />
             </View>
+
+            <SectionRow 
+                label={`${groupName == '' ? 'Select ' : ''}Customer Type`} 
+                onPress={() => setGroupModalVisible(true)}
+            >
+                <TextTheme style={{fontSize: 20, fontWeight: 900, flex: 1}} >{ groupName || 'Customer Type'}</TextTheme>
+                <ShowWhen when={groupName === ''} >
+                    <FeatherIcon name="arrow-right" size={20} />
+                </ShowWhen>
+            </SectionRow>
+
+            <BottomModal 
+                visible={isGroupModalVisible} 
+                setVisible={setGroupModalVisible} 
+                style={{paddingHorizontal: 20, gap: 24}}
+            >
+                <TextTheme style={{fontWeight: 900, fontSize: 16}} >Customer Types</TextTheme>  
+
+                <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 12}} >
+                    {
+                        GroupNames.map(name => (
+                            <AnimateButton 
+                                key={name} 
+                                style={{
+                                    borderWidth: 2, borderRadius: 100, paddingInline: 16, borderColor: secondaryBackgroundColor, paddingBlock: 10, flexDirection: 'row', alignItems: 'center', gap: 8,
+                                    backgroundColor: name === groupName ? secondaryBackgroundColor : primaryBackgroundColor
+                                }}
+                                onPress={() => {
+                                    setGroupName(name)
+                                    setGroupModalVisible(false);
+                                }}
+                            >
+                                <TextTheme style={{fontWeight: 900, fontSize: 14}} >{name}</TextTheme>
+                                <FeatherIcon name="arrow-right" size={14} />
+                            </AnimateButton>
+                        ))
+                    }
+                
+                </View>              
+            </BottomModal>
 
             <View style={{minHeight: 40}} />
         </BottomModal>

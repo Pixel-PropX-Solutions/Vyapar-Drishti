@@ -12,7 +12,7 @@ import BottomModal from "../../../Components/Modal/BottomModal";
 const dummyCustomerData: CustomerCardProps[] = [
     {
         name: "Aarav Sharma",
-        phoneNumber: "+91 98765 43210",
+        phoneNo: "+91 98765 43210",
         createOn: "2024-05-15",
         id: "1",
         totalAmount: 0,
@@ -21,7 +21,7 @@ const dummyCustomerData: CustomerCardProps[] = [
     },
     {
         name: "Priya Singh",
-        phoneNumber: "+91 87654 32109",
+        phoneNo: "+91 87654 32109",
         createOn: "2023-11-20",
         id: "2",
         totalAmount: 0,
@@ -30,7 +30,7 @@ const dummyCustomerData: CustomerCardProps[] = [
     },
     {
         name: "Rahul Mehta",
-        phoneNumber: "+91 76543 21098",
+        phoneNo: "+91 76543 21098",
         createOn: "2025-01-08",
         id: "3",
         totalAmount: 0,
@@ -39,7 +39,7 @@ const dummyCustomerData: CustomerCardProps[] = [
     },
     {
         name: "Sneha Devi",
-        phoneNumber: "+91 65432 10987",
+        phoneNo: "+91 65432 10987",
         createOn: "2024-03-22",
         id: "4",
         totalAmount: 0,
