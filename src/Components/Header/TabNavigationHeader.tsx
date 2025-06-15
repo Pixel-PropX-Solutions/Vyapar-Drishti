@@ -6,38 +6,47 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamsList } from "../../Navigation/StackNavigation";
 import BottomModal from "../Modal/BottomModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SectionRowWithIcon } from "../View/SectionView";
 import LogoImage from "../Image/LogoImage";
 import { ScrollView } from "react-native-gesture-handler";
 import BackgroundThemeView from "../View/BackgroundThemeView";
+import { GetCompany } from "../../Utils/Types";
+import { createCompany, getAllCompanies, getCurrentCompant } from "../../Services/company";
+import NoralTextInput from "../TextInput/NoralTextInput";
+import { useTheme } from "../../Contexts/ThemeProvider";
+import FontAwesome6Icon from "../Icon/FontAwesome6Icon";
+import arrayToFormData from "../../Utils/arrayToFormData";
+import { useAlert } from "../Alert/AlertProvider";
 
 
-type CompanyInfoType = {holderName: string, companyName: string};
-
-const CompanyData: CompanyInfoType[] = [
-    {holderName: 'Sumit', companyName: "Tech Solution Inc"},
-    {holderName: 'John Wick', companyName: "Global Inovation LLC"},
-]
 
 export default function TabNavigationHeader(): React.JSX.Element {
 
     const navigation = useNavigation<StackNavigationProp<StackParamsList, 'tab-navigation'>>();
 
-    const [isModalVisible, setModalVisible] = useState<boolean>(false);
+    const [isCompanySwitchModalVisible, setCompanySwitchModalVisible] = useState<boolean>(false);
+    const [isCompanyCreateModalVisible, setCompanyCreateMdoalVisible] = useState<boolean>(false);
 
-    
-    const [companyInfo, setCompanyInfo] = useState<CompanyInfoType>(CompanyData[0]);
+    const [companyData, setCompanyData] = useState<GetCompany[] | []>([]);
+    const [currentCompany, setCurrentCompany] = useState<GetCompany>();
 
-    function handleSwitch(info: CompanyInfoType) {
-        setCompanyInfo(info);
-        setModalVisible(false);
-    }
+
+    useEffect(() => {
+        getAllCompanies().then(({data}) => {
+            setCompanyData(data)
+        })        
+
+        getCurrentCompant().then(({data}) => {
+            setCurrentCompany(data);
+        })
+
+    }, [])
 
     return (
         <View style={{width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'row', padding: 10, justifyContent: 'space-between'}} >
             <AnimateButton 
-                onPress={() => setModalVisible(true)}
+                onPress={() => setCompanySwitchModalVisible(true)}
                 style={{flexDirection: 'row', alignItems: 'center', gap: 8, height: 44, paddingLeft: 10, paddingRight: 20, borderRadius: 40}}
             >
                 <BackgroundThemeView isPrimary={false} style={{width: 40, borderRadius: 12, aspectRatio: 1, overflow: 'hidden', alignItems: 'center', justifyContent: 'center'}} >
@@ -45,8 +54,8 @@ export default function TabNavigationHeader(): React.JSX.Element {
                 </BackgroundThemeView>
                 
                 <View>
-                    <TextTheme style={{fontSize: 16, fontWeight: 700}}>{companyInfo.holderName}</TextTheme>
-                    <TextTheme isPrimary={false} style={{fontSize: 12, fontWeight: 700}}>{companyInfo.companyName}</TextTheme>
+                    <TextTheme style={{fontSize: 16, fontWeight: 700}}>{currentCompany?.name}</TextTheme>
+                    <TextTheme isPrimary={false} style={{fontSize: 12, fontWeight: 700}}>{currentCompany?.email}</TextTheme>
                 </View>
             </AnimateButton>
 
@@ -69,28 +78,107 @@ export default function TabNavigationHeader(): React.JSX.Element {
             </View>
 
             <BottomModal
-                visible={isModalVisible} setVisible={setModalVisible}
+                visible={isCompanySwitchModalVisible} setVisible={setCompanySwitchModalVisible}
                 style={{paddingInline: 20, gap: 20}}
+                actionButtons={[{
+                    title: '+ Add New', onPress: ()=>{
+                        setCompanyCreateMdoalVisible(true);
+                    }
+                }]}
             >
                 <TextTheme style={{fontSize: 16, fontWeight: 900}} >Select Company</TextTheme>
 
                 <ScrollView contentContainerStyle={{gap: 16}} >
 
                     {
-                        CompanyData.map(info => (
+                        companyData.map(({_id, name, email}) => (
                             <SectionRowWithIcon
-                                label={info.holderName}
-                                text={info.companyName}
+                                key={_id}
+                                label={name}
+                                text={email}
                                 icon={<LogoImage size={44}/>}
-                                onPress={() => handleSwitch(info)}
-                                backgroundColor={companyInfo.holderName == info.holderName ? 'rgb(50,150,250)' : ''}
-                                color={companyInfo.holderName == info.holderName ? 'white' : ''}
+                                onPress={() => {}}
+                                backgroundColor={_id == currentCompany?._id ? 'rgb(50,150,250)' : ''}
+                                color={_id == currentCompany?._id ? 'white' : ''}
                             />
                         ))
                     }
                                 
                 </ScrollView>
             </BottomModal>
+
+            <CompanyCreateModal
+                visible={isCompanyCreateModalVisible}
+                setVisible={setCompanyCreateMdoalVisible}
+                onCreate={()=>{
+                    getAllCompanies().then(({data}) => {
+                        setCompanyData(data)
+                    })  
+                }}
+            />
+
         </View>
+    )
+}
+
+
+type CompanyCreateModalType = {
+    visible: boolean, 
+    setVisible: (vis: boolean) => void, 
+    onCreate: () => void
+}
+
+function CompanyCreateModal({visible, setVisible, onCreate}: CompanyCreateModalType) {
+
+    const {primaryColor} = useTheme();
+    const {setAlert} = useAlert();
+
+    const [name, setName] = useState<string>('');
+    const [mail, setMail] = useState<string>('');
+
+    async function onPress(){
+        if(!(name && mail)) return setAlert({
+            type: 'error', massage: 'all field are require to create new company', id: 'company-create-modal'
+        });
+
+        let from = arrayToFormData([['name', name], ['email', mail]]);
+        
+        let {status} = await createCompany(from)
+
+        if(status) onCreate();
+        else setAlert({
+            type: 'error', massage: 'Internal server error'
+        })
+    }
+
+    return (
+        <BottomModal
+            alertId='company-create-modal'
+            visible={visible} setVisible={setVisible}
+            style={{paddingInline: 20}}
+            actionButtons={[{title: 'Create', onPress}]}
+        >
+            <TextTheme style={{fontSize: 16, fontWeight: 900, marginBottom: 12}} >Create Company</TextTheme>
+
+            <View style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12}} >
+                <FontAwesome6Icon name="building" size={28} />
+                <NoralTextInput
+                    placeholder="Company Name"
+                    style={{fontSize: 24, fontWeight: 900, flex: 1}}
+                    onChangeText={setName}
+                />
+            </View>
+            
+            <View style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12}} >
+                <FeatherIcon name="mail" size={28} />
+                <NoralTextInput
+                    placeholder="Mail Id"
+                    style={{fontSize: 24, fontWeight: 900, flex: 1}}
+                    onChangeText={setMail}
+                />
+            </View>
+            
+            <View style={{minHeight: 40}} />
+        </BottomModal>
     )
 }

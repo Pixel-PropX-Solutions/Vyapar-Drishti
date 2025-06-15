@@ -1,27 +1,26 @@
-import { KeyboardTypeOptions, View } from "react-native";
+import { KeyboardTypeOptions, TextInputProps, View, ViewStyle } from "react-native";
 import TextTheme from "../Text/TextTheme";
-import { useState } from "react";
+import { Ref, useState } from "react";
 import { Text, TextInput } from "react-native-gesture-handler";
 import { useTheme } from "../../Contexts/ThemeProvider";
 
 
-type Props = {
-    placeholder: string,
+type Props = TextInputProps & {
     label: string,
-    onChangeText?: (text: string) => void,
     focusColor?: string,
-    keyboardType?: KeyboardTypeOptions,
     massage?: string,
     massageTextColor?: string,
-    checkInputText?: (text: string) => boolean;
+    checkInputText?: (text: string) => boolean,
+    value?: string,
+    containerStyle?: ViewStyle
 }
 
-export default function LabelTextInput({placeholder, label, onChangeText, focusColor='rgb(50, 150, 250)', keyboardType, massageTextColor='rgb(200,50,50)', checkInputText, massage}: Props): React.JSX.Element {
+export default function LabelTextInput({label, containerStyle, onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkInputText, massage, value='', ...props}: Props): React.JSX.Element {
 
     const {primaryColor: color, primaryBackgroundColor: backgroundColor} = useTheme();
 
     const [isFocus, setFocus] = useState<boolean>(false);
-    const [inputText, setInputText] = useState<string>('');
+    const [inputText, setInputText] = useState<string>(value);
     const [isInputTextValid, setInputTextValid] = useState<boolean>(true);
 
     function handleOnChangeText(text: string): void {
@@ -33,7 +32,7 @@ export default function LabelTextInput({placeholder, label, onChangeText, focusC
     }
 
     return (
-        <View>
+        <View style={containerStyle} >
             <View 
                 style={{
                     borderWidth: 2, paddingInline: 12, borderRadius: 12, position: 'relative',
@@ -48,13 +47,12 @@ export default function LabelTextInput({placeholder, label, onChangeText, focusC
                 </TextTheme>
 
                 <TextInput  
+                    {...props}
                     value={inputText}
-                    placeholder={placeholder}
                     placeholderTextColor={color}
                     onChangeText={handleOnChangeText}
                     onFocus={() => setFocus(true)}
                     onBlur={() => setFocus(false)}
-                    keyboardType={keyboardType}
                     style={{
                         opacity: inputText ? 1 : 0.7,   
                         color, paddingTop: 14

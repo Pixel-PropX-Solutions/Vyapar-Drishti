@@ -10,42 +10,42 @@ import CreateCustomerModal from "../../../Components/Modal/Customer/CreateCustom
 import BottomModal from "../../../Components/Modal/BottomModal";
 
 const dummyCustomerData: CustomerCardProps[] = [
-    {
-        name: "Aarav Sharma",
-        phoneNo: "+91 98765 43210",
-        createOn: "2024-05-15",
-        id: "1",
-        totalAmount: 0,
-        payAmount: 0,
-        pandingAmount: 0
-    },
-    {
-        name: "Priya Singh",
-        phoneNo: "+91 87654 32109",
-        createOn: "2023-11-20",
-        id: "2",
-        totalAmount: 0,
-        payAmount: 0,
-        pandingAmount: 0
-    },
-    {
-        name: "Rahul Mehta",
-        phoneNo: "+91 76543 21098",
-        createOn: "2025-01-08",
-        id: "3",
-        totalAmount: 0,
-        payAmount: 0,
-        pandingAmount: 0
-    },
-    {
-        name: "Sneha Devi",
-        phoneNo: "+91 65432 10987",
-        createOn: "2024-03-22",
-        id: "4",
-        totalAmount: 0,
-        payAmount: 0,
-        pandingAmount: 0
-    }
+    // {
+    //     name: "Aarav Sharma",
+    //     phoneNo: "+91 98765 43210",
+    //     createOn: "2024-05-15",
+    //     id: "1",
+    //     totalAmount: 0,
+    //     payAmount: 0,
+    //     pandingAmount: 0
+    // },
+    // {
+    //     name: "Priya Singh",
+    //     phoneNo: "+91 87654 32109",
+    //     createOn: "2023-11-20",
+    //     id: "2",
+    //     totalAmount: 0,
+    //     payAmount: 0,
+    //     pandingAmount: 0
+    // },
+    // {
+    //     name: "Rahul Mehta",
+    //     phoneNo: "+91 76543 21098",
+    //     createOn: "2025-01-08",
+    //     id: "3",
+    //     totalAmount: 0,
+    //     payAmount: 0,
+    //     pandingAmount: 0
+    // },
+    // {
+    //     name: "Sneha Devi",
+    //     phoneNo: "+91 65432 10987",
+    //     createOn: "2024-03-22",
+    //     id: "4",
+    //     totalAmount: 0,
+    //     payAmount: 0,
+    //     pandingAmount: 0
+    // }
 ];
 
 export default function CustomerScreen(): React.JSX.Element {
@@ -76,7 +76,7 @@ export default function CustomerScreen(): React.JSX.Element {
                 <RoundedPlusButton size={60} iconSize={24} onPress={() => setCreateCustomerModalOpen(true)} />
             </View>
 
-            <CreateCustomerModal visible={isCreateCustomerModalOpen} setVisible={setCreateCustomerModalOpen} />
+            <CreateCustomerModal handleCreate={() => {}} visible={isCreateCustomerModalOpen} setVisible={setCreateCustomerModalOpen} />
         </View>
     )
 }

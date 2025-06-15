@@ -4,6 +4,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import StackNavigator from "./src/Navigation/StackNavigation";
 import ThemeProvider from "./src/Contexts/ThemeProvider";
 import AlertProvider from "./src/Components/Alert/AlertProvider";
+import AlertCard from "./src/Components/Alert/AlertCard";
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
       <SafeAreaProvider>
         <ThemeProvider>
           <AlertProvider>
+            <AlertCard/>
             <StackNavigator/>
           </AlertProvider>
         </ThemeProvider>

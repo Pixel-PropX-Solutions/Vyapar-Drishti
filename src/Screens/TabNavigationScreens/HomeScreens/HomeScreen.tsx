@@ -1,19 +1,20 @@
 import { ScrollView } from "react-native-gesture-handler";
 import TextTheme from "../../../Components/Text/TextTheme";
 import BackgroundThemeView from "../../../Components/View/BackgroundThemeView";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import FeatherIcon from "../../../Components/Icon/FeatherIcon";
 import AnimateButton from "../../../Components/Button/AnimateButton";
 import { useTheme } from "../../../Contexts/ThemeProvider";
-import { Pressable } from "react-native";
 import BillCard, { BillCardProps } from "../../../Components/Card/BillCard";
 import DateSelector from "../../../Components/Other/DateSelector";
-import SectionView, { SectionRow } from "../../../Components/View/SectionView";
 import FontAwesome6Icon from "../../../Components/Icon/FontAwesome6Icon";
+import { useEffect } from "react";
+import { getAllCompanies } from "../../../Services/company";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { StackParamsList } from "../../../Navigation/StackNavigation";
 
 export default function HomeScreen(): React.JSX.Element {
-
-    const {primaryColor: color} = useTheme();
 
     const dummyBillData: BillCardProps[] = [
         {
@@ -50,6 +51,8 @@ export default function HomeScreen(): React.JSX.Element {
             pandingAmount: 0
         },
     ];
+
+    const navigation = useNavigation<StackNavigationProp<StackParamsList, 'tab-navigation'>>();
 
     return (
         <ScrollView style={{marginTop: 12, width: '100%', height: '100%'}} contentContainerStyle={{gap: 20}}>

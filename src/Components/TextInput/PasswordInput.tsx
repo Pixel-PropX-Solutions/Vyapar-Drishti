@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { Text, TextInputProps, View } from "react-native";
 import TextTheme from "../Text/TextTheme";
 import { useState } from "react";
 import { TextInput } from "react-native-gesture-handler";
@@ -7,7 +7,7 @@ import AnimateButton from "../Button/AnimateButton";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 
-type Props = {
+type Props = TextInputProps & {
     placeholder?: string,
     label?: string,
     onChangeText?: (text: string) => void,
@@ -17,7 +17,7 @@ type Props = {
     checkInputText?: (text: string) => boolean
 }
 
-export default function PasswordInput({placeholder='***********', label='Password', onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkInputText, massage}: Props): React.JSX.Element {
+export default function PasswordInput({placeholder='***********', label='Password', onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkInputText, massage, ...props}: Props): React.JSX.Element {
 
     const {primaryColor: color, primaryBackgroundColor: backgroundColor} = useTheme();
 
@@ -50,6 +50,7 @@ export default function PasswordInput({placeholder='***********', label='Passwor
                 </TextTheme>
 
                 <TextInput  
+                    {...props}
                     value={inputText}
                     placeholder={placeholder}
                     placeholderTextColor={color}

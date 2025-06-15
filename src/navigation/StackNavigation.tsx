@@ -9,10 +9,13 @@ import SafePaddingView from "../Components/SafeAreaView/SafePaddingView";
 import { useTheme } from "../Contexts/ThemeProvider";
 import SettingScreen from "../Screens/SettingScreen";
 import NotificationScreen from "../Screens/NotificationScreen";
-import ProfileScreen from "../Screens/ProfileScreen";
-import { Dimensions, UIManager } from "react-native";
+import ProfileScreen from "../Screens/CompanyScreens/CompanyProfileScreen";
+import { Dimensions } from "react-native";
 import CustomerInfoScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen";
 import CraeteBillScreen from "../Screens/TabNavigationScreens/BillScreens/CreateBillScreen";
+import CreateCompanyScreen from "../Screens/CompanyScreens/CreateCompanyScreen";
+import CompanyProfileScreen from "../Screens/CompanyScreens/CompanyProfileScreen";
+import { NavigationRef } from "./NavigationService";
 
 export type StackParamsList = {
     'splash-screen': undefined,
@@ -22,7 +25,9 @@ export type StackParamsList = {
     'tab-navigation': undefined,
     'setting-screen': undefined,
     'notification-screen': undefined,
-    'profile-screen': undefined,
+    
+    'company-profile-screen': undefined,
+    'create-company-screen': undefined, 
 
     'customer-info-screen': undefined
 
@@ -37,7 +42,7 @@ export default function StackNavigation(): React.JSX.Element {
     const {height, width} = Dimensions.get('screen')
 
     return (
-        <NavigationContainer>
+        <NavigationContainer ref={NavigationRef} >
             <SafePaddingView style={{width, height}}>
                 <Stack.Navigator
                     initialRouteName="splash-screen"
@@ -46,8 +51,11 @@ export default function StackNavigation(): React.JSX.Element {
                     <Stack.Screen name="login-screen" component={LoginScreen} />
                     <Stack.Screen name="signup-screen" component={SignUpScreen} />
                     <Stack.Screen name="setting-screen" component={SettingScreen} />
-                    <Stack.Screen name="profile-screen" component={ProfileScreen} />
                     <Stack.Screen name="notification-screen" component={NotificationScreen} />
+
+                    <Stack.Screen name="company-profile-screen" component={CompanyProfileScreen} />
+                    <Stack.Screen name="create-company-screen" component={CreateCompanyScreen} />
+
 
                     <Stack.Screen name="customer-info-screen" component={CustomerInfoScreen} />
                     <Stack.Screen name="create-bill-screen" component={CraeteBillScreen} />

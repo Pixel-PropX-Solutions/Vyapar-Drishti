@@ -80,7 +80,7 @@ export default function SettingScreen(): React.JSX.Element {
                         label="Business Profile"
                         icon={<FeatherIcon name={"user"} size={20} />}
                         text={"Update your business profile information"}
-                        onPress={() => navigation.navigate('profile-screen')}
+                        onPress={() => navigation.navigate('company-profile-screen')}
                     />
 
                     <SectionRowWithIcon
