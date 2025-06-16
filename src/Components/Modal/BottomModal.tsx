@@ -1,12 +1,12 @@
 
-import { Modal,  PressableProps, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
+import { Modal,  ModalProps,  PressableProps, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
 import FeatherIcons from 'react-native-vector-icons/Feather';
 import { Text } from "react-native-gesture-handler";
 import { useTheme } from "../../Contexts/ThemeProvider";
 import AlertCard from "../Alert/AlertCard";
 import { Dimensions } from "react-native";
 
-type BottomModalProps = {
+type BottomModalProps = ModalProps & {
     visible: boolean,
     setVisible: (vis: boolean) => void,
     children: React.ReactNode,
@@ -22,7 +22,7 @@ type BottomModalProps = {
     topMarginPrecentage?: number
 }
 
-export default function BottomModal({visible, setVisible, children, style, backdropColor='rgba(0, 0, 0, 0.50)', actionButtons, closeOnBack=true, animationType='slide', bottomOpationStyle={}, onClose=()=>{}, alertId, topMarginPrecentage=0.25}: BottomModalProps): React.JSX.Element {
+export default function BottomModal({visible, setVisible, children, style, backdropColor='rgba(0, 0, 0, 0.50)', actionButtons, closeOnBack=true, animationType='slide', bottomOpationStyle={}, onClose=()=>{}, alertId, topMarginPrecentage=0.25, ...props}: BottomModalProps): React.JSX.Element {
 
     const {primaryColor: color, primaryBackgroundColor: backgroundColor, secondaryBackgroundColor} = useTheme();
 
@@ -32,7 +32,7 @@ export default function BottomModal({visible, setVisible, children, style, backd
     
 
     return (
-        <Modal backdropColor={backdropColor} animationType={animationType} visible={visible} onRequestClose={() => {setVisible(!closeOnBack); onClose();}}>
+        <Modal {...props} backdropColor={backdropColor} animationType={animationType} visible={visible} onRequestClose={() => {setVisible(!closeOnBack); onClose();}}>
             {alertId && <AlertCard id={alertId} />}
             <View style={[styles.root]}>
                 <TouchableWithoutFeedback onPress={() => setVisible(false)} >

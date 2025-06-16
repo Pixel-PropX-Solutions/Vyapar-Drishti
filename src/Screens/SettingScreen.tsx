@@ -6,14 +6,11 @@ import { useTheme } from "../Contexts/ThemeProvider";
 import FeatherIcon from "../Components/Icon/FeatherIcon";
 import SectionView, { SectionRowWithIcon } from "../Components/View/SectionView";
 import TextTheme from "../Components/Text/TextTheme";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { StackParamsList } from "../Navigation/StackNavigation";
+import navigator from "../Navigation/NavigationService";
 
 export default function SettingScreen(): React.JSX.Element {
 
     const {setTheme, theme} = useTheme();
-    const navigation = useNavigation<StackNavigationProp<StackParamsList, 'setting-screen'>>();
 
     return (
         <View style={{width: '100%', height: '100%'}} >
@@ -80,7 +77,7 @@ export default function SettingScreen(): React.JSX.Element {
                         label="Business Profile"
                         icon={<FeatherIcon name={"user"} size={20} />}
                         text={"Update your business profile information"}
-                        onPress={() => navigation.navigate('company-profile-screen')}
+                        onPress={() => navigator.navigate('company-profile-screen')}
                     />
 
                     <SectionRowWithIcon
@@ -118,7 +115,7 @@ export default function SettingScreen(): React.JSX.Element {
                     />
                 </SectionView>
 
-                <SectionView label="Danger Zone" style={{gap: 12}} lableColor="red" >
+                <SectionView label="Danger Zone" style={{gap: 12}} labelColor="red" >
                     <SectionRowWithIcon
                         color="white"
                         backgroundColor="rgb(255,80,100)"

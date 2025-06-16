@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import RoundedPlusButton from "../../../Components/Button/RoundedPlusButton";
 import CreateCustomerModal from "../../../Components/Modal/Customer/CreateCustomerModal";
 import BottomModal from "../../../Components/Modal/BottomModal";
+import TabNavigationScreenHeader from "../../../Components/Header/TabNavigationHeader";
+import TextTheme from "../../../Components/Text/TextTheme";
 
 const dummyCustomerData: CustomerCardProps[] = [
     // {
@@ -56,6 +58,10 @@ export default function CustomerScreen(): React.JSX.Element {
 
     return (
         <View style={{width: '100%', height: '100%'}} >
+            <TabNavigationScreenHeader>
+                <TextTheme>Customers</TextTheme>
+            </TabNavigationScreenHeader>
+            
             <ScrollView style={{paddingInline: 20, marginTop: 12, width: '100%', height: '100%'}}>
                 <View style={{gap: 20}} >
                     {

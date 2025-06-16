@@ -29,10 +29,19 @@ export default function CreateCompanyScreen(): React.JSX.Element {
                         placeholder="contact@companyname.com"
                     />
                     
-                    <LabelTextInput 
-                        label="Phone Number"
-                        placeholder="xxxxx-xxxxx"
-                    />
+                    <View style={{flexDirection: 'row', gap: 12}} >
+                        <LabelTextInput 
+                            label="Country Code"
+                            placeholder="e.g. +91, +1"
+                            containerStyle={{width: 120}}
+                        />
+                    
+                        <LabelTextInput 
+                            containerStyle={{flex: 1}}
+                            label="Phone Number"
+                            placeholder="xxxxx-xxxxx"
+                        />
+                    </View>
 
                     <LabelTextInput 
                         label="Maling Name"

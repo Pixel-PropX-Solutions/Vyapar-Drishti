@@ -12,6 +12,7 @@ import BottomModal from "../../../Components/Modal/BottomModal";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamsList } from "../../../Navigation/StackNavigation";
+import TabNavigationScreenHeader from "../../../Components/Header/TabNavigationHeader";
 
 const dummyBillData: BillCardProps[] = [
     {
@@ -89,6 +90,10 @@ export default function BillScreen(): React.JSX.Element {
 
     return (
         <View style={{width: '100%', height: '100%'}}>
+            <TabNavigationScreenHeader>
+                <TextTheme>Bills</TextTheme>
+            </TabNavigationScreenHeader>
+            
             <ScrollView style={{marginTop: 12, width: '100%', height: '100%'}}>
 
                 <SummaryCard

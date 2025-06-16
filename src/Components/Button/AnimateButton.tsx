@@ -3,19 +3,18 @@ import { Animated, findNodeHandle, Pressable, PressableProps, UIManager, View, V
 import { GestureResponderEvent } from "react-native";
 import { useTheme } from "../../Contexts/ThemeProvider";
 
-type AnimateButtonProps = {
+type AnimateButtonProps = PressableProps & {
     children?: ReactNode,
     style?: ViewStyle,
     duration?: number,
     bubbleScale?: number,
     onPress?: (event: GestureResponderEvent) => void,
-    props?: PressableProps,
     delay?: number,
     bubbleColor?: string
 }
 
 
-export default function AnimateButton({children, style={}, duration=300, bubbleScale=10, onPress=()=>{}, props={}, delay=100, bubbleColor}: AnimateButtonProps ): React.JSX.Element {
+export default function AnimateButton({children, style={}, duration=300, bubbleScale=10, onPress=()=>{}, delay=100, bubbleColor, ...props}: AnimateButtonProps ): React.JSX.Element {
 
     const {secondaryColor} = useTheme()
 

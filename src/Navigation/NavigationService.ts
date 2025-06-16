@@ -16,8 +16,28 @@ export function navigate<RouteName extends keyof StackParamsList>(
 }
 
 
-export function goBack() {
-  if (navigation.isReady() && navigation.canGoBack()) {
-    navigation.goBack();
+
+const navigator = {
+  navigate, 
+
+  goBack: function() {
+    if (navigation.isReady() && navigation.canGoBack()) {
+      navigation.goBack();
+    }
+  },
+  
+  replace: function(name: keyof StackParamsList, params?: any) {
+    if (navigation.isReady()) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name, params }],
+      });
+    }
+  },
+
+  currentRouteName: function() {
+    return navigation.isReady() ? navigation.getCurrentRoute()?.name : null;
   }
-}
+} 
+
+export default navigator

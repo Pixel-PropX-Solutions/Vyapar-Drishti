@@ -1,6 +1,6 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { BASE_URL } from "../../env";
-import AuthStorage from "../Store/AuthStorage";
+import AuthStore from "../Store/AuthStore";
 import { navigate } from "../Navigation/NavigationService";
 
 
@@ -18,10 +18,8 @@ const userApi = axios.create({
 // ✅ Add token to headers *and* as cookies manually
 userApi.interceptors.request.use((config) => {
 
-    console.log(AuthStorage.getAllKeys())
-
-    const accessToken = AuthStorage.getString("accessToken");
-    const refreshToken = AuthStorage.getString("refreshToken");
+    const accessToken = AuthStore.getString("accessToken");
+    const refreshToken = AuthStore.getString("refreshToken");
   
     if (accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
@@ -41,8 +39,8 @@ userApi.interceptors.response.use(
       const { accessToken, refreshToken } = response.data || {};
   
       if (accessToken && refreshToken) {
-        AuthStorage.set("accessToken", accessToken);
-        AuthStorage.set("refreshToken", refreshToken);
+        AuthStore.set("accessToken", accessToken);
+        AuthStore.set("refreshToken", refreshToken);
       }
       
       return response;
@@ -57,7 +55,7 @@ userApi.interceptors.response.use(
         originalRequest._retry = true;
   
         try {
-          const refreshToken = AuthStorage.getString("refreshToken");
+          const refreshToken = AuthStore.getString("refreshToken");
           if (!refreshToken) throw new Error("Refresh token not found.");
   
           console.log("Attempting token refresh");
@@ -76,8 +74,8 @@ userApi.interceptors.response.use(
   
           console.log("Token refreshed:", data);
   
-          AuthStorage.set("accessToken", data.accessToken);
-          AuthStorage.set("refreshToken", data.refreshToken);
+          AuthStore.set("accessToken", data.accessToken);
+          AuthStore.set("refreshToken", data.refreshToken);
   
           // Retry the original request with the new token
           originalRequest.headers["Authorization"] = `Bearer ${data.accessToken}`;
@@ -86,8 +84,9 @@ userApi.interceptors.response.use(
           return userApi(originalRequest);
         } catch (refreshError) {
           console.error("Token refresh failed:", refreshError);
-          AuthStorage.delete("accessToken");
-          AuthStorage.delete("refreshToken");
+          AuthStore.delete("accessToken");
+          AuthStore.delete("refreshToken");
+
           // Add logout or navigation logic if needed
           navigate('login-screen');
         }

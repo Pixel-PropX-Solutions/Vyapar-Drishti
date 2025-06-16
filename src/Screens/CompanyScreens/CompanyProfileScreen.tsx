@@ -1,154 +1,154 @@
 import { ScrollView } from "react-native-gesture-handler";
 import TextTheme from "../../Components/Text/TextTheme";
 import StackNavigationHeader from "../../Components/Header/StackNavigationHeader";
-import { View } from "react-native";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import SectionView, { SectionArrowRow, SectionRow } from "../../Components/View/SectionView";
+import { Text, View } from "react-native";
+import SectionView, { SectionRow } from "../../Components/View/SectionView";
 import FeatherIcon from "../../Components/Icon/FeatherIcon";
 import LogoImage from "../../Components/Image/LogoImage";
 import NormalButton from "../../Components/Button/NormalButton";
-import { useEffect, useState } from "react";
-import { GetCompany } from "../../Utils/Types";
-import { getCurrentCompant } from "../../Services/company";
+import { useCompanyStore } from "../../Store/ReduxStore";
+import DeleteModal from "../../Components/Modal/DeleteModal";
+import { useState } from "react";
+import navigator from "../../Navigation/NavigationService";
+import AnimateButton from "../../Components/Button/AnimateButton";
 
 export default function CompanyProfileScreen(): React.JSX.Element {
 
-  const [companyInfo, setCompanyInfo] = useState<GetCompany>();
+    const { company } = useCompanyStore();
 
-  useEffect(() => {
-    getCurrentCompant().then(({data}) => {
-      setCompanyInfo(data);
-    })
-  }, [])
+    const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
 
-  return (
-      <View style={{width: '100%', height: '100%'}}>
-          <StackNavigationHeader title="Profile" />
-          
-          <ScrollView style={{paddingHorizontal: 20, width: '100%', height: '100%'}} contentContainerStyle={{gap: 28}} scrollEnabled={true}>
+    return (
+        <View style={{ width: '100%', height: '100%' }}>
+            <StackNavigationHeader title="Profile" />
 
-              <View style={{ alignItems: 'center', padding: 16, width: '100%' }}>
-                  <LogoImage size={100} borderRadius={100} />
-                  <TextTheme style={{ fontSize: 22, fontWeight: 'bold' }} >{companyInfo?.name}</TextTheme>
-                  <TextTheme isPrimary={false} style={{fontSize: 16}} >{companyInfo?.email}</TextTheme>
-              </View>
+            <ScrollView style={{ paddingHorizontal: 20, width: '100%', height: '100%' }} contentContainerStyle={{ gap: 28 }} scrollEnabled={true}>
 
-              <SectionView label="Account" >
-                  <SectionArrowRow 
-                      icon={<FeatherIcon name="info" size={24} />}
-                      text="Persnol Information" 
-                      onPress={() => {}} 
-                  />
-              </SectionView>
-              
-              <SectionView label="Contact" style={{gap: 8}} >
-                  <SectionRow onPress={() => {}} style={{justifyContent: 'space-between'}} >
-                      <TextTheme style={{fontSize: 16, fontWeight: 900}} >Phone</TextTheme>
+                <View style={{ alignItems: 'center', padding: 16, width: '100%' }}>
+                    <LogoImage size={100} borderRadius={100} />
+                    <TextTheme style={{ fontSize: 22, fontWeight: 'bold' }} >{company?.name}</TextTheme>
+                    <TextTheme isPrimary={false} style={{ fontSize: 16 }} >{company?.email}</TextTheme>
+                </View>
 
-                      <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}} >
-                          <TextTheme isPrimary={false} style={{fontSize: 16, fontWeight: 900}} >{companyInfo?.phone?.number}</TextTheme>
-                          <FeatherIcon isPrimary={false} name="phone" size={16} />
-                      </View>
-                  </SectionRow>
+                <SectionView
+                    style={{ gap: 8 }} label="Company Info"
+                    labelContainerChildren={<EditButton onPress={() => { }} />}
+                >
+                    <SectionRow onPress={() => { }} style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Name</TextTheme>
 
-                  <SectionRow onPress={() => {}} style={{justifyContent: 'space-between'}} >
-                      <TextTheme style={{fontSize: 16, fontWeight: 900}} >Email</TextTheme>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.name}</TextTheme>
+                        </View>
+                    </SectionRow>
 
-                      <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}} >
-                          <TextTheme isPrimary={false} style={{fontSize: 16, fontWeight: 900}} >{companyInfo?.email}</TextTheme>
-                          <FeatherIcon isPrimary={false} name="mail" size={16} />
-                      </View>
-                  </SectionRow>
-              </SectionView>
-              
-              <SectionView label="Address" style={{gap: 8}} >
-                  <SectionRow onPress={() => {}} style={{justifyContent: 'space-between'}} >
-                      <TextTheme style={{fontSize: 16, fontWeight: 900}} >Country</TextTheme>
+                    <SectionRow onPress={() => { }} style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Website</TextTheme>
 
-                      <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}} >
-                          <TextTheme isPrimary={false} style={{fontSize: 16, fontWeight: 900}} >{companyInfo?.country}</TextTheme>
-                          <FeatherIcon isPrimary={false} name="map" size={16} />
-                      </View>
-                  </SectionRow>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.website}</TextTheme>
+                        </View>
+                    </SectionRow>
+                </SectionView>
 
-                  <SectionRow onPress={() => {}} style={{justifyContent: 'space-between'}} >
-                      <TextTheme style={{fontSize: 16, fontWeight: 900}} >Street, City</TextTheme>
+                <SectionView
+                    label="Contact" style={{ gap: 8 }}
+                    labelContainerChildren={<EditButton onPress={() => { }} />}
+                >
+                    <SectionRow onPress={() => { }} style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Phone</TextTheme>
 
-                      <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}} >
-                          <TextTheme isPrimary={false} style={{fontSize: 16, fontWeight: 900}} >{companyInfo?.address_1}</TextTheme>
-                          <FeatherIcon isPrimary={false} name="home" size={16} />
-                      </View>
-                  </SectionRow>
-                  
-                  <SectionRow onPress={() => {}} style={{justifyContent: 'space-between'}} >
-                      <TextTheme style={{fontSize: 16, fontWeight: 900}} >Pin Code</TextTheme>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                                {company?.phone?.code} {company?.phone?.number ?? 'Not fill'}
+                            </TextTheme>
+                            <FeatherIcon isPrimary={false} name="phone" size={16} />
+                        </View>
+                    </SectionRow>
 
-                      <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}} >
-                          <TextTheme isPrimary={false} style={{fontSize: 16, fontWeight: 900}} >{companyInfo?.pinCode}</TextTheme>
-                          <FeatherIcon isPrimary={false} name="map-pin" size={16} />
-                      </View>
-                  </SectionRow>
-              </SectionView>
-              
-              <NormalButton isPrimary={false} text="Logout" textStyle={{fontWeight: 900}} /> 
+                    <SectionRow onPress={() => { }} style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Email</TextTheme>
 
-              <View style={{minHeight: 40}} />
-          </ScrollView>
-      </View>
-  )
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.email ?? 'Not fill'}</TextTheme>
+                            <FeatherIcon isPrimary={false} name="mail" size={16} />
+                        </View>
+                    </SectionRow>
+                </SectionView>
+
+                <SectionView 
+                    label="Address" style={{ gap: 8 }} 
+                    labelContainerChildren={<EditButton onPress={() => {}} />}
+                >
+                    <SectionRow onPress={() => { }} style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Country</TextTheme>
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.country ?? 'Not fill'}</TextTheme>
+                            <FeatherIcon isPrimary={false} name="map" size={16} />
+                        </View>
+                    </SectionRow>
+
+                    <SectionRow onPress={() => { }} style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Street, City</TextTheme>
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.address_1 ?? 'Not fill'}</TextTheme>
+                            <FeatherIcon isPrimary={false} name="home" size={16} />
+                        </View>
+                    </SectionRow>
+
+                    <SectionRow onPress={() => { }} style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Pin Code</TextTheme>
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.pinCode ?? 'Not fill'}</TextTheme>
+                            <FeatherIcon isPrimary={false} name="map-pin" size={16} />
+                        </View>
+                    </SectionRow>
+                </SectionView>
+
+                <NormalButton
+                    onPress={() => navigator.navigate('create-company-screen')}
+                    isPrimary={false} text="Update Info" textStyle={{ fontWeight: 900 }}
+                />
+
+                <SectionView label="Danger Zone" labelColor="rgb(250,0,0)" >
+                    <NormalButton
+                        icon={<FeatherIcon name="alert-circle" size={16} color="white" />}
+                        backgroundColor="rgb(250,50,80)"
+                        color="white"
+                        text="Remove Company"
+                        textStyle={{ fontWeight: 900 }}
+                        onPress={() => setDeleteModalVisible(true)}
+                    />
+                </SectionView>
+
+                <View style={{ minHeight: 40 }} />
+            </ScrollView>
+
+            <DeleteModal
+                visible={isDeleteModalVisible}
+                setVisible={setDeleteModalVisible}
+                passkey={company?.name ?? 'delete'}
+                massage="Once you press delete there no way to go back"
+                handleDelete={() => { }}
+            />
+        </View>
+    )
 }
 
 
-// Section Component
-const Section: React.FC<{ title: string; children: React.ReactNode }> = ({
-  title,
-  children,
-}) => (
-  <View style={{ paddingTop: 16 }}>
-    <TextTheme
-      style={{
-        color: '#121416',
-        fontSize: 18,
-        fontWeight: 'bold',
-        paddingHorizontal: 16,
-        marginBottom: 8,
-      }}
-    >
-      {title}
-    </TextTheme>
-    {children}
-  </View>
-);
-
-// Row Component
-const Row: React.FC<{
-  label: string;
-  value?: string;
-  hasArrow?: boolean;
-}> = ({ label, value, hasArrow = false }) => (
-  <View
-    style={{
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: 16,
-      minHeight: 56,
-      justifyContent: 'space-between',
-    }}
-  >
-    <TextTheme
-      numberOfLines={1}
-      style={{
-        flex: 1,
-        fontSize: 16,
-        color: '#121416',
-      }}
-    >
-      {label}
-    </TextTheme>
-    {hasArrow ? (
-      <Icon name="chevron-right" size={24} color="#121416" />
-    ) : (
-      <TextTheme style={{ color: '#121416', fontSize: 16 }}>{value}</TextTheme>
-    )}
-  </View>
-);
+function EditButton({ onPress }: { onPress: () => void }): React.JSX.Element {
+    return (
+        <View style={{ flex: 1, alignItems: 'flex-end' }} >
+            <AnimateButton
+                onPress={onPress}
+                style={{ borderRadius: 100, height: 44, paddingInline: 20, gap: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}
+            >
+                <FeatherIcon name="edit-3" size={20} />
+                <TextTheme style={{ fontSize: 14, fontWeight: '900', color: 'white' }}>Edit</TextTheme>
+            </AnimateButton>
+        </View>
+    )
+}

@@ -7,21 +7,25 @@ import FeatherIcon from "../Icon/FeatherIcon";
 import BackgroundThemeView from "./BackgroundThemeView";
 
 
-type Props ={ 
+type Props = { 
     label: string,
     children: React.ReactNode,
     style?: ViewStyle,
     containerStyle?: ViewStyle,
-    lableColor?: string
+    labelColor?: string,
+    labelContainerChildren?: React.JSX.Element
 }
 
-export default function SectionView({label, children, style, containerStyle, lableColor}: Props): React.JSX.Element {
+export default function SectionView({label, children, style, containerStyle, labelColor, labelContainerChildren}: Props): React.JSX.Element {
 
     return (
         <View style={containerStyle}>
-            <TextTheme isPrimary={false} style={{paddingLeft: 4, fontWeight: '900', fontSize: 20, marginBottom: 12}} color={lableColor} >
-                {label}
-            </TextTheme>
+            <View style={{flexDirection: 'row', alignItems: 'center', width: '100%', marginBottom: 12}} >
+                <TextTheme isPrimary={false} style={{paddingLeft: 4, fontWeight: '900', fontSize: 20}} color={labelColor} >
+                    {label}
+                </TextTheme>
+                {labelContainerChildren}
+            </View>
 
             <View style={style}>
                 {children}

@@ -8,11 +8,10 @@ import { useTheme } from "../../../Contexts/ThemeProvider";
 import BillCard, { BillCardProps } from "../../../Components/Card/BillCard";
 import DateSelector from "../../../Components/Other/DateSelector";
 import FontAwesome6Icon from "../../../Components/Icon/FontAwesome6Icon";
-import { useEffect } from "react";
-import { getAllCompanies } from "../../../Services/company";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamsList } from "../../../Navigation/StackNavigation";
+import HomeScreenHeader from "../../../Components/Header/HomeScreenHeader";
 
 export default function HomeScreen(): React.JSX.Element {
 
@@ -55,147 +54,90 @@ export default function HomeScreen(): React.JSX.Element {
     const navigation = useNavigation<StackNavigationProp<StackParamsList, 'tab-navigation'>>();
 
     return (
-        <ScrollView style={{marginTop: 12, width: '100%', height: '100%'}} contentContainerStyle={{gap: 20}}>
+        <View style={{width: '100%', height: '100%'}} >
+            <HomeScreenHeader/>
+            <ScrollView style={{marginTop: 12, width: '100%', height: '100%'}} contentContainerStyle={{gap: 20}}>
 
-            <View style={{paddingInline: 20, gap: 32}} >
-                
-                <View style={{gap: 12}} >
-                    <TextTheme style={{fontSize: 16, fontWeight: 800}} >This Month</TextTheme>
-                    <View style={{flexDirection: 'row', gap: 12}}>
-                        <View style={{padding: 12, borderRadius: 12, flex: 1, backgroundColor: 'rgb(50,200,150)'}}>
-                            <TextTheme color="white" isPrimary={false} style={{fontWeight: 900}} >Pay Amount</TextTheme>
-                            <TextTheme color="white">0.00 INR</TextTheme>
-                        </View>
-
-                        <View style={{padding: 12, borderRadius: 12, flex: 1, backgroundColor: 'rgb(50,150,250)'}}>
-                            <TextTheme color="white" isPrimary={false} style={{fontWeight: 900}} >Panding Amount</TextTheme>
-                            <TextTheme color="white">0.00 INR</TextTheme>
-                        </View>
-                    </View>
-                </View>
-
-
-
-                <View style={{gap: 12}} >
-                    <TextTheme style={{fontSize: 16, fontWeight: 800}} >Quick Access</TextTheme>
+                <View style={{paddingInline: 20, gap: 32}} >
+                    
                     <View style={{gap: 12}} >
+                        <TextTheme style={{fontSize: 16, fontWeight: 800}} >This Month</TextTheme>
                         <View style={{flexDirection: 'row', gap: 12}}>
-                            <QuickAccessBox 
-                                label="Sells" 
-                                text="Add new sells" 
-                                icon={<FeatherIcon name="trending-up" size={16} />} 
-                                onPress={() => {}}
-                            />
-                            <QuickAccessBox 
-                                label="Purchase" 
-                                text="Add purchase" 
-                                icon={<FontAwesome6Icon name="coins" size={16} />} 
-                                onPress={() => {}}
-                            />
-                        </View>
+                            <View style={{padding: 12, borderRadius: 12, flex: 1, backgroundColor: 'rgb(50,200,150)'}}>
+                                <TextTheme color="white" isPrimary={false} style={{fontWeight: 900}} >Pay Amount</TextTheme>
+                                <TextTheme color="white">0.00 INR</TextTheme>
+                            </View>
 
-                        <View style={{flexDirection: 'row', gap: 12}}>
-                            <QuickAccessBox 
-                                label="Customer" 
-                                text="Add Customer" 
-                                icon={<FeatherIcon name="users" size={16} />} 
-                                onPress={() => {}}
-                            />
-                            <QuickAccessBox 
-                                label="Share" 
-                                text="Share app with friends" 
-                                icon={<FeatherIcon name="share" size={16} />} 
-                                onPress={() => {}}
-                            />
+                            <View style={{padding: 12, borderRadius: 12, flex: 1, backgroundColor: 'rgb(50,150,250)'}}>
+                                <TextTheme color="white" isPrimary={false} style={{fontWeight: 900}} >Panding Amount</TextTheme>
+                                <TextTheme color="white">0.00 INR</TextTheme>
+                            </View>
+                        </View>
+                    </View>
+
+                    <View style={{gap: 12}} >
+                        <TextTheme style={{fontSize: 16, fontWeight: 800}} >Quick Access</TextTheme>
+                        <View style={{gap: 12}} >
+                            <View style={{flexDirection: 'row', gap: 12}}>
+                                <QuickAccessBox 
+                                    label="Sells" 
+                                    text="Add new sells" 
+                                    icon={<FeatherIcon name="trending-up" size={16} />} 
+                                    onPress={() => {}}
+                                />
+                                <QuickAccessBox 
+                                    label="Purchase" 
+                                    text="Add purchase" 
+                                    icon={<FontAwesome6Icon name="coins" size={16} />} 
+                                    onPress={() => {}}
+                                />
+                            </View>
+
+                            <View style={{flexDirection: 'row', gap: 12}}>
+                                <QuickAccessBox 
+                                    label="Customer" 
+                                    text="Add Customer" 
+                                    icon={<FeatherIcon name="users" size={16} />} 
+                                    onPress={() => {}}
+                                />
+                                <QuickAccessBox 
+                                    label="Share" 
+                                    text="Share app with friends" 
+                                    icon={<FeatherIcon name="share" size={16} />} 
+                                    onPress={() => {}}
+                                />
+                            </View>
                         </View>
                     </View>
                 </View>
-            </View>
-
-            {/* <AvgInvoiceCard 
-                avgAmount={0} 
-                totalBills={dummyBillData.length} 
-                totalCustomers={0} 
-                totalPropducts={0} 
-            /> */}
-
-            
-
-            <BackgroundThemeView isPrimary={false} style={{width: '100%', height: '100%', padding: 20, borderTopLeftRadius: 36, borderTopRightRadius: 36, marginTop: 24}} >
-
-                <TextTheme style={{textAlign: 'center', fontSize: 16, marginBottom: 12, fontWeight: 900}} >Panding Bills</TextTheme>
-
-                <DateSelector/>
-
-                <View style={{marginBlock: 20}} >
-                    {
-                        dummyBillData.map(bill => (
-                            <BillCard
-                                key={bill.id}
-                                id={bill.id}
-                                date={bill.date} month={bill.month} year={bill.year}
-                                customerName={bill.customerName}
-                                totalAmount={bill.totalAmount}
-                                payAmount={bill.payAmount}
-                                billNo={bill.billNo}
-                                pandingAmount={bill.totalAmount - bill.payAmount}
-                            />
-                        ))
-                    }
-                </View>
-
-                <View style={{minHeight: 80}} />
-            </BackgroundThemeView>
-        </ScrollView>
-    )
-}
-
-
-type AvgInvoiceCardProps = {
-    avgAmount: number,
-    totalBills: number,
-    totalCustomers: number,
-    totalPropducts: number
-}
-
-function AvgInvoiceCard({avgAmount, totalBills, totalCustomers, totalPropducts}: AvgInvoiceCardProps): React.JSX.Element {
-
-    const {primaryBackgroundColor: backgroundColor} = useTheme()
-
-    return (
-        <BackgroundThemeView isPrimary={false} style={{padding: 16, borderRadius: 16, marginBlock: 12, marginInline: 20,}}>
-            <TextTheme style={{fontSize: 14, fontWeight: 800}} >INVOICE AVG</TextTheme>
-            
-            <TextTheme style={{fontSize: 20, fontWeight: 900, marginBlock: 6}}>
-                INR {avgAmount}
-            </TextTheme>
-            
-            <View style={{display: 'flex', alignItems: 'center', justifyContent: "center", flexDirection: 'row', gap: 8, marginTop: 12}}>
-                <AnimateButton style={{paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor}}>
-                    <TextTheme style={{fontSize: 18, fontWeight: 900, marginTop: 4}}>
-                        <FeatherIcon name="file-text" size={20} />
-                        {`  ${totalBills}`}
-                    </TextTheme>
-                    <TextTheme isPrimary={false} style={{fontSize: 10}}>Total Bill</TextTheme>
-                </AnimateButton>
-
-                <AnimateButton style={{paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor}}>
-                    <TextTheme style={{fontSize: 18, fontWeight: 900, marginTop: 4}}>
-                        <FeatherIcon name="users" size={20} />
-                        {`  ${totalCustomers}`}
-                    </TextTheme>
-                    <TextTheme isPrimary={false} style={{fontSize: 10}}>Total Customer</TextTheme>
-                </AnimateButton>
                 
-                <AnimateButton style={{paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor}}>
-                    <TextTheme style={{fontSize: 18, fontWeight: 900, marginTop: 4}}>
-                        <FeatherIcon name="package" size={20} />
-                        {`  ${totalPropducts}`}
-                    </TextTheme>
-                    <TextTheme isPrimary={false} style={{fontSize: 10}}>Total Product</TextTheme>
-                </AnimateButton>
-            </View>
-        </BackgroundThemeView>
+                <BackgroundThemeView isPrimary={false} style={{width: '100%', height: '100%', padding: 20, borderTopLeftRadius: 36, borderTopRightRadius: 36, marginTop: 24}} >
+
+                    <TextTheme style={{textAlign: 'center', fontSize: 16, marginBottom: 12, fontWeight: 900}} >Panding Bills</TextTheme>
+
+                    <DateSelector/>
+
+                    <View style={{marginBlock: 20}} >
+                        {
+                            dummyBillData.map(bill => (
+                                <BillCard
+                                    key={bill.id}
+                                    id={bill.id}
+                                    date={bill.date} month={bill.month} year={bill.year}
+                                    customerName={bill.customerName}
+                                    totalAmount={bill.totalAmount}
+                                    payAmount={bill.payAmount}
+                                    billNo={bill.billNo}
+                                    pandingAmount={bill.totalAmount - bill.payAmount}
+                                />
+                            ))
+                        }
+                    </View>
+
+                    <View style={{minHeight: 80}} />
+                </BackgroundThemeView>
+            </ScrollView>
+        </View>
     )
 }
 

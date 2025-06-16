@@ -10,6 +10,7 @@ import NormalButton from "../../../Components/Button/NormalButton";
 import RoundedPlusButton from "../../../Components/Button/RoundedPlusButton";
 import { useState } from "react";
 import CreateProductModal from "../../../Components/Modal/Product/CreateProductModal";
+import TabNavigationScreenHeader from "../../../Components/Header/TabNavigationHeader";
 
 const dummyProductData: ProductCardProps[] = [
     {
@@ -67,6 +68,10 @@ export default function ProductScreen(): React.JSX.Element {
 
     return (
         <View  style={{width: '100%', height: '100%'}}>
+            <TabNavigationScreenHeader>
+                <TextTheme>Products</TextTheme>
+            </TabNavigationScreenHeader>
+            
             <ScrollView style={{marginTop: 12, width: '100%', height: '100%'}}>
 
                 <SummaryCard
