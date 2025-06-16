@@ -25,7 +25,7 @@ export default function HomeScreenHeader(): React.JSX.Element {
     const [isCompanyCreateModalVisible, setCompanyCreateMdoalVisible] = useState<boolean>(false);
 
 
-    const { company, companies, isCompanyFetching, isCompaniesFetching, error } = useCompanyStore();
+    const { company, companies, isCompanyFetching, error } = useCompanyStore();
     const dispatch = useAppDispatch()
 
     useEffect(() => {
@@ -87,7 +87,7 @@ export default function HomeScreenHeader(): React.JSX.Element {
             <BottomModal
                 visible={isCompanySwitchModalVisible} setVisible={setCompanySwitchModalVisible}
                 style={{ paddingInline: 20, gap: 20 }}
-                actionButtons={[{
+                actionButtons={companies.length >= 2 ? undefined : [{
                     title: '+ Add New', onPress: () => {
                         setCompanyCreateMdoalVisible(true);
                     }
@@ -107,9 +107,8 @@ export default function HomeScreenHeader(): React.JSX.Element {
                                 backgroundColor={_id == company?._id ? 'rgb(50,150,250)' : ''}
                                 color={_id == company?._id ? 'white' : ''}
                                 onPress={() => { 
-                                    dispatch(setCompany(_id)).then(_ => {
-                                        if(!error) dispatch(getCompany())
-                                    });
+                                    dispatch(setCompany(_id)).then(_ => dispatch(getCompany()));
+                                    setCompanySwitchModalVisible(false);
                                 }}
                             />
                         ))
@@ -149,7 +148,7 @@ function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalType) {
 
         let from = arrayToFormData([['name', name], ['email', mail]]);
         
-        dispatch(createCompany(from));
+        await dispatch(createCompany(from));
         dispatch(getAllCompanies());
         setVisible(false);
     }

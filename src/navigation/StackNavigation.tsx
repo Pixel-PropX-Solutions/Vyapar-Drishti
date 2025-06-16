@@ -13,7 +13,6 @@ import ProfileScreen from "../Screens/CompanyScreens/CompanyProfileScreen";
 import { Dimensions } from "react-native";
 import CustomerInfoScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen";
 import CraeteBillScreen from "../Screens/TabNavigationScreens/BillScreens/CreateBillScreen";
-import CreateCompanyScreen from "../Screens/CompanyScreens/CreateCompanyScreen";
 import CompanyProfileScreen from "../Screens/CompanyScreens/CompanyProfileScreen";
 import { NavigationRef } from "./NavigationService";
 
@@ -27,7 +26,6 @@ export type StackParamsList = {
     'notification-screen': undefined,
     
     'company-profile-screen': undefined,
-    'create-company-screen': undefined, 
 
     'customer-info-screen': undefined
 
@@ -54,7 +52,6 @@ export default function StackNavigation(): React.JSX.Element {
                     <Stack.Screen name="notification-screen" component={NotificationScreen} />
 
                     <Stack.Screen name="company-profile-screen" component={CompanyProfileScreen} />
-                    <Stack.Screen name="create-company-screen" component={CreateCompanyScreen} />
 
 
                     <Stack.Screen name="customer-info-screen" component={CustomerInfoScreen} />

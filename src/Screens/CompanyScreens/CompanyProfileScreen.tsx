@@ -9,14 +9,18 @@ import NormalButton from "../../Components/Button/NormalButton";
 import { useCompanyStore } from "../../Store/ReduxStore";
 import DeleteModal from "../../Components/Modal/DeleteModal";
 import { useState } from "react";
-import navigator from "../../Navigation/NavigationService";
 import AnimateButton from "../../Components/Button/AnimateButton";
+import { CompanyAddressUpdateModal, CompanyContactUpdateModal, CompanyInfoUpdateModal } from "./CompanyProfileScreenModals";
+import sliceString from "../../Utils/sliceString";
 
 export default function CompanyProfileScreen(): React.JSX.Element {
 
     const { company } = useCompanyStore();
 
     const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+    const [isInfoUpdateModalVisible, setInfoUdpateModalVisible] = useState<boolean>(false);
+    const [isContactUpdateModalVisible, setContactUdpateModalVisible] = useState<boolean>(false);
+    const [isAddressUpdateModalVisible, setAddressUdpateModalVisible] = useState<boolean>(false);
 
     return (
         <View style={{ width: '100%', height: '100%' }}>
@@ -32,86 +36,111 @@ export default function CompanyProfileScreen(): React.JSX.Element {
 
                 <SectionView
                     style={{ gap: 8 }} label="Company Info"
-                    labelContainerChildren={<EditButton onPress={() => { }} />}
+                    labelContainerChildren={
+                        <EditButton onPress={() => { setInfoUdpateModalVisible(true) }} />
+                    }
                 >
-                    <SectionRow onPress={() => { }} style={{ justifyContent: 'space-between' }} >
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Name</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.name}</TextTheme>
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                                {company?.name}
+                            </TextTheme>
                         </View>
                     </SectionRow>
 
-                    <SectionRow onPress={() => { }} style={{ justifyContent: 'space-between' }} >
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Website</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.website}</TextTheme>
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                                {sliceString(company?.website, 24) ?? 'Not Set'}
+                            </TextTheme>
                         </View>
                     </SectionRow>
                 </SectionView>
 
                 <SectionView
                     label="Contact" style={{ gap: 8 }}
-                    labelContainerChildren={<EditButton onPress={() => { }} />}
+                    labelContainerChildren={
+                        <EditButton onPress={() => { setContactUdpateModalVisible(true) }} />
+                    }
                 >
-                    <SectionRow onPress={() => { }} style={{ justifyContent: 'space-between' }} >
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Email</TextTheme>
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                                {sliceString(company?.email, 25) ?? 'Not Set'}
+                            </TextTheme>
+                            <FeatherIcon isPrimary={false} name="mail" size={16} />
+                        </View>
+                    </SectionRow>
+
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Phone</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
                             <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                                {company?.phone?.code} {company?.phone?.number ?? 'Not fill'}
+                                {company?.phone?.code} {company?.phone?.number ?? 'Not Set'}
                             </TextTheme>
                             <FeatherIcon isPrimary={false} name="phone" size={16} />
                         </View>
                     </SectionRow>
-
-                    <SectionRow onPress={() => { }} style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Email</TextTheme>
+                    
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Mailing Name</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.email ?? 'Not fill'}</TextTheme>
-                            <FeatherIcon isPrimary={false} name="mail" size={16} />
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                                {sliceString(company?.mailing_name, 24) ?? 'Not Set'}
+                            </TextTheme>
                         </View>
                     </SectionRow>
                 </SectionView>
 
                 <SectionView 
                     label="Address" style={{ gap: 8 }} 
-                    labelContainerChildren={<EditButton onPress={() => {}} />}
+                    labelContainerChildren={
+                        <EditButton onPress={() => { setAddressUdpateModalVisible(true) }} />
+                    }
                 >
-                    <SectionRow onPress={() => { }} style={{ justifyContent: 'space-between' }} >
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Country</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.country ?? 'Not fill'}</TextTheme>
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.country ?? 'Not Set'}</TextTheme>
                             <FeatherIcon isPrimary={false} name="map" size={16} />
                         </View>
                     </SectionRow>
+                    
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >State</TextTheme>
 
-                    <SectionRow onPress={() => { }} style={{ justifyContent: 'space-between' }} >
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.state ?? 'Not Set'}</TextTheme>
+                        </View>
+                    </SectionRow>
+
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Street, City</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.address_1 ?? 'Not fill'}</TextTheme>
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{sliceString(company?.address_1, 25) ?? 'Not Set'}</TextTheme>
                             <FeatherIcon isPrimary={false} name="home" size={16} />
                         </View>
                     </SectionRow>
 
-                    <SectionRow onPress={() => { }} style={{ justifyContent: 'space-between' }} >
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Pin Code</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.pinCode ?? 'Not fill'}</TextTheme>
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.pinCode ?? 'Not Set'}</TextTheme>
                             <FeatherIcon isPrimary={false} name="map-pin" size={16} />
                         </View>
                     </SectionRow>
                 </SectionView>
-
-                <NormalButton
-                    onPress={() => navigator.navigate('create-company-screen')}
-                    isPrimary={false} text="Update Info" textStyle={{ fontWeight: 900 }}
-                />
 
                 <SectionView label="Danger Zone" labelColor="rgb(250,0,0)" >
                     <NormalButton
@@ -133,6 +162,18 @@ export default function CompanyProfileScreen(): React.JSX.Element {
                 passkey={company?.name ?? 'delete'}
                 massage="Once you press delete there no way to go back"
                 handleDelete={() => { }}
+            />
+
+            <CompanyInfoUpdateModal  
+                visible={isInfoUpdateModalVisible} setVisible={setInfoUdpateModalVisible}
+            />
+
+            <CompanyContactUpdateModal
+                visible={isContactUpdateModalVisible} setVisible={setContactUdpateModalVisible}
+            />
+
+            <CompanyAddressUpdateModal
+                visible={isAddressUpdateModalVisible} setVisible={setAddressUdpateModalVisible}
             />
         </View>
     )

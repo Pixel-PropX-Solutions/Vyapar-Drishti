@@ -1,7 +1,8 @@
 export default function arrayToFormData(arr: [key: string, val: string | boolean][]): FormData {
     const form = new FormData;
     for(let [key, val] of arr){
-        form.append(key, typeof val === 'boolean' ? val ? 'true' : 'false' : val);
+        let value = typeof val === 'boolean' ? val ? 'true' : 'false' : val || ''
+        form.append(key, value ?? '');
     }
     return form;
 }

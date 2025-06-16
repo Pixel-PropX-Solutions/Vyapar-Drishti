@@ -79,7 +79,11 @@ export const updateCompany = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await userApi.put(`/user/update/company/${id}`, data);
+      const response = await userApi.put(`/user/update/company/${id}`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       console.log("updateCompany response", response);
 
       if (response.data.success === true) {
