@@ -5,17 +5,43 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import LogoImage from "../Components/Image/LogoImage";
 import TextTheme from "../Components/Text/TextTheme";
 import { View } from "react-native";
+import { useAppDispatch } from "../Store/ReduxStore";
+import { getCurrentUser } from "../Services/user";
 
 export default function SplashScreen(): React.JSX.Element {
 
     const navigation = useNavigation<StackNavigationProp<StackParamsList, 'splash-screen'>>();
+    const dispatch = useAppDispatch();
+
+
+    
+
+    async function handleNavigation(){
+
+        const navigate = (isValid: boolean) => {
+            if(isValid) {
+                navigation.replace('tab-navigation');
+            } else {
+                navigation.replace('landing-screen');
+            }
+        }
+
+        const oldTime = Date.now();
+        
+        let res = await dispatch(getCurrentUser()) as { payload: { user?: any } };
+
+        let cuurentTime = Date.now();
+       
+        if(cuurentTime - oldTime < 1000) {
+            setTimeout(() => navigate(Boolean(res.payload?.user)), 1000 - (cuurentTime - oldTime));
+        } else {
+            navigate(Boolean(res.payload.user));
+        }
+        
+    }
 
     useEffect(() => {
-        const interval = setTimeout(() => {
-            navigation.replace('tab-navigation');
-        }, 1500);
-
-        return () => clearInterval(interval);
+        handleNavigation();
     }, [])
 
     return (

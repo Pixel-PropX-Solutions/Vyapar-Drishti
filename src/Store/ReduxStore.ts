@@ -1,10 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
-import companyReduser from "./Reducers/companyReduser";
+import companyReduser from "./Redusers/companyReduser";
 import { useDispatch, useSelector } from "react-redux";
+import customerReduser from "./Redusers/customerReduser";
+import userReducer from "./Redusers/userReduser";
 
 const ReduxStore = configureStore({
     reducer: {
-        company: companyReduser
+        companyStore: companyReduser,
+        customerStore: customerReduser,
+        userStore: userReducer,
     }
 })
 
@@ -18,6 +22,15 @@ export function useAppDispatch() {
     return useDispatch<AppDispatch>()
 };
 
+
 export function useCompanyStore(){
-    return useSelector((state: RootState) => state.company);
+    return useSelector((state: RootState) => state.companyStore);
+}
+
+export function useCustomerStore(){
+    return useSelector((state: RootState) => state.customerStore);
+}
+
+export function useUserStore(){
+    return useSelector((state: RootState) => state.userStore);
 }

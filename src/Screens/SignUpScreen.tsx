@@ -11,16 +11,39 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamsList } from "../Navigation/StackNavigation";
 import { useState } from "react";
 import { isValidEmail, isValidMobileNumber } from "../Functions/StringOpations/pattenMaching";
+import { useAppDispatch, useUserStore } from "../Store/ReduxStore";
+import LoadingModal from "../Components/Modal/LoadingModal";
+import { register } from "../Services/user";
 
 export default function SignUpScreen(): React.JSX.Element {
 
     const navigation = useNavigation<StackNavigationProp<StackParamsList, 'signup-screen'>>();
+    const dispatch = useAppDispatch();
+    const {loading, isAuthenticated} = useUserStore();
+
 
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
+    const [code, setCode] = useState<string>('91'); 
     const [phoneNumber, setPhoneNumber] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
+
+    async function handleSignUp() {
+        if(!(firstName && lastName && email && code && phoneNumber)) {
+            console.log('Please fill all fields');
+            return;
+        }
+
+        let data = {name: {first: firstName, last: lastName}, email, phone: {code, number: phoneNumber}};
+        
+        await dispatch(register(data));
+        
+        if(isAuthenticated){
+            navigation.replace('tab-navigation');
+        } else {
+            console.log('Registration failed, please try again');
+        }
+    }
 
     return (
         <ScrollView style={{width: '100%', height: '100%', paddingInline: 20}} contentContainerStyle={{alignItems: 'center'}} >
@@ -61,26 +84,44 @@ export default function SignUpScreen(): React.JSX.Element {
                     onChangeText={setEmail}
                 />
 
-                <LabelTextInput 
-                    label="Phone Number" 
-                    placeholder="XXXXX-XXXXX" 
-                    keyboardType="phone-pad" 
-                    checkInputText={isValidMobileNumber}
-                    massage="Phone number only content digits"
-                    onChangeText={setPhoneNumber}
-                />
+                <View style={{flexDirection: 'row', gap: 12}} >
+                    <LabelTextInput
+                        value={code} 
+                        label="Code" 
+                        placeholder="e.g. +91, +1" 
+                        keyboardType="phone-pad" 
+                        onChangeText={setCode}
+                        containerStyle={{width: 100}}
+                    />
 
-                <View>
+                    <LabelTextInput 
+                        label="Phone Number" 
+                        placeholder="e.g. 12344567890" 
+                        keyboardType="phone-pad" 
+                        checkInputText={isValidMobileNumber}
+                        massage="Phone number only content digits"
+                        onChangeText={setPhoneNumber}
+                        containerStyle={{flex: 1}}
+                    />
+
+                </View>
+                {/* <View>
                     <PasswordInput  
                         checkInputText={(pass) => pass.length >= 8}
                         massage="Password lenght is too short"
                         onChangeText={setPassword}
-                    />
+                        />
                     <TextTheme style={{paddingLeft: 4, paddingTop: 8}}>Forgot Password</TextTheme>
-                </View>
+                </View> */}
                 
                 <View style={{display: 'flex'}} >
-                    <NormalButton text="Login" textStyle={{fontWeight: 900, fontSize: 16,}} /> 
+                    <NormalButton 
+                        text="Sign Up" 
+                        textStyle={{fontWeight: 900, fontSize: 16,}} 
+                        onPress={handleSignUp}
+                        isLoading={loading} 
+                        onLoadingText="Wait..."
+                    /> 
                     
                     <Pressable onPress={() => {navigation.replace('login-screen'); console.log(navigation)}} >
                         <TextTheme style={{paddingLeft: 4, paddingTop: 12, textAlign: 'center'}}>

@@ -18,6 +18,7 @@ import { useAppDispatch, useCompanyStore } from "../../Store/ReduxStore";
 import navigator from "../../Navigation/NavigationService";
 import LoadingView from "../View/LoadingView";
 import ShowWhen from "../Other/ShowWhen";
+import { setIsCompanyFetching } from "../../Store/Redusers/companyReduser";
 
 export default function HomeScreenHeader(): React.JSX.Element {
 
@@ -25,7 +26,7 @@ export default function HomeScreenHeader(): React.JSX.Element {
     const [isCompanyCreateModalVisible, setCompanyCreateMdoalVisible] = useState<boolean>(false);
 
 
-    const { company, companies, isCompanyFetching, error } = useCompanyStore();
+    const { company, companies, isCompanyFetching } = useCompanyStore();
     const dispatch = useAppDispatch()
 
     useEffect(() => {
@@ -107,6 +108,9 @@ export default function HomeScreenHeader(): React.JSX.Element {
                                 backgroundColor={_id == company?._id ? 'rgb(50,150,250)' : ''}
                                 color={_id == company?._id ? 'white' : ''}
                                 onPress={() => { 
+                                    if(_id == company?._id) return setCompanySwitchModalVisible(false);
+                                    
+                                    dispatch(setIsCompanyFetching(true));
                                     dispatch(setCompany(_id)).then(_ => dispatch(getCompany()));
                                     setCompanySwitchModalVisible(false);
                                 }}
@@ -137,6 +141,7 @@ function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalType) {
     const { primaryColor } = useTheme();
     const { setAlert } = useAlert();
     const dispatch = useAppDispatch();
+    const {companies} = useCompanyStore()
 
     const [name, setName] = useState<string>('');
     const [mail, setMail] = useState<string>('');
@@ -156,7 +161,8 @@ function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalType) {
     return (
         <BottomModal
             alertId='company-create-modal'
-            visible={visible} setVisible={setVisible}
+            visible={companies.length == 0 ? true : visible} setVisible={setVisible}
+            closeOnBack={companies.length !== 0}
             style={{ paddingInline: 20 }}
             actionButtons={[{ title: 'Create', onPress }]}
         >

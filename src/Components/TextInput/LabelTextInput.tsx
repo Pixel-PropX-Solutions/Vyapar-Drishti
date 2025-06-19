@@ -12,10 +12,11 @@ type Props = TextInputProps & {
     massageTextColor?: string,
     checkInputText?: (text: string) => boolean,
     value?: string,
-    containerStyle?: ViewStyle
+    containerStyle?: ViewStyle,
+    useTrim?: boolean
 }
 
-export default function LabelTextInput({label, containerStyle, onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkInputText, massage, value='', ...props}: Props): React.JSX.Element {
+export default function LabelTextInput({label, containerStyle, onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkInputText, massage, value='', useTrim=true, ...props}: Props): React.JSX.Element {
 
     const {primaryColor: color, primaryBackgroundColor: backgroundColor} = useTheme();
 
@@ -25,7 +26,7 @@ export default function LabelTextInput({label, containerStyle, onChangeText, foc
 
     function handleOnChangeText(text: string): void {
         setInputText(text);
-
+        if(useTrim) text = text.trim();
         if(onChangeText) onChangeText(text);
         if(checkInputText) setInputTextValid(checkInputText(text));
         if(!text) setInputTextValid(true);

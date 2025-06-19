@@ -6,7 +6,7 @@ import AnimateButton from "../Button/AnimateButton";
 import numberToString from "../../Functions/Numbers/numberToString";
 
 
-export type CustomerCardProps = {
+type CustomerCardProps = {
     id: string,
     name: string,
     phoneNo: string,

@@ -9,19 +9,20 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamsList } from "../Navigation/StackNavigation";
 import { useState } from "react";
-import { loginUser } from "../Services/auth";
+import { loginUser } from "../Services/user";
 import { useAlert } from "../Components/Alert/AlertProvider";
+import { useAppDispatch, useUserStore } from "../Store/ReduxStore";
 
 export default function SignUpScreen(): React.JSX.Element {
 
     const {setAlert} = useAlert();
     
     const navigation = useNavigation<StackNavigationProp<StackParamsList, 'login-screen'>>();
+    const {loading, isAuthenticated} = useUserStore();
+    const dispatch = useAppDispatch();
 
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-
-    const [isLoading, setLoading] = useState<boolean>(false);
 
     async function handleLogin(){
 
@@ -31,14 +32,12 @@ export default function SignUpScreen(): React.JSX.Element {
         formData.append('username', username);
         formData.append('password', password);
 
-        setLoading(true);
-        let {accessToken} = await loginUser(formData);
-        setLoading(false);
+        await dispatch(loginUser(formData));
 
-        if(accessToken) {
-            navigation.navigate('tab-navigation');
+        if(isAuthenticated) {
+            return navigation.navigate('tab-navigation');
         } else {
-            setAlert({type: 'error', massage: 'invalid information'})
+            return setAlert({type: 'error', massage: 'invalid information'})
         }
     }
 
@@ -80,7 +79,7 @@ export default function SignUpScreen(): React.JSX.Element {
 
                 <View style={{ display: 'flex' }} >
                     <NormalButton 
-                        isLoading={isLoading}
+                        isLoading={loading}
                         onLoadingText="Wait..."
                         text="Login" 
                         textStyle={{ fontWeight: 900, fontSize: 16 }} 

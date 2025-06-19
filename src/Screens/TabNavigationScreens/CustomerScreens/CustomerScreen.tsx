@@ -1,60 +1,31 @@
 import { ScrollView } from "react-native-gesture-handler";
-import CustomerCard, { CustomerCardProps } from "../../../Components/Card/CustomerCard";
 import { View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { StackParamsList } from "../../../Navigation/StackNavigation";
 import { useEffect, useState } from "react";
 import RoundedPlusButton from "../../../Components/Button/RoundedPlusButton";
 import CreateCustomerModal from "../../../Components/Modal/Customer/CreateCustomerModal";
-import BottomModal from "../../../Components/Modal/BottomModal";
 import TabNavigationScreenHeader from "../../../Components/Header/TabNavigationHeader";
 import TextTheme from "../../../Components/Text/TextTheme";
+import { useAppDispatch, useCompanyStore, useCustomerStore } from "../../../Store/ReduxStore";
+import { viewAllCustomer, viewAllCustomers } from "../../../Services/customer";
 
-const dummyCustomerData: CustomerCardProps[] = [
-    // {
-    //     name: "Aarav Sharma",
-    //     phoneNo: "+91 98765 43210",
-    //     createOn: "2024-05-15",
-    //     id: "1",
-    //     totalAmount: 0,
-    //     payAmount: 0,
-    //     pandingAmount: 0
-    // },
-    // {
-    //     name: "Priya Singh",
-    //     phoneNo: "+91 87654 32109",
-    //     createOn: "2023-11-20",
-    //     id: "2",
-    //     totalAmount: 0,
-    //     payAmount: 0,
-    //     pandingAmount: 0
-    // },
-    // {
-    //     name: "Rahul Mehta",
-    //     phoneNo: "+91 76543 21098",
-    //     createOn: "2025-01-08",
-    //     id: "3",
-    //     totalAmount: 0,
-    //     payAmount: 0,
-    //     pandingAmount: 0
-    // },
-    // {
-    //     name: "Sneha Devi",
-    //     phoneNo: "+91 65432 10987",
-    //     createOn: "2024-03-22",
-    //     id: "4",
-    //     totalAmount: 0,
-    //     payAmount: 0,
-    //     pandingAmount: 0
-    // }
-];
 
 export default function CustomerScreen(): React.JSX.Element {
 
-    const navigation = useNavigation<StackNavigationProp<StackParamsList, 'tab-navigation'>>();
+    const dispatch = useAppDispatch();
+    const {customers} = useCustomerStore();
+    const {company} = useCompanyStore();
 
     const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
+
+    useEffect(() => {
+        dispatch(viewAllCustomers(company?._id ?? '')).then(_ => {
+            console.log('All customers fetched:', customers);
+        });
+
+        dispatch(viewAllCustomer({company_id: company?._id ?? ''})).then(_ => {
+            console.log('All customers fetched:', customers);
+        });
+    }, [company?._id]);
 
     return (
         <View style={{width: '100%', height: '100%'}} >
@@ -65,13 +36,12 @@ export default function CustomerScreen(): React.JSX.Element {
             <ScrollView style={{paddingInline: 20, marginTop: 12, width: '100%', height: '100%'}}>
                 <View style={{gap: 20}} >
                     {
-                        dummyCustomerData.map(customer => (
-                            <CustomerCard   
-                            {...customer} 
-                            key={customer.id} 
-                            onPress={() => navigation.navigate('customer-info-screen')}
-                            />
-                        ))
+                        // [].map(customer => (
+                        //     <CustomerCard   
+                            
+                        //     onPress={() => navigation.navigate('customer-info-screen')}
+                        //     />
+                        // ))
                     }
                 </View>
 
@@ -82,7 +52,7 @@ export default function CustomerScreen(): React.JSX.Element {
                 <RoundedPlusButton size={60} iconSize={24} onPress={() => setCreateCustomerModalOpen(true)} />
             </View>
 
-            <CreateCustomerModal handleCreate={() => {}} visible={isCreateCustomerModalOpen} setVisible={setCreateCustomerModalOpen} />
+            <CreateCustomerModal visible={isCreateCustomerModalOpen} setVisible={setCreateCustomerModalOpen} />
         </View>
     )
 }

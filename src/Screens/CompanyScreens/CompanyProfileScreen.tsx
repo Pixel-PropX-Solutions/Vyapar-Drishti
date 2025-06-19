@@ -55,7 +55,7 @@ export default function CompanyProfileScreen(): React.JSX.Element {
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
                             <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                                {sliceString(company?.website, 24) ?? 'Not Set'}
+                                {sliceString(company?.website, 35) ?? 'Not Set'}
                             </TextTheme>
                         </View>
                     </SectionRow>
@@ -72,7 +72,7 @@ export default function CompanyProfileScreen(): React.JSX.Element {
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
                             <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                                {sliceString(company?.email, 25) ?? 'Not Set'}
+                                {sliceString(company?.email, 35) ?? 'Not Set'}
                             </TextTheme>
                             <FeatherIcon isPrimary={false} name="mail" size={16} />
                         </View>
@@ -94,7 +94,7 @@ export default function CompanyProfileScreen(): React.JSX.Element {
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
                             <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                                {sliceString(company?.mailing_name, 24) ?? 'Not Set'}
+                                {sliceString(company?.mailing_name, 34) ?? 'Not Set'}
                             </TextTheme>
                         </View>
                     </SectionRow>
@@ -127,7 +127,9 @@ export default function CompanyProfileScreen(): React.JSX.Element {
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Street, City</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{sliceString(company?.address_1, 25) ?? 'Not Set'}</TextTheme>
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                                {sliceString(company?.address_1, 35) ?? 'Not Set'}
+                            </TextTheme>
                             <FeatherIcon isPrimary={false} name="home" size={16} />
                         </View>
                     </SectionRow>
@@ -136,7 +138,9 @@ export default function CompanyProfileScreen(): React.JSX.Element {
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Pin Code</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.pinCode ?? 'Not Set'}</TextTheme>
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                                {company?.pinCode ?? 'Not Set'}
+                            </TextTheme>
                             <FeatherIcon isPrimary={false} name="map-pin" size={16} />
                         </View>
                     </SectionRow>

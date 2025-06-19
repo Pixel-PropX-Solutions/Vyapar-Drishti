@@ -44,7 +44,7 @@ export default function NormalButton({text, isPrimary=true, onPress, color, back
 
     return (
         <AnimateButton 
-            onPress={onPress}
+            onPress={isLoading ? ()=>{} : onPress}
             bubbleColor={isPrimary ? color : backgroundColor}
             style={{
                 display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', 

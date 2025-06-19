@@ -5,25 +5,31 @@ import TextTheme from "../../Text/TextTheme";
 import FeatherIcon from "../../Icon/FeatherIcon";
 import NoralTextInput from "../../TextInput/NoralTextInput";
 import { useTheme } from "../../../Contexts/ThemeProvider";
-import { SectionArrowRow, SectionRow } from "../../View/SectionView";
+import { SectionRow } from "../../View/SectionView";
 import AnimateButton from "../../Button/AnimateButton";
 import ShowWhen from "../../Other/ShowWhen";
 import { useAlert } from "../../Alert/AlertProvider";
+import LoadingModal from "../LoadingModal";
+import { useAppDispatch, useCompanyStore, useCustomerStore } from "../../../Store/ReduxStore";
+import { createCustomer, viewAllCustomers } from "../../../Services/customer";
 
 type Data = {name: string, phoneNo: string, groupName: string}
 
 type Props = {
     visible: boolean,
-    setVisible: Dispatch<SetStateAction<boolean>>,
-    handleCreate: (data: Data) => void
+    setVisible: Dispatch<SetStateAction<boolean>>
 }
 
 const GroupNames: string[] = ["Assets", "Liabilities", "Equity", "Revenue", "Income", "Expenses"]
 
-export default function CreateCustomerModal({visible, setVisible, handleCreate}: Props): React.JSX.Element {
+export default function CreateCustomerModal({visible, setVisible}: Props): React.JSX.Element {
 
     const {primaryColor, primaryBackgroundColor, secondaryBackgroundColor} = useTheme();
     const {setAlert} = useAlert();
+
+    const {company} = useCompanyStore();
+    const {loading} = useCustomerStore();
+    const dispatch = useAppDispatch();
 
     const [isGroupModalVisible, setGroupModalVisible] = useState<boolean>(false);
 
@@ -31,13 +37,20 @@ export default function CreateCustomerModal({visible, setVisible, handleCreate}:
     const [phoneNo, setPhoneNo] = useState<string>('');
     const [groupName, setGroupName] = useState<string>('');
     
-    function handleOnPressCreate() {
+    async function handleOnPressCreate() {
         if(!(name && phoneNo && groupName)) return setAlert({
             type: 'error', massage: 'to add new customer all field are required.', id: 'create-customer-modal'
         });
 
+        const formData = new FormData;
+        [
+            ['name', name], ['parent', groupName], ['number', phoneNo], ['company_id', company?._id ?? '']
+        ].forEach(([key, value]) => formData.append(key, value));
+        
+        await dispatch(createCustomer(formData));
+        await dispatch(viewAllCustomers(company?._id ?? ''));
+        
         setVisible(false);
-        handleCreate({name, phoneNo, groupName});
     }
 
 
@@ -112,6 +125,7 @@ export default function CreateCustomerModal({visible, setVisible, handleCreate}:
                 </View>              
             </BottomModal>
 
+            <LoadingModal visible={loading} />
             <View style={{minHeight: 40}} />
         </BottomModal>
     )

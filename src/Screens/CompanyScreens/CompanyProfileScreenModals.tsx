@@ -8,6 +8,8 @@ import { getCompany, updateCompany } from "../../Services/company";
 import { useAlert } from "../../Components/Alert/AlertProvider";
 import arrayToFormData from "../../Utils/arrayToFormData";
 import { isValidEmail } from "../../Functions/StringOpations/pattenMaching";
+import LoadingModal from "../../Components/Modal/LoadingModal";
+import ShowWhen from "../../Components/Other/ShowWhen";
 
 type Props = {
     visible: boolean;
@@ -18,7 +20,7 @@ type Props = {
 export function CompanyInfoUpdateModal({visible, setVisible}: Props): React.JSX.Element {
 
     const {setAlert} = useAlert();
-    const {company} = useCompanyStore();
+    const {company, loading} = useCompanyStore();
     const dispatch = useAppDispatch();
 
     const [name, setName] = useState<string>(company?.name ?? '');
@@ -74,6 +76,9 @@ export function CompanyInfoUpdateModal({visible, setVisible}: Props): React.JSX.
             </View>
 
             <View style={{minHeight: 40}} />
+            <ShowWhen when={visible} >
+                <LoadingModal visible={loading} text="Updating Wait..." />
+            </ShowWhen>
         </BottomModal>
     )
 }
@@ -82,7 +87,7 @@ export function CompanyInfoUpdateModal({visible, setVisible}: Props): React.JSX.
 
 export function CompanyContactUpdateModal({visible, setVisible}: Props): React.JSX.Element {
 
-    const {company} = useCompanyStore();
+    const {company, loading} = useCompanyStore();
     const dispatch = useAppDispatch();
 
     const [email, setEmail] = useState<string>(company?.email ?? '');
@@ -155,6 +160,9 @@ export function CompanyContactUpdateModal({visible, setVisible}: Props): React.J
             </View>
 
             <View style={{minHeight: 40}} />
+            <ShowWhen when={visible} >
+                <LoadingModal visible={loading} text="Updating Wait..." />
+            </ShowWhen>
         </BottomModal>
     )
 }
@@ -163,7 +171,7 @@ export function CompanyContactUpdateModal({visible, setVisible}: Props): React.J
 
 export function CompanyAddressUpdateModal({visible, setVisible}: Props): React.JSX.Element {
 
-    const {company} = useCompanyStore();
+    const {company, loading} = useCompanyStore();
     const dispatch = useAppDispatch();
 
     const [country, setCountry] = useState<string>(company?.country ?? '');
@@ -226,6 +234,9 @@ export function CompanyAddressUpdateModal({visible, setVisible}: Props): React.J
             </View>
 
             <View style={{minHeight: 40}} />
+            <ShowWhen when={visible} >
+                <LoadingModal visible={loading} text="Updating Wait..." />
+            </ShowWhen>
         </BottomModal>
     )
 }

@@ -1,5 +1,4 @@
 import { View } from "react-native";
-import SafePaddingView from "../Components/SafeAreaView/SafePaddingView";
 import NormalButton from "../Components/Button/NormalButton";
 import TextTheme from "../Components/Text/TextTheme";
 import { useNavigation } from "@react-navigation/native";
@@ -25,7 +24,7 @@ export default function LandingScreen(): React.JSX.Element {
                         Welcome to Vyapar Drishty
                     </TextTheme>
                     
-                    <TextTheme style={{fontWeight: 900}} iSPrimary={false} >
+                    <TextTheme style={{fontWeight: 900}} isPrimary={false} >
                         Simplify Your GST Billing and Complete GST invoice management with automatic tax calculations.
                     </TextTheme>
                 </View>

@@ -5,8 +5,8 @@ import { createCompany, getAllCompanies, getCompany, setCompany } from "../../Se
 interface CompanyState {
     company: GetCompany | null;
     companies: Array<GetCompany> | [];
-    loading: boolean;
     error: string | null;
+    loading: boolean;
     isCompaniesFetching: boolean;
     isCompanyFetching: boolean;
 }
@@ -14,16 +14,24 @@ interface CompanyState {
 const initialState: CompanyState = {
     company: null,
     companies: [],
-    loading: false,
     error: null,
+    loading: false,
     isCompaniesFetching: false,
     isCompanyFetching: false,
 };
 
+
 const companySlice: Slice<CompanyState> = createSlice({
     name: "company",
     initialState,
-    reducers: {},
+    reducers: {
+        setIsCompanyFetching: (state, action: PayloadAction<boolean>) => {
+            state.isCompanyFetching = action.payload;
+        },
+        setIsCompaniesFetching: (state, action: PayloadAction<boolean>) => {
+            state.isCompaniesFetching = action.payload;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(createCompany.pending, (state) => {
@@ -40,28 +48,33 @@ const companySlice: Slice<CompanyState> = createSlice({
 
             .addCase(getCompany.pending, (state) => {
                 state.error = null;
+                state.loading = true;
                 state.isCompanyFetching = true;
             })
             .addCase(getCompany.fulfilled, (state, action: PayloadAction<any>) => {
                 state.company = action.payload.company;
+                state.loading = false;
                 state.isCompanyFetching = false;
             })
             .addCase(getCompany.rejected, (state, action) => {
                 state.error = action.payload as string;
+                state.loading = false;
                 state.isCompanyFetching = false;
             })
            
             .addCase(getAllCompanies.pending, (state) => {
                 state.error = null;
+                state.loading = true;
                 state.isCompaniesFetching = true;
             })
             .addCase(getAllCompanies.fulfilled, (state, action: PayloadAction<any>) => {
-                // Ensure companies is an array of GetCompany objects
                 state.companies = action.payload.companies;
+                state.loading = false;
                 state.isCompaniesFetching = false;
             })
             .addCase(getAllCompanies.rejected, (state, action) => {
                 state.error = action.payload as string;
+                state.loading = false;
                 state.isCompaniesFetching = false;
             })
 
@@ -80,5 +93,7 @@ const companySlice: Slice<CompanyState> = createSlice({
     },
 });
 
-// export const {  } = companySlice.actions;
-export default companySlice.reducer;
+const companyReducer = companySlice.reducer;
+export default companyReducer;
+
+export const { setIsCompanyFetching, setIsCompaniesFetching } = companySlice.actions;
