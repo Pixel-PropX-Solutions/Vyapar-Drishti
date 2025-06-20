@@ -4,17 +4,19 @@ import FeatherIcon from "../Icon/FeatherIcon";
 import { useTheme } from "../../Contexts/ThemeProvider";
 import AnimateButton from "../Button/AnimateButton";
 import numberToString from "../../Functions/Numbers/numberToString";
+import ShowWhen from "../Other/ShowWhen";
 
 
 type CustomerCardProps = {
     id: string,
     name: string,
-    phoneNo: string,
+    groupName: string,
     createOn: string,
+    phoneNo?: string,
     onPress?: () => void,
 }
 
-export default function CustomerCard({name, phoneNo, createOn, onPress=()=>{}, id}: CustomerCardProps): React.JSX.Element {
+export default function CustomerCard({name, groupName, createOn, phoneNo='', onPress=()=>{}, id}: CustomerCardProps): React.JSX.Element {
 
     const {secondaryBackgroundColor: backgroundColor} = useTheme();
 
@@ -31,15 +33,17 @@ export default function CustomerCard({name, phoneNo, createOn, onPress=()=>{}, i
                     
                     <View>
                         <TextTheme style={{fontSize: 18, fontWeight: 900}} >{name}</TextTheme>
-                        <TextTheme style={{fontSize: 12}} >{'Group Name'}</TextTheme>
+                        <TextTheme style={{fontSize: 12}} >{groupName}</TextTheme>
                     </View>
                 </View>
                 
                 <View style={{alignItems: 'flex-end'}} >
-                    <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}} >
-                        <TextTheme isPrimary={false} style={{fontSize: 12}} >{phoneNo}</TextTheme>
-                        <FeatherIcon isPrimary={false} name="phone" size={12} />
-                    </View>
+                    <ShowWhen when={phoneNo !== ''} >
+                        <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}} >
+                            <TextTheme isPrimary={false} style={{fontSize: 12}} >{phoneNo}</TextTheme>
+                            <FeatherIcon isPrimary={false} name="phone" size={12} />
+                        </View>
+                    </ShowWhen>
 
                     <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}} >
                         <TextTheme isPrimary={false} style={{fontSize: 12}} >{createOn}</TextTheme>

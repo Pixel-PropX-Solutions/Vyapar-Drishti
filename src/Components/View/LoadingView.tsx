@@ -9,10 +9,11 @@ type Props = ViewProps & {
     color?: string,
     isPrimary?: boolean,
     borderRadius?: number,
-    style?: ViewStyle
+    style?: ViewStyle,
+    scale?: number
 }
 
-export default function LoadingView({width, duration=1000, height, borderRadius=4, color, isPrimary=false, style, ...props}: Props): React.JSX.Element {
+export default function LoadingView({width, duration=1000, height, borderRadius=4, color, isPrimary=false, style, scale=0.98, ...props}: Props): React.JSX.Element {
 
     const {primaryBackgroundColor, secondaryBackgroundColor} = useTheme();
 
@@ -44,7 +45,7 @@ export default function LoadingView({width, duration=1000, height, borderRadius=
                     inputRange: [0, 1], outputRange: [0.4, 1]
                 }),
                 transform: [{scale: animate0to1.interpolate({
-                    inputRange: [0, 1], outputRange: [0.98, 1]
+                    inputRange: [0, 1], outputRange: [scale, 1]
                 })}],
                 width, height, backgroundColor: color, borderRadius
             }, style]} 

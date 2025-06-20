@@ -37,6 +37,14 @@ const navigator = {
 
   currentRouteName: function() {
     return navigation.isReady() ? navigation.getCurrentRoute()?.name : null;
+  },
+
+  getParams: function<RouteName extends keyof StackParamsList>(name: RouteName): StackParamsList[RouteName] | undefined {
+    if (navigation.isReady()) {
+      const route = navigation.getState().routes.find(route => route.name === name);
+      return route ? (route.params as StackParamsList[RouteName]) : undefined;
+    }
+    return undefined;
   }
 } 
 

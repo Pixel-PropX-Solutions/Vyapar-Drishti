@@ -20,7 +20,7 @@ type Props = {
     setVisible: Dispatch<SetStateAction<boolean>>
 }
 
-const GroupNames: string[] = ["Assets", "Liabilities", "Equity", "Revenue", "Income", "Expenses"]
+const GroupNames: string[] = ["Assets", "Liabilities", "Income", "Expenses", 'Sundry debtors', 'Sundry creditor']
 
 export default function CreateCustomerModal({visible, setVisible}: Props): React.JSX.Element {
 
@@ -38,8 +38,10 @@ export default function CreateCustomerModal({visible, setVisible}: Props): React
     const [groupName, setGroupName] = useState<string>('');
     
     async function handleOnPressCreate() {
-        if(!(name && phoneNo && groupName)) return setAlert({
-            type: 'error', massage: 'to add new customer all field are required.', id: 'create-customer-modal'
+        if(!(name && groupName)) return setAlert({
+            type: 'error', 
+            id: 'create-customer-modal',
+            massage: 'to add new customer name and customer type must be required.'
         });
 
         const formData = new FormData;
@@ -64,26 +66,9 @@ export default function CreateCustomerModal({visible, setVisible}: Props): React
             ]}
             style={{paddingInline: 20}}
         >
-            <TextTheme style={{fontWeight: 900, fontSize: 16, marginBottom: 12}} >Customer Details</TextTheme>
+            <TextTheme style={{fontWeight: 900, fontSize: 16, marginBottom: 32}} >Customer Details</TextTheme>
     
-            <View style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12}} >
-                <FeatherIcon name="user" size={28} />
-                <NoralTextInput
-                    placeholder="Name"
-                    style={{fontSize: 24, fontWeight: 900, flex: 1}}
-                    onChangeText={setName}
-                />
-            </View>
-
-            <View style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, marginBottom: 24}} >
-                <FeatherIcon name="phone" size={28} />
-                <NoralTextInput
-                    placeholder="Phone No"
-                    style={{fontSize: 24, fontWeight: 900, flex: 1}}
-                    onChangeText={setPhoneNo}
-                    keyboardType="phone-pad"
-                />
-            </View>
+            
             
             <SectionRow 
                 label={`${groupName == '' ? 'Select ' : ''}Customer Type`} 
@@ -94,6 +79,33 @@ export default function CreateCustomerModal({visible, setVisible}: Props): React
                     <FeatherIcon name="arrow-right" size={20} />
                 </ShowWhen>
             </SectionRow>
+
+            
+
+            <View style={{marginBlock: 10, marginTop: 20, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12}} >
+                <FeatherIcon name="user" size={28} />
+                <NoralTextInput
+                    placeholder="Name"
+                    style={{fontSize: 24, fontWeight: 900, flex: 1}}
+                    onChangeText={setName}
+                />
+            </View>
+
+            <ShowWhen when={['Sundry debtors', 'Sundry creditor'].includes(groupName)} >
+                <View style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, marginBottom: 24}} >
+                    <FeatherIcon name="phone" size={28} />
+                    <NoralTextInput
+                        placeholder="Phone No"
+                        style={{fontSize: 24, fontWeight: 900, flex: 1}}
+                        onChangeText={setPhoneNo}
+                        keyboardType="phone-pad"
+                    />
+                </View>
+            </ShowWhen>
+
+            <View style={{minHeight: 40}} />
+
+            <LoadingModal visible={loading} />
 
             <BottomModal 
                 visible={isGroupModalVisible} 
@@ -120,13 +132,9 @@ export default function CreateCustomerModal({visible, setVisible}: Props): React
                                 <FeatherIcon name="arrow-right" size={14} />
                             </AnimateButton>
                         ))
-                    }
-                
+                    }  
                 </View>              
             </BottomModal>
-
-            <LoadingModal visible={loading} />
-            <View style={{minHeight: 40}} />
         </BottomModal>
     )
 }

@@ -4,6 +4,7 @@ import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit";
 
 interface CustomerState {
     customers: Array<GetUserLedgers>;
+    isAllCustomerFetching: boolean;
     customer: GetUserLedgers | null;
     customersList: Array<CustomersList>|[];
     loading: boolean,
@@ -13,6 +14,7 @@ interface CustomerState {
 
 const initialState: CustomerState = {
     customers: [],
+    isAllCustomerFetching: false,
     customersList: [],
     customer: null,
     pageMeta: {
@@ -50,16 +52,16 @@ const customerSlice: Slice<CustomerState> = createSlice({
 
             .addCase(viewAllCustomer.pending, (state) => {
                 state.error = null;
-                state.loading = true;
+                state.isAllCustomerFetching = true;
             })
             .addCase(viewAllCustomer.fulfilled, (state, action: PayloadAction<any>) => {
                 state.customers = action.payload.customers;
                 state.pageMeta = action.payload.pageMeta;
-                state.loading = false;
+                state.isAllCustomerFetching = false;
             })
             .addCase(viewAllCustomer.rejected, (state, action) => {
                 state.error = action.payload as string;
-                state.loading = false;
+                state.isAllCustomerFetching = false;
             })
             
             .addCase(viewAllCustomers.pending, (state) => {
