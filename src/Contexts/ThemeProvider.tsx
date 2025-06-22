@@ -1,5 +1,6 @@
 import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
-// import { AppStorage } from "../Database/Storage"
+import { useThemeStore } from "../Store/ThemeStore"
+
 
 
 
@@ -57,7 +58,8 @@ const themeColors: {
 
 export default function ThemeProvider ({children}: {children: React.ReactNode}): React.JSX.Element {
     
-    const appTheme: 'light' | 'dark' =  'light'
+    const {getTheme, setTheme: setThemeInStore} = useThemeStore();
+    const appTheme: 'light' | 'dark' = getTheme(); 
 
     const [theme, setTheme] = useState<'light' | 'dark'>(appTheme);
     const [primaryColor, setPrimaryColor] = useState<string>(themeColors[appTheme]['primaryColor']);
@@ -66,7 +68,7 @@ export default function ThemeProvider ({children}: {children: React.ReactNode}):
     const [secondaryBackgroundColor, setSecondaryBackgroundColor] = useState<string>(themeColors[appTheme]['secondaryBackgroundColor']);
 
     useEffect(() => {
-        // AppStorage.set('theme', theme);
+        setThemeInStore(theme);
         setPrimaryColor(themeColors[theme]['primaryColor']);
         setSecondaryColor(themeColors[theme]['secondaryColor']);
         setPrimaryBackgroundColor(themeColors[theme]['primaryBackgroundColor']);

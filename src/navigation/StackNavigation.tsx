@@ -9,7 +9,6 @@ import SafePaddingView from "../Components/SafeAreaView/SafePaddingView";
 import { useTheme } from "../Contexts/ThemeProvider";
 import SettingScreen from "../Screens/SettingScreen";
 import NotificationScreen from "../Screens/NotificationScreen";
-import ProfileScreen from "../Screens/CompanyScreens/CompanyProfileScreen";
 import { Dimensions } from "react-native";
 import CustomerInfoScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen";
 import CraeteBillScreen from "../Screens/TabNavigationScreens/BillScreens/CreateBillScreen";

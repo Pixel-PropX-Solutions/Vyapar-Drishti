@@ -7,6 +7,7 @@ import FeatherIcon from "../Components/Icon/FeatherIcon";
 import SectionView, { SectionRowWithIcon } from "../Components/View/SectionView";
 import TextTheme from "../Components/Text/TextTheme";
 import navigator from "../Navigation/NavigationService";
+import AuthStore from "../Store/AuthStore";
 
 export default function SettingScreen(): React.JSX.Element {
 
@@ -112,6 +113,20 @@ export default function SettingScreen(): React.JSX.Element {
                         icon={<FeatherIcon name={"github"} size={20} />}
                         text={"https://github.com/Mustak24/Vyapar-Drishti"}
                         onPress={() => {}}
+                    />
+                    
+                    <SectionRowWithIcon
+                        hasArrow={true}
+                        label="Logout"
+                        icon={<FeatherIcon name={"log-out"} size={20} color="white" />}
+                        text={"to log out from your account"}
+                        backgroundColor="rgb(50,150,250)"
+                        iconContainerColor="rgb(120,200,250)"
+                        color="white"
+                        onPress={() => {
+                            AuthStore.clearAll();
+                            navigator.replace('landing-screen');
+                        }}
                     />
                 </SectionView>
 

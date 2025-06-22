@@ -1,4 +1,3 @@
-// src/Navigation/NavigationRef.ts
 import { createNavigationContainerRef } from '@react-navigation/native';
 import type { StackParamsList } from './StackNavigation';
 

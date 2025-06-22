@@ -105,15 +105,15 @@ type SectionRowWithIcon = {
     hasArrow?: boolean,
     backgroundColor?: string,
     color?: string,
-    children?: React.ReactNode
+    children?: React.ReactNode,
+    iconContainerColor?: string
 }
 
-export function SectionRowWithIcon({isPrimary=false, onPress, label, text, icon, hasArrow=false, backgroundColor='', color, children}: SectionRowWithIcon): React.JSX.Element {
+export function SectionRowWithIcon({isPrimary=false, onPress, label, text, icon, hasArrow=false, backgroundColor='', color, children, iconContainerColor=''}: SectionRowWithIcon): React.JSX.Element {
     const {secondaryBackgroundColor, primaryBackgroundColor} = useTheme();
    
-    if(backgroundColor === ''){
-        backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
-    }
+    if(backgroundColor === '') backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
+    if(iconContainerColor === '') iconContainerColor = isPrimary ? secondaryBackgroundColor : primaryBackgroundColor;
 
 
     return (
@@ -123,9 +123,9 @@ export function SectionRowWithIcon({isPrimary=false, onPress, label, text, icon,
             style={{padding: 12, borderRadius: 16, backgroundColor, width: '100%', alignItems: 'center', flexDirection: 'row', gap: 12, justifyContent: 'space-between'}}
         >
             <View style={{alignItems: 'center', flexDirection: 'row', gap: 12, flex: 1}}>
-                <BackgroundThemeView isPrimary={!isPrimary} style={{alignItems: 'center', justifyContent: 'center', width: 44, aspectRatio: 1, overflow: 'hidden', borderRadius: 12}} >
+                <View style={{alignItems: 'center', justifyContent: 'center', width: 44, aspectRatio: 1, overflow: 'hidden', borderRadius: 12, backgroundColor: iconContainerColor}} >
                     {icon}
-                </BackgroundThemeView>
+                </View>
 
                 <View style={{flex: 1}} >
                     <TextTheme color={color} style={{fontWeight: 900}} numberOfLines={1} >{label}</TextTheme>

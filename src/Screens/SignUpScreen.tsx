@@ -4,7 +4,6 @@ import TextTheme from "../Components/Text/TextTheme";
 import LabelTextInput from "../Components/TextInput/LabelTextInput";
 import LogoImage from "../Components/Image/LogoImage";
 import NormalButton from "../Components/Button/NormalButton";
-import PasswordInput from "../Components/TextInput/PasswordInput";
 import { ScrollView, Text } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -12,7 +11,6 @@ import { StackParamsList } from "../Navigation/StackNavigation";
 import { useState } from "react";
 import { isValidEmail, isValidMobileNumber } from "../Functions/StringOpations/pattenMaching";
 import { useAppDispatch, useUserStore } from "../Store/ReduxStore";
-import LoadingModal from "../Components/Modal/LoadingModal";
 import { register } from "../Services/user";
 
 export default function SignUpScreen(): React.JSX.Element {
@@ -46,7 +44,10 @@ export default function SignUpScreen(): React.JSX.Element {
     }
 
     return (
-        <ScrollView style={{width: '100%', height: '100%', paddingInline: 20}} contentContainerStyle={{alignItems: 'center'}} >
+        <ScrollView 
+            style={{width: '100%', height: '100%', paddingInline: 20}} contentContainerStyle={{alignItems: 'center'}} 
+            keyboardShouldPersistTaps='handled'    
+        >
             <View style={{display: 'flex', gap: 4, alignItems: 'center', marginBottom: 16, marginTop: 40}} >
                 <LogoImage size={100} borderRadius={50} />
                 <TextTheme style={{fontWeight: 900, fontSize: 24}} >Vyapar Drishti</TextTheme>

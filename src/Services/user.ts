@@ -31,7 +31,7 @@ export const loginUser = createAsyncThunk(
   async (
     formData: FormData, 
     {rejectWithValue}
-  ) => {
+  ): Promise<{accessToken: string} | any> => {
   try {
     const response = await userApi.post( `/auth/login?user_type=user`, formData, {
         headers: {
