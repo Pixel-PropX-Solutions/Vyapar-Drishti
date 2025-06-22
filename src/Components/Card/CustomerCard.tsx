@@ -46,7 +46,7 @@ export default function CustomerCard({name, groupName, createOn, phoneNo='', onP
                     </ShowWhen>
 
                     <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}} >
-                        <TextTheme isPrimary={false} style={{fontSize: 12}} >{createOn}</TextTheme>
+                        <TextTheme isPrimary={false} style={{fontSize: 12}} >{createOn.split('T')[0]}</TextTheme>
                         <FeatherIcon isPrimary={false} name="calendar" size={12} />
                     </View>
                 </View>

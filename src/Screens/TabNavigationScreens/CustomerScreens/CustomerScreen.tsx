@@ -44,7 +44,7 @@ export default function CustomerScreen(): React.JSX.Element {
                         id={item._id}
                         name={item.ledger_name}
                         groupName={item.parent}
-                        createOn={item.created_at.split('T')[0]}
+                        createOn={item.created_at}
                         // onPress={() => navigator.navigate('customer-info-screen', {id: item._id})}
                     />
                 )}     

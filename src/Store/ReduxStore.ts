@@ -3,12 +3,14 @@ import companyReduser from "./Redusers/companyReduser";
 import { useDispatch, useSelector } from "react-redux";
 import customerReduser from "./Redusers/customerReduser";
 import userReducer from "./Redusers/userReduser";
+import productReduser from "./Redusers/productReduser";
 
 const ReduxStore = configureStore({
     reducer: {
         companyStore: companyReduser,
         customerStore: customerReduser,
         userStore: userReducer,
+        productStore: productReduser
     }
 })
 
@@ -33,4 +35,8 @@ export function useCustomerStore(){
 
 export function useUserStore(){
     return useSelector((state: RootState) => state.userStore);
+}
+
+export function useProductStore(){
+    return useSelector((state: RootState) => state.productStore);
 }

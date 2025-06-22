@@ -1,22 +1,27 @@
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import TextTheme from "../Text/TextTheme";
 import AnimateButton from "../Button/AnimateButton";
 import FeatherIcon from "../Icon/FeatherIcon";
 import { useTheme } from "../../Contexts/ThemeProvider";
 import numberToString from "../../Functions/Numbers/numberToString";
+import AnimatePingBall from "../View/AnimatePingBall";
+import BackgroundThemeView from "../View/BackgroundThemeView";
+import ShowWhen from "../Other/ShowWhen";
+import sliceString from "../../Utils/sliceString";
 
 export type ProductCardProps = {
     id: string,
     productName: string,
     productsNo: string,
+    unit: string | 'Unit',
+    lowStockQuantity: number,
+    isPrimary?: boolean,
     inStock: number,
-    price: number,
-    sell: number,
-    unit?: string | 'Unit',
-    isPrimary?: boolean
+    profitValue: number,
+    sellQuantity: number
 }
 
-export default function ProductCard({id, productName, productsNo, inStock, price, sell, unit='Unit', isPrimary=true}: ProductCardProps): React.JSX.Element {
+export default function ProductCard({id, productName, productsNo, unit='Unit', isPrimary=true, lowStockQuantity, inStock, profitValue, sellQuantity}: ProductCardProps): React.JSX.Element {
 
     const {secondaryBackgroundColor, primaryBackgroundColor} = useTheme()
 
@@ -24,10 +29,11 @@ export default function ProductCard({id, productName, productsNo, inStock, price
         <AnimateButton 
             style={{padding: 16, borderRadius: 16, display: 'flex', alignItems: 'flex-start', gap: 16, backgroundColor: isPrimary ? primaryBackgroundColor : secondaryBackgroundColor}} 
         >
-            <View style={{justifyContent: 'space-between', alignItems: 'center', gap: 12, flexDirection: 'row', width: '100%'}} >
-                <TextTheme style={{paddingLeft: 2, fontWeight: 600}} >{productName}</TextTheme>
+            <View style={{width: "100%"}} >
+                <TextTheme style={{paddingLeft: 2, fontWeight: 600, fontSize: 16}} >{sliceString(productName, 30)}</TextTheme>
                 <TextTheme isPrimary={false} style={{paddingLeft: 2, fontWeight: 600, fontSize: 12}} >#{productsNo}</TextTheme>
             </View>
+
 
             <View style={{display: 'flex', flexDirection: 'row', gap: 20, justifyContent: 'space-between', width: '100%', alignItems: 'center'}} >
                 <View style={{flexDirection: 'row', gap: 32}}>
@@ -37,19 +43,32 @@ export default function ProductCard({id, productName, productsNo, inStock, price
                     </View>
 
                     <View>
-                        <TextTheme isPrimary={false} style={{fontSize: 12}} >Price</TextTheme>
-                        <TextTheme style={{fontSize: 12}} >{numberToString(price)} INR</TextTheme>
-                    </View>
-
-                    <View>
                         <TextTheme isPrimary={false} style={{fontSize: 12}} >
                             {'Sell '}
                             <FeatherIcon name="trending-up" size={12}/>
                         </TextTheme>
-                        <TextTheme style={{fontSize: 12}} >{sell} {unit}</TextTheme>
+                        <TextTheme style={{fontSize: 12}} >{sellQuantity} {unit}</TextTheme>
                     </View>
+
+                    <View>
+                        <TextTheme isPrimary={false} style={{fontSize: 12}} >Profit</TextTheme>
+                        <TextTheme style={{fontSize: 12}} >{numberToString(profitValue)} INR</TextTheme>
+                    </View>
+
                 </View>
             </View>
+            
+            <ShowWhen when={inStock <= lowStockQuantity} >
+                <View style={{paddingHorizontal: 12, position: 'absolute', top: 8, right: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 12, borderWidth: 2, borderColor: 'white', boxSizing: 'border-box', height: 32, backgroundColor: inStock === 0 ? 'rgb(250,50,50)' : 'rgb(250,150,50)'}} >
+                    <Text style={{fontSize: 12, color: 'white',}} >
+                        {inStock === 0 ? 'Out of Stock' : 'Low Stock'}
+                    </Text>
+
+                    <BackgroundThemeView style={{position: 'absolute', borderRadius: '50%', aspectRatio: 1, padding: 2, top: 5, right: 3, transform: 'translate(50%, -50%)'}} >
+                        <AnimatePingBall size={12} backgroundColor={inStock === 0 ? 'rgb(250,50,50)' : 'rgb(250,150,50)'} />
+                    </BackgroundThemeView>
+                </View>
+            </ShowWhen>
         </AnimateButton>
     )
 }

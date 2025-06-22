@@ -8,6 +8,9 @@ import { useTheme } from "../../../Contexts/ThemeProvider";
 import MaterialIcon from "../../Icon/MaterialIcon";
 import { useAlert } from "../../Alert/AlertProvider";
 import AnimateButton from "../../Button/AnimateButton";
+import { useAppDispatch, useCompanyStore, useProductStore } from "../../../Store/ReduxStore";
+import { createProduct, viewAllProducts } from "../../../Services/product";
+import LoadingModal from "../LoadingModal";
 
 type FromData = {
     name: string, productNo: string, price: string, unit: string
@@ -15,8 +18,7 @@ type FromData = {
 
 type Props = {
     visible: boolean,
-    setVisible: Dispatch<SetStateAction<boolean>>,
-    onCreate: (data: FromData) => void
+    setVisible: Dispatch<SetStateAction<boolean>>
 }
 
 const unitsOfMeasurement: string[] = [
@@ -32,10 +34,14 @@ const unitsOfMeasurement: string[] = [
   "ML"        // Milliliters
 ];
 
-export default function CreateProductModal({visible, setVisible, onCreate}: Props): React.JSX.Element {
+export default function CreateProductModal({visible, setVisible}: Props): React.JSX.Element {
 
     const {primaryColor, primaryBackgroundColor, secondaryBackgroundColor} = useTheme();
     const {setAlert} = useAlert();
+
+    const dispatch = useAppDispatch();
+    const {company} = useCompanyStore();
+    const {loading, pageMeta} = useProductStore();
 
     const [isUnitModalVisible, setUnitModalVisible] = useState<boolean>(false);
 
@@ -43,8 +49,9 @@ export default function CreateProductModal({visible, setVisible, onCreate}: Prop
     const [price, setPrice] = useState<string>('');
     const [unit, setUnit] = useState<string>('Unit');
     const [productNo, setProductNo] = useState<string>('');
+    const [lowStockAlert, setLowStockAlert] = useState<string>('');
 
-    function handleCreate() {
+    async function handleCreate() {
         if(!(name && price && productNo)) {
             return setAlert({
                 type: 'error', 
@@ -53,7 +60,23 @@ export default function CreateProductModal({visible, setVisible, onCreate}: Prop
             });
         }
 
-        onCreate({name, price, unit, productNo});
+
+        let productData = new FormData;
+        [
+            ['stock_item_name', name], ['company_id', company?._id ?? ''], ['unit', unit], ['opening_rate', price], ['gst_hsn_code', productNo], ['low_stock_alert', lowStockAlert || '0']
+        ].forEach((([Keyboard, value]) => productData.append(Keyboard, value)));
+
+        let {payload: res} = await dispatch(createProduct({productData}))
+        if(res && res?.status === 'success') {
+            await dispatch(viewAllProducts({company_id: company?._id ?? '', pageNumber: pageMeta.page}));
+            setVisible(false);
+        } else {
+            setAlert({
+                type: 'error', 
+                id: 'create-product-modal',
+                massage: res?.message || 'Failed to create product.'
+            });
+        }
     }
 
     return (
@@ -78,10 +101,10 @@ export default function CreateProductModal({visible, setVisible, onCreate}: Prop
             </View>
 
             <View style={{flexDirection: 'row', gap: 16, justifyContent: 'center'}} >
-                <View style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, flex: 1, maxWidth: 200}} >
-                    <MaterialIcon name="attach-money" size={28} />
+                <View style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, flex: 1, maxWidth: 320}} >
+                    <FeatherIcon name="box" size={28} />
                     <NoralTextInput
-                        placeholder="Price"
+                        placeholder="Low Stock Level"
                         style={{fontSize: 24, fontWeight: 900, flex: 1}}
                         onChangeText={setPrice}
                         keyboardType="number-pad"
@@ -90,7 +113,7 @@ export default function CreateProductModal({visible, setVisible, onCreate}: Prop
 
                 <AnimateButton 
                     onPress={() => setUnitModalVisible(true)}
-                    style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, width: 150, paddingInline: 8}} 
+                    style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, width: 100, paddingInline: 8}} 
                 >
                     <TextTheme style={{fontSize: 24, fontWeight: 900, flex: 1}}>{unit}</TextTheme>
                     <FeatherIcon name="arrow-right" size={24} />
@@ -105,16 +128,6 @@ export default function CreateProductModal({visible, setVisible, onCreate}: Prop
                     onChangeText={setProductNo}
                 />
             </View>
-           
-            <View style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12}} >
-                <FeatherIcon name="box" size={28} />
-                <NoralTextInput
-                    placeholder="Low Stock Level"
-                    style={{fontSize: 24, fontWeight: 900, flex: 1}}
-                    onChangeText={setProductNo}
-                    keyboardType="number-pad"
-                />
-            </View> 
 
             <View style={{minHeight: 40}} />
 
@@ -146,6 +159,8 @@ export default function CreateProductModal({visible, setVisible, onCreate}: Prop
                     }
                 </View>
             </BottomModal>
+
+            <LoadingModal visible={loading} />
         </BottomModal>
     )
 }

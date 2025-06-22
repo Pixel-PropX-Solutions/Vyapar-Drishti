@@ -26,10 +26,10 @@ export default function AnimatePingBall({size, backgroundColor, duration=500, sc
     }, []) 
 
     return (
-        <View style={{position: 'relative', width: size, aspectRatio: 1, borderRadius: size, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor}} >
+        <View style={{position: 'relative', width: size, aspectRatio: 1, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor}} >
             <Animated.View 
                 style={{
-                    width: size, backgroundColor, aspectRatio: 1, borderRadius: size,
+                    width: size, backgroundColor, aspectRatio: 1, borderRadius: '50%',
                     opacity: animate0to1.interpolate({
                         inputRange: [0,1], outputRange: [0.9, 0]
                     }),

@@ -20,13 +20,16 @@ export default function CraeteBillScreen(): React.JSX.Element {
 
     const {billType} = router.params;
 
-    const time = new Date()
+    const time = new Date();
+
+    const [isCustomerModalVisible, setCustomerModalVisible] = useState<boolean>(false);
 
     const [billtype, setBillType] = useState<'sell' | 'purchase'>('sell');
     const [billNo, setBillNo] = useState<string>('#INV-2025-000');
     const [creteOn, setCreateOn] = useState<{date: number, month: number, year: number}>({
         date: time.getDate(), month: time.getMonth(), year: time.getFullYear()
     })
+
 
     return (
         <View style={{justifyContent: 'space-between', width: '100%', height: '100%'}} >
@@ -51,7 +54,10 @@ export default function CraeteBillScreen(): React.JSX.Element {
                         createOn={creteOn} setCreateOn={setCreateOn}
                     />
 
-                    <AnimateButton style={{padding: 8, borderRadius: 12, width: '100%', backgroundColor: secondaryBackgroundColor, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}} >
+                    <AnimateButton 
+                        style={{padding: 8, borderRadius: 12, width: '100%', backgroundColor: secondaryBackgroundColor, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}} 
+                        onPress={() => setCustomerModalVisible(true)}
+                    >
                         <View style={{flexDirection: 'row', gap: 8, alignItems: 'center'}} >
                             <BackgroundThemeView style={{width: 44, aspectRatio: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 8}} >
                                 <FeatherIcon name="user" size={16} />
@@ -162,7 +168,7 @@ function AmountBox(): React.JSX.Element {
     const [paddingBottom, setPaddingBottom] = useState<number>(20);
 
     const color = 'white';
-    const secondaryColor = 'rgba(125,125,125,0.5)';
+    const secondaryColor = 'rgba(125,125,125,0.25)';
     const backgroundColor = 'rgb(50,200,150)';
 
     return (
