@@ -14,6 +14,7 @@ import CustomerInfoScreen from "../Screens/TabNavigationScreens/CustomerScreens/
 import CraeteBillScreen from "../Screens/TabNavigationScreens/BillScreens/CreateBillScreen";
 import CompanyProfileScreen from "../Screens/CompanyScreens/CompanyProfileScreen";
 import { NavigationRef } from "./NavigationService";
+import ProductInfoScreen from "../Screens/TabNavigationScreens/ProductScreens/ProductInfoScreen";
 
 export type StackParamsList = {
     'splash-screen': undefined,
@@ -25,7 +26,7 @@ export type StackParamsList = {
     'notification-screen': undefined,
     
     'company-profile-screen': undefined,
-
+    'product-info-screen': {productId: string}
     'customer-info-screen': undefined
 
     'create-bill-screen': {billType: string}
@@ -52,7 +53,7 @@ export default function StackNavigation(): React.JSX.Element {
 
                     <Stack.Screen name="company-profile-screen" component={CompanyProfileScreen} />
 
-
+                    <Stack.Screen name="product-info-screen" component={ProductInfoScreen} />
                     <Stack.Screen name="customer-info-screen" component={CustomerInfoScreen} />
                     <Stack.Screen name="create-bill-screen" component={CraeteBillScreen} />
 

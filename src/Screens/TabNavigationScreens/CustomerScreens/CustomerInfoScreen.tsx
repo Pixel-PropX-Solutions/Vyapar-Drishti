@@ -85,7 +85,6 @@ export default function CustomerInfoScreen(): React.JSX.Element {
     return (
         <BackgroundThemeView style={{width: '100%', height: '100%'}} >
             <EntityInfoHeader
-                onPressExit={() => navigation.goBack()}
                 onPressEdit={() => setInfoUpdateModalOpen(true)}
                 onPressDelete={() => setDeleteModalOpen(true)}
             />

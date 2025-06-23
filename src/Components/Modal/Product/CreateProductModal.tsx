@@ -67,7 +67,9 @@ export default function CreateProductModal({visible, setVisible}: Props): React.
         ].forEach((([Keyboard, value]) => productData.append(Keyboard, value)));
 
         let {payload: res} = await dispatch(createProduct({productData}))
-        if(res && res?.status === 'success') {
+        console.log('after feaching: ',res);
+
+        if(res && res?.success) {
             await dispatch(viewAllProducts({company_id: company?._id ?? '', pageNumber: pageMeta.page}));
             setVisible(false);
         } else {

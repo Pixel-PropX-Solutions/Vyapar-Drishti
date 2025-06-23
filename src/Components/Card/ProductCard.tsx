@@ -10,7 +10,6 @@ import ShowWhen from "../Other/ShowWhen";
 import sliceString from "../../Utils/sliceString";
 
 export type ProductCardProps = {
-    id: string,
     productName: string,
     productsNo: string,
     unit: string | 'Unit',
@@ -18,16 +17,18 @@ export type ProductCardProps = {
     isPrimary?: boolean,
     inStock: number,
     profitValue: number,
-    sellQuantity: number
+    sellQuantity: number,
+    onPress: () => void
 }
 
-export default function ProductCard({id, productName, productsNo, unit='Unit', isPrimary=true, lowStockQuantity, inStock, profitValue, sellQuantity}: ProductCardProps): React.JSX.Element {
+export default function ProductCard({productName, productsNo, unit='Unit', isPrimary=true, lowStockQuantity, inStock, profitValue, sellQuantity, onPress}: ProductCardProps): React.JSX.Element {
 
     const {secondaryBackgroundColor, primaryBackgroundColor} = useTheme()
 
     return (
         <AnimateButton 
             style={{padding: 16, borderRadius: 16, display: 'flex', alignItems: 'flex-start', gap: 16, backgroundColor: isPrimary ? primaryBackgroundColor : secondaryBackgroundColor}} 
+            onPress={onPress}
         >
             <View style={{width: "100%"}} >
                 <TextTheme style={{paddingLeft: 2, fontWeight: 600, fontSize: 16}} >{sliceString(productName, 30)}</TextTheme>

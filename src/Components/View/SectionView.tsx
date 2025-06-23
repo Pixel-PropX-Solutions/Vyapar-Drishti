@@ -40,10 +40,12 @@ type SectionRowProps = {
     onPress?: () => void,
     children?: React.ReactNode,
     label?: string,
-    style?: ViewStyle
+    style?: ViewStyle,
+    isLabelPrimary?: boolean,
+    gap?: number
 }
 
-export function SectionRow({isPrimary=false, backgroundColor, onPress, children, label='', style}: SectionRowProps): React.JSX.Element {
+export function SectionRow({isPrimary=false, backgroundColor, onPress, children, label='', style, isLabelPrimary=false, gap=12}: SectionRowProps): React.JSX.Element {
 
     const {secondaryBackgroundColor, primaryBackgroundColor} = useTheme();
     if(!backgroundColor) backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
@@ -51,12 +53,12 @@ export function SectionRow({isPrimary=false, backgroundColor, onPress, children,
 
     return (
         <AnimateButton 
-            style={{padding: 12, borderRadius: 12, backgroundColor, width: '100%'}}
+            style={{padding: 12, borderRadius: 12, backgroundColor, width: '100%', gap}}
             onPress={onPress}
             bubbleScale={30}
         >
             <ShowWhen when={label !== ''}>
-                <TextTheme isPrimary={false} style={{fontWeight: '900', marginBottom: 12}}>{label ?? 'dsd'}</TextTheme>
+                <TextTheme isPrimary={isLabelPrimary} style={{fontWeight: '900'}}>{label}</TextTheme>
             </ShowWhen>
             <View style={[{flexDirection: 'row', alignItems: 'center'}, style]} >
                 {children}

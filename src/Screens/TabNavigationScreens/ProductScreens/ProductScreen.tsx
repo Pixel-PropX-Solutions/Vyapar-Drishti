@@ -1,8 +1,7 @@
-import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { FlatList } from "react-native-gesture-handler";
 import TextTheme from "../../../Components/Text/TextTheme";
-import ProductCard, { ProductCardProps } from "../../../Components/Card/ProductCard";
+import ProductCard from "../../../Components/Card/ProductCard";
 import { Text, View } from "react-native";
-import BackgroundThemeView from "../../../Components/View/BackgroundThemeView";
 import AnimateButton from "../../../Components/Button/AnimateButton";
 import FeatherIcon from "../../../Components/Icon/FeatherIcon";
 import { useTheme } from "../../../Contexts/ThemeProvider";
@@ -13,11 +12,10 @@ import CreateProductModal from "../../../Components/Modal/Product/CreateProductM
 import TabNavigationScreenHeader from "../../../Components/Header/TabNavigationHeader";
 import { useAppDispatch, useCompanyStore, useProductStore } from "../../../Store/ReduxStore";
 import { viewAllProducts } from "../../../Services/product";
+import navigator from "../../../Navigation/NavigationService";
 
 
 export default function ProductScreen(): React.JSX.Element {
-
-    const {primaryColor: color} = useTheme();
 
     const {company} = useCompanyStore();
     const {productsData, pageMeta} = useProductStore();
@@ -46,15 +44,15 @@ export default function ProductScreen(): React.JSX.Element {
                 keyExtractor={(item) => item._id}
                 renderItem={({item}) => (
                     <ProductCard
+                        unit={item.unit}
                         isPrimary={false}
-                        id={item._id}
+                        sellQuantity={item.sales_qty}
                         productName={item.stock_item_name}
                         productsNo={item.gst_hsn_code ?? ''}
-                        unit={item.unit}
                         inStock={item.purchase_qty - item.sales_qty}
                         lowStockQuantity={item.low_stock_alert ?? 0}
                         profitValue={item.purchase_value - item.sales_value}
-                        sellQuantity={item.sales_qty}
+                        onPress={() => navigator.navigate('product-info-screen', {productId: item._id})}
                     />
                 )}
             />

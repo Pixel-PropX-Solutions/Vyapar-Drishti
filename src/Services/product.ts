@@ -15,7 +15,7 @@ export const createProduct = createAsyncThunk(
       
       console.log("createProduct response", createRes);
       if (createRes.data.success === true) {
-        return createRes.data.data;
+        return createRes.data;
       } else {
         return rejectWithValue("Product creation failed");
       }
