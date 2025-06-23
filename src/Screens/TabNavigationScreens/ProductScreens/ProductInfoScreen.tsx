@@ -9,17 +9,17 @@ import BackgroundThemeView from "../../../Components/View/BackgroundThemeView";
 import NormalButton from "../../../Components/Button/NormalButton";
 import { useAppDispatch, useCompanyStore, useProductStore } from "../../../Store/ReduxStore";
 import { useEffect, useState } from "react";
-import { getProduct, viewProduct } from "../../../Services/product";
-import TabNavigationScreenHeader from "../../../Components/Header/TabNavigationHeader";
+import { deleteProduct, getProduct, viewAllProducts, viewProduct } from "../../../Services/product";
 import StackNavigationHeader from "../../../Components/Header/StackNavigationHeader";
 import DeleteModal from "../../../Components/Modal/DeleteModal";
 import ShowWhen from "../../../Components/Other/ShowWhen";
 import LoadingView from "../../../Components/View/LoadingView";
+import LoadingModal from "../../../Components/Modal/LoadingModal";
 
 export default function ProductInfoScreen(): React.JSX.Element {
 
     const {productId} = navigator.getParams('product-info-screen') ?? {};
-    if(!productId){ navigator.goBack(); return <></>; }
+    if(!productId) return <></>;
 
     const {company} = useCompanyStore();
     const {item, product, loading} = useProductStore();
@@ -32,9 +32,11 @@ export default function ProductInfoScreen(): React.JSX.Element {
         dispatch(viewProduct({company_id: company?._id ?? '', product_id: productId}));
     }, [productId]);
 
-    function handleDelete(){
-
+    async function handleDelete(){
+        // await dispatch(deleteProduct({company_id: company?._id ?? '', id: productId ?? ''}));
+        // dispatch(viewAllProducts({company_id: company?._id ?? '', pageNumber: 1}));
         setDeleteModalVisible(false);
+        navigator.goBack();
     }
 
     return (
@@ -199,6 +201,8 @@ export default function ProductInfoScreen(): React.JSX.Element {
                 passkey={product?.gst_hsn_code ?? 'delete'}
                 massage="Once you delete the product then no way to go back."
             />
+
+            <LoadingModal visible={loading && isDeleteModalVisible} />
         </View>
     )
 }

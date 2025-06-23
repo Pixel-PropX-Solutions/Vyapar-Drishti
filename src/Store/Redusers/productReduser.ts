@@ -24,6 +24,7 @@ interface ProductState {
   deletionModal: boolean;
   productId: string;
   pageMeta: PageMeta;
+  isProductsFetching: boolean;
 
   error: string | null;
 }
@@ -37,6 +38,7 @@ const initialState: ProductState = {
   item: null,
   uploadData: null,
   loading: false,
+  isProductsFetching: false,
   deletionModal: false,
   productId: "",
   pageMeta: {
@@ -53,12 +55,8 @@ const productSlice = createSlice({
   initialState,
   reducers: {
     setProductId(state, action: PayloadAction<any>) {
-      console.log("payload", action.payload);
       state.productId = action.payload.productId;
       state.deletionModal = !state.deletionModal;
-    },
-    setProductDataNull(state) {
-      state.productData = null
     }
   },
   extraReducers: (builder) => {
@@ -104,17 +102,21 @@ const productSlice = createSlice({
 
       .addCase(viewAllProducts.pending, (state) => {
         state.error = null;
-        state.loading = true;
+        state.isProductsFetching = true;
       })
-      .addCase(viewAllProducts.fulfilled, (state, action: PayloadAction<any>) => {
-          state.productsData = action.payload.productsData;
+      .addCase(viewAllProducts.fulfilled, (state, action: PayloadAction<{productsData: GetProduct[], pageMeta: PageMeta} | any>) => {
           state.pageMeta = action.payload.pageMeta;
-          state.loading = false;
+          state.isProductsFetching = false;
+          if(action.payload.pageMeta.page == 1){
+            state.productsData = action.payload.productsData;
+          } else {
+            state.productsData = [...(state.productsData ?? []), ...(action.payload.productsData ?? [])]
+          }
         }
       )
       .addCase(viewAllProducts.rejected, (state, action) => {
         state.error = action.payload as string;
-        state.loading = false;
+        state.isProductsFetching = false;
       })
 
       .addCase(updateProduct.pending, (state) => {
@@ -147,4 +149,4 @@ const productReduser = productSlice.reducer;
 export default productReduser;;
 
 
-export const { setProductId, setProductDataNull } = productSlice.actions;
+export const { setProductId } = productSlice.actions;

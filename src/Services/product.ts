@@ -1,5 +1,5 @@
 import userApi from "../Api/userApi";
-import { StockOutState } from "../utils/types";
+import { GetProduct, PageMeta, StockOutState } from "../utils/types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const createProduct = createAsyncThunk(
@@ -74,7 +74,7 @@ export const viewAllProducts = createAsyncThunk(
         // is_deleted,
     }: ViewAllProductsType,
     { rejectWithValue }
-  ) => {
+  ): Promise<{productsData: GetProduct[], pageMeta: PageMeta} | any> => {
     try {
       const response = await userApi.get(
         `/product/view/all/product?company_id=${company_id}&search=${searchQuery}${category === 'All' ? "" : "&category=" + category}&page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder === "asc" ? "1" : "-1"

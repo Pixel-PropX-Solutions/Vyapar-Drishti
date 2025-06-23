@@ -1,10 +1,9 @@
 import { FlatList } from "react-native-gesture-handler";
 import TextTheme from "../../../Components/Text/TextTheme";
-import ProductCard from "../../../Components/Card/ProductCard";
+import ProductCard, { ProductLoadingCard } from "../../../Components/Card/ProductCard";
 import { Text, View } from "react-native";
 import AnimateButton from "../../../Components/Button/AnimateButton";
 import FeatherIcon from "../../../Components/Icon/FeatherIcon";
-import { useTheme } from "../../../Contexts/ThemeProvider";
 import NormalButton from "../../../Components/Button/NormalButton";
 import RoundedPlusButton from "../../../Components/Button/RoundedPlusButton";
 import { useEffect, useState } from "react";
@@ -13,19 +12,26 @@ import TabNavigationScreenHeader from "../../../Components/Header/TabNavigationH
 import { useAppDispatch, useCompanyStore, useProductStore } from "../../../Store/ReduxStore";
 import { viewAllProducts } from "../../../Services/product";
 import navigator from "../../../Navigation/NavigationService";
+import ShowWhen from "../../../Components/Other/ShowWhen";
 
 
 export default function ProductScreen(): React.JSX.Element {
 
     const {company} = useCompanyStore();
-    const {productsData, pageMeta} = useProductStore();
+    const {productsData, pageMeta, isProductsFetching} = useProductStore();
     const dispatch = useAppDispatch();
 
     const [isCreateModalOpen, setCreateModalOpen] = useState<boolean>(false);
+    
+    function handleProductFetching(){
+        if(isProductsFetching) return;
+        if(pageMeta.total <= pageMeta.page * pageMeta.limit) return;
+        dispatch(viewAllProducts({company_id: company?._id ?? '', pageNumber: pageMeta.page + 1}));
+    }
 
     useEffect(() => {
-        dispatch(viewAllProducts({company_id: company?._id ?? '', pageNumber: pageMeta.page}))
-    }, [])
+        dispatch(viewAllProducts({company_id: company?._id ?? '', pageNumber: pageMeta.page}));
+    }, []);
 
     return (
         <View  style={{width: '100%', height: '100%'}}>
@@ -42,6 +48,7 @@ export default function ProductScreen(): React.JSX.Element {
                 contentContainerStyle={{gap: 20, paddingBottom: 80, paddingTop: 12, paddingHorizontal: 20}}
                 data={productsData}
                 keyExtractor={(item) => item._id}
+               
                 renderItem={({item}) => (
                     <ProductCard
                         unit={item.unit}
@@ -55,6 +62,24 @@ export default function ProductScreen(): React.JSX.Element {
                         onPress={() => navigator.navigate('product-info-screen', {productId: item._id})}
                     />
                 )}
+
+                ListFooterComponentStyle={{gap: 20}}
+                ListFooterComponent={<ShowWhen when={isProductsFetching}>
+                    <ProductLoadingCard/>
+                    <ProductLoadingCard/>
+                    <ProductLoadingCard/>
+                </ShowWhen>}
+
+                onScroll={({nativeEvent}) => {
+                    let {contentOffset, layoutMeasurement, contentSize} = nativeEvent;
+                    let contentOffsetY = contentOffset.y;
+                    let totalHeight = contentSize.height;
+                    let height = layoutMeasurement.height;
+
+                    if(totalHeight - height < contentOffsetY + 400) {
+                        handleProductFetching();
+                    }
+                }}
             />
 
             <View style={{position: 'absolute', right: 20, bottom: 20}} >

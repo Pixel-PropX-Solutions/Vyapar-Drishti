@@ -8,6 +8,7 @@ import AnimatePingBall from "../View/AnimatePingBall";
 import BackgroundThemeView from "../View/BackgroundThemeView";
 import ShowWhen from "../Other/ShowWhen";
 import sliceString from "../../Utils/sliceString";
+import LoadingView from "../View/LoadingView";
 
 export type ProductCardProps = {
     productName: string,
@@ -71,5 +72,35 @@ export default function ProductCard({productName, productsNo, unit='Unit', isPri
                 </View>
             </ShowWhen>
         </AnimateButton>
+    )
+}
+
+
+
+export function ProductLoadingCard({isPrimary=false}: {isPrimary?: boolean}): React.JSX.Element {
+    return (
+        <BackgroundThemeView isPrimary={isPrimary} style={{width: '100%', borderRadius: 12, padding: 12, gap: 12}}>
+            <View style={{gap: 4}} >
+                <LoadingView isPrimary={!isPrimary} width={120} height={12} />
+                <LoadingView isPrimary={!isPrimary} width={80} height={10} />
+            </View>
+
+            <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', gap: 20}} >
+                <View style={{gap: 4}} >
+                    <LoadingView isPrimary={!isPrimary} width={60} height={12} />
+                    <LoadingView isPrimary={!isPrimary} width={40} height={10} />
+                </View>
+
+                <View style={{gap: 4}} >
+                    <LoadingView isPrimary={!isPrimary} width={60} height={12} />
+                    <LoadingView isPrimary={!isPrimary} width={40} height={10} />
+                </View>
+                
+                <View style={{gap: 4}} >
+                    <LoadingView isPrimary={!isPrimary} width={60} height={12} />
+                    <LoadingView isPrimary={!isPrimary} width={40} height={10} />
+                </View>
+            </View>
+        </BackgroundThemeView>
     )
 }
