@@ -1,7 +1,6 @@
 import { ScrollView } from "react-native-gesture-handler";
 import StackNavigationHeader from "../Components/Header/StackNavigationHeader";
-import { View, ViewStyle } from "react-native";
-import AnimateButton from "../Components/Button/AnimateButton";
+import { View } from "react-native";
 import { useTheme } from "../Contexts/ThemeProvider";
 import FeatherIcon from "../Components/Icon/FeatherIcon";
 import SectionView, { SectionRowWithIcon } from "../Components/View/SectionView";
@@ -71,7 +70,7 @@ export default function SettingScreen(): React.JSX.Element {
                         label="Bill Prefix"
                         icon={<FeatherIcon name={"hash"} size={20} />}
                         text={"Customize your bill Prefix"}
-                        onPress={() => {}}
+                        onPress={() => setBillPrefixModalVisible(true)}
                     >
                         <View style={{flexDirection: 'row', gap: 12, alignItems: 'center'}}>
                             <TextTheme style={{fontWeight: 900, fontSize: 16}} >{billPrefix}</TextTheme>
@@ -163,6 +162,7 @@ export default function SettingScreen(): React.JSX.Element {
             </ScrollView>
 
             <SetCurrencyModal visible={isCurrencyModalVisible} setVisible={setCurrencyModalVisible} />
+            <SetBillPrefixModal visible={isBillPrefixModalVisible} setVisible={setBillPrefixModalVisible} />
         </View>
     )
 }
@@ -193,6 +193,42 @@ function SetCurrencyModal({visible, setVisible}: {visible: boolean, setVisible: 
                     value={text}
                     placeholder="Enter Currency"
                     maxLength={3}
+                    keyboardType="ascii-capable"
+                    style={{fontSize: 24, fontWeight: 900, flex: 1}}
+                    onChangeText={(val) => setText(() => val.toString().toUpperCase().trim())}
+                    autoFocus
+                />
+            </View>
+        </BottomModal>
+    )
+}
+
+function SetBillPrefixModal({visible, setVisible}: {visible: boolean, setVisible: (vis: boolean) => void}): React.JSX.Element {
+    const {primaryColor} = useTheme();
+    const {billPrefix, setBillPrefix} = useAppStorage();
+
+    const [text, setText] = useState<string>(billPrefix);
+    
+    return (
+        <BottomModal 
+            visible={visible} 
+            setVisible={setVisible} 
+            style={{paddingHorizontal: 20}}
+            actionButtons={[{title: 'Set', onPress: () => {
+                if(!text) return;
+
+                setBillPrefix(text);
+                setVisible(false);
+            }}]}
+        >
+            <TextTheme style={{fontSize: 16, fontWeight: 800}} >Set New Bill Prefix</TextTheme>
+
+            <View style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, width: '100%', maxWidth: 400}} >
+                <TextTheme style={{fontSize: 24, fontWeight: 900}} >PREFIX:</TextTheme>
+                <NoralTextInput
+                    value={text}
+                    maxLength={4}
+                    placeholder="Enter Currency"
                     keyboardType="ascii-capable"
                     style={{fontSize: 24, fontWeight: 900, flex: 1}}
                     onChangeText={(val) => setText(() => val.toString().toUpperCase().trim())}
