@@ -16,7 +16,7 @@ import CustomerSelectorModal from "../../../Components/Modal/Customer/CustomerSe
 import ShowWhen from "../../../Components/Other/ShowWhen";
 import { SectionRow } from "../../../Components/View/SectionView";
 import { sliceString } from "../../../Utils/functionTools";
-import { getCurrency } from "../../../Store/AppSettingStore";
+import { useAppStorage } from "../../../Contexts/AppStorageProvider";
 
 
 export default function CraeteBillScreen(){
@@ -29,6 +29,7 @@ export default function CraeteBillScreen(){
 function Screen(): React.JSX.Element {
 
     const {secondaryBackgroundColor, primaryBackgroundColor, primaryColor} = useTheme();
+    const {currency} = useAppStorage();
     const {billNo, setBillNo, createOn, setCreateOn, customer, products, totalValue} = useCreateBillContext();
 
     const navigation = useNavigation<StackNavigationProp<StackParamsList, 'create-bill-screen'>>();
@@ -119,7 +120,7 @@ function Screen(): React.JSX.Element {
                         <AnimateButton style={{padding: 12, borderRadius: 8, flex: 1, backgroundColor: primaryBackgroundColor}}>
                             <View style={{flexDirection: 'row', gap: 8, alignItems: 'center'}} >
                                 <FeatherIcon name="download" size={20} />
-                                <TextTheme>{totalValue.toFixed(2) || '0.00'} {getCurrency()}</TextTheme>
+                                <TextTheme>{totalValue.toFixed(2) || '0.00'} {currency}</TextTheme>
                             </View>
                             <TextTheme style={{fontSize: 10}} isPrimary={false} >Total Amount</TextTheme>
                         </AnimateButton>
@@ -153,13 +154,13 @@ function Screen(): React.JSX.Element {
                                 <View>
                                     <TextTheme style={{fontSize: 12, fontWeight: 500}} >Price</TextTheme>
                                     <TextTheme isPrimary={false} style={{fontWeight: 500, fontSize: 12}}>
-                                        {item.price.toFixed(2) || '0.00'} {getCurrency()}
+                                        {item.price.toFixed(2) || '0.00'} {currency}
                                     </TextTheme>
                                 </View>
                                 <View>
                                     <TextTheme style={{fontSize: 12, fontWeight: 500}} >Total Amount</TextTheme>
                                     <TextTheme isPrimary={false} style={{fontWeight: 500, fontSize: 12}}>
-                                        {(item.price * item.quantity).toFixed(2) || '0.00'} {getCurrency()}
+                                        {(item.price * item.quantity).toFixed(2) || '0.00'} {currency}
                                     </TextTheme>
                                 </View>
                             </View>
@@ -237,6 +238,7 @@ function BillNoAndDateSelector({billNo, setBillNo, createOn, setCreateOn}: BillN
 function AmountBox(): React.JSX.Element {
 
     const {totalValue, products} = useCreateBillContext();
+    const {currency} = useAppStorage();
 
     const [paddingBottom, setPaddingBottom] = useState<number>(20);
 
@@ -255,7 +257,7 @@ function AmountBox(): React.JSX.Element {
                     <View>
                         <TextTheme color={color}  style={{fontSize: 16, fontWeight: 900}} >TOTAL AMOUNT</TextTheme>
                         <TextTheme color={color} isPrimary={false} style={{fontSize: 16, fontWeight: 900}} >
-                            {totalValue.toFixed(2) || '0.00'} {getCurrency()}
+                            {totalValue.toFixed(2) || '0.00'} {currency}
                         </TextTheme>
                     </View>
 
@@ -280,7 +282,7 @@ function AmountBox(): React.JSX.Element {
                             onFocus={() => setPaddingBottom(44)}
                             onBlur={() => setPaddingBottom(20)}
                         />
-                        <TextTheme color={color} style={{fontSize: 24, fontWeight: 900}} >{getCurrency()}</TextTheme>
+                        <TextTheme color={color} style={{fontSize: 24, fontWeight: 900}} >{currency}</TextTheme>
                     </View>
                 </View>
             </View>

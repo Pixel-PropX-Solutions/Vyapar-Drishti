@@ -9,7 +9,7 @@ import BackgroundThemeView from "../View/BackgroundThemeView";
 import ShowWhen from "../Other/ShowWhen";
 import sliceString from "../../Utils/sliceString";
 import LoadingView from "../View/LoadingView";
-import { getCurrency } from "../../Store/AppSettingStore";
+import { useAppStorage } from "../../Contexts/AppStorageProvider";
 
 export type ProductCardProps = {
     productName: string,
@@ -25,7 +25,8 @@ export type ProductCardProps = {
 
 export default function ProductCard({productName, productsNo, unit='Unit', isPrimary=true, lowStockQuantity, inStock, profitValue, sellQuantity, onPress}: ProductCardProps): React.JSX.Element {
 
-    const {secondaryBackgroundColor, primaryBackgroundColor} = useTheme()
+    const {secondaryBackgroundColor, primaryBackgroundColor} = useTheme();
+    const {currency} = useAppStorage()
 
     return (
         <AnimateButton 
@@ -55,7 +56,7 @@ export default function ProductCard({productName, productsNo, unit='Unit', isPri
 
                     <View>
                         <TextTheme isPrimary={false} style={{fontSize: 12}} >Profit</TextTheme>
-                        <TextTheme style={{fontSize: 12}} >{numberToString(profitValue)} {getCurrency()}</TextTheme>
+                        <TextTheme style={{fontSize: 12}} >{numberToString(profitValue)} {currency}</TextTheme>
                     </View>
 
                 </View>

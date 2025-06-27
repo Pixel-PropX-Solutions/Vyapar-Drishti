@@ -13,7 +13,6 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamsList } from "../../../Navigation/StackNavigation";
 import TabNavigationScreenHeader from "../../../Components/Header/TabNavigationHeader";
-import { getCurrency } from "../../../Store/AppSettingStore";
 
 
 
@@ -23,6 +22,7 @@ const dummayBillsType: string[] = [
 ]
 
 export default function BillScreen(): React.JSX.Element {
+
 
     const navigation = useNavigation<StackNavigationProp<StackParamsList, 'tab-navigation'>>();
 
@@ -96,40 +96,40 @@ export default function BillScreen(): React.JSX.Element {
 }
 
 
-type SummaryCardProps = {
-    shopeName: string,
-    totalValue: number,
-    payBills: number,
-    pandingBills: number
-}
+// type SummaryCardProps = {
+//     shopeName: string,
+//     totalValue: number,
+//     payBills: number,
+//     pandingBills: number
+// }
 
-function SummaryCard({shopeName, payBills, totalValue, pandingBills}: SummaryCardProps): React.JSX.Element {
+// function SummaryCard({shopeName, payBills, totalValue, pandingBills}: SummaryCardProps): React.JSX.Element {
 
-    return (
-        <BackgroundThemeView isPrimary={false} style={{padding: 16, borderRadius: 16, marginBlock: 12, marginHorizontal: 20}}>
-            <TextTheme style={{fontSize: 14, fontWeight: 800}} >{shopeName}</TextTheme>
+//     return (
+//         <BackgroundThemeView isPrimary={false} style={{padding: 16, borderRadius: 16, marginBlock: 12, marginHorizontal: 20}}>
+//             <TextTheme style={{fontSize: 14, fontWeight: 800}} >{shopeName}</TextTheme>
             
-            <TextTheme style={{fontSize: 20, fontWeight: 900, marginBlock: 6}}>
-                {getCurrency()} {totalValue}
-            </TextTheme>
+//             <TextTheme style={{fontSize: 20, fontWeight: 900, marginBlock: 6}}>
+//                 {getCurrency()} {totalValue}
+//             </TextTheme>
             
-            <View style={{display: 'flex', alignItems: 'center', justifyContent: "center", flexDirection: 'row', gap: 8, marginTop: 12}}>
-                <AnimateButton style={{paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(50,200,150)'}}>
-                    <Text style={{fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white'}}>
-                        <FeatherIcon name="file-text" size={20} color="white" />
-                        {`  ${payBills}`}
-                    </Text>
-                    <Text style={{fontSize: 12, color: 'white'}}>Pay Bills</Text>
-                </AnimateButton>
+//             <View style={{display: 'flex', alignItems: 'center', justifyContent: "center", flexDirection: 'row', gap: 8, marginTop: 12}}>
+//                 <AnimateButton style={{paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(50,200,150)'}}>
+//                     <Text style={{fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white'}}>
+//                         <FeatherIcon name="file-text" size={20} color="white" />
+//                         {`  ${payBills}`}
+//                     </Text>
+//                     <Text style={{fontSize: 12, color: 'white'}}>Pay Bills</Text>
+//                 </AnimateButton>
 
-                <AnimateButton style={{paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(250,150,100)'}}>
-                    <Text style={{fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white'}}>
-                        <FeatherIcon name="file" size={20} color="white" />
-                        {`  ${pandingBills}`}
-                    </Text>
-                    <Text style={{fontSize: 12, color: 'white'}}>Panding Bills</Text>
-                </AnimateButton>
-            </View>
-        </BackgroundThemeView>
-    )
-}
+//                 <AnimateButton style={{paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(250,150,100)'}}>
+//                     <Text style={{fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white'}}>
+//                         <FeatherIcon name="file" size={20} color="white" />
+//                         {`  ${pandingBills}`}
+//                     </Text>
+//                     <Text style={{fontSize: 12, color: 'white'}}>Panding Bills</Text>
+//                 </AnimateButton>
+//             </View>
+//         </BackgroundThemeView>
+//     )
+// }

@@ -8,11 +8,18 @@ import SectionView, { SectionRowWithIcon } from "../Components/View/SectionView"
 import TextTheme from "../Components/Text/TextTheme";
 import navigator from "../Navigation/NavigationService";
 import AuthStore from "../Store/AuthStore";
-import { getBillPrefix, getCurrency } from "../Store/AppSettingStore";
+import BottomModal from "../Components/Modal/BottomModal";
+import NoralTextInput from "../Components/TextInput/NoralTextInput";
+import { useState } from "react";
+import { useAppStorage } from "../Contexts/AppStorageProvider";
 
 export default function SettingScreen(): React.JSX.Element {
 
     const {setTheme, theme} = useTheme();
+    const {currency, billPrefix} = useAppStorage();
+
+    const [isCurrencyModalVisible, setCurrencyModalVisible] = useState<boolean>(false);
+    const [isBillPrefixModalVisible, setBillPrefixModalVisible] = useState<boolean>(false);
 
     return (
         <View style={{width: '100%', height: '100%'}} >
@@ -40,10 +47,10 @@ export default function SettingScreen(): React.JSX.Element {
                         label="Currency"
                         icon={<FeatherIcon name={"dollar-sign"} size={20} />}
                         text={"Customize currency"}
-                        onPress={() => {}}
+                        onPress={() => setCurrencyModalVisible(true)}
                     >
                         <View style={{flexDirection: 'row', gap: 12, alignItems: 'center'}}>
-                            <TextTheme style={{fontWeight: 900, fontSize: 16}} >{getCurrency()}</TextTheme>
+                            <TextTheme style={{fontWeight: 900, fontSize: 16}} >{currency}</TextTheme>
                             <FeatherIcon name="chevron-right" size={20} />
                         </View>
                     </SectionRowWithIcon>
@@ -67,7 +74,7 @@ export default function SettingScreen(): React.JSX.Element {
                         onPress={() => {}}
                     >
                         <View style={{flexDirection: 'row', gap: 12, alignItems: 'center'}}>
-                            <TextTheme style={{fontWeight: 900, fontSize: 16}} >{getBillPrefix()}</TextTheme>
+                            <TextTheme style={{fontWeight: 900, fontSize: 16}} >{billPrefix}</TextTheme>
                             <FeatherIcon name="chevron-right" size={20} />
                         </View>
                     </SectionRowWithIcon>
@@ -154,6 +161,44 @@ export default function SettingScreen(): React.JSX.Element {
 
                 <View style={{minHeight: 40}} />
             </ScrollView>
+
+            <SetCurrencyModal visible={isCurrencyModalVisible} setVisible={setCurrencyModalVisible} />
         </View>
+    )
+}
+
+function SetCurrencyModal({visible, setVisible}: {visible: boolean, setVisible: (vis: boolean) => void}): React.JSX.Element {
+    const {primaryColor} = useTheme();
+    const {currency, setCurrency} = useAppStorage();
+
+    const [text, setText] = useState<string>(currency);
+    
+    return (
+        <BottomModal 
+            visible={visible} 
+            setVisible={setVisible} 
+            style={{paddingHorizontal: 20}}
+            actionButtons={[{title: 'Set', onPress: () => {
+                if(!text) return;
+
+                setCurrency(text);
+                setVisible(false);
+            }}]}
+        >
+            <TextTheme style={{fontSize: 16, fontWeight: 800}} >Set New Currency</TextTheme>
+
+            <View style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, width: '100%', maxWidth: 400}} >
+                <TextTheme style={{fontSize: 24, fontWeight: 900}} >CURRENCY:</TextTheme>
+                <NoralTextInput
+                    value={text}
+                    placeholder="Enter Currency"
+                    maxLength={3}
+                    keyboardType="ascii-capable"
+                    style={{fontSize: 24, fontWeight: 900, flex: 1}}
+                    onChangeText={(val) => setText(() => val.toString().toUpperCase().trim())}
+                    autoFocus
+                />
+            </View>
+        </BottomModal>
     )
 }

@@ -14,66 +14,7 @@ import { StackParamsList } from "../../../Navigation/StackNavigation";
 import { useState } from "react";
 import UpdateCustomerInfoModal from "../../../Components/Modal/Customer/UpdateCustomerInfoModal";
 import DeleteModal from "../../../Components/Modal/DeleteModal";
-import { getCurrency } from "../../../Store/AppSettingStore";
-
-
-const dummyBillData: BillCardProps[] = [
-    {
-        id: "BL001",
-        date: 10,
-        month: 5, // May
-        year: 2024,
-        payAmount: 1500.75,
-        totalAmount: 2000.50,
-        billNo: "INV-2024-001",
-        customerName: "Alice Wonderland",
-        pandingAmount: 0
-    },
-    {
-        id: "BL002",
-        date: 22,
-        month: 4, // April
-        year: 2024,
-        payAmount: 500, // Example with string payAmount
-        totalAmount: 750.20,
-        billNo: "INV-2024-002",
-        customerName: "Bob The Builder",
-        pandingAmount: 0
-    },
-    {
-        id: "BL003",
-        date: 5,
-        month: 6, // June
-        year: 2024,
-        payAmount: 300.00,
-        totalAmount: 300.00, // Example with string totalAmount
-        billNo: "INV-2024-003",
-        customerName: "Charlie Chaplin",
-        pandingAmount: 0
-    },
-    {
-        id: "BL004",
-        date: 1,
-        month: 1, // January
-        year: 2024,
-        payAmount: 1000,
-        totalAmount: 1000,
-        billNo: "INV-2024-004",
-        customerName: "Diana Prince",
-        pandingAmount: 0
-    },
-    {
-        id: "BL005",
-        date: 15,
-        month: 3, // March
-        year: 2024,
-        payAmount: 250.50,
-        totalAmount: 1200.00,
-        billNo: "INV-2024-005",
-        customerName: "Ethan Hunt",
-        pandingAmount: 0
-    },
-];
+import { useAppStorage } from "../../../Contexts/AppStorageProvider";
 
 
 export default function CustomerInfoScreen(): React.JSX.Element {
@@ -107,20 +48,7 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                     <DateSelector/>
 
                     <View style={{gap: 12}} >
-                        {
-                            dummyBillData.map(bill => (
-                                <BillCard
-                                    key={bill.id}
-                                    id={bill.id}
-                                    date={bill.date} month={bill.month} year={bill.year}
-                                    customerName={bill.customerName}
-                                    totalAmount={bill.totalAmount}
-                                    payAmount={bill.payAmount}
-                                    billNo={bill.billNo}
-                                    pandingAmount={bill.totalAmount - bill.pandingAmount}
-                                />
-                            ))
-                        }
+                       
                     </View>
 
                 <View style={{minHeight: 80}} />
@@ -158,11 +86,13 @@ type InfoSectionProps = {
 }
 
 function InfoSection({name, phoneNumber, totalAmount=0, createOn}: InfoSectionProps): React.ReactNode {
+    const {currency} = useAppStorage();
+
     return (
         <View style={{flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', marginTop: 8, paddingHorizontal: 20}} >
             <View  >
                 <TextTheme style={{fontSize: 20, fontWeight: 900}} >{name}</TextTheme>
-                <TextTheme isPrimary={false} style={{fontSize: 16, fontWeight: 900}}>{getCurrency()} {totalAmount}</TextTheme>
+                <TextTheme isPrimary={false} style={{fontSize: 16, fontWeight: 900}}>{currency} {totalAmount}</TextTheme>
             </View>
 
             <View style={{alignItems: 'flex-end'}} >

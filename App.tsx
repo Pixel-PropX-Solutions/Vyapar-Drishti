@@ -7,18 +7,21 @@ import AlertProvider from "./src/Components/Alert/AlertProvider";
 import AlertCard from "./src/Components/Alert/AlertCard";
 import { Provider } from "react-redux";
 import ReduxStore from "./src/Store/ReduxStore";
+import AppStorageProvider from "./src/Contexts/AppStorageProvider";
 
 export default function App() {
   return (
     <GestureHandlerRootView style={{flex: 1}} >
       <SafeAreaProvider>
         <ThemeProvider>
-          <Provider store={ReduxStore} >
-            <AlertProvider>
-              <AlertCard/>
-              <StackNavigator/>
-            </AlertProvider>
-          </Provider>
+          <AppStorageProvider>
+            <Provider store={ReduxStore} >
+              <AlertProvider>
+                <AlertCard/>
+                <StackNavigator/>
+              </AlertProvider>
+            </Provider>
+          </AppStorageProvider>
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

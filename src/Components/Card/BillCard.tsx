@@ -9,7 +9,7 @@ import AnimatePingBall from "../View/AnimatePingBall";
 import AnimateButton from "../Button/AnimateButton";
 import FeatherIcon from "../Icon/FeatherIcon";
 import numberToString from "../../Functions/Numbers/numberToString";
-import { getCurrency } from "../../Store/AppSettingStore";
+import { useAppStorage } from "../../Contexts/AppStorageProvider";
 
 export type BillCardProps = {
     id: string,
@@ -23,6 +23,8 @@ export type BillCardProps = {
 
 export default function BillCard({id, date, month, year, totalAmount=0, payAmount=0, billNo, customerName, pandingAmount=0}: BillCardProps): React.JSX.Element {
 
+    const {currency} = useAppStorage();
+
     const status: 'paid' | 'panding' = totalAmount === payAmount ? 'paid' : 'panding';
     const statusColor = status === 'paid' ? 'rgb(50,200,150)' : 'rgb(250,150,50)';
 
@@ -30,7 +32,7 @@ export default function BillCard({id, date, month, year, totalAmount=0, payAmoun
         <View style={{gap: 6, marginBlock: 12}}>
             <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', paddingInline: 8}} >
                 <TextTheme style={{fontSize: 20, fontWeight: 900}} >{getMounthName(month)} {date}</TextTheme>
-                <TextTheme style={{fontWeight: 900, fontSize: 16}} >{numberToString(payAmount, 1)} {getCurrency()}</TextTheme>
+                <TextTheme style={{fontWeight: 900, fontSize: 16}} >{numberToString(payAmount, 1)} {currency}</TextTheme>
             </View>
 
             <BackgroundThemeView style={{padding: 16, borderRadius: 16, display: 'flex', alignItems: 'flex-start', gap: 8}} >
@@ -57,12 +59,12 @@ export default function BillCard({id, date, month, year, totalAmount=0, payAmoun
                     <View style={{flexDirection: 'row', gap: 32}}>
                         <View>
                             <TextTheme style={{fontSize: 12}} >Total</TextTheme>
-                            <TextTheme style={{fontSize: 12}} >{numberToString(totalAmount)} {getCurrency()}</TextTheme>
+                            <TextTheme style={{fontSize: 12}} >{numberToString(totalAmount)} {currency}</TextTheme>
                         </View>
 
                         <View>
                             <TextTheme style={{fontSize: 12}} >Panding</TextTheme>
-                            <TextTheme style={{fontSize: 12}} >{numberToString(pandingAmount)} {getCurrency()}</TextTheme>
+                            <TextTheme style={{fontSize: 12}} >{numberToString(pandingAmount)} {currency}</TextTheme>
                         </View>
                     </View>
 

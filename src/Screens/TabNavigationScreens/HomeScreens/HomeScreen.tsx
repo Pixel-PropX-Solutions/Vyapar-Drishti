@@ -1,59 +1,19 @@
 import { ScrollView } from "react-native-gesture-handler";
 import TextTheme from "../../../Components/Text/TextTheme";
-import BackgroundThemeView from "../../../Components/View/BackgroundThemeView";
 import { View } from "react-native";
 import FeatherIcon from "../../../Components/Icon/FeatherIcon";
 import AnimateButton from "../../../Components/Button/AnimateButton";
 import { useTheme } from "../../../Contexts/ThemeProvider";
-import BillCard, { BillCardProps } from "../../../Components/Card/BillCard";
-import DateSelector from "../../../Components/Other/DateSelector";
 import FontAwesome6Icon from "../../../Components/Icon/FontAwesome6Icon";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { StackParamsList } from "../../../Navigation/StackNavigation";
 import HomeScreenHeader from "../../../Components/Header/HomeScreenHeader";
 import CreateCustomerModal from "../../../Components/Modal/Customer/CreateCustomerModal";
 import { useState } from "react";
 import navigator from "../../../Navigation/NavigationService";
-import { getCurrency } from "../../../Store/AppSettingStore";
+import { useAppStorage } from "../../../Contexts/AppStorageProvider";
 
 export default function HomeScreen(): React.JSX.Element {
 
-    // const dummyBillData: BillCardProps[] = [
-    //     {
-    //         id: "BL001",
-    //         date: 10,
-    //         month: 5, // May
-    //         year: 2024,
-    //         payAmount: 1500.75,
-    //         totalAmount: 2000.50,
-    //         billNo: "INV-2024-001",
-    //         customerName: "Alice Wonderland",
-    //         pandingAmount: 0
-    //     },
-    //     {
-    //         id: "BL002",
-    //         date: 22,
-    //         month: 4, // April
-    //         year: 2024,
-    //         payAmount: 500, // Example with string payAmount
-    //         totalAmount: 750.20,
-    //         billNo: "INV-2024-002",
-    //         customerName: "Bob The Builder",
-    //         pandingAmount: 0
-    //     },
-    //     {
-    //         id: "BL005",
-    //         date: 15,
-    //         month: 3, // March
-    //         year: 2024,
-    //         payAmount: 250.50,
-    //         totalAmount: 1200.00,
-    //         billNo: "INV-2024-005",
-    //         customerName: "Ethan Hunt",
-    //         pandingAmount: 0
-    //     },
-    // ];
+    const {currency} = useAppStorage();
 
     const [isCustomerModalVisible, setCustomerModalVisible] = useState<boolean>(false);
 
@@ -68,12 +28,12 @@ export default function HomeScreen(): React.JSX.Element {
                         <View style={{flexDirection: 'row', gap: 12}}>
                             <View style={{padding: 12, borderRadius: 12, flex: 1, backgroundColor: 'rgb(50,200,150)'}}>
                                 <TextTheme color="white" isPrimary={false} style={{fontWeight: 900}} >Pay Amount</TextTheme>
-                                <TextTheme color="white">0.00 {getCurrency()}</TextTheme>
+                                <TextTheme color="white">0.00 {currency}</TextTheme>
                             </View>
 
                             <View style={{padding: 12, borderRadius: 12, flex: 1, backgroundColor: 'rgb(50,150,250)'}}>
                                 <TextTheme color="white" isPrimary={false} style={{fontWeight: 900}} >Panding Amount</TextTheme>
-                                <TextTheme color="white">0.00 {getCurrency()}</TextTheme>
+                                <TextTheme color="white">0.00 {currency}</TextTheme>
                             </View>
                         </View>
                     </View>
