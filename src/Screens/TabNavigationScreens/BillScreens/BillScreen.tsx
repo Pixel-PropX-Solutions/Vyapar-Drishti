@@ -13,73 +13,13 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamsList } from "../../../Navigation/StackNavigation";
 import TabNavigationScreenHeader from "../../../Components/Header/TabNavigationHeader";
+import { getCurrency } from "../../../Store/AppSettingStore";
 
-const dummyBillData: BillCardProps[] = [
-    {
-        id: "BL001",
-        date: 10,
-        month: 5, // May
-        year: 2024,
-        payAmount: 1500.75,
-        totalAmount: 2000.50,
-        billNo: "INV-2024-001",
-        customerName: "Alice Wonderland",
-        pandingAmount: 0
-    },
-    {
-        id: "BL002",
-        date: 22,
-        month: 4, // April
-        year: 2024,
-        payAmount: 500, // Example with string payAmount
-        totalAmount: 750.20,
-        billNo: "INV-2024-002",
-        customerName: "Bob The Builder",
-        pandingAmount: 0
-    },
-    {
-        id: "BL003",
-        date: 5,
-        month: 6, // June
-        year: 2024,
-        payAmount: 300.00,
-        totalAmount: 300.00, // Example with string totalAmount
-        billNo: "INV-2024-003",
-        customerName: "Charlie Chaplin",
-        pandingAmount: 0
-    },
-    {
-        id: "BL004",
-        date: 1,
-        month: 1, // January
-        year: 2024,
-        payAmount: 1000,
-        totalAmount: 1000,
-        billNo: "INV-2024-004",
-        customerName: "Diana Prince",
-        pandingAmount: 0
-    },
-    {
-        id: "BL005",
-        date: 15,
-        month: 3, // March
-        year: 2024,
-        payAmount: 250.50,
-        totalAmount: 1200.00,
-        billNo: "INV-2024-005",
-        customerName: "Ethan Hunt",
-        pandingAmount: 0
-    },
-];
 
 
 const dummayBillsType: string[] = [
-    "Sales Bill (Tax Invoice)",   // The primary document for sales, includes GST details
-    "Purchase Bill",              // The invoice your business receives from suppliers
-    "Proforma Invoice",           // An estimated bill, crucial for quotes and initial agreements
-    "Credit Note",                // For sales returns or reductions in previously billed amounts
-    "Debit Note",                 // For purchase returns or increases in previously billed amounts
-    "E-Way Bill",  
+    "Sales Bill",
+    "Purchase Bill"
 ]
 
 export default function BillScreen(): React.JSX.Element {
@@ -91,56 +31,32 @@ export default function BillScreen(): React.JSX.Element {
     return (
         <View style={{width: '100%', height: '100%'}}>
             <TabNavigationScreenHeader>
-                <TextTheme>Bills</TextTheme>
+                <TextTheme style={{fontWeight: 900, fontSize: 20}} >Bill Screen</TextTheme>
             </TabNavigationScreenHeader>
             
-            <ScrollView style={{marginTop: 12, width: '100%', height: '100%'}}>
 
-                <SummaryCard
-                    shopeName="Gen-I Store"
-                    totalValue={18000}
-                    payBills={10}
-                    pandingBills={2}
-                />
+            <BackgroundThemeView  isPrimary={false} style={{width: '100%', height: '100%', padding: 20, borderTopLeftRadius: 36, borderTopRightRadius: 32, gap: 20}} >
+                <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBlock: 8}} >
+                    <NormalButton 
+                        text=" Filerts" 
+                        textStyle={{fontWeight: 800}}
+                        icon={<FeatherIcon name="filter" size={16} useInversTheme={true} />}
+                    />
 
-                <BackgroundThemeView  isPrimary={false} style={{width: '100%', height: '100%', padding: 20, borderTopLeftRadius: 36, borderTopRightRadius: 32, marginTop: 24, gap: 20}} >
-                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBlock: 8}} >
-                        <NormalButton 
-                            text=" Filerts" 
-                            textStyle={{fontWeight: 800}}
-                            icon={<FeatherIcon name="filter" size={16} useInversTheme={true} />}
-                        />
+                    <View style={{alignItems: 'flex-end'}} >
+                        <TextTheme style={{fontSize: 12}} isPrimary={false} >Total Results</TextTheme>
+                        <TextTheme>
+                            <FeatherIcon name="file-text" size={16} />
+                            {' '}
+                            12
+                        </TextTheme>
+                    </View> 
+                </View>
 
-                        <View style={{alignItems: 'flex-end'}} >
-                            <TextTheme style={{fontSize: 12}} isPrimary={false} >Total Results</TextTheme>
-                            <TextTheme>
-                                <FeatherIcon name="file-text" size={16} />
-                                {' '}
-                                12
-                            </TextTheme>
-                        </View> 
-                    </View>
+                
 
-                    <View style={{gap: 12}} >
-                        {
-                            dummyBillData.map(bill => (
-                                <BillCard
-                                    key={bill.id}
-                                    id={bill.id}
-                                    date={bill.date} month={bill.month} year={bill.year}
-                                    customerName={bill.customerName}
-                                    totalAmount={bill.totalAmount}
-                                    payAmount={bill.payAmount}
-                                    billNo={bill.billNo}
-                                    pandingAmount={bill.totalAmount - bill.pandingAmount}
-                                />
-                            ))
-                        }
-                    </View>
-
-                    <View style={{minHeight: 80}} />
-                </BackgroundThemeView>
-            </ScrollView>
+                <View style={{minHeight: 80}} />
+            </BackgroundThemeView>
 
             <View style={{position: 'absolute', right: 20, bottom: 20}} >
                 <RoundedPlusButton size={60} iconSize={24} onPress={() => setBillTypeSelectorModalVisible(true)} />
@@ -194,7 +110,7 @@ function SummaryCard({shopeName, payBills, totalValue, pandingBills}: SummaryCar
             <TextTheme style={{fontSize: 14, fontWeight: 800}} >{shopeName}</TextTheme>
             
             <TextTheme style={{fontSize: 20, fontWeight: 900, marginBlock: 6}}>
-                INR {totalValue}
+                {getCurrency()} {totalValue}
             </TextTheme>
             
             <View style={{display: 'flex', alignItems: 'center', justifyContent: "center", flexDirection: 'row', gap: 8, marginTop: 12}}>

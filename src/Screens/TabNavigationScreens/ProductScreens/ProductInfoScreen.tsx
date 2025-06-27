@@ -15,6 +15,7 @@ import DeleteModal from "../../../Components/Modal/DeleteModal";
 import ShowWhen from "../../../Components/Other/ShowWhen";
 import LoadingView from "../../../Components/View/LoadingView";
 import LoadingModal from "../../../Components/Modal/LoadingModal";
+import { getCurrency } from "../../../Store/AppSettingStore";
 
 export default function ProductInfoScreen(): React.JSX.Element {
 
@@ -70,7 +71,7 @@ export default function ProductInfoScreen(): React.JSX.Element {
                     
                     <View >
                         <TextTheme style={{fontWeight: 900, fontSize: 20}}>
-                            INR {((item?.purchase_value ?? 0) - (item?.sales_value ?? 0)) || '0.00'}
+                            {getCurrency()} {((item?.purchase_value ?? 0) - (item?.sales_value ?? 0)) || '0.00'}
                         </TextTheme>
                         <TextTheme isPrimary={false} style={{fontWeight: 900, fontSize: 12}}>In Stock Value</TextTheme>
                     </View>
@@ -81,7 +82,7 @@ export default function ProductInfoScreen(): React.JSX.Element {
                         <View style={{paddingHorizontal: 6}} >
                             <TextTheme style={{fontSize: 14, fontWeight: 800, marginBottom: 4}} >PURCHASES</TextTheme>
                             <TextTheme isPrimary={false} style={{fontSize: 16, fontWeight: 800, marginBottom: 12}} >
-                                INR {item?.purchase_value || '0.00'}
+                                {getCurrency()} {item?.purchase_value || '0.00'}
                             </TextTheme>
 
                             <View style={{marginTop: 12}} >
@@ -100,7 +101,7 @@ export default function ProductInfoScreen(): React.JSX.Element {
                         <View style={{paddingHorizontal: 6}} >
                             <TextTheme style={{fontSize: 14, fontWeight: 800, marginBottom: 4}} >SELLS</TextTheme>
                             <TextTheme isPrimary={false} style={{fontSize: 16, fontWeight: 800, marginBottom: 12}} >
-                                INR {item?.sales_value || '0.00'}
+                                {getCurrency()} {item?.sales_value || '0.00'}
                             </TextTheme>
 
                             <View style={{marginTop: 12}} >

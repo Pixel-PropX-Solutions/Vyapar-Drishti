@@ -14,6 +14,7 @@ import { StackParamsList } from "../../../Navigation/StackNavigation";
 import { useState } from "react";
 import UpdateCustomerInfoModal from "../../../Components/Modal/Customer/UpdateCustomerInfoModal";
 import DeleteModal from "../../../Components/Modal/DeleteModal";
+import { getCurrency } from "../../../Store/AppSettingStore";
 
 
 const dummyBillData: BillCardProps[] = [
@@ -161,7 +162,7 @@ function InfoSection({name, phoneNumber, totalAmount=0, createOn}: InfoSectionPr
         <View style={{flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', marginTop: 8, paddingHorizontal: 20}} >
             <View  >
                 <TextTheme style={{fontSize: 20, fontWeight: 900}} >{name}</TextTheme>
-                <TextTheme isPrimary={false} style={{fontSize: 16, fontWeight: 900}}>INR {totalAmount}</TextTheme>
+                <TextTheme isPrimary={false} style={{fontSize: 16, fontWeight: 900}}>{getCurrency()} {totalAmount}</TextTheme>
             </View>
 
             <View style={{alignItems: 'flex-end'}} >

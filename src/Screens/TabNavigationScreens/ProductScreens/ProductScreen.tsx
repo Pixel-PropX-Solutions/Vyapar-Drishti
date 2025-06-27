@@ -30,7 +30,7 @@ export default function ProductScreen(): React.JSX.Element {
     }
 
     useEffect(() => {
-        dispatch(viewAllProducts({company_id: company?._id ?? '', pageNumber: pageMeta.page}));
+        dispatch(viewAllProducts({company_id: company?._id ?? '', pageNumber: 1}));
     }, []);
 
     return (

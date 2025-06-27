@@ -9,6 +9,7 @@ import AnimatePingBall from "../View/AnimatePingBall";
 import AnimateButton from "../Button/AnimateButton";
 import FeatherIcon from "../Icon/FeatherIcon";
 import numberToString from "../../Functions/Numbers/numberToString";
+import { getCurrency } from "../../Store/AppSettingStore";
 
 export type BillCardProps = {
     id: string,
@@ -29,7 +30,7 @@ export default function BillCard({id, date, month, year, totalAmount=0, payAmoun
         <View style={{gap: 6, marginBlock: 12}}>
             <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', paddingInline: 8}} >
                 <TextTheme style={{fontSize: 20, fontWeight: 900}} >{getMounthName(month)} {date}</TextTheme>
-                <TextTheme style={{fontWeight: 900, fontSize: 16}} >{numberToString(payAmount, 1)} INR</TextTheme>
+                <TextTheme style={{fontWeight: 900, fontSize: 16}} >{numberToString(payAmount, 1)} {getCurrency()}</TextTheme>
             </View>
 
             <BackgroundThemeView style={{padding: 16, borderRadius: 16, display: 'flex', alignItems: 'flex-start', gap: 8}} >
@@ -56,12 +57,12 @@ export default function BillCard({id, date, month, year, totalAmount=0, payAmoun
                     <View style={{flexDirection: 'row', gap: 32}}>
                         <View>
                             <TextTheme style={{fontSize: 12}} >Total</TextTheme>
-                            <TextTheme style={{fontSize: 12}} >{numberToString(totalAmount)} INR</TextTheme>
+                            <TextTheme style={{fontSize: 12}} >{numberToString(totalAmount)} {getCurrency()}</TextTheme>
                         </View>
 
                         <View>
                             <TextTheme style={{fontSize: 12}} >Panding</TextTheme>
-                            <TextTheme style={{fontSize: 12}} >{numberToString(pandingAmount)} INR</TextTheme>
+                            <TextTheme style={{fontSize: 12}} >{numberToString(pandingAmount)} {getCurrency()}</TextTheme>
                         </View>
                     </View>
 

@@ -8,6 +8,7 @@ import SectionView, { SectionRowWithIcon } from "../Components/View/SectionView"
 import TextTheme from "../Components/Text/TextTheme";
 import navigator from "../Navigation/NavigationService";
 import AuthStore from "../Store/AuthStore";
+import { getBillPrefix, getCurrency } from "../Store/AppSettingStore";
 
 export default function SettingScreen(): React.JSX.Element {
 
@@ -42,7 +43,7 @@ export default function SettingScreen(): React.JSX.Element {
                         onPress={() => {}}
                     >
                         <View style={{flexDirection: 'row', gap: 12, alignItems: 'center'}}>
-                            <TextTheme style={{fontWeight: 900, fontSize: 16}} >INR</TextTheme>
+                            <TextTheme style={{fontWeight: 900, fontSize: 16}} >{getCurrency()}</TextTheme>
                             <FeatherIcon name="chevron-right" size={20} />
                         </View>
                     </SectionRowWithIcon>
@@ -66,7 +67,7 @@ export default function SettingScreen(): React.JSX.Element {
                         onPress={() => {}}
                     >
                         <View style={{flexDirection: 'row', gap: 12, alignItems: 'center'}}>
-                            <TextTheme style={{fontWeight: 900, fontSize: 16}} >#INV-001</TextTheme>
+                            <TextTheme style={{fontWeight: 900, fontSize: 16}} >{getBillPrefix()}</TextTheme>
                             <FeatherIcon name="chevron-right" size={20} />
                         </View>
                     </SectionRowWithIcon>
@@ -154,26 +155,5 @@ export default function SettingScreen(): React.JSX.Element {
                 <View style={{minHeight: 40}} />
             </ScrollView>
         </View>
-    )
-}
-
-
-type ContainerProps = {
-    children: React.ReactNode,
-    backgroundColor?: string,
-    style?: ViewStyle,
-    onPress?: ()=>void
-}
-
-function Container({children, backgroundColor='rgb(25,25,25)', style={}, onPress=()=>{}}: ContainerProps): React.JSX.Element {
-    
-    return (
-        <AnimateButton 
-            style={{padding: 20, borderRadius: 20, backgroundColor, width: '100%', overflow: 'hidden', ...style}}
-            onPress={onPress}
-            bubbleScale={30}
-        >
-            {children}
-        </AnimateButton>
     )
 }

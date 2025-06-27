@@ -15,6 +15,7 @@ import HomeScreenHeader from "../../../Components/Header/HomeScreenHeader";
 import CreateCustomerModal from "../../../Components/Modal/Customer/CreateCustomerModal";
 import { useState } from "react";
 import navigator from "../../../Navigation/NavigationService";
+import { getCurrency } from "../../../Store/AppSettingStore";
 
 export default function HomeScreen(): React.JSX.Element {
 
@@ -67,12 +68,12 @@ export default function HomeScreen(): React.JSX.Element {
                         <View style={{flexDirection: 'row', gap: 12}}>
                             <View style={{padding: 12, borderRadius: 12, flex: 1, backgroundColor: 'rgb(50,200,150)'}}>
                                 <TextTheme color="white" isPrimary={false} style={{fontWeight: 900}} >Pay Amount</TextTheme>
-                                <TextTheme color="white">0.00 INR</TextTheme>
+                                <TextTheme color="white">0.00 {getCurrency()}</TextTheme>
                             </View>
 
                             <View style={{padding: 12, borderRadius: 12, flex: 1, backgroundColor: 'rgb(50,150,250)'}}>
                                 <TextTheme color="white" isPrimary={false} style={{fontWeight: 900}} >Panding Amount</TextTheme>
-                                <TextTheme color="white">0.00 INR</TextTheme>
+                                <TextTheme color="white">0.00 {getCurrency()}</TextTheme>
                             </View>
                         </View>
                     </View>

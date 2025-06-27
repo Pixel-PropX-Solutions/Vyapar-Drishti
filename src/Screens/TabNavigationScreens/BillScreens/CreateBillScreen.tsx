@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, View } from "react-native";
+import { FlatList, KeyboardAvoidingView, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import AnimateButton from "../../../Components/Button/AnimateButton";
 import FeatherIcon from "../../../Components/Icon/FeatherIcon";
@@ -6,29 +6,39 @@ import { useTheme } from "../../../Contexts/ThemeProvider";
 import TextTheme from "../../../Components/Text/TextTheme";
 import { Dispatch, SetStateAction, useState } from "react";
 import BackgroundThemeView from "../../../Components/View/BackgroundThemeView";
-import { getMounthName } from "../../../Functions/TimeOpration/timeByIndex";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamsList } from "../../../Navigation/StackNavigation";
 import NoralTextInput from "../../../Components/TextInput/NoralTextInput";
+import ProductSelectorModal from "../../../Components/Modal/Product/ProductSelectorModal";
+import CreateBillScreenProvider, { useCreateBillContext } from "../../../Contexts/CreateBillScreenProvider";
+import CustomerSelectorModal from "../../../Components/Modal/Customer/CustomerSelectorModal";
+import ShowWhen from "../../../Components/Other/ShowWhen";
+import { SectionRow } from "../../../Components/View/SectionView";
+import { sliceString } from "../../../Utils/functionTools";
+import { getCurrency } from "../../../Store/AppSettingStore";
 
-export default function CraeteBillScreen(): React.JSX.Element {
+
+export default function CraeteBillScreen(){
+    return <CreateBillScreenProvider>
+        <Screen/>
+    </CreateBillScreenProvider>
+}
+
+
+function Screen(): React.JSX.Element {
 
     const {secondaryBackgroundColor, primaryBackgroundColor, primaryColor} = useTheme();
+    const {billNo, setBillNo, createOn, setCreateOn, customer, products, totalValue} = useCreateBillContext();
+
     const navigation = useNavigation<StackNavigationProp<StackParamsList, 'create-bill-screen'>>();
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
 
     const {billType} = router.params;
 
-    const time = new Date();
 
     const [isCustomerModalVisible, setCustomerModalVisible] = useState<boolean>(false);
-
-    const [billtype, setBillType] = useState<'sell' | 'purchase'>('sell');
-    const [billNo, setBillNo] = useState<string>('#INV-2025-000');
-    const [creteOn, setCreateOn] = useState<{date: number, month: number, year: number}>({
-        date: time.getDate(), month: time.getMonth(), year: time.getFullYear()
-    })
+    const [isProductModalVisible, setProductModalVisible] = useState<boolean>(false);
 
 
     return (
@@ -51,7 +61,7 @@ export default function CraeteBillScreen(): React.JSX.Element {
                 <View style={{gap: 16}} >
                     <BillNoAndDateSelector
                         billNo={billNo} setBillNo={setBillNo}
-                        createOn={creteOn} setCreateOn={setCreateOn}
+                        createOn={createOn} setCreateOn={setCreateOn}
                     />
 
                     <AnimateButton 
@@ -64,14 +74,24 @@ export default function CraeteBillScreen(): React.JSX.Element {
                             </BackgroundThemeView>
 
                             <View>
-                                <TextTheme style={{fontSize: 16, fontWeight: 800}} >Select Customer</TextTheme>
+                                <TextTheme style={{fontSize: 16, fontWeight: 800}} >
+                                    {customer?.name ?? 'Select Customer'}
+                                </TextTheme>
+                                <ShowWhen when={!!customer?.group} >
+                                    <TextTheme isPrimary={false} style={{fontSize: 12, fontWeight: 800}} >
+                                        {customer?.group}
+                                    </TextTheme>
+                                </ShowWhen>
                             </View>
                         </View>
 
                         <FeatherIcon name="arrow-right" size={20} style={{paddingRight: 10}} />
                     </AnimateButton>
                     
-                    <AnimateButton style={{padding: 8, borderRadius: 12, width: '100%', backgroundColor: secondaryBackgroundColor, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}} >
+                    <AnimateButton 
+                        onPress={() => setProductModalVisible(true)}
+                        style={{padding: 8, borderRadius: 12, width: '100%', backgroundColor: secondaryBackgroundColor, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}} 
+                    >
                         <View style={{flexDirection: 'row', gap: 8, alignItems: 'center'}} >
                             <BackgroundThemeView style={{width: 44, aspectRatio: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 8}} >
                                 <FeatherIcon name="package" size={16} />
@@ -91,7 +111,7 @@ export default function CraeteBillScreen(): React.JSX.Element {
                         <AnimateButton style={{padding: 12, borderRadius: 8, flex: 1, backgroundColor: primaryBackgroundColor}}>
                             <View style={{flexDirection: 'row', gap: 8, alignItems: 'center'}} >
                                 <FeatherIcon name="package" size={20} />
-                                <TextTheme>25</TextTheme>
+                                <TextTheme>{products.length}</TextTheme>
                             </View>
                             <TextTheme style={{fontSize: 10}} isPrimary={false} >Total Products</TextTheme>
                         </AnimateButton>
@@ -99,12 +119,60 @@ export default function CraeteBillScreen(): React.JSX.Element {
                         <AnimateButton style={{padding: 12, borderRadius: 8, flex: 1, backgroundColor: primaryBackgroundColor}}>
                             <View style={{flexDirection: 'row', gap: 8, alignItems: 'center'}} >
                                 <FeatherIcon name="download" size={20} />
-                                <TextTheme>0.00 INR</TextTheme>
+                                <TextTheme>{totalValue.toFixed(2) || '0.00'} {getCurrency()}</TextTheme>
                             </View>
                             <TextTheme style={{fontSize: 10}} isPrimary={false} >Total Amount</TextTheme>
                         </AnimateButton>
                     </View>
                 </BackgroundThemeView>
+                
+
+                <FlatList
+                    contentContainerStyle={{gap: 12}}
+
+                    ListHeaderComponent={<ShowWhen when={products.length !== 0}>
+                        <TextTheme style={{fontSize: 16, fontWeight: 800, marginBottom: 4}} >Products</TextTheme>
+                    </ShowWhen>}
+
+                    data={products}
+                    keyExtractor={item => item.id}
+                    renderItem={({item}) => (
+                        <SectionRow style={{flexDirection: 'column', alignItems: 'flex-start', gap: 12, position: 'relative'}} >
+                            <View>
+                                <TextTheme style={{fontWeight: 800, fontSize: 16}}>{sliceString(item.name, 34)}</TextTheme>
+                                <TextTheme isPrimary={false} style={{fontSize: 12, fontWeight: 500}} >{item.productNo}</TextTheme>
+                            </View>
+                            
+                            <View style={{alignItems: 'flex-end', flexDirection: 'row', gap: 28}} >
+                                <View>
+                                    <TextTheme style={{fontSize: 12, fontWeight: 500}} >Quantity</TextTheme>
+                                    <TextTheme isPrimary={false} style={{fontSize: 12, fontWeight: 500}} >
+                                        {item.quantity} {item.unit}
+                                    </TextTheme>
+                                </View>
+                                <View>
+                                    <TextTheme style={{fontSize: 12, fontWeight: 500}} >Price</TextTheme>
+                                    <TextTheme isPrimary={false} style={{fontWeight: 500, fontSize: 12}}>
+                                        {item.price.toFixed(2) || '0.00'} {getCurrency()}
+                                    </TextTheme>
+                                </View>
+                                <View>
+                                    <TextTheme style={{fontSize: 12, fontWeight: 500}} >Total Amount</TextTheme>
+                                    <TextTheme isPrimary={false} style={{fontWeight: 500, fontSize: 12}}>
+                                        {(item.price * item.quantity).toFixed(2) || '0.00'} {getCurrency()}
+                                    </TextTheme>
+                                </View>
+                            </View>
+
+                            <View style={{position: 'absolute', top: -6, right: -6}} >
+                                <AnimateButton style={{backgroundColor: 'rgb(250,50,100)', borderRadius: 8, paddingInline: 12,flexDirection: 'row', gap: 12, alignItems: 'center', height: 32}} >
+                                    <FeatherIcon name="delete" size={12} color="white" />
+                                    <TextTheme color="white" style={{fontSize: 12}} >Remove</TextTheme>
+                                </AnimateButton>
+                            </View>
+                        </SectionRow>
+                    )}
+                />
 
                 <View style={{minHeight: 40}} />
             </ScrollView>
@@ -112,6 +180,9 @@ export default function CraeteBillScreen(): React.JSX.Element {
             <KeyboardAvoidingView behavior="padding" >
                 <AmountBox/>
             </KeyboardAvoidingView>
+
+            <CustomerSelectorModal visible={isCustomerModalVisible} setVisible={setCustomerModalVisible} billType={billType} />
+            <ProductSelectorModal visible={isProductModalVisible} setVisible={setProductModalVisible} />
         </View>
     )
 }
@@ -123,8 +194,8 @@ export default function CraeteBillScreen(): React.JSX.Element {
 type BillNoAndDateSelectorProps = {
     billNo: string,
     setBillNo: Dispatch<SetStateAction<string>>,
-    createOn: {date: number, month: number, year: number}
-    setCreateOn: Dispatch<SetStateAction<{date: number, month: number, year: number}>>
+    createOn: string
+    setCreateOn: Dispatch<SetStateAction<string>>
 }
 
 function BillNoAndDateSelector({billNo, setBillNo, createOn, setCreateOn}: BillNoAndDateSelectorProps): React.JSX.Element {
@@ -152,7 +223,7 @@ function BillNoAndDateSelector({billNo, setBillNo, createOn, setCreateOn}: BillN
                 <View>
                     <TextTheme style={{fontSize: 14, fontWeight: 800}} >Create On</TextTheme>
                     <TextTheme isPrimary={false} style={{fontSize: 12, fontWeight: 800}} >
-                        {`${createOn.date} ${getMounthName(createOn.month)} ${createOn.year}`}
+                        {createOn}
                     </TextTheme>
                 </View>
             </AnimateButton>
@@ -164,6 +235,8 @@ function BillNoAndDateSelector({billNo, setBillNo, createOn, setCreateOn}: BillN
 
 
 function AmountBox(): React.JSX.Element {
+
+    const {totalValue, products} = useCreateBillContext();
 
     const [paddingBottom, setPaddingBottom] = useState<number>(20);
 
@@ -181,13 +254,15 @@ function AmountBox(): React.JSX.Element {
                 <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12}} >
                     <View>
                         <TextTheme color={color}  style={{fontSize: 16, fontWeight: 900}} >TOTAL AMOUNT</TextTheme>
-                        <TextTheme color={color} isPrimary={false} style={{fontSize: 16, fontWeight: 900}} >0.00 INR</TextTheme>
+                        <TextTheme color={color} isPrimary={false} style={{fontSize: 16, fontWeight: 900}} >
+                            {totalValue.toFixed(2) || '0.00'} {getCurrency()}
+                        </TextTheme>
                     </View>
 
                     <View style={{alignItems: 'flex-end'}} >
                         <TextTheme color={color} isPrimary={false} style={{fontSize: 16, fontWeight: 900}} >PRODUCTS</TextTheme>
                         <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-                            <TextTheme color={color} style={{fontSize: 16, fontWeight: 900}} >0</TextTheme>
+                            <TextTheme color={color} style={{fontSize: 16, fontWeight: 900}} >{products.length}</TextTheme>
                             <FeatherIcon name="package" size={16} color={color} />
                         </View>
                     </View>
@@ -197,6 +272,7 @@ function AmountBox(): React.JSX.Element {
                     <TextTheme color={color} style={{fontSize: 16, fontWeight: 900}} >Enter Pay Amount</TextTheme>
                     <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}} >
                         <NoralTextInput 
+                            value={totalValue.toFixed(2)}
                             color={color}
                             keyboardType="number-pad"
                             placeholder="0.00" 
@@ -204,7 +280,7 @@ function AmountBox(): React.JSX.Element {
                             onFocus={() => setPaddingBottom(44)}
                             onBlur={() => setPaddingBottom(20)}
                         />
-                        <TextTheme color={color} style={{fontSize: 24, fontWeight: 900}} >INR</TextTheme>
+                        <TextTheme color={color} style={{fontSize: 24, fontWeight: 900}} >{getCurrency()}</TextTheme>
                     </View>
                 </View>
             </View>

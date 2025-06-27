@@ -1,10 +1,12 @@
 
-import { Modal,  ModalProps,  PressableProps, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
+import { Keyboard, Modal,  ModalProps,  PressableProps, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
 import FeatherIcons from 'react-native-vector-icons/Feather';
 import { Text } from "react-native-gesture-handler";
 import { useTheme } from "../../Contexts/ThemeProvider";
 import AlertCard from "../Alert/AlertCard";
 import { Dimensions } from "react-native";
+import { useEffect, useState } from "react";
+import AnimateButton from "../Button/AnimateButton";
 
 type BottomModalProps = ModalProps & {
     visible: boolean,
@@ -19,7 +21,7 @@ type BottomModalProps = ModalProps & {
     animationType?: "none" | "slide" | "fade",
     onClose?: () => void,
     alertId?: string,
-    topMarginPrecentage?: number
+    topMarginPrecentage?: number,
 }
 
 export default function BottomModal({visible, setVisible, children, style, backdropColor='rgba(0, 0, 0, 0.50)', actionButtons, closeOnBack=true, animationType='slide', bottomOpationStyle={}, onClose=()=>{}, alertId, topMarginPrecentage=0.25, ...props}: BottomModalProps): React.JSX.Element {
@@ -28,37 +30,49 @@ export default function BottomModal({visible, setVisible, children, style, backd
 
     const {height} = Dimensions.get('screen');
 
-    const maxHeight = height - height*topMarginPrecentage;
+    const [maxHeight, setMaxHeight] = useState<number>(height - height*topMarginPrecentage)
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', ({endCoordinates}) => {
+            setMaxHeight((pre) => pre - endCoordinates.height);
+        });
+
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            setMaxHeight(height - height*topMarginPrecentage);
+        });
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, []);
     
 
     return (
         <Modal {...props} backdropColor={backdropColor} animationType={animationType} visible={visible} onRequestClose={() => {setVisible(!closeOnBack); onClose();}}>
             {alertId && <AlertCard id={alertId} />}
             <View style={[styles.root]}>
-                <TouchableWithoutFeedback onPress={() => setVisible(false)} >
-                    <View style={{width: '100%', flex: 1}}></View>
-                </TouchableWithoutFeedback>
+                <AnimateButton onPress={() => setVisible(false)} style={{width: '100%', flex: 1}} />
 
                 <View style={[styles.modalContener, {backgroundColor, borderColor: secondaryBackgroundColor, maxHeight} ,style]}>
                     {children}
                 </View>
 
+                
                 <View style={[styles.bottomOpations, {backgroundColor, borderColor: secondaryBackgroundColor}, bottomOpationStyle]}>
-                    <TouchableOpacity style={[styles.closeBtn, {borderColor: secondaryBackgroundColor, backgroundColor}]} onPress={() => {setVisible(false); onClose();}}>
+                    <AnimateButton style={{borderColor: secondaryBackgroundColor, backgroundColor, ...styles.closeBtn}} onPress={() => {setVisible(false); onClose();}}>
                         <FeatherIcons name="plus" size={16} color={color} style={{transform: 'rotate(45deg)'}} />
-                    </TouchableOpacity>
+                    </AnimateButton>
                     
                     <View style={styles.actionsButtonsBox}>
                         {
                             actionButtons?.map(({title, onPress, color='white', backgroundColor='black', icon, style}) => (
-                                <TouchableOpacity key={title} onPress={onPress}>
-                                    <View 
-                                        style={[{height: 44, borderRadius: 100, paddingInline: 20, display: 'flex', alignItems: 'center', flexDirection: 'row', gap: 10, backgroundColor, overflow: 'hidden'}, style]}
-                                    >
+                                <AnimateButton bubbleColor={color} key={title} onPress={onPress}
+                                    style={{height: 44, borderRadius: 100, paddingInline: 20, display: 'flex', alignItems: 'center', flexDirection: 'row', gap: 10, backgroundColor, overflow: 'hidden', ...style}}
+                                >
                                         {icon ? icon : null}
                                         <Text style={{color, fontWeight: '900', fontSize: 14}}>{title}</Text>
-                                    </View>
-                                </TouchableOpacity>
+                                </AnimateButton>
                             ))
                         }
                     </View>

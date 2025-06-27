@@ -7,7 +7,7 @@ import TabNavigationScreenHeader from "../../../Components/Header/TabNavigationH
 import TextTheme from "../../../Components/Text/TextTheme";
 import { useAppDispatch, useCompanyStore, useCustomerStore } from "../../../Store/ReduxStore";
 import { viewAllCustomer } from "../../../Services/customer";
-import CustomerCard from "../../../Components/Card/CustomerCard";
+import CustomerCard, { CustomerLoadingView } from "../../../Components/Card/CustomerCard";
 import LoadingView from "../../../Components/View/LoadingView";
 import ShowWhen from "../../../Components/Other/ShowWhen";
 
@@ -21,7 +21,7 @@ export default function CustomerScreen(): React.JSX.Element {
     const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
 
     useEffect(() => {
-        dispatch(viewAllCustomer({company_id: company?._id ?? ''}));
+        dispatch(viewAllCustomer({company_id: company?._id ?? '', pageNumber: 1}));
     }, [company?._id]);
 
     return (
@@ -41,7 +41,6 @@ export default function CustomerScreen(): React.JSX.Element {
                 keyExtractor={(item) => item._id}
                 renderItem={({item}) => (
                     <CustomerCard  
-                        id={item._id}
                         name={item.ledger_name}
                         groupName={item.parent}
                         createOn={item.created_at}
@@ -60,16 +59,3 @@ export default function CustomerScreen(): React.JSX.Element {
 }
 
 
-function CustomerLoadingView(): React.JSX.Element{
-    return (
-        <LoadingView style={{width: '100%', maxWidth: 460, justifyContent: 'space-between', padding: 12, borderRadius: 16, alignItems: 'flex-start', marginBlock: 10}} scale={1}  >
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}} >
-                <LoadingView width={44} height={44} borderRadius={36} isPrimary={true} />
-                <View>
-                    <LoadingView width={120} height={20} borderRadius={12} isPrimary={true} />
-                    <LoadingView width={80} height={16} borderRadius={8} isPrimary={true} style={{marginTop: 4}} />
-                </View>
-            </View>
-        </LoadingView>
-    )
-}
