@@ -58,12 +58,12 @@ export default function CreateBillScreenProvider({children}: {children: React.Re
         setTotalValue(() => products.reduce((acc, pro) => acc + (pro.price * pro.quantity), 0));
     }, [products]);
 
-    // useEffect(() => {
-    //     let time = new Date();
-    //     let year = time.getFullYear();
-    //     let no = time.getMonth()*30 + time.getDate()*7 + time.getDay()*24 + time.getHours()*60 + time.getMinutes()*60 + time.getSeconds();
-    //     setBillNo(`#INV-${year}-${no}`); 
-    // }, []);
+    useEffect(() => {
+        let time = new Date();
+        let year = time.getFullYear();
+        let no = time.getMonth()*30 + time.getDate()*7 + time.getDay()*24 + time.getHours()*60 + time.getMinutes()*60 + time.getSeconds();
+        setBillNo(`#INV-${year}-${no}`); 
+    }, []);
 
     const states = {
         products, setProducts,

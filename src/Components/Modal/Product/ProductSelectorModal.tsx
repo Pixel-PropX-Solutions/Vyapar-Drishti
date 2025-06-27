@@ -15,6 +15,7 @@ import { useAlert } from "../../Alert/AlertProvider";
 import { useCreateBillContext } from "../../../Contexts/CreateBillScreenProvider";
 import { GetProduct } from "../../../Utils/types";
 import { stringToNumber } from "../../../Utils/functionTools";
+import EmptyListView from "../../View/EmptyListView";
 
 type Props = {
     visible: boolean;
@@ -92,6 +93,7 @@ export default function ProductSelectorModal({visible, setVisible}: Props): Reac
             </View>
 
             <FlatList
+                ListEmptyComponent={<EmptyListView type="product" />}
                 contentContainerStyle={{gap: 20, paddingBottom: 80, paddingTop: 12}}
                 data={filterProducts}
                 keyExtractor={(item) => item._id}

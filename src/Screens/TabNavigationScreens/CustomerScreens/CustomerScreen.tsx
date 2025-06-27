@@ -10,6 +10,8 @@ import { viewAllCustomer } from "../../../Services/customer";
 import CustomerCard, { CustomerLoadingView } from "../../../Components/Card/CustomerCard";
 import LoadingView from "../../../Components/View/LoadingView";
 import ShowWhen from "../../../Components/Other/ShowWhen";
+import FeatherIcon from "../../../Components/Icon/FeatherIcon";
+import EmptyListView from "../../../Components/View/EmptyListView";
 
 
 export default function CustomerScreen(): React.JSX.Element {
@@ -34,8 +36,9 @@ export default function CustomerScreen(): React.JSX.Element {
                 <CustomerLoadingView/>
                 <CustomerLoadingView/>
             </ShowWhen>
-
+        
             <FlatList
+                ListEmptyComponent={<EmptyListView type="customer" />}
                 contentContainerStyle={{marginTop: 12, width: '100%', height: '100%', gap: 20}}
                 data={customers}
                 keyExtractor={(item) => item._id}
@@ -57,5 +60,3 @@ export default function CustomerScreen(): React.JSX.Element {
         </View>
     )
 }
-
-

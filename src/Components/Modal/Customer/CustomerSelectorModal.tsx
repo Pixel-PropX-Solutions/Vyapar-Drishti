@@ -12,6 +12,7 @@ import { View } from "react-native";
 import FeatherIcon from "../../Icon/FeatherIcon";
 import NoralTextInput from "../../TextInput/NoralTextInput";
 import { useTheme } from "../../../Contexts/ThemeProvider";
+import EmptyListView from "../../View/EmptyListView";
 
 type Props = {
     visible: boolean,
@@ -63,6 +64,7 @@ export default function CustomerSelectorModal({visible, setVisible, billType}: P
             </View>
 
             <FlatList
+                ListEmptyComponent={<EmptyListView type="customer" />}
                 data={filterCustomers}
                 keyExtractor={item => item._id}
 

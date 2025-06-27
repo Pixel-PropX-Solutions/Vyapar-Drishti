@@ -13,6 +13,7 @@ import { useAppDispatch, useCompanyStore, useProductStore } from "../../../Store
 import { viewAllProducts } from "../../../Services/product";
 import navigator from "../../../Navigation/NavigationService";
 import ShowWhen from "../../../Components/Other/ShowWhen";
+import EmptyListView from "../../../Components/View/EmptyListView";
 
 
 export default function ProductScreen(): React.JSX.Element {
@@ -45,6 +46,7 @@ export default function ProductScreen(): React.JSX.Element {
             </View>
 
             <FlatList
+                ListEmptyComponent={<EmptyListView type="product" />}
                 contentContainerStyle={{gap: 20, paddingBottom: 80, paddingTop: 12, paddingHorizontal: 20}}
                 data={productsData}
                 keyExtractor={(item) => item._id}

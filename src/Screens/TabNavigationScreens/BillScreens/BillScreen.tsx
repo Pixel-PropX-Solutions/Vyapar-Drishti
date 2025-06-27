@@ -1,11 +1,9 @@
-import { ScrollView } from "react-native-gesture-handler";
 import TextTheme from "../../../Components/Text/TextTheme";
 import BackgroundThemeView from "../../../Components/View/BackgroundThemeView";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import AnimateButton from "../../../Components/Button/AnimateButton";
 import FeatherIcon from "../../../Components/Icon/FeatherIcon";
 import NormalButton from "../../../Components/Button/NormalButton";
-import BillCard, { BillCardProps } from "../../../Components/Card/BillCard";
 import RoundedPlusButton from "../../../Components/Button/RoundedPlusButton";
 import { useState } from "react";
 import BottomModal from "../../../Components/Modal/BottomModal";
@@ -13,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamsList } from "../../../Navigation/StackNavigation";
 import TabNavigationScreenHeader from "../../../Components/Header/TabNavigationHeader";
+import EmptyListView from "../../../Components/View/EmptyListView";
 
 
 
@@ -48,12 +47,12 @@ export default function BillScreen(): React.JSX.Element {
                         <TextTheme>
                             <FeatherIcon name="file-text" size={16} />
                             {' '}
-                            12
+                            0
                         </TextTheme>
                     </View> 
                 </View>
 
-                
+                <EmptyListView type="invoice" />
 
                 <View style={{minHeight: 80}} />
             </BackgroundThemeView>

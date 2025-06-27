@@ -48,8 +48,9 @@ export default function NotificationScreen(): React.JSX.Element {
             <ShowWhen when={notificationData.length !== 0} otherwise={<EmptyNotificationScreen/>}>
                 <ScrollView style={{width: '100%', height: '100%', paddingHorizontal: 20}} contentContainerStyle={{gap: 12}} >
                     {
-                        notificationData.map(info => (
+                        notificationData.map((info, index) => (
                             <SectionRowWithIcon
+                                key={index}
                                 label={info.title}
                                 text={info.message}
                                 icon={<FeatherIcon name='info' size={20} />}
