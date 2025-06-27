@@ -11,17 +11,21 @@ type Props = TextInputProps & {
     color?: string,
 }
 
-export default function NoralTextInput({placeholder='', style={}, value='', color, ...props}: Props): React.JSX.Element {
+export default function NoralTextInput({placeholder='', style={}, color, onChangeText,...props}: Props): React.JSX.Element {
 
     const {primaryColor, secondaryColor} = useTheme();
+    const [value, setValue] = useState<string>(props.value ?? '')
 
     return (
         <TextInput
             {...props}
             placeholder={placeholder}
-            value={value}
             placeholderTextColor={ color ?? secondaryColor}
             style={[{color: color ?? primaryColor, opacity: value ? 1 : 0.6}, style]}
+            onChangeText={(text) => {
+                setValue(text);
+                if(onChangeText) onChangeText(text)
+            }}
         />
     )
 }
