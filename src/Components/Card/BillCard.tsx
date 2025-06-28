@@ -12,8 +12,7 @@ import numberToString from "../../Functions/Numbers/numberToString";
 import { useAppStorage } from "../../Contexts/AppStorageProvider";
 
 export type BillCardProps = {
-    id: string,
-    date: number, month: number, year: number,
+    createOn: string,
     payAmount: number,
     totalAmount: number,
     pandingAmount: number,
@@ -21,7 +20,7 @@ export type BillCardProps = {
     customerName: string
 }
 
-export default function BillCard({id, date, month, year, totalAmount=0, payAmount=0, billNo, customerName, pandingAmount=0}: BillCardProps): React.JSX.Element {
+export default function BillCard({createOn, totalAmount=0, payAmount=0, billNo, customerName, pandingAmount=0}: BillCardProps): React.JSX.Element {
 
     const {currency} = useAppStorage();
 
@@ -31,7 +30,9 @@ export default function BillCard({id, date, month, year, totalAmount=0, payAmoun
     return (
         <View style={{gap: 6, marginBlock: 12}}>
             <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', paddingInline: 8}} >
-                <TextTheme style={{fontSize: 20, fontWeight: 900}} >{getMounthName(month)} {date}</TextTheme>
+                <TextTheme style={{fontSize: 20, fontWeight: 900}} >
+                    {getMounthName(parseInt(createOn.split('-')[1]))} {createOn.split('-')[2]}
+                </TextTheme>
                 <TextTheme style={{fontWeight: 900, fontSize: 16}} >{numberToString(payAmount, 1)} {currency}</TextTheme>
             </View>
 
@@ -49,7 +50,7 @@ export default function BillCard({id, date, month, year, totalAmount=0, payAmoun
 
                     <View style={{alignItems: 'flex-end'}} >
                         <TextTheme style={{fontSize: 12}} isPrimary={false} >#{billNo}</TextTheme>
-                        <TextTheme style={{fontSize: 12}} isPrimary={false} >{date} {getMounthName(month)} {year}</TextTheme>
+                        <TextTheme style={{fontSize: 12}} isPrimary={false} >{createOn}</TextTheme>
                     </View>
                 </View>
 

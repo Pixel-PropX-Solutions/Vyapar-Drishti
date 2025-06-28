@@ -19,10 +19,11 @@ import EmptyListView from "../../View/EmptyListView";
 
 type Props = {
     visible: boolean;
-    setVisible: (vis: boolean) => void
+    setVisible: (vis: boolean) => void;
+    billType: string
 }
 
-export default function ProductSelectorModal({visible, setVisible}: Props): React.JSX.Element {
+export default function ProductSelectorModal({visible, setVisible, billType}: Props): React.JSX.Element {
 
     const {setAlert} = useAlert();
 
@@ -73,7 +74,10 @@ export default function ProductSelectorModal({visible, setVisible}: Props): Reac
 
     useEffect(() => {
         setFilterProducts(() => (
-            productsData?.filter(a => !products.some(b => b.id == a._id))
+            productsData?.filter(a => (
+                !products.some(b => b.id == a._id) && 
+                billType.toLowerCase() == 'sales bill' ? a.current_stock : true
+            ))
         ) ?? [])
     }, [productsData, products])
 
@@ -164,25 +168,6 @@ export default function ProductSelectorModal({visible, setVisible}: Props): Reac
                         <TextTheme style={{fontSize: 24, fontWeight: 900}}>{unit ?? "Unit"}</TextTheme>
                     </AnimateButton>
                 </View>
-
-                {/* <View style={{flexDirection: 'row', justifyContent: 'space-between', gap: 12}} >
-                    <AnimateButton 
-                        onPress={() => setQuantity(pre => pre > 0 ? pre - 1 : 0)}
-                        style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, padding: 8, flex: 1}} 
-                        
-                    >
-                        <FeatherIcon name="chevrons-left" size={24} />
-                        <TextTheme style={{fontSize: 24, fontWeight: 900}}>{unit ?? "Unit"} {'( - )'}</TextTheme>
-                    </AnimateButton>
-
-                    <AnimateButton 
-                        onPressIn={() => setQuantity(pre => pre < inStock ? pre + 1 : pre)}
-                        style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, padding: 8, flex: 1}} 
-                    >
-                        <TextTheme style={{fontSize: 24, fontWeight: 900}}>{'( + )'} {unit ?? "Unit"}</TextTheme>
-                        <FeatherIcon name="chevrons-right" size={24} />
-                    </AnimateButton>
-                </View> */}
 
                 <View style={{flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, width: '100%'}} >
                     <FeatherIcon name="dollar-sign" size={24} />

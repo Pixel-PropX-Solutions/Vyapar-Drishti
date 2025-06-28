@@ -29,7 +29,9 @@ type ContextType = {
     setBillNo: Dispatch<SetStateAction<string>>,
 
     createOn: string,
-    setCreateOn: Dispatch<SetStateAction<string>>
+    setCreateOn: Dispatch<SetStateAction<string>>,
+
+    resetAllStates: () => void
 }
 
 
@@ -40,7 +42,8 @@ const Context = createContext<ContextType>({
     customer: null, setCustomer: fn,
     totalValue: 0,
     billNo: '', setBillNo: fn,
-    createOn: '', setCreateOn: fn
+    createOn: '', setCreateOn: fn,
+    resetAllStates: fn
 })
 
 
@@ -52,6 +55,11 @@ export default function CreateBillScreenProvider({children}: {children: React.Re
     const [totalValue, setTotalValue] = useState<number>(0);
     const [billNo, setBillNo] = useState<string>('#INV-2025-000');
     const [createOn, setCreateOn] = useState<string>(new Date().toLocaleDateString());
+
+    function resetAllStates(): void {
+        setProducts([]); setCreateOn(new Date().toLocaleDateString());
+        setCustomer(null); setTotalValue(0);
+    }
 
 
     useEffect(() => {
@@ -70,7 +78,8 @@ export default function CreateBillScreenProvider({children}: {children: React.Re
         customer, setCustomer,
         totalValue,
         billNo, setBillNo,
-        createOn, setCreateOn
+        createOn, setCreateOn,
+        resetAllStates
     }
 
     return <Context.Provider children={children} value={states} />

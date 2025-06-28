@@ -46,7 +46,7 @@ export default function ProductScreen(): React.JSX.Element {
             </View>
 
             <FlatList
-                ListEmptyComponent={<EmptyListView type="product" />}
+                ListEmptyComponent={isProductsFetching ? null : <EmptyListView type="product" />}
                 contentContainerStyle={{gap: 20, paddingBottom: 80, paddingTop: 12, paddingHorizontal: 20}}
                 data={productsData}
                 keyExtractor={(item) => item._id}

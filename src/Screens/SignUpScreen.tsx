@@ -1,5 +1,4 @@
 import { Pressable, View } from "react-native";
-import SafePaddingView from "../Components/SafeAreaView/SafePaddingView";
 import TextTheme from "../Components/Text/TextTheme";
 import LabelTextInput from "../Components/TextInput/LabelTextInput";
 import LogoImage from "../Components/Image/LogoImage";

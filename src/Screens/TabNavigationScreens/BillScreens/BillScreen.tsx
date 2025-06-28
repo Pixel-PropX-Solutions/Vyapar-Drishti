@@ -5,13 +5,19 @@ import AnimateButton from "../../../Components/Button/AnimateButton";
 import FeatherIcon from "../../../Components/Icon/FeatherIcon";
 import NormalButton from "../../../Components/Button/NormalButton";
 import RoundedPlusButton from "../../../Components/Button/RoundedPlusButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BottomModal from "../../../Components/Modal/BottomModal";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamsList } from "../../../Navigation/StackNavigation";
 import TabNavigationScreenHeader from "../../../Components/Header/TabNavigationHeader";
 import EmptyListView from "../../../Components/View/EmptyListView";
+import { useAppDispatch, useCompanyStore, useInvoiceStore } from "../../../Store/ReduxStore";
+import { viewAllInvoices } from "../../../Services/invoice";
+import { FlatList } from "react-native-gesture-handler";
+import BillCard from "../../../Components/Card/BillCard";
+import ShowWhen from "../../../Components/Other/ShowWhen";
+import { ProductLoadingCard } from "../../../Components/Card/ProductCard";
 
 
 
@@ -22,10 +28,24 @@ const dummayBillsType: string[] = [
 
 export default function BillScreen(): React.JSX.Element {
 
+    const dispatch = useAppDispatch();
+    const {invoices, isInvoiceFeaching, pageMeta} = useInvoiceStore();
+    const {company} = useCompanyStore()
 
     const navigation = useNavigation<StackNavigationProp<StackParamsList, 'tab-navigation'>>();
 
     const [isBillTypeSelectorModalVisible, setBillTypeSelectorModalVisible] = useState<boolean>(false);
+
+    function handleInvoiceFetching(){
+        if(isInvoiceFeaching) return;
+        if(pageMeta.total <= pageMeta.page * pageMeta.limit) return;
+        dispatch(viewAllInvoices({company_id: company?._id ?? '', pageNumber: pageMeta.page + 1}));
+    }
+    
+
+    useEffect(() => {
+        dispatch(viewAllInvoices({company_id: company?._id ?? '', pageNumber: 1}))
+    }, [])
 
     return (
         <View style={{width: '100%', height: '100%'}}>
@@ -52,7 +72,41 @@ export default function BillScreen(): React.JSX.Element {
                     </View> 
                 </View>
 
-                <EmptyListView type="invoice" />
+                <FlatList
+                    ListEmptyComponent={isInvoiceFeaching ? null : <EmptyListView type="invoice" />}
+                    contentContainerStyle={{gap: 20, paddingBottom: 80}}
+                    data={invoices}
+                    keyExtractor={(item) => item._id}
+                
+                    renderItem={({item}) => (
+                        <BillCard
+                            billNo={item.voucher_number}
+                            customerName={item.party_name}
+                            createOn={item.created_at.split('T')[0]}
+                            totalAmount={item.amount}
+                            payAmount={item.amount}
+                            pandingAmount={0}
+                        />
+                    )}
+
+                    ListFooterComponentStyle={{gap: 20}}
+                    ListFooterComponent={<ShowWhen when={isInvoiceFeaching}>
+                        <ProductLoadingCard/>
+                        <ProductLoadingCard/>
+                        <ProductLoadingCard/>
+                    </ShowWhen>}
+
+                    onScroll={({nativeEvent}) => {
+                        let {contentOffset, layoutMeasurement, contentSize} = nativeEvent;
+                        let contentOffsetY = contentOffset.y;
+                        let totalHeight = contentSize.height;
+                        let height = layoutMeasurement.height;
+
+                        if(totalHeight - height < contentOffsetY + 400) {
+                            handleInvoiceFetching();
+                        }
+                    }}
+                />
 
                 <View style={{minHeight: 80}} />
             </BackgroundThemeView>

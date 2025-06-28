@@ -38,7 +38,7 @@ export default function CustomerScreen(): React.JSX.Element {
             </ShowWhen>
         
             <FlatList
-                ListEmptyComponent={<EmptyListView type="customer" />}
+                ListEmptyComponent={isAllCustomerFetching ? null : <EmptyListView type="customer" />}
                 contentContainerStyle={{marginTop: 12, width: '100%', height: '100%', gap: 20}}
                 data={customers}
                 keyExtractor={(item) => item._id}

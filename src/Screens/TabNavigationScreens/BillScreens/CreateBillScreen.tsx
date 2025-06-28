@@ -17,6 +17,12 @@ import ShowWhen from "../../../Components/Other/ShowWhen";
 import { SectionRow } from "../../../Components/View/SectionView";
 import { sliceString } from "../../../Utils/functionTools";
 import { useAppStorage } from "../../../Contexts/AppStorageProvider";
+import EmptyListView from "../../../Components/View/EmptyListView";
+import { CreateInvoiceData } from "../../../Utils/types";
+import { useAppDispatch, useCompanyStore, useInvoiceStore } from "../../../Store/ReduxStore";
+import { createInvoice } from "../../../Services/invoice";
+import navigator from "../../../Navigation/NavigationService";
+import LoadingModal from "../../../Components/Modal/LoadingModal";
 
 
 export default function CraeteBillScreen(){
@@ -28,9 +34,13 @@ export default function CraeteBillScreen(){
 
 function Screen(): React.JSX.Element {
 
-    const {secondaryBackgroundColor, primaryBackgroundColor, primaryColor} = useTheme();
+    const dispatch = useAppDispatch();
+
     const {currency} = useAppStorage();
-    const {billNo, setBillNo, createOn, setCreateOn, customer, products, totalValue} = useCreateBillContext();
+    const {company} = useCompanyStore();
+    const {loading} = useInvoiceStore();
+    const {secondaryBackgroundColor, primaryBackgroundColor} = useTheme();
+    const {billNo, setBillNo, createOn, setCreateOn, customer, products, totalValue, resetAllStates, setProducts} = useCreateBillContext();
 
     const navigation = useNavigation<StackNavigationProp<StackParamsList, 'create-bill-screen'>>();
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
@@ -40,6 +50,32 @@ function Screen(): React.JSX.Element {
 
     const [isCustomerModalVisible, setCustomerModalVisible] = useState<boolean>(false);
     const [isProductModalVisible, setProductModalVisible] = useState<boolean>(false);
+
+
+    async function handleInvoice() {
+        let data: CreateInvoiceData = {
+            company_id: company?._id ?? '', date: createOn, voucher_number: billNo, voucher_type: billType, 
+            reference_date: '', narration: '', place_of_supply: '', reference_number: '', 
+            items: products.map(pro => ({
+                _item: pro.id, quantity: pro.quantity, rate: pro.price, vouchar_id: billNo, 
+                item: pro.name, amount: pro.price * pro.quantity
+            })),
+            party_name: customer?.name ?? '',
+            accounting: [
+                {amount: totalValue, ledger: "", ledger_id: customer?.id ?? '', vouchar_id: billNo}, 
+                {amount: totalValue, ledger: "", ledger_id: customer?.id ?? '', vouchar_id: billNo}
+            ]
+
+        }
+
+        let {payload: res} = await dispatch(createInvoice(data));
+       
+        if(res.success){
+            resetAllStates();
+            return navigator.goBack();
+        }
+
+    }
 
 
     return (
@@ -129,7 +165,9 @@ function Screen(): React.JSX.Element {
                 
 
                 <FlatList
+                    scrollEnabled={false}
                     contentContainerStyle={{gap: 12}}
+                    ListEmptyComponent={<EmptyListView title="No Product Added" />}
 
                     ListHeaderComponent={<ShowWhen when={products.length !== 0}>
                         <TextTheme style={{fontSize: 16, fontWeight: 800, marginBottom: 4}} >Products</TextTheme>
@@ -166,7 +204,15 @@ function Screen(): React.JSX.Element {
                             </View>
 
                             <View style={{position: 'absolute', top: -6, right: -6}} >
-                                <AnimateButton style={{backgroundColor: 'rgb(250,50,100)', borderRadius: 8, paddingInline: 12,flexDirection: 'row', gap: 12, alignItems: 'center', height: 32}} >
+                                <AnimateButton 
+                                    style={{backgroundColor: 'rgb(250,50,100)', borderRadius: 8, paddingInline: 12,flexDirection: 'row', gap: 12, alignItems: 'center', height: 32}} 
+                                    onPress={() => setProducts(pro => {
+                                        let temp = [...pro];
+                                        let index = pro.findIndex(e => e.id == item.id);
+                                        if(index >= 0) temp.splice(index, 1);
+                                        return temp
+                                    })}
+                                >
                                     <FeatherIcon name="delete" size={12} color="white" />
                                     <TextTheme color="white" style={{fontSize: 12}} >Remove</TextTheme>
                                 </AnimateButton>
@@ -179,11 +225,12 @@ function Screen(): React.JSX.Element {
             </ScrollView>
             
             <KeyboardAvoidingView behavior="padding" >
-                <AmountBox/>
+                <AmountBox handleCreateInvoice={handleInvoice} />
             </KeyboardAvoidingView>
 
             <CustomerSelectorModal visible={isCustomerModalVisible} setVisible={setCustomerModalVisible} billType={billType} />
-            <ProductSelectorModal visible={isProductModalVisible} setVisible={setProductModalVisible} />
+            <ProductSelectorModal visible={isProductModalVisible} setVisible={setProductModalVisible} billType={billType} />
+            <LoadingModal visible={loading} />
         </View>
     )
 }
@@ -235,7 +282,7 @@ function BillNoAndDateSelector({billNo, setBillNo, createOn, setCreateOn}: BillN
 
 
 
-function AmountBox(): React.JSX.Element {
+function AmountBox({handleCreateInvoice}: {handleCreateInvoice: () => void}): React.JSX.Element {
 
     const {totalValue, products} = useCreateBillContext();
     const {currency} = useAppStorage();
@@ -290,7 +337,7 @@ function AmountBox(): React.JSX.Element {
             <View style={{flexDirection: 'row', justifyContent: 'flex-end', position: 'relative', alignItems: 'center'}} >
                 <View style={{position: 'absolute', width: '100%', flex: 1, borderWidth: 2, borderColor: secondaryColor, height: 0}} />
                 
-                <AnimateButton style={{paddingHorizontal: 20, height: 44, borderRadius: 44, justifyContent: 'center', borderColor: secondaryColor, marginRight: 20, borderWidth: 3, backgroundColor}} >
+                <AnimateButton onPress={handleCreateInvoice} style={{paddingHorizontal: 20, height: 44, borderRadius: 44, justifyContent: 'center', borderColor: secondaryColor, marginRight: 20, borderWidth: 3, backgroundColor}} >
                     <TextTheme color={color} style={{fontWeight: 900}} >Create</TextTheme>
                 </AnimateButton>
             </View>
