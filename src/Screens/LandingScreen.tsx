@@ -1,14 +1,10 @@
 import { View } from "react-native";
 import NormalButton from "../Components/Button/NormalButton";
 import TextTheme from "../Components/Text/TextTheme";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { StackParamsList } from "../Navigation/StackNavigation";
 import LogoImage from "../Components/Image/LogoImage";
+import navigator from "../Navigation/NavigationService";
 
 export default function LandingScreen(): React.JSX.Element {
-
-    const navigation = useNavigation<StackNavigationProp<StackParamsList, 'landing-screen'>>()
 
     return (
         <View style={{width: '100%', height: '100%', display: 'flex', justifyContent: 'space-between', paddingInline: 20}}>           
@@ -33,14 +29,14 @@ export default function LandingScreen(): React.JSX.Element {
                     isPrimary={true}
                     text="Get Free Account" 
                     textStyle={{fontWeight: 900, fontSize: 14}} 
-                    onPress={() => navigation.navigate('signup-screen')}
+                    onPress={() => navigator.navigate('signup-screen')}
                 />
                 
                 <NormalButton 
                     isPrimary={false}
                     text="Already Have Account" 
                     textStyle={{fontWeight: 900, fontSize: 14}} 
-                    onPress={() => navigation.navigate('login-screen')}
+                    onPress={() => navigator.navigate('login-screen')}
                 />
             </View>
        </View>

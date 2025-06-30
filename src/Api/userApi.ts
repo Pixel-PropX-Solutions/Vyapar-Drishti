@@ -1,7 +1,7 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { BASE_URL } from "../../env";
 import AuthStore from "../Store/AuthStore";
-import { navigate } from "../Navigation/NavigationService";
+import navigator, { navigate } from "../Navigation/NavigationService";
 
 
 interface Token {
@@ -14,7 +14,6 @@ const userApi = axios.create({
     withCredentials: true,
 });
 
-// ✅ Add token to headers *and* as cookies manually
 userApi.interceptors.request.use((config) => {
 
     const accessToken = AuthStore.getString("accessToken");
@@ -65,7 +64,7 @@ userApi.interceptors.response.use(
             {
               headers: {
                 Cookie: `refresh_token=${refreshToken}`,
-                Authorization: `Bearer ${refreshToken}`, // If your backend needs it
+                Authorization: `Bearer ${refreshToken}`,
               },
               withCredentials: true,
             }
@@ -76,7 +75,6 @@ userApi.interceptors.response.use(
           AuthStore.set("accessToken", data.accessToken);
           AuthStore.set("refreshToken", data.refreshToken);
   
-          // Retry the original request with the new token
           originalRequest.headers["Authorization"] = `Bearer ${data.accessToken}`;
           originalRequest.headers["Cookie"] = `access_token=${data.accessToken}; refresh_token=${data.refreshToken}`;
   
@@ -86,8 +84,7 @@ userApi.interceptors.response.use(
           AuthStore.delete("accessToken");
           AuthStore.delete("refreshToken");
 
-          // Add logout or navigation logic if needed
-          navigate('login-screen');
+          navigator.reset('landing-screen');
         }
       }
   

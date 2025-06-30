@@ -1,28 +1,22 @@
-import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
-import { StackParamsList } from "../Navigation/StackNavigation";
-import { StackNavigationProp } from "@react-navigation/stack";
 import LogoImage from "../Components/Image/LogoImage";
 import TextTheme from "../Components/Text/TextTheme";
 import { View } from "react-native";
 import { useAppDispatch } from "../Store/ReduxStore";
 import { getCurrentUser } from "../Services/user";
+import navigator from "../Navigation/NavigationService";
 
 export default function SplashScreen(): React.JSX.Element {
 
-    const navigation = useNavigation<StackNavigationProp<StackParamsList, 'splash-screen'>>();
     const dispatch = useAppDispatch();
-
-
-    
 
     async function handleNavigation(){
 
         const navigate = (isValid: boolean) => {
             if(isValid) {
-                navigation.replace('tab-navigation');
+                navigator.reset('tab-navigation');
             } else {
-                navigation.replace('landing-screen');
+                navigator.reset('landing-screen');
             }
         }
 
@@ -33,7 +27,7 @@ export default function SplashScreen(): React.JSX.Element {
         let cuurentTime = Date.now();
        
         if(cuurentTime - oldTime < 1000) {
-            setTimeout(() => navigate(Boolean(res.payload?.user)), 1000 - (cuurentTime - oldTime));
+            setTimeout(() => navigate(Boolean(res.payload?.user)), Math.max(1000 - (cuurentTime - oldTime), 0));
         } else {
             navigate(Boolean(res.payload.user));
         }

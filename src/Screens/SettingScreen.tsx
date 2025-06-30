@@ -132,7 +132,7 @@ export default function SettingScreen(): React.JSX.Element {
                         color="white"
                         onPress={() => {
                             AuthStore.clearAll();
-                            navigator.replace('landing-screen');
+                            navigator.reset('landing-screen');
                         }}
                     />
                 </SectionView>

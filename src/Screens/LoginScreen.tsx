@@ -5,20 +5,17 @@ import LogoImage from "../Components/Image/LogoImage";
 import NormalButton from "../Components/Button/NormalButton";
 import PasswordInput from "../Components/TextInput/PasswordInput";
 import { ScrollView, Text } from "react-native-gesture-handler";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { StackParamsList } from "../Navigation/StackNavigation";
 import { useState } from "react";
 import { loginUser } from "../Services/user";
 import { useAlert } from "../Components/Alert/AlertProvider";
 import { useAppDispatch, useUserStore } from "../Store/ReduxStore";
+import navigator from "../Navigation/NavigationService";
 
 export default function LoginScreen(): React.JSX.Element {
 
     const {setAlert} = useAlert();
     
-    const navigation = useNavigation<StackNavigationProp<StackParamsList, 'login-screen'>>();
-    const {loading, isAuthenticated} = useUserStore();
+    const {loading} = useUserStore();
     const dispatch = useAppDispatch();
 
     const [username, setUsername] = useState<string>('');
@@ -35,7 +32,7 @@ export default function LoginScreen(): React.JSX.Element {
         let {payload: res} = await dispatch(loginUser(formData));
 
         if(res && res?.accessToken) {
-            return navigation.navigate('tab-navigation');
+            return navigator.reset('tab-navigation');
         } else {
             return setAlert({type: 'error', massage: 'invalid information'})
         }
@@ -89,7 +86,7 @@ export default function LoginScreen(): React.JSX.Element {
                         onPress={handleLogin} 
                     />
 
-                    <Pressable onPress={() => { navigation.replace('signup-screen'); console.log(navigation) }} >
+                    <Pressable onPress={() => {navigator.replace('signup-screen');}} >
                         <TextTheme style={{ paddingLeft: 4, paddingTop: 12, textAlign: 'center' }}>
                             Create new Account?
                             <Text style={{ color: 'rgb(50,150,250)', fontWeight: 900, paddingLeft: 8 }}>

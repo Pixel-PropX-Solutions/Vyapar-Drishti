@@ -1,4 +1,4 @@
-import { createNavigationContainerRef } from '@react-navigation/native';
+import { createNavigationContainerRef, StackActions } from '@react-navigation/native';
 import type { StackParamsList } from './StackNavigation';
 
 const navigation = createNavigationContainerRef<StackParamsList>();
@@ -25,12 +25,18 @@ const navigator = {
     }
   },
   
-  replace: function(name: keyof StackParamsList, params?: any) {
+  reset: function(name: keyof StackParamsList, params?: any) {
     if (navigation.isReady()) {
       navigation.reset({
         index: 0,
         routes: [{ name, params }],
       });
+    }
+  },
+
+  replace: function (name: keyof StackParamsList, params?: any){
+    if(navigation.isReady()){
+      navigation.current?.dispatch(StackActions.replace(name, params))
     }
   },
 

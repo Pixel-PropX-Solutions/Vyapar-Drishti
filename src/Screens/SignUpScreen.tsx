@@ -4,19 +4,16 @@ import LabelTextInput from "../Components/TextInput/LabelTextInput";
 import LogoImage from "../Components/Image/LogoImage";
 import NormalButton from "../Components/Button/NormalButton";
 import { ScrollView, Text } from "react-native-gesture-handler";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { StackParamsList } from "../Navigation/StackNavigation";
 import { useState } from "react";
 import { isValidEmail, isValidMobileNumber } from "../Functions/StringOpations/pattenMaching";
 import { useAppDispatch, useUserStore } from "../Store/ReduxStore";
 import { register } from "../Services/user";
+import navigator from "../Navigation/NavigationService";
 
 export default function SignUpScreen(): React.JSX.Element {
 
-    const navigation = useNavigation<StackNavigationProp<StackParamsList, 'signup-screen'>>();
     const dispatch = useAppDispatch();
-    const {loading, isAuthenticated} = useUserStore();
+    const {loading} = useUserStore();
 
 
     const [firstName, setFirstName] = useState<string>('');
@@ -36,7 +33,7 @@ export default function SignUpScreen(): React.JSX.Element {
         const {payload: res} = await dispatch(register(data));
 
         if(res?.accessToken){
-            navigation.replace('tab-navigation');
+            navigator.reset('tab-navigation');
         } else {
             console.log('Registration failed, please try again');
         }
@@ -131,7 +128,7 @@ export default function SignUpScreen(): React.JSX.Element {
                         onLoadingText="Wait..."
                     /> 
                     
-                    <Pressable onPress={() => {navigation.replace('login-screen'); console.log(navigation)}} >
+                    <Pressable onPress={() => {navigator.replace('login-screen');}} >
                         <TextTheme style={{paddingLeft: 4, paddingTop: 12, textAlign: 'center'}}>
                             Already have Account?
                             <Text style={{color: 'rgb(50,150,250)', fontWeight: 900, paddingLeft: 8}}>
