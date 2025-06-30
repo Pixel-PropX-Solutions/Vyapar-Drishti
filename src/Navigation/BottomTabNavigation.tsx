@@ -7,7 +7,8 @@ import BillScreen from "../Screens/TabNavigationScreens/BillScreens/BillScreen";
 import SettingScreen from "../Screens/TabNavigationScreens/MenuScreens/MenuScreen";
 import FeatherIcons from 'react-native-vector-icons/Feather'
 import { useTheme } from "../Contexts/ThemeProvider";
-import { View } from "react-native";
+import { Dimensions, View } from "react-native";
+import SafeAreaFromBottom from "../Components/SafeAreaView/SafeAreaFromBottom";
 
 
 export type BottomTabParamsList = {
@@ -24,9 +25,10 @@ export default function BottomTabNavigation(): React.JSX.Element {
 
     const {primaryColor: color, primaryBackgroundColor: backgroundColor} = useTheme();
     const activeColor = 'rgb(50,150,250)'
+    const {height, width} = Dimensions.get('window')
 
     return (
-        <View style={{width: '100%', height: '100%'}} >
+        <View style={{width, height}} >
             <Tab.Navigator
                 initialRouteName="home-screen"
                 screenOptions={{
@@ -80,6 +82,8 @@ export default function BottomTabNavigation(): React.JSX.Element {
                     }} 
                 />
             </Tab.Navigator>
+            
+            <SafeAreaFromBottom/>
         </View>
     )
 }

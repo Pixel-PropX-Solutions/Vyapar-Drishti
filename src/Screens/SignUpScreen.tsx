@@ -31,11 +31,11 @@ export default function SignUpScreen(): React.JSX.Element {
             return;
         }
 
-        let data = {name: {first: firstName, last: lastName}, email, phone: {code, number: phoneNumber}};
+        const data = {name: {first: firstName, last: lastName}, email, phone: {code, number: phoneNumber}};
         
-        await dispatch(register(data));
-        
-        if(isAuthenticated){
+        const {payload: res} = await dispatch(register(data));
+
+        if(res?.accessToken){
             navigation.replace('tab-navigation');
         } else {
             console.log('Registration failed, please try again');
@@ -63,6 +63,8 @@ export default function SignUpScreen(): React.JSX.Element {
                             label="First Name" 
                             placeholder="John" 
                             onChangeText={setFirstName}
+                            useTrim={true}
+                            autoCapitalize="words"
                         />
                     </View>
 
@@ -71,6 +73,8 @@ export default function SignUpScreen(): React.JSX.Element {
                             label="Last Name" 
                             placeholder="Wick" 
                             onChangeText={setLastName}
+                            useTrim={true}
+                            autoCapitalize="words"
                         />
                     </View>
                 </View>
@@ -82,6 +86,8 @@ export default function SignUpScreen(): React.JSX.Element {
                     checkInputText={isValidEmail}
                     massage="Enter mail was invalid !!!"
                     onChangeText={setEmail}
+                    useTrim={true}
+                    autoCapitalize="none"
                 />
 
                 <View style={{flexDirection: 'row', gap: 12}} >
@@ -92,6 +98,7 @@ export default function SignUpScreen(): React.JSX.Element {
                         keyboardType="phone-pad" 
                         onChangeText={setCode}
                         containerStyle={{width: 100}}
+                        useTrim={true}
                     />
 
                     <LabelTextInput 
@@ -102,6 +109,7 @@ export default function SignUpScreen(): React.JSX.Element {
                         massage="Phone number only content digits"
                         onChangeText={setPhoneNumber}
                         containerStyle={{flex: 1}}
+                        useTrim={true}
                     />
 
                 </View>

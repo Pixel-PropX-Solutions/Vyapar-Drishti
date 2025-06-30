@@ -60,15 +60,17 @@ export default function LoginScreen(): React.JSX.Element {
 
             <View style={{ display: 'flex', gap: 20, width: '100%', maxWidth: 450, marginBottom: 20 }}>
                 <LabelTextInput
-                    label="Username"
-                    placeholder="john_wick24"
+                    label="Email"
+                    placeholder="john_wick24@mail.com"
                     onChangeText={setUsername}
                     autoCapitalize="none"
+                    useTrim={true}
                 />
 
                 <View>
                     <PasswordInput
                         massage="Password length is too short"
+                        autoCapitalize="none"
                         onChangeText={setPassword}
                         onSubmitEditing={handleLogin}
                     />

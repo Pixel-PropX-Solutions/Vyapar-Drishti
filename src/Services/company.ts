@@ -1,5 +1,6 @@
 import userApi from "../Api/userApi";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { GetCompany } from "../Utils/types";
 
 
 export const createCompany = createAsyncThunk(
@@ -53,7 +54,7 @@ export const getCompany = createAsyncThunk(
 
 export const getAllCompanies = createAsyncThunk(
   "get/all/company",
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue }): Promise<{companies: GetCompany[]} | any> => {
     try {
       const response = await userApi.get('/user/all/company',);
       console.log("getAllCompanies response", response.data);

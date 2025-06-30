@@ -23,15 +23,15 @@ import { setIsCompanyFetching } from "../../Store/Redusers/companyReduser";
 export default function HomeScreenHeader(): React.JSX.Element {
 
     const [isCompanySwitchModalVisible, setCompanySwitchModalVisible] = useState<boolean>(false);
-    const [isCompanyCreateModalVisible, setCompanyCreateMdoalVisible] = useState<boolean>(false);
+    const [isCompanyCreateModalVisible, setCompanyCreateModalVisible] = useState<boolean>(false);
 
 
     const { company, companies, isCompanyFetching } = useCompanyStore();
     const dispatch = useAppDispatch()
 
     useEffect(() => {
-        dispatch(getAllCompanies());
         dispatch(getCompany());
+        dispatch(getAllCompanies());
     }, [])
 
     return (
@@ -90,7 +90,7 @@ export default function HomeScreenHeader(): React.JSX.Element {
                 style={{ paddingInline: 20, gap: 20 }}
                 actionButtons={companies.length >= 2 ? undefined : [{
                     title: '+ Add New', onPress: () => {
-                        setCompanyCreateMdoalVisible(true);
+                        setCompanyCreateModalVisible(true);
                     }
                 }]}
             >
@@ -123,7 +123,7 @@ export default function HomeScreenHeader(): React.JSX.Element {
 
             <CompanyCreateModal
                 visible={isCompanyCreateModalVisible}
-                setVisible={setCompanyCreateMdoalVisible}
+                setVisible={setCompanyCreateModalVisible}
             />
 
         </View>
@@ -141,7 +141,7 @@ function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalType) {
     const { primaryColor } = useTheme();
     const { setAlert } = useAlert();
     const dispatch = useAppDispatch();
-    const {companies} = useCompanyStore()
+    const {companies, isCompaniesFetching} = useCompanyStore()
 
     const [name, setName] = useState<string>('');
     const [mail, setMail] = useState<string>('');
@@ -151,17 +151,23 @@ function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalType) {
             type: 'error', massage: 'all field are require to create new company', id: 'company-create-modal'
         });
 
-        let from = arrayToFormData([['name', name], ['email', mail]]);
+        let from = arrayToFormData([['name', name.trim()], ['email', mail.trim()]]);
         
         await dispatch(createCompany(from));
-        dispatch(getAllCompanies());
+        const {payload: res} = await dispatch(getAllCompanies());
+
+        if((res?.companies ?? []).length === 1){
+            dispatch(setIsCompanyFetching(true));
+            dispatch(setCompany(res.companies[0]._id)).then(_ => dispatch(getCompany()));
+        }
+
         setVisible(false);
     }
 
     return (
         <BottomModal
             alertId='company-create-modal'
-            visible={companies.length == 0 ? true : visible} setVisible={setVisible}
+            visible={isCompaniesFetching ? visible : companies.length === 0 ? true : visible} setVisible={setVisible}
             closeOnBack={companies.length !== 0}
             style={{ paddingInline: 20 }}
             actionButtons={[{ title: 'Create', onPress }]}
@@ -174,6 +180,7 @@ function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalType) {
                     placeholder="Company Name"
                     style={{ fontSize: 24, fontWeight: 900, flex: 1 }}
                     onChangeText={setName}
+                    autoCapitalize="sentences"
                 />
             </View>
 
@@ -183,6 +190,7 @@ function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalType) {
                     placeholder="Mail Id"
                     style={{ fontSize: 24, fontWeight: 900, flex: 1 }}
                     onChangeText={setMail}
+                    autoCapitalize="none"
                 />
             </View>
 

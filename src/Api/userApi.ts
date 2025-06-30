@@ -11,7 +11,6 @@ interface Token {
 
 const userApi = axios.create({
     baseURL: BASE_URL,
-    // baseURL: import.meta.env.VITE_LOCAL_BACKEND_BASE_URL,
     withCredentials: true,
 });
 
@@ -65,7 +64,7 @@ userApi.interceptors.response.use(
             {},
             {
               headers: {
-                Cookie: `refreshToken=${refreshToken}`,
+                Cookie: `refresh_token=${refreshToken}`,
                 Authorization: `Bearer ${refreshToken}`, // If your backend needs it
               },
               withCredentials: true,

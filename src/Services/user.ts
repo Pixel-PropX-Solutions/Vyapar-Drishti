@@ -58,7 +58,7 @@ export const register = createAsyncThunk(
   async (
     userData: UserSignUp,
     { rejectWithValue }
-  ) => {
+  ): Promise<{accessToken: string} | any> => {
     try {
       const response = await userApi.post(`/auth/register`, userData);
       console.log("register response", response.data);

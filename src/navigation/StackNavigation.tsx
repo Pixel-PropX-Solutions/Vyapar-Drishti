@@ -37,7 +37,7 @@ const Stack = createStackNavigator<StackParamsList>();
 export default function StackNavigation(): React.JSX.Element {
 
     const {primaryBackgroundColor: backgroundColor} = useTheme()
-    const {height, width} = Dimensions.get('screen')
+    const {height, width} = Dimensions.get('window')
 
     return (
         <NavigationContainer ref={NavigationRef} >

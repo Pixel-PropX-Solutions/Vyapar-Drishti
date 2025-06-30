@@ -64,6 +64,7 @@ export function CompanyInfoUpdateModal({visible, setVisible}: Props): React.JSX.
                     label="Name" 
                     placeholder="Enter your company name" 
                     value={name} onChangeText={setName}
+                    useTrim={true}
                 />
 
                 <LabelTextInput 
@@ -71,7 +72,7 @@ export function CompanyInfoUpdateModal({visible, setVisible}: Props): React.JSX.
                     placeholder="https://www.conmpanyname.com" 
                     value={website} onChangeText={setWebsite}
                     autoCapitalize="none"
-                    
+                    useTrim={true}         
                 />
             </View>
 
@@ -130,6 +131,7 @@ export function CompanyContactUpdateModal({visible, setVisible}: Props): React.J
                     label="Mailing Name" 
                     placeholder="e.g. Technology, Menufacturing" 
                     value={mailingName} onChangeText={setMailingName}
+                    useTrim={true}
                 />
                
                 <LabelTextInput 
@@ -138,6 +140,7 @@ export function CompanyContactUpdateModal({visible, setVisible}: Props): React.J
                     placeholder="contact@companyname.ocm" 
                     value={email} onChangeText={setEmail}
                     autoCapitalize="none"
+                    useTrim={true}
                 />
 
                 <View style={{flexDirection: 'row', gap: 12, width: '100%', alignItems: 'center'}} >
@@ -147,6 +150,7 @@ export function CompanyContactUpdateModal({visible, setVisible}: Props): React.J
                         containerStyle={{width: 120}} 
                         value={code} onChangeText={setCode}
                         keyboardType="number-pad"
+                        useTrim={true}
                     />
 
                     <LabelTextInput 
@@ -155,6 +159,7 @@ export function CompanyContactUpdateModal({visible, setVisible}: Props): React.J
                         containerStyle={{flex: 1}} 
                         value={number} onChangeText={setNumber}
                         keyboardType="number-pad"
+                        useTrim={true}
                     />
                 </View>
             </View>
