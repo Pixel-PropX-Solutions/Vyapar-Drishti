@@ -1,5 +1,4 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React from "react";
 import HomeScreen from "../Screens/TabNavigationScreens/HomeScreens/HomeScreen";
 import ProductScreen from "../Screens/TabNavigationScreens/ProductScreens/ProductScreen";
 import CustomerScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerScreen";
@@ -7,8 +6,9 @@ import BillScreen from "../Screens/TabNavigationScreens/BillScreens/BillScreen";
 import SettingScreen from "../Screens/TabNavigationScreens/MenuScreens/MenuScreen";
 import FeatherIcons from 'react-native-vector-icons/Feather'
 import { useTheme } from "../Contexts/ThemeProvider";
-import { Dimensions, View } from "react-native";
+import { View } from "react-native";
 import SafeAreaFromBottom from "../Components/SafeAreaView/SafeAreaFromBottom";
+import SafeAreaFromTop from "../Components/SafeAreaView/SafeAreaFromTop";
 
 
 export type BottomTabParamsList = {
@@ -25,15 +25,16 @@ export default function BottomTabNavigation(): React.JSX.Element {
 
     const {primaryColor: color, primaryBackgroundColor: backgroundColor} = useTheme();
     const activeColor = 'rgb(50,150,250)'
-    const {height, width} = Dimensions.get('window')
 
     return (
-        <View style={{width, height}} >
+        <View style={{width: '100%', height: '100%'}} >
+            <SafeAreaFromTop/>
+            
             <Tab.Navigator
                 initialRouteName="home-screen"
                 screenOptions={{
                     headerShown: false, animation: 'shift', 
-                    tabBarStyle: {backgroundColor},
+                    tabBarStyle: {backgroundColor, maxHeight: 69},
                     tabBarInactiveTintColor: color,
                     tabBarActiveTintColor: activeColor,
                     sceneStyle: {backgroundColor}
