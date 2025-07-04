@@ -1,19 +1,19 @@
-export function stringToNumber(str: string, pre=2, originalType=true){
+export function stringToNumber(str: string, pre = 2, originalType = true) {
     let num = '';
     let decimal = '';
-    let numbers = '0123456789'
+    let numbers = '0123456789';
 
     let index = 0;
-    while(index < str.length && numbers.includes(str[index])){
+    while (index < str.length && numbers.includes(str[index])) {
         num += str[index];
         index++;
     }
-    
-    if(index < str.length && str[index] !== '.') return originalType ? parseInt(num) : Number(num + '.' + createString(pre, '0'));
+
+    if (index < str.length && str[index] !== '.') {return originalType ? parseInt(num) : Number(num + '.' + createString(pre, '0'));}
 
     index++;
 
-    while(index < str.length && decimal.length <= pre && numbers.includes(str[index])){
+    while (index < str.length && decimal.length <= pre && numbers.includes(str[index])) {
         decimal += str[index];
         index++;
     }
@@ -24,17 +24,24 @@ export function stringToNumber(str: string, pre=2, originalType=true){
 }
 
 
-export function createString(len: number, char=' '){
+export function createString(len: number, char = ' ') {
     let str = '';
-    for(let i=0; i<len; i++) str += char;
+    for (let i = 0; i < len; i++) {str += char;}
     return str;
 }
 
 
-export function sliceString(str: any, len=Infinity, rem=2): string | undefined {
-    if(typeof str !== 'string') return str;
+export function sliceString(str: any, len = Infinity, rem = 2): string | undefined {
+    if (typeof str !== 'string') {return str;}
 
-    if(str.length <= len) return str;
+    if (str.length <= len) {return str;}
 
-    return str?.slice(0, len-rem) + '...'
+    return str?.slice(0, len - rem) + '...';
 }
+
+// Helper to get 1st April of current year
+export const getDefaultAprilFirst = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    return new Date(year, 3, 1); // Month is 0-indexed, so 3 = April
+};

@@ -1,6 +1,7 @@
-import FeatherIcons from 'react-native-vector-icons/Feather';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from '../../Contexts/ThemeProvider';
 import { ViewStyle } from 'react-native';
+
 
 type Props = {
     name: string,
@@ -11,7 +12,7 @@ type Props = {
     useInversTheme?: boolean
 }
 
-export default function FeatherIcon({name, size, color, style, isPrimary=true, useInversTheme=false}: Props) {
+export default function MaterialDesignIcon({name, size, color, style, isPrimary=true, useInversTheme=false}: Props) {
     const {primaryColor, secondaryColor, primaryBackgroundColor, secondaryBackgroundColor} = useTheme();
     
     
@@ -22,5 +23,5 @@ export default function FeatherIcon({name, size, color, style, isPrimary=true, u
     }
     
 
-    return <FeatherIcons  name={name} size={size} color={color} style={style} />
+    return <MaterialCommunityIcons name={name} size={size} color={color} style={style} />
 }

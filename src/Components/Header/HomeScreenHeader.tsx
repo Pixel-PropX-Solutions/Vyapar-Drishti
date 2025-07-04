@@ -8,17 +8,14 @@ import { SectionRowWithIcon } from "../View/SectionView";
 import LogoImage from "../Image/LogoImage";
 import { ScrollView } from "react-native-gesture-handler";
 import BackgroundThemeView from "../View/BackgroundThemeView";
-import { createCompany, getAllCompanies, getCompany, setCompany } from "../../Services/company";
-import NoralTextInput from "../TextInput/NoralTextInput";
-import { useTheme } from "../../Contexts/ThemeProvider";
-import FontAwesome6Icon from "../Icon/FontAwesome6Icon";
-import arrayToFormData from "../../Utils/arrayToFormData";
-import { useAlert } from "../Alert/AlertProvider";
-import { useAppDispatch, useCompanyStore } from "../../Store/ReduxStore";
+import { getAllCompanies, getCompany } from "../../Services/company";
+import { useAppDispatch, useCompanyStore, useUserStore } from "../../Store/ReduxStore";
 import navigator from "../../Navigation/NavigationService";
 import LoadingView from "../View/LoadingView";
 import ShowWhen from "../Other/ShowWhen";
 import { setIsCompanyFetching } from "../../Store/Redusers/companyReduser";
+import { getCurrentUser, updateUserSettings } from "../../Services/user";
+import { CompanyCreateModal } from "../Other/CreateCompanyModal";
 
 export default function HomeScreenHeader(): React.JSX.Element {
 
@@ -27,6 +24,7 @@ export default function HomeScreenHeader(): React.JSX.Element {
 
 
     const { company, companies, isCompanyFetching } = useCompanyStore();
+    const { user } = useUserStore();
     const dispatch = useAppDispatch()
 
     useEffect(() => {
@@ -40,20 +38,20 @@ export default function HomeScreenHeader(): React.JSX.Element {
                 onPress={() => setCompanySwitchModalVisible(true)}
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 8, height: 44, paddingLeft: 10, paddingRight: 20, borderRadius: 40 }}
             >
-                <ShowWhen 
-                    when={!isCompanyFetching} 
+                <ShowWhen
+                    when={!isCompanyFetching}
                     otherwise={<LoadingView width={44} height={44} />}
                 >
                     <BackgroundThemeView isPrimary={false} style={{ width: 40, borderRadius: 12, aspectRatio: 1, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }} >
-                        <LogoImage size={44} />
+                        <LogoImage size={44} imageSrc={company?.image} />
                     </BackgroundThemeView>
                 </ShowWhen>
 
                 <View>
-                    <ShowWhen 
-                        when={!isCompanyFetching} 
+                    <ShowWhen
+                        when={!isCompanyFetching}
                         otherwise={<>
-                            <LoadingView height={12} width={50} style={{marginBottom: 4}} />
+                            <LoadingView height={12} width={50} style={{ marginBottom: 4 }} />
                             <LoadingView height={12} width={80} />
                         </>}
                     >
@@ -99,19 +97,26 @@ export default function HomeScreenHeader(): React.JSX.Element {
                 <ScrollView contentContainerStyle={{ gap: 16 }} >
 
                     {
-                        companies.map(({ _id, name, email }) => (
+                        companies.map(({ _id, name, email, image }) => (
                             <SectionRowWithIcon
                                 key={_id}
                                 label={name}
                                 text={email}
-                                icon={<LogoImage size={44} />}
-                                backgroundColor={_id == company?._id ? 'rgb(50,150,250)' : ''}
-                                color={_id == company?._id ? 'white' : ''}
-                                onPress={() => { 
-                                    if(_id == company?._id) return setCompanySwitchModalVisible(false);
-                                    
+                                icon={<LogoImage size={44} imageSrc={image ?? ''} />}
+                                backgroundColor={_id === company?._id ? 'rgb(50,150,250)' : ''}
+                                color={_id === company?._id ? 'white' : ''}
+                                onPress={() => {
+                                    if (_id === company?._id) return setCompanySwitchModalVisible(false);
+
                                     dispatch(setIsCompanyFetching(true));
-                                    dispatch(setCompany(_id)).then(_ => dispatch(getCompany()));
+
+                                    dispatch(updateUserSettings({ id: user?.user_settings?._id || '', data: { current_company_id: _id, current_company_name: name } }))
+                                        .unwrap().then((response) => {
+                                            if (response) {
+                                                dispatch(getCurrentUser());
+                                                dispatch(getCompany());
+                                            }
+                                        });
                                     setCompanySwitchModalVisible(false);
                                 }}
                             />
@@ -127,74 +132,5 @@ export default function HomeScreenHeader(): React.JSX.Element {
             />
 
         </View>
-    )
-}
-
-
-type CompanyCreateModalType = {
-    visible: boolean,
-    setVisible: (vis: boolean) => void
-}
-
-function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalType) {
-
-    const { primaryColor } = useTheme();
-    const { setAlert } = useAlert();
-    const dispatch = useAppDispatch();
-    const {companies, isCompaniesFetching} = useCompanyStore()
-
-    const [name, setName] = useState<string>('');
-    const [mail, setMail] = useState<string>('');
-
-    async function onPress() {
-        if (!(name && mail)) return setAlert({
-            type: 'error', massage: 'all field are require to create new company', id: 'company-create-modal'
-        });
-
-        let from = arrayToFormData([['name', name.trim()], ['email', mail.trim()]]);
-        
-        await dispatch(createCompany(from));
-        const {payload: res} = await dispatch(getAllCompanies());
-
-        if((res?.companies ?? []).length === 1){
-            dispatch(setIsCompanyFetching(true));
-            dispatch(setCompany(res.companies[0]._id)).then(_ => dispatch(getCompany()));
-        }
-
-        setVisible(false);
-    }
-
-    return (
-        <BottomModal
-            alertId='company-create-modal'
-            visible={isCompaniesFetching ? visible : companies.length === 0 ? true : visible} setVisible={setVisible}
-            closeOnBack={companies.length !== 0}
-            style={{ paddingInline: 20 }}
-            actionButtons={[{ title: 'Create', onPress }]}
-        >
-            <TextTheme style={{ fontSize: 16, fontWeight: 900, marginBottom: 12 }} >Create Company</TextTheme>
-
-            <View style={{ marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12 }} >
-                <FontAwesome6Icon name="building" size={28} />
-                <NoralTextInput
-                    placeholder="Company Name"
-                    style={{ fontSize: 24, fontWeight: 900, flex: 1 }}
-                    onChangeText={setName}
-                    autoCapitalize="sentences"
-                />
-            </View>
-
-            <View style={{ marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12 }} >
-                <FeatherIcon name="mail" size={28} />
-                <NoralTextInput
-                    placeholder="Mail Id"
-                    style={{ fontSize: 24, fontWeight: 900, flex: 1 }}
-                    onChangeText={setMail}
-                    autoCapitalize="none"
-                />
-            </View>
-
-            <View style={{ minHeight: 40 }} />
-        </BottomModal>
     )
 }

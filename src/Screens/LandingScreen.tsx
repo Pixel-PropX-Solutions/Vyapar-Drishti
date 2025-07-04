@@ -17,7 +17,7 @@ export default function LandingScreen(): React.JSX.Element {
 
                 <View style={{marginBottom: 14, paddingLeft: 6}}>
                     <TextTheme style={{fontWeight: 900, fontSize: 20, marginBottom: 4}} >
-                        Welcome to Vyapar Drishty
+                        Welcome to Vyapar Drishti
                     </TextTheme>
                     
                     <TextTheme style={{fontWeight: 900}} isPrimary={false} >

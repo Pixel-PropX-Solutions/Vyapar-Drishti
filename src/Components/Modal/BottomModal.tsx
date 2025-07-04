@@ -1,5 +1,5 @@
 
-import { Keyboard, Modal,  ModalProps,  PressableProps, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
+import { Keyboard, Modal, ModalProps, PressableProps, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
 import FeatherIcons from 'react-native-vector-icons/Feather';
 import { Text } from "react-native-gesture-handler";
 import { useTheme } from "../../Contexts/ThemeProvider";
@@ -8,11 +8,21 @@ import { Dimensions } from "react-native";
 import { useEffect, useState } from "react";
 import AnimateButton from "../Button/AnimateButton";
 
+type ActionButton = {
+    key?: string,
+    title: string,
+    onPress: (arg: PressableProps) => void,
+    color?: string,
+    backgroundColor?: string,
+    icon?: any,
+    style?: ViewStyle
+};
+
 type BottomModalProps = ModalProps & {
     visible: boolean,
     setVisible: (vis: boolean) => void,
     children: React.ReactNode,
-    actionButtons?: [{title: string, onPress: (arg: PressableProps) => void, color?: string, backgroundColor?: string, icon?: any, style?: ViewStyle}],
+    actionButtons?: ActionButton[],
     transparent?: boolean,
     style?: ViewStyle,
     bottomOpationStyle?: ViewStyle,
@@ -24,21 +34,21 @@ type BottomModalProps = ModalProps & {
     topMarginPrecentage?: number,
 }
 
-export default function BottomModal({visible, setVisible, children, style, backdropColor='rgba(0, 0, 0, 0.50)', actionButtons, closeOnBack=true, animationType='slide', bottomOpationStyle={}, onClose=()=>{}, alertId, topMarginPrecentage=0.25, ...props}: BottomModalProps): React.JSX.Element {
+export default function BottomModal({ visible, setVisible, children, style, backdropColor = 'rgba(0, 0, 0, 0.50)', actionButtons, closeOnBack = true, animationType = 'slide', bottomOpationStyle = {}, onClose = () => { }, alertId, topMarginPrecentage = 0.25, ...props }: BottomModalProps): React.JSX.Element {
 
-    const {primaryColor: color, primaryBackgroundColor: backgroundColor, secondaryBackgroundColor} = useTheme();
+    const { primaryColor: color, primaryBackgroundColor: backgroundColor, secondaryBackgroundColor } = useTheme();
 
-    const {height} = Dimensions.get('screen');
+    const { height } = Dimensions.get('screen');
 
-    const [maxHeight, setMaxHeight] = useState<number>(height - height*topMarginPrecentage)
+    const [maxHeight, setMaxHeight] = useState<number>(height - height * topMarginPrecentage)
 
     useEffect(() => {
-        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', ({endCoordinates}) => {
+        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', ({ endCoordinates }) => {
             setMaxHeight((pre) => pre - endCoordinates.height);
         });
 
         const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-            setMaxHeight(height - height*topMarginPrecentage);
+            setMaxHeight(height - height * topMarginPrecentage);
         });
 
         return () => {
@@ -46,38 +56,39 @@ export default function BottomModal({visible, setVisible, children, style, backd
             keyboardDidHideListener.remove();
         };
     }, []);
-    
+
 
     return (
-        <Modal {...props} backdropColor={backdropColor} animationType={animationType} visible={visible} onRequestClose={() => {setVisible(!closeOnBack); onClose();}}>
+        <Modal {...props} backdropColor={backdropColor} animationType={animationType} visible={visible} onRequestClose={() => { setVisible(!closeOnBack); onClose(); }}>
             {alertId && <AlertCard id={alertId} />}
             <View style={[styles.root]}>
-                <AnimateButton onPress={() => setVisible(false)} style={{width: '100%', flex: 1}} />
+                <AnimateButton onPress={() => setVisible(false)} style={{ width: '100%', flex: 1 }} />
 
-                <View style={[styles.modalContener, {backgroundColor, borderColor: secondaryBackgroundColor, maxHeight} ,style]}>
+                <View style={[styles.modalContener, { backgroundColor, borderColor: secondaryBackgroundColor, maxHeight }, style]}>
                     {children}
                 </View>
 
-                
-                <View style={[styles.bottomOpations, {backgroundColor, borderColor: secondaryBackgroundColor}, bottomOpationStyle]}>
-                    <AnimateButton style={{borderColor: secondaryBackgroundColor, backgroundColor, ...styles.closeBtn}} onPress={() => {setVisible(false); onClose();}}>
-                        <FeatherIcons name="plus" size={16} color={color} style={{transform: 'rotate(45deg)'}} />
+
+                <View style={[styles.bottomOpations, { backgroundColor, borderColor: secondaryBackgroundColor }, bottomOpationStyle]}>
+                    <AnimateButton style={{ borderColor: secondaryBackgroundColor, backgroundColor, ...styles.closeBtn }} onPress={() => { setVisible(false); onClose(); }}>
+                        <FeatherIcons name="plus" size={16} color={color} style={{ transform: 'rotate(45deg)' }} />
                     </AnimateButton>
-                    
+
                     <View style={styles.actionsButtonsBox}>
                         {
-                            actionButtons?.map(({title, onPress, color='white', backgroundColor='black', icon, style}) => (
-                                <AnimateButton bubbleColor={color} key={title} onPress={onPress}
-                                    style={{height: 44, borderRadius: 100, paddingInline: 20, display: 'flex', alignItems: 'center', flexDirection: 'row', gap: 10, backgroundColor, overflow: 'hidden', ...style}}
+                            actionButtons?.map(({ title, onPress, color = 'white', backgroundColor = 'black', icon, style, key }, index) => (
+                                <AnimateButton bubbleColor={color} key={`${key + title + index}`} onPress={onPress}
+                                    style={{ height: 44, borderRadius: 100, paddingInline: 20, display: 'flex', alignItems: 'center', flexDirection: 'row', gap: 10, backgroundColor, overflow: 'hidden', ...style }}
                                 >
-                                        {icon ? icon : null}
-                                        <Text style={{color, fontWeight: '900', fontSize: 14}}>{title}</Text>
+                                    {icon ? icon : null}
+
+                                    {title && <Text style={{ color, fontWeight: '900', fontSize: 14 }}>{title}</Text>}
                                 </AnimateButton>
                             ))
                         }
                     </View>
                 </View>
-            </View> 
+            </View>
         </Modal>
     )
 }
@@ -88,7 +99,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-end',
         flexDirection: 'column',
-        width: '100%',   
+        width: '100%',
         height: '100%',
         flex: 1,
         paddingInline: 2

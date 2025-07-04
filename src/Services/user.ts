@@ -27,30 +27,30 @@ export const getCurrentUser = createAsyncThunk(
 );
 
 export const loginUser = createAsyncThunk(
-  "auth/loginUser", 
+  "auth/loginUser",
   async (
-    formData: FormData, 
-    {rejectWithValue}
-  ): Promise<{accessToken: string} | any> => {
-  try {
-    const response = await userApi.post( `/auth/login?user_type=user`, formData, {
+    formData: FormData,
+    { rejectWithValue }
+  ): Promise<{ accessToken: string } | any> => {
+    try {
+      const response = await userApi.post(`/auth/login?user_type=user`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-    });
-    const { accessToken } = response.data;
+      });
+      const { accessToken } = response.data;
 
-    if (accessToken) {
-      return { accessToken };
-    } else {
-      return rejectWithValue('Login failed: No access token received.');
+      if (accessToken) {
+        return { accessToken };
+      } else {
+        return rejectWithValue('Login failed: No access token received.');
+      }
+    } catch (error: any) {
+      const message =
+        error.response?.data?.message || 'Login failed: Invalid credentials or server error.';
+      return rejectWithValue(message);
     }
-  } catch (error: any) {
-    const message =
-      error.response?.data?.message || 'Login failed: Invalid credentials or server error.';
-    return rejectWithValue(message);
-  }
-});
+  });
 
 
 export const register = createAsyncThunk(
@@ -58,7 +58,7 @@ export const register = createAsyncThunk(
   async (
     userData: UserSignUp,
     { rejectWithValue }
-  ): Promise<{accessToken: string} | any> => {
+  ): Promise<{ accessToken: string } | any> => {
     try {
       const response = await userApi.post(`/auth/register`, userData);
       console.log("register response", response.data);
@@ -76,6 +76,29 @@ export const register = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Registration failed: Server error."
+      );
+    }
+  }
+);
+
+export const updateUserSettings = createAsyncThunk(
+  "update/user/settings",
+  async (
+    { id, data }: { id: string; data: Record<string, unknown> },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await userApi.put(`/user/settings/update/${id}`, data);
+      console.log("updateUserSettings response", response);
+
+      if (response.data.success === true) {
+        const data = response.data.data;
+        return data;
+      } else return rejectWithValue("Login Failed: No access token recieved.");
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+        "Login failed: Invalid credentials or server error."
       );
     }
   }

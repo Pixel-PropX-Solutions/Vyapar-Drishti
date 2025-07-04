@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import LogoImage from "../Components/Image/LogoImage";
+import LogoText from "../Components/Image/LogoText";
 import TextTheme from "../Components/Text/TextTheme";
 import { View } from "react-native";
 import { useAppDispatch } from "../Store/ReduxStore";
@@ -41,7 +42,7 @@ export default function SplashScreen(): React.JSX.Element {
     return (
         <View style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12}} >
             <LogoImage size={200} />
-            <TextTheme style={{fontSize: 28, fontWeight: 900}} >Vyapar Dristy</TextTheme>  
+            {/* <TextTheme style={{fontSize: 28, fontWeight: 900}} >Vyapar Dristy</TextTheme>   */}
         </View>
     )
 }

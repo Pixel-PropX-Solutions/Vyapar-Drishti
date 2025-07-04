@@ -1,21 +1,21 @@
-import { View } from "react-native";
-import { useTheme } from "../../../Contexts/ThemeProvider";
-import AnimateButton from "../../Button/AnimateButton";
-import FeatherIcon from "../../Icon/FeatherIcon";
-import TextTheme from "../../Text/TextTheme";
-import NoralTextInput from "../../TextInput/NoralTextInput";
-import BottomModal from "../BottomModal";
-import ProductCard, { ProductLoadingCard } from "../../Card/ProductCard";
-import { FlatList } from "react-native-gesture-handler";
-import { useAppDispatch, useCompanyStore, useProductStore } from "../../../Store/ReduxStore";
-import ShowWhen from "../../Other/ShowWhen";
-import { useEffect, useState } from "react";
-import { viewAllProducts } from "../../../Services/product";
-import { useAlert } from "../../Alert/AlertProvider";
-import { useCreateBillContext } from "../../../Contexts/CreateBillScreenProvider";
-import { GetProduct } from "../../../Utils/types";
-import { stringToNumber } from "../../../Utils/functionTools";
-import EmptyListView from "../../View/EmptyListView";
+import { View } from 'react-native';
+import { useTheme } from '../../../Contexts/ThemeProvider';
+import AnimateButton from '../../Button/AnimateButton';
+import FeatherIcon from '../../Icon/FeatherIcon';
+import TextTheme from '../../Text/TextTheme';
+import NoralTextInput from '../../TextInput/NoralTextInput';
+import BottomModal from '../BottomModal';
+import ProductCard, { ProductLoadingCard } from '../../Card/ProductCard';
+import { FlatList } from 'react-native-gesture-handler';
+import { useAppDispatch, useCompanyStore, useProductStore } from '../../../Store/ReduxStore';
+import ShowWhen from '../../Other/ShowWhen';
+import { useEffect, useState } from 'react';
+import { viewAllProducts } from '../../../Services/product';
+import { useAlert } from '../../Alert/AlertProvider';
+import { useCreateBillContext } from '../../../Contexts/CreateBillScreenProvider';
+import { GetProduct } from '../../../Utils/types';
+import { stringToNumber } from '../../../Utils/functionTools';
+import EmptyListView from '../../View/EmptyListView';
 
 type Props = {
     visible: boolean;
@@ -29,15 +29,15 @@ export default function ProductSelectorModal({visible, setVisible, billType}: Pr
 
     const {primaryColor} = useTheme();
     const {company} = useCompanyStore();
-    const {products, setProducts} = useCreateBillContext()
+    const {products, setProducts} = useCreateBillContext();
     const {productsData, isProductsFetching, pageMeta} = useProductStore();
 
     const dispatch = useAppDispatch();
 
     const [isUnitModalVisible, setUnitModalVisible] = useState<boolean>(false);
 
-    const [filterProducts, setFilterProducts] = useState<GetProduct[]>([])
-    
+    const [filterProducts, setFilterProducts] = useState<GetProduct[]>([]);
+
     const [quantity, setQuantity] = useState<string>('');
     const [unit, setUnit] = useState<string>('Unit');
     const [price, setPrice] = useState<string>('');
@@ -45,21 +45,21 @@ export default function ProductSelectorModal({visible, setVisible, billType}: Pr
     const [name, setName] = useState<string>('');
     const [productNo, setProductNo] = useState<string>('');
 
-     
+
     function handleProductFetching(){
-        if(isProductsFetching) return;
-        if(pageMeta.total <= pageMeta.page * pageMeta.limit) return;
+        if(isProductsFetching) {return;}
+        if(pageMeta.total <= pageMeta.page * pageMeta.limit) {return;}
         dispatch(viewAllProducts({company_id: company?._id ?? '', pageNumber: pageMeta.page + 1}));
     }
 
     function handleProduct() {
-        if(!(price && quantity)) return setAlert({
+        if(!(price && quantity)) {return setAlert({
             id: 'create-bill-product-selector-modal',
-            type: 'error', massage: 'please enter all requried information !!!'
-        })
+            type: 'error', massage: 'please enter all requried information !!!',
+        });}
 
         setProducts((pro) => [...pro, {
-            id: productId, price: stringToNumber(price), quantity: stringToNumber(quantity), name, productNo, unit
+            id: productId, price: stringToNumber(price), quantity: stringToNumber(quantity), name, productNo, unit,
         }]);
 
         setPrice(''); setQuantity('');
@@ -67,7 +67,7 @@ export default function ProductSelectorModal({visible, setVisible, billType}: Pr
         setUnitModalVisible(false);
         setVisible(false);
     }
-    
+
     useEffect(() => {
         dispatch(viewAllProducts({company_id: company?._id ?? '', pageNumber: 1}));
     }, []);
@@ -75,22 +75,22 @@ export default function ProductSelectorModal({visible, setVisible, billType}: Pr
     useEffect(() => {
         setFilterProducts(() => (
             productsData?.filter(a => (
-                !products.some(b => b.id == a._id) && 
+                !products.some(b => b.id == a._id) &&
                 billType.toLowerCase() == 'sales bill' ? a.current_stock : true
             ))
-        ) ?? [])
-    }, [productsData, products])
+        ) ?? []);
+    }, [productsData, products]);
 
     return (
         <BottomModal visible={visible} setVisible={setVisible} style={{padding: 20, gap: 20}}>
             <TextTheme style={{fontWeight: 800, fontSize: 16}} >Select Product</TextTheme>
 
             <View
-                style={{borderWidth: 2, borderColor: primaryColor, borderRadius: 100, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: "row", paddingLeft: 10, paddingRight: 16}}
+                style={{borderWidth: 2, borderColor: primaryColor, borderRadius: 100, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', paddingLeft: 10, paddingRight: 16}}
             >
                 <FeatherIcon name="search" size={20} />
 
-                <NoralTextInput  
+                <NoralTextInput
                     placeholder="Search"
                     style={{flex: 1}}
                 />
@@ -102,7 +102,7 @@ export default function ProductSelectorModal({visible, setVisible, billType}: Pr
                 data={filterProducts}
                 keyExtractor={(item) => item._id}
                 keyboardShouldPersistTaps="always"
-               
+
                 renderItem={({item}) => (
                     <ProductCard
                         unit={item.unit}
@@ -139,14 +139,14 @@ export default function ProductSelectorModal({visible, setVisible, billType}: Pr
             />
 
 
-            <BottomModal 
+            <BottomModal
                 alertId="create-bill-product-selector-modal"
-                visible={isUnitModalVisible} setVisible={setUnitModalVisible} 
-                style={{padding: 20, gap: 20}} 
+                visible={isUnitModalVisible} setVisible={setUnitModalVisible}
+                style={{padding: 20, gap: 20}}
                 actionButtons={[{
-                    title: "+ Add", onPress: handleProduct
-                }]}  
-                  
+                    title: '+ Add', onPress: handleProduct,
+                }]}
+
             >
                 <TextTheme style={{fontWeight: 800, fontSize: 16}} >Select Quantity</TextTheme>
 
@@ -162,18 +162,18 @@ export default function ProductSelectorModal({visible, setVisible, billType}: Pr
                         />
                     </View>
 
-                    <AnimateButton 
-                        style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, paddingLeft: 8, paddingRight: 20}}     
+                    <AnimateButton
+                        style={{marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, paddingLeft: 8, paddingRight: 20}}
                     >
-                        <TextTheme style={{fontSize: 24, fontWeight: 900}}>{unit ?? "Unit"}</TextTheme>
+                        <TextTheme style={{fontSize: 24, fontWeight: 900}}>{unit ?? 'Unit'}</TextTheme>
                     </AnimateButton>
                 </View>
 
                 <View style={{flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, width: '100%'}} >
                     <FeatherIcon name="dollar-sign" size={24} />
-                    <NoralTextInput 
+                    <NoralTextInput
                         value={price}
-                        placeholder="Enter Price" 
+                        placeholder="Enter rate"
                         keyboardType="number-pad"
                         style={{fontSize: 24, fontWeight: 900, width: '100%'}}
                         onChangeText={setPrice}
@@ -183,5 +183,5 @@ export default function ProductSelectorModal({visible, setVisible, billType}: Pr
                 <View style={{minHeight: 40}} />
             </BottomModal>
         </BottomModal>
-    )
+    );
 }

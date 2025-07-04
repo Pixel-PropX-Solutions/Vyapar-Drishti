@@ -1,16 +1,18 @@
 import { createSlice, Slice } from "@reduxjs/toolkit";
-import { loginUser, register, getCurrentUser } from "../../Services/user";
+import { loginUser, register, getCurrentUser, updateUserSettings } from "../../Services/user";
 
 interface UserState {
     loading: boolean;
     error: string | null;
     isAuthenticated: boolean;
+    user: any | null;
 }
 
 const initialState: UserState = {
     loading: false,
     error: null,
     isAuthenticated: false,
+    user: null, // Assuming you want to store user data after login or registration
 };
 
 const userSlice: Slice<UserState> = createSlice({
@@ -54,12 +56,26 @@ const userSlice: Slice<UserState> = createSlice({
             .addCase(getCurrentUser.fulfilled, (state, action) => {
                 state.loading = false;
                 state.isAuthenticated = action.payload.user ? true : false;
+                state.user = action.payload.user;
             })
             .addCase(getCurrentUser.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message || "Failed to fetch current user";
                 state.isAuthenticated = false;
-            });
+            })
+
+            .addCase(updateUserSettings.pending, (state) => {
+                state.error = null;
+                state.loading = true;
+            })
+            .addCase(updateUserSettings.fulfilled, (state) => {
+                state.loading = false;
+            })
+            .addCase(updateUserSettings.rejected, (state, action) => {
+                state.error = action.payload as string;
+                state.loading = false;
+            })
+            ;
     }
 });
 

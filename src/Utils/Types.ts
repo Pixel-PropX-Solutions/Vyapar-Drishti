@@ -47,6 +47,7 @@ export type CustomerSortField =
 export type SortOrder = "asc" | "desc";
 
 export interface Units {
+  id: string;
   label: string;
   value: string;
 }
@@ -229,8 +230,10 @@ export interface CreateInvoiceData {
   company_id: string,
   date: string,
   voucher_type: string,
+  voucher_type_id: string,
   voucher_number: string,
   party_name: string,
+  party_name_id: string,
   narration: string,
   reference_number: string,
   reference_date: string,
@@ -244,7 +247,7 @@ export interface CreateInvoiceData {
   items: Array<{
     vouchar_id: string;
     item: string;
-    _item: string;
+    item_id: string;
     quantity: number;
     rate: number;
     amount: number;
@@ -580,22 +583,15 @@ export interface GetAllVouchars {
   is_deemed_positive: boolean
 }
 
-export interface GetAllAccountingGroups {
+export interface AccountingGroups {
   _id: string;
   accounting_group_name: string;
-  user_id: string;
-  company_id: string;
+  user_id: string | null;
+  company_id: string | null;
   description: string;
-  image: string;
-  is_deleted: false,
+  image: string | File | null;
+  is_deleted: false;
   parent: string;
-  // is_revenue: false,
-  // is_deemedpositive: false,
-  // is_reserved: true,
-  // affects_gross_profit: false,
-  // sort_position: null,
-  created_at: string;
-  updated_at: string;
 }
 
 export interface DefaultAccountingGroup {

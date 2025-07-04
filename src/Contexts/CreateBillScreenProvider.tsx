@@ -68,7 +68,7 @@ export default function CreateBillScreenProvider({children}: {children: React.Re
 
     useEffect(() => {
         let time = new Date();
-        let year = time.getFullYear();
+        let year = time.getFullYear().toString().slice(2);
         let no = time.getMonth()*30 + time.getDate()*7 + time.getDay()*24 + time.getHours()*60 + time.getMinutes()*60 + time.getSeconds();
         setBillNo(`#INV-${year}-${no}`); 
     }, []);

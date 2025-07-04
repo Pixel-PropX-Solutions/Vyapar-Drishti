@@ -66,6 +66,7 @@ export default function CustomerSelectorModal({visible, setVisible, billType}: P
             <FlatList
                 ListEmptyComponent={<EmptyListView type="customer" />}
                 data={filterCustomers}
+                contentContainerStyle={{gap: 10}}
                 keyExtractor={item => item._id}
 
                 renderItem={({item}) => (

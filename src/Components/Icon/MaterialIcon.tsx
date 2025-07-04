@@ -2,6 +2,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useTheme } from '../../Contexts/ThemeProvider';
 import { ViewStyle } from 'react-native';
 
+
 type Props = {
     name: string,
     size: number,

@@ -1,100 +1,102 @@
-import { FlatList } from "react-native-gesture-handler";
-import TextTheme from "../../../Components/Text/TextTheme";
-import ProductCard, { ProductLoadingCard } from "../../../Components/Card/ProductCard";
-import { Text, View } from "react-native";
-import AnimateButton from "../../../Components/Button/AnimateButton";
-import FeatherIcon from "../../../Components/Icon/FeatherIcon";
-import NormalButton from "../../../Components/Button/NormalButton";
-import RoundedPlusButton from "../../../Components/Button/RoundedPlusButton";
-import { useEffect, useState } from "react";
-import CreateProductModal from "../../../Components/Modal/Product/CreateProductModal";
-import TabNavigationScreenHeader from "../../../Components/Header/TabNavigationHeader";
-import { useAppDispatch, useCompanyStore, useProductStore } from "../../../Store/ReduxStore";
-import { viewAllProducts } from "../../../Services/product";
-import navigator from "../../../Navigation/NavigationService";
-import ShowWhen from "../../../Components/Other/ShowWhen";
-import EmptyListView from "../../../Components/View/EmptyListView";
+import { FlatList } from 'react-native-gesture-handler';
+import TextTheme from '../../../Components/Text/TextTheme';
+import ProductCard, { ProductLoadingCard } from '../../../Components/Card/ProductCard';
+import { Text, View } from 'react-native';
+import AnimateButton from '../../../Components/Button/AnimateButton';
+import FeatherIcon from '../../../Components/Icon/FeatherIcon';
+import NormalButton from '../../../Components/Button/NormalButton';
+import RoundedPlusButton from '../../../Components/Button/RoundedPlusButton';
+import { useEffect, useState } from 'react';
+import CreateProductModal from '../../../Components/Modal/Product/CreateProductModal';
+import TabNavigationScreenHeader from '../../../Components/Header/TabNavigationHeader';
+import { useAppDispatch, useCompanyStore, useProductStore } from '../../../Store/ReduxStore';
+import { viewAllProducts } from '../../../Services/product';
+import navigator from '../../../Navigation/NavigationService';
+import ShowWhen from '../../../Components/Other/ShowWhen';
+import EmptyListView from '../../../Components/View/EmptyListView';
 
 
 export default function ProductScreen(): React.JSX.Element {
 
-    const {company} = useCompanyStore();
-    const {productsData, pageMeta, isProductsFetching} = useProductStore();
+    const { company } = useCompanyStore();
+    const { productsData, pageMeta, isProductsFetching } = useProductStore();
     const dispatch = useAppDispatch();
-
     const [isCreateModalOpen, setCreateModalOpen] = useState<boolean>(false);
-    
-    function handleProductFetching(){
-        if(isProductsFetching) return;
-        if(pageMeta.total <= pageMeta.page * pageMeta.limit) return;
-        dispatch(viewAllProducts({company_id: company?._id ?? '', pageNumber: pageMeta.page + 1}));
+
+    function handleProductFetching() {
+        if (isProductsFetching) { return; }
+        if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
+        dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1 }));
     }
 
     useEffect(() => {
-        dispatch(viewAllProducts({company_id: company?._id ?? '', pageNumber: 1}));
-    }, []);
+        dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: 1 }));
+    }, [company?._id, dispatch]);
 
     return (
-        <View  style={{width: '100%', height: '100%'}}>
+        <View style={{ width: '100%', height: '100%' }}>
             <TabNavigationScreenHeader>
-                <TextTheme style={{fontSize: 16, fontWeight: 800}}>Products</TextTheme>
+                <TextTheme style={{ fontSize: 16, fontWeight: 800 }}>Products</TextTheme>
             </TabNavigationScreenHeader>
-        
-            <View style={{gap: 24, paddingHorizontal: 20}}>
+
+            <View style={{ gap: 24, paddingHorizontal: 20 }}>
                 <SummaryCard highStock={pageMeta.total - (pageMeta.low_stock ?? 0)} lowStock={pageMeta.low_stock ?? 0} />
-                <ProductFilterView/>
+                <ProductFilterView />
             </View>
 
             <FlatList
                 ListEmptyComponent={isProductsFetching ? null : <EmptyListView type="product" />}
-                contentContainerStyle={{gap: 20, paddingBottom: 80, paddingTop: 12, paddingHorizontal: 20}}
+                contentContainerStyle={{ gap: 20, paddingBottom: 80, paddingTop: 12, paddingHorizontal: 20 }}
                 data={productsData}
                 keyExtractor={(item) => item._id}
-               
-                renderItem={({item}) => (
-                    <ProductCard
+
+                renderItem={({ item }) => {
+                    const profit = (item.sales_value / item.sales_qty - (item.purchase_value / item.purchase_qty));
+                    const profitMargin = item.purchase_value ? ((profit / (item.sales_value / item.sales_qty)) * 100).toFixed(2) : 0;
+
+                    return (<ProductCard
                         unit={item.unit}
                         isPrimary={false}
                         sellQuantity={item.sales_qty}
                         productName={item.stock_item_name}
                         productsNo={item.gst_hsn_code ?? ''}
                         inStock={item.purchase_qty - item.sales_qty}
-                        lowStockQuantity={item.low_stock_alert ?? 0}
-                        profitValue={item.purchase_value - item.sales_value}
-                        onPress={() => navigator.navigate('product-info-screen', {productId: item._id})}
-                    />
-                )}
+                        lowStockQuantity={item.low_stock_alert ?? 10}
+                        profitValue={profitMargin}
+                        onPress={() => navigator.navigate('product-info-screen', { productId: item._id })}
+                    />)
+                }}
 
-                ListFooterComponentStyle={{gap: 20}}
+                ListFooterComponentStyle={{ gap: 20 }}
                 ListFooterComponent={<ShowWhen when={isProductsFetching}>
-                    <ProductLoadingCard/>
-                    <ProductLoadingCard/>
-                    <ProductLoadingCard/>
+                    <ProductLoadingCard />
+                    <ProductLoadingCard />
+                    <ProductLoadingCard />
                 </ShowWhen>}
 
-                onScroll={({nativeEvent}) => {
-                    let {contentOffset, layoutMeasurement, contentSize} = nativeEvent;
+                onScroll={({ nativeEvent }) => {
+                    let { contentOffset, layoutMeasurement, contentSize } = nativeEvent;
                     let contentOffsetY = contentOffset.y;
                     let totalHeight = contentSize.height;
                     let height = layoutMeasurement.height;
 
-                    if(totalHeight - height < contentOffsetY + 400) {
+                    if (totalHeight - height < contentOffsetY + 400) {
                         handleProductFetching();
                     }
                 }}
             />
 
-            <View style={{position: 'absolute', right: 20, bottom: 20}} >
+            <View style={{ position: 'absolute', right: 20, bottom: 20 }} >
                 <RoundedPlusButton size={60} iconSize={24} onPress={() => setCreateModalOpen(true)} />
             </View>
 
-            <CreateProductModal 
-                visible={isCreateModalOpen} 
-                setVisible={setCreateModalOpen} 
+            <CreateProductModal
+                visible={isCreateModalOpen}
+                setVisible={setCreateModalOpen}
             />
 
         </View>
-    )
+    );
 }
 
 
@@ -103,53 +105,53 @@ type SummaryCardProps = {
     lowStock: number,
 }
 
-function SummaryCard({highStock, lowStock}: SummaryCardProps): React.JSX.Element {
+function SummaryCard({ highStock, lowStock }: SummaryCardProps): React.JSX.Element {
 
-    return (  
-        <View style={{display: 'flex', alignItems: 'center', justifyContent: "center", flexDirection: 'row', gap: 8, marginTop: 12}}>
-            <AnimateButton style={{paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(50,200,150)'}}>
-                <Text style={{fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white'}}>
+    return (
+        <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, marginTop: 12 }}>
+            <AnimateButton style={{ paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(50,200,150)' }}>
+                <Text style={{ fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white' }}>
                     <FeatherIcon name="package" size={20} color="white" />
                     {`  ${highStock}`}
                 </Text>
-                <Text style={{fontSize: 12, color: 'white'}}>High Stock</Text>
+                <Text style={{ fontSize: 12, color: 'white' }}>High Stock</Text>
             </AnimateButton>
 
-            <AnimateButton style={{paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(250,100,100)'}}>
-                <Text style={{fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white'}}>
+            <AnimateButton style={{ paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(250,100,100)' }}>
+                <Text style={{ fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white' }}>
                     <FeatherIcon name="box" size={20} color="white" />
                     {`  ${lowStock}`}
                 </Text>
-                <Text style={{fontSize: 12, color: 'white'}}>Low Stock</Text>
+                <Text style={{ fontSize: 12, color: 'white' }}>Low Stock</Text>
             </AnimateButton>
         </View>
-    )
+    );
 }
 
 
 
 function ProductFilterView(): React.JSX.Element {
 
-    const {pageMeta} = useProductStore()
+    const { pageMeta } = useProductStore();
 
     return (
-        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBlock: 8}} >
+        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBlock: 8 }} >
 
-            <NormalButton 
-                text=" Filerts" 
-                textStyle={{fontWeight: 800}}
+            <NormalButton
+                text=" Filerts"
+                textStyle={{ fontWeight: 800 }}
                 icon={<FeatherIcon name="filter" size={16} useInversTheme={true} />}
             />
 
-            <View style={{alignItems: 'flex-end'}} >
-                <TextTheme style={{fontSize: 12}} isPrimary={false} >Total Results</TextTheme>
+            <View style={{ alignItems: 'flex-end' }} >
+                <TextTheme style={{ fontSize: 12 }} isPrimary={false} >Total Results</TextTheme>
                 <TextTheme>
                     <FeatherIcon name="package" size={16} />
                     {' '}
                     {pageMeta.total}
                 </TextTheme>
             </View>
-            
+
         </View>
-    )
+    );
 }

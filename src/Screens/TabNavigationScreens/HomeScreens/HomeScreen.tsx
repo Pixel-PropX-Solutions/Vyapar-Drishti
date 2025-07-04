@@ -1,96 +1,91 @@
-import { ScrollView } from "react-native-gesture-handler";
-import TextTheme from "../../../Components/Text/TextTheme";
-import { View } from "react-native";
-import FeatherIcon from "../../../Components/Icon/FeatherIcon";
-import AnimateButton from "../../../Components/Button/AnimateButton";
-import { useTheme } from "../../../Contexts/ThemeProvider";
-import FontAwesome6Icon from "../../../Components/Icon/FontAwesome6Icon";
-import HomeScreenHeader from "../../../Components/Header/HomeScreenHeader";
-import CreateCustomerModal from "../../../Components/Modal/Customer/CreateCustomerModal";
-import { useState } from "react";
-import navigator from "../../../Navigation/NavigationService";
-import { useAppStorage } from "../../../Contexts/AppStorageProvider";
+import { ScrollView } from 'react-native-gesture-handler';
+import TextTheme from '../../../Components/Text/TextTheme';
+import { View } from 'react-native';
+import FeatherIcon from '../../../Components/Icon/FeatherIcon';
+import AnimateButton from '../../../Components/Button/AnimateButton';
+import { useTheme } from '../../../Contexts/ThemeProvider';
+import FontAwesome6Icon from '../../../Components/Icon/FontAwesome6Icon';
+import HomeScreenHeader from '../../../Components/Header/HomeScreenHeader';
+import CreateCustomerModal from '../../../Components/Modal/Customer/CreateCustomerModal';
+import { useState } from 'react';
+import navigator from '../../../Navigation/NavigationService';
+import { useAppStorage } from '../../../Contexts/AppStorageProvider';
 
 export default function HomeScreen(): React.JSX.Element {
 
-    const {currency} = useAppStorage();
+    const { currency } = useAppStorage();
 
     const [isCustomerModalVisible, setCustomerModalVisible] = useState<boolean>(false);
 
     return (
-        <View style={{width: '100%', height: '100%'}} >
-            <HomeScreenHeader/>
+        <View style={{ width: '100%', height: '100%' }} >
+            <HomeScreenHeader />
 
-            <ScrollView style={{marginTop: 12, width: '100%', height: '100%'}} contentContainerStyle={{gap: 20}}>
-                <View style={{paddingInline: 20, gap: 32}} >       
-                    <View style={{gap: 12}} >
-                        <TextTheme style={{fontSize: 16, fontWeight: 800}} >This Month</TextTheme>
-                        <View style={{flexDirection: 'row', gap: 12}}>
-                            <View style={{padding: 12, borderRadius: 12, flex: 1, backgroundColor: 'rgb(50,200,150)'}}>
-                                <TextTheme color="white" isPrimary={false} style={{fontWeight: 900}} >Pay Amount</TextTheme>
+            <ScrollView style={{ marginTop: 12, width: '100%', height: '100%' }} contentContainerStyle={{ gap: 20 }}>
+                <View style={{ paddingInline: 20, gap: 32 }} >
+                    <View style={{ gap: 12 }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >This Month</TextTheme>
+                        <View style={{ flexDirection: 'row', gap: 12 }}>
+                            <View style={{ padding: 12, borderRadius: 12, flex: 1, backgroundColor: 'rgb(50,200,150)' }}>
+                                <TextTheme color="white" isPrimary={false} style={{ fontWeight: 900 }} >Pay Amount</TextTheme>
                                 <TextTheme color="white">0.00 {currency}</TextTheme>
                             </View>
 
-                            <View style={{padding: 12, borderRadius: 12, flex: 1, backgroundColor: 'rgb(50,150,250)'}}>
-                                <TextTheme color="white" isPrimary={false} style={{fontWeight: 900}} >Panding Amount</TextTheme>
+                            <View style={{ padding: 12, borderRadius: 12, flex: 1, backgroundColor: 'rgb(50,150,250)' }}>
+                                <TextTheme color="white" isPrimary={false} style={{ fontWeight: 900 }} >Pending Amount</TextTheme>
                                 <TextTheme color="white">0.00 {currency}</TextTheme>
                             </View>
                         </View>
                     </View>
 
-                    <View style={{gap: 12}} >
-                        <TextTheme style={{fontSize: 16, fontWeight: 800}} >Quick Access</TextTheme>
-                        <View style={{gap: 12}} >
-                            <View style={{flexDirection: 'row', gap: 12}}>
-                                <QuickAccessBox 
-                                    label="Sells" 
-                                    text="Add new sells" 
-                                    icon={<FeatherIcon name="trending-up" size={16} />} 
-                                    onPress={() => {navigator.navigate('create-bill-screen', {billType: 'Sells'})}}
+                    <View style={{ gap: 12 }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >Quick Access</TextTheme>
+                        <View style={{ gap: 12 }} >
+                            <View style={{ flexDirection: 'row', gap: 12 }}>
+                                <QuickAccessBox
+                                    label="Sells"
+                                    text="Add new sells"
+                                    icon={<FeatherIcon name="trending-up" size={16} />}
+                                    onPress={() => { navigator.navigate('create-bill-screen', { billType: 'Sells' }); }}
                                 />
 
-                                <QuickAccessBox 
-                                    label="Purchase" 
-                                    text="Add purchase" 
-                                    icon={<FontAwesome6Icon name="coins" size={16} />} 
-                                    onPress={() => {navigator.navigate('create-bill-screen', {billType: 'Purchase'})}}
+                                <QuickAccessBox
+                                    label="Purchase"
+                                    text="Add purchase"
+                                    icon={<FontAwesome6Icon name="coins" size={16} />}
+                                    onPress={() => { navigator.navigate('create-bill-screen', { billType: 'Purchase' }); }}
                                 />
                             </View>
 
-                            <View style={{flexDirection: 'row', gap: 12}}>
-                                <QuickAccessBox 
-                                    label="Customer" 
-                                    text="Add Customer" 
-                                    icon={<FeatherIcon name="users" size={16} />} 
+                            <View style={{ flexDirection: 'row', gap: 12 }}>
+                                <QuickAccessBox
+                                    label="Customer"
+                                    text="Add Customer"
+                                    icon={<FeatherIcon name="users" size={16} />}
                                     onPress={() => setCustomerModalVisible(true)}
                                 />
 
-                                <QuickAccessBox 
-                                    label="Share" 
-                                    text="Share app with friends" 
-                                    icon={<FeatherIcon name="share" size={16} />} 
-                                    onPress={() => {}}
+                                <QuickAccessBox
+                                    label="Share"
+                                    text="Share app with friends"
+                                    icon={<FeatherIcon name="share" size={16} />}
+                                    onPress={() => { }}
                                 />
                             </View>
                         </View>
                     </View>
                 </View>
-                
+
                 {/* <BackgroundThemeView isPrimary={false} style={{width: '100%', height: '100%', padding: 20, borderTopLeftRadius: 36, borderTopRightRadius: 36, marginTop: 24}} >
-
-                    <TextTheme style={{textAlign: 'center', fontSize: 16, marginBottom: 12, fontWeight: 900}} >Panding Bills</TextTheme>
-
+                    <TextTheme style={{textAlign: 'center', fontSize: 16, marginBottom: 12, fontWeight: 900}} >Pending Bills</TextTheme>
                     <DateSelector/>
-
-                    
-
                     <View style={{minHeight: 80}} />
                 </BackgroundThemeView> */}
             </ScrollView>
 
             <CreateCustomerModal visible={isCustomerModalVisible} setVisible={setCustomerModalVisible} />
         </View>
-    )
+    );
 }
 
 
@@ -98,22 +93,22 @@ type QuickAccessBoxProps = {
     icon: React.ReactNode, text: string, label: string, onPress: () => void
 }
 
-function QuickAccessBox({icon, text, label, onPress}: QuickAccessBoxProps): React.JSX.Element {
+function QuickAccessBox({ icon, text, label, onPress }: QuickAccessBoxProps): React.JSX.Element {
 
-    const {secondaryBackgroundColor, primaryBackgroundColor} = useTheme()
+    const { secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
 
     return (
-        <AnimateButton 
-            onPress={onPress} 
-            style={{height: 60, borderRadius: 8, alignItems: 'center', flex: 1, flexDirection: 'row', backgroundColor: secondaryBackgroundColor, padding: 12, gap: 8}} 
+        <AnimateButton
+            onPress={onPress}
+            style={{ height: 60, borderRadius: 8, alignItems: 'center', flex: 1, flexDirection: 'row', backgroundColor: secondaryBackgroundColor, padding: 12, gap: 8 }}
         >
-            <View style={{backgroundColor: primaryBackgroundColor, borderRadius: 8, overflow: 'hidden', width: 40, aspectRatio: 1, alignItems: 'center', justifyContent: 'center'}} >
+            <View style={{ backgroundColor: primaryBackgroundColor, borderRadius: 8, overflow: 'hidden', width: 40, aspectRatio: 1, alignItems: 'center', justifyContent: 'center' }} >
                 {icon}
             </View>
-            <View style={{flex: 1}} >
-                <TextTheme style={{fontSize: 14}} >{label}</TextTheme>
-                <TextTheme isPrimary={false} style={{fontSize: 11}} numberOfLines={2} >{text}</TextTheme>
+            <View style={{ flex: 1 }} >
+                <TextTheme style={{ fontSize: 14 }} >{label}</TextTheme>
+                <TextTheme isPrimary={false} style={{ fontSize: 11 }} numberOfLines={2} >{text}</TextTheme>
             </View>
         </AnimateButton>
-    )
+    );
 }

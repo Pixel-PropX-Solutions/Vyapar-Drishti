@@ -30,7 +30,7 @@ export default function CompanyProfileScreen(): React.JSX.Element {
             <ScrollView style={{ paddingHorizontal: 20, width: '100%', height: '100%' }} contentContainerStyle={{ gap: 28 }} scrollEnabled={true}>
 
                 <View style={{ alignItems: 'center', padding: 16, width: '100%' }}>
-                    <LogoImage size={100} borderRadius={100} />
+                    <LogoImage size={100} borderRadius={100} imageSrc={company?.image} />
                     <TextTheme style={{ fontSize: 22, fontWeight: 'bold' }} >{company?.name}</TextTheme>
                     <TextTheme isPrimary={false} style={{ fontSize: 16 }} >{company?.email}</TextTheme>
                 </View>

@@ -140,7 +140,7 @@ function SummaryCard({totalBills=0, payBills=0}: SummaryCardProps): React.ReactN
                     <FeatherIcon name="file" size={20} color={'white'} />
                     {`  ${totalBills - payBills}`}
                 </Text>
-                <Text style={{fontSize: 10, color: 'white'}}>Panding Bills</Text>
+                <Text style={{fontSize: 10, color: 'white'}}>Pending Bills</Text>
             </AnimateButton>
         </View>
     )
