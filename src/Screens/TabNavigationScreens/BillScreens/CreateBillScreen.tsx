@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 
 import { FlatList, KeyboardAvoidingView, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -42,34 +43,6 @@ function Screen(): React.JSX.Element {
     const { loading } = useInvoiceStore();
     const { secondaryBackgroundColor } = useTheme();
     const { billNo, setBillNo, createOn, setCreateOn, customer, products, totalValue, resetAllStates, setProducts } = useCreateBillContext();
-    const [data, setData] = useState({
-        company_id: company?._id ?? '',
-        date: createOn,
-        voucher_type: '',
-        voucher_number: billNo,
-        party_name: '',
-        party_id: '',
-        counter_party: '',
-        counter_id: '',
-        narration: '',
-        reference_number: '',
-        reference_date: '',
-        place_of_supply: '',
-        accounting: [] as Array<{
-            vouchar_id: string;
-            ledger: string;
-            ledger_id: string;
-            amount: number;
-        }>,
-        items: [] as Array<{
-            vouchar_id: string;
-            item: string;
-            item_id: string;
-            quantity: number;
-            rate: number;
-            amount: number;
-        }>,
-    });
     const navigation = useNavigation<StackNavigationProp<StackParamsList, 'create-bill-screen'>>();
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
 
@@ -343,7 +316,7 @@ function Screen(): React.JSX.Element {
                 <FlatList
                     scrollEnabled={false}
                     contentContainerStyle={{ gap: 12 }}
-                    ListEmptyComponent={<EmptyListView title="No Items Added" />}
+                    ListEmptyComponent={<EmptyListView title="No Items Added" text="Add items to the bill" />}
 
                     ListHeaderComponent={<ShowWhen when={products.length !== 0}>
                         <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 4 }} >Items</TextTheme>
@@ -419,9 +392,11 @@ function Screen(): React.JSX.Element {
                 <View style={{ minHeight: 40 }} />
             </ScrollView>
 
-            <KeyboardAvoidingView behavior="padding" >
-                <AmountBox handleCreateInvoice={handleInvoice} isFormValid={isFormValid} isCreating={isCreating} />
-            </KeyboardAvoidingView>
+            {(customer && products.length > 0) && (
+                <KeyboardAvoidingView behavior="padding" >
+                    <AmountBox handleCreateInvoice={handleInvoice} isFormValid={isFormValid} isCreating={isCreating} />
+                </KeyboardAvoidingView>
+            )}
 
             <CustomerSelectorModal visible={isCustomerModalVisible} setVisible={setCustomerModalVisible} billType={billType} />
             <ProductSelectorModal visible={isProductModalVisible} setVisible={setProductModalVisible} billType={billType} />

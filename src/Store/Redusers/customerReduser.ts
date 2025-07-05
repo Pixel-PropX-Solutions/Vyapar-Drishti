@@ -1,12 +1,13 @@
 import { updateCustomer, getCustomer, createCustomer, deleteCustomer, restoreCustomer, viewAllCustomer, viewAllCustomers } from '../../Services/customer';
-import { PageMeta, GetUserLedgers, CustomersList } from "../../utils/types";
+import { PageMeta, GetUserLedgers, CustomersList, AccountingGroups } from "../../utils/types";
 import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit";
 
 interface CustomerState {
     customers: Array<GetUserLedgers>;
     isAllCustomerFetching: boolean;
     customer: GetUserLedgers | null;
-    customersList: Array<CustomersList>|[];
+    customersList: Array<CustomersList> | [];
+    customerType: AccountingGroups | null;
     loading: boolean,
     error: string | null;
     pageMeta: PageMeta
@@ -16,6 +17,7 @@ const initialState: CustomerState = {
     customers: [],
     isAllCustomerFetching: false,
     customersList: [],
+    customerType: null,
     customer: null,
     pageMeta: {
         page: 0,
@@ -24,14 +26,31 @@ const initialState: CustomerState = {
         unique: [],
     },
     loading: false,
-    error: null
+    error: null,
 }
 
 const customerSlice: Slice<CustomerState> = createSlice({
     name: "customers",
     initialState,
     reducers: {
-
+        setCustomerType: (state, action: PayloadAction<AccountingGroups | null>) => {
+            state.customerType = action.payload;
+        },
+        resetCustomerState: (state) => {
+            state.customers = [];
+            state.isAllCustomerFetching = false;
+            state.customer = null;
+            state.customersList = [];
+            state.customerType = null;
+            state.loading = false;
+            state.error = null;
+            state.pageMeta = {
+                page: 0,
+                limit: 0,
+                total: 0,
+                unique: [],
+            };
+        }
     },
 
     extraReducers: (builder) => {
@@ -63,7 +82,7 @@ const customerSlice: Slice<CustomerState> = createSlice({
                 state.error = action.payload as string;
                 state.isAllCustomerFetching = false;
             })
-            
+
             .addCase(viewAllCustomers.pending, (state) => {
                 state.error = null;
                 state.loading = true;
@@ -134,6 +153,7 @@ const customerSlice: Slice<CustomerState> = createSlice({
     }
 });
 
+export const { setCustomerType, resetCustomerState } = customerSlice.actions;
 const customerReduser = customerSlice.reducer;
 export default customerReduser;
 

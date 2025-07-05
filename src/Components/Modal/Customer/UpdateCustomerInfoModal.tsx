@@ -44,7 +44,7 @@ export default function UpdateCustomerInfoModal({visible, setVisible, name: oldN
             return setAlert({
                 type: 'error', 
                 id: 'create-product-modal',
-                massage: 'Please enter product Name, price and product No for create a new product.'
+                message: 'Please enter product Name, price and product No for create a new product.'
             });
         }
 

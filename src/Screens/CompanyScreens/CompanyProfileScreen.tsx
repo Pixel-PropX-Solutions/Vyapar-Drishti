@@ -165,7 +165,7 @@ export default function CompanyProfileScreen(): React.JSX.Element {
                 visible={isDeleteModalVisible}
                 setVisible={setDeleteModalVisible}
                 passkey={company?.name ?? 'delete'}
-                massage="Once you press delete there no way to go back"
+                message="Once you press delete there no way to go back"
                 handleDelete={() => { }}
             />
 

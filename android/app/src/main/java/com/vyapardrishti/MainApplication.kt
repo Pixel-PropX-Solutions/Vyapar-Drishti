@@ -1,4 +1,4 @@
-package com.vyapardrishti
+package com.pixelprophet.vyapardrishti
 
 import android.app.Application
 import com.facebook.react.PackageList

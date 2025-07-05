@@ -1,6 +1,7 @@
-import { View } from "react-native";
-import FeatherIcon from "../Icon/FeatherIcon";
-import TextTheme from "../Text/TextTheme";
+/* eslint-disable react-native/no-inline-styles */
+import { View } from 'react-native';
+import FeatherIcon from '../Icon/FeatherIcon';
+import TextTheme from '../Text/TextTheme';
 
 
 type Info = {title: string, text: string}
@@ -10,22 +11,22 @@ type InfoObject = {'product': Info, 'customer': Info, 'invoice': Info}
 const info: InfoObject = {
     product: {
         title: 'No Products Added',
-        text: 'Start by adding your first product to begin managing your inventory and sales.'
+        text: 'Start by adding your first product to begin managing your inventory and sales.',
     },
     customer: {
         title: 'No Customers Added',
-        text: 'Add customer details to keep track of your clients and their purchases.'
+        text: 'Add customer details to keep track of your clients and their purchases.',
     },
     invoice: {
         title: 'No Invoices Created',
-        text: 'Generate invoices after making sales to keep your billing organized and professional.'
-    }
+        text: 'Generate invoices after making sales to keep your billing organized and professional.',
+    },
 };
 
 
 type Props = {title?:string, text?: string, type?: 'invoice' | 'customer' | 'product'}
 
-export default function EmptyListView({title='', text='', type}: Props) {
+export default function EmptyListView({title = '', text = '', type}: Props) {
     return (
         <View style={{padding: 30, opacity: 0.6, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
             <FeatherIcon name="inbox" size={38} />
@@ -36,5 +37,5 @@ export default function EmptyListView({title='', text='', type}: Props) {
                 {type ? info[type].text : text}
             </TextTheme>
         </View>
-    )
+    );
 }

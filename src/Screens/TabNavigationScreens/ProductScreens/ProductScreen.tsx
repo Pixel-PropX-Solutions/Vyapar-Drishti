@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import { FlatList } from 'react-native-gesture-handler';
 import TextTheme from '../../../Components/Text/TextTheme';
 import ProductCard, { ProductLoadingCard } from '../../../Components/Card/ProductCard';

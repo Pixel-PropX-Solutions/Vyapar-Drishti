@@ -1,5 +1,5 @@
-import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
-import { useThemeStore } from "../Store/ThemeStore"
+import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
+import { useThemeStore } from '../Store/ThemeStore';
 
 
 
@@ -14,20 +14,20 @@ type ThemeContextType = {
     secondaryColor: string,
     setSecondaryColor: Dispatch<SetStateAction<string>>,
 
-    primaryBackgroundColor: string, 
+    primaryBackgroundColor: string,
     setPrimaryBackgroundColor: Dispatch<SetStateAction<string>>,
 
-    secondaryBackgroundColor: string, 
+    secondaryBackgroundColor: string,
     setSecondaryBackgroundColor: Dispatch<SetStateAction<string>>
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-    theme: 'light', setTheme: () => {},
-    primaryColor: '', setPrimaryColor: () => {},
-    secondaryColor: '', setSecondaryColor: () => {},
-    primaryBackgroundColor: '', setPrimaryBackgroundColor: () => {},
-    secondaryBackgroundColor: '', setSecondaryBackgroundColor: () => {}
-})
+    theme: 'light', setTheme: () => { },
+    primaryColor: '', setPrimaryColor: () => { },
+    secondaryColor: '', setSecondaryColor: () => { },
+    primaryBackgroundColor: '', setPrimaryBackgroundColor: () => { },
+    secondaryBackgroundColor: '', setSecondaryBackgroundColor: () => { },
+});
 
 
 
@@ -46,47 +46,47 @@ const themeColors: {
         primaryColor: 'black',
         secondaryColor: 'rgb(50,50,50)',
         primaryBackgroundColor: 'white',
-        secondaryBackgroundColor: 'rgb(220,220,220)'
+        secondaryBackgroundColor: 'rgb(220,220,220)',
     },
     dark: {
         primaryColor: 'white',
         secondaryColor: 'rgb(220,220,220)',
         primaryBackgroundColor: 'black',
-        secondaryBackgroundColor: 'rgb(30,30,30)'
-    }
-}
+        secondaryBackgroundColor: 'rgb(30,30,30)',
+    },
+};
 
-export default function ThemeProvider ({children}: {children: React.ReactNode}): React.JSX.Element {
-    
-    const {getTheme, setTheme: setThemeInStore} = useThemeStore();
-    const appTheme: 'light' | 'dark' = getTheme(); 
+export default function ThemeProvider({ children }: { children: React.ReactNode }): React.JSX.Element {
+
+    const { getTheme, setTheme: setThemeInStore } = useThemeStore();
+    const appTheme: 'light' | 'dark' = getTheme();
 
     const [theme, setTheme] = useState<'light' | 'dark'>(appTheme);
-    const [primaryColor, setPrimaryColor] = useState<string>(themeColors[appTheme]['primaryColor']);
-    const [secondaryColor, setSecondaryColor] = useState<string>(themeColors[appTheme]['secondaryColor']);
-    const [primaryBackgroundColor, setPrimaryBackgroundColor] = useState<string>(themeColors[appTheme]['primaryBackgroundColor']);
-    const [secondaryBackgroundColor, setSecondaryBackgroundColor] = useState<string>(themeColors[appTheme]['secondaryBackgroundColor']);
+    const [primaryColor, setPrimaryColor] = useState<string>(themeColors[appTheme].primaryColor);
+    const [secondaryColor, setSecondaryColor] = useState<string>(themeColors[appTheme].secondaryColor);
+    const [primaryBackgroundColor, setPrimaryBackgroundColor] = useState<string>(themeColors[appTheme].primaryBackgroundColor);
+    const [secondaryBackgroundColor, setSecondaryBackgroundColor] = useState<string>(themeColors[appTheme].secondaryBackgroundColor);
 
     useEffect(() => {
         setThemeInStore(theme);
-        setPrimaryColor(themeColors[theme]['primaryColor']);
-        setSecondaryColor(themeColors[theme]['secondaryColor']);
-        setPrimaryBackgroundColor(themeColors[theme]['primaryBackgroundColor']);
-        setSecondaryBackgroundColor(themeColors[theme]['secondaryBackgroundColor']);
-    }, [theme])
+        setPrimaryColor(themeColors[theme].primaryColor);
+        setSecondaryColor(themeColors[theme].secondaryColor);
+        setPrimaryBackgroundColor(themeColors[theme].primaryBackgroundColor);
+        setSecondaryBackgroundColor(themeColors[theme].secondaryBackgroundColor);
+    }, [theme]);
 
     const states = {
         theme, setTheme,
         primaryColor, setPrimaryColor,
         secondaryColor, setSecondaryColor,
         primaryBackgroundColor, setPrimaryBackgroundColor,
-        secondaryBackgroundColor, setSecondaryBackgroundColor
-    }
+        secondaryBackgroundColor, setSecondaryBackgroundColor,
+    };
 
-    return <ThemeContext.Provider value={states} >{children}</ThemeContext.Provider>
+    return <ThemeContext.Provider value={states} >{children}</ThemeContext.Provider>;
 }
 
 
-export function useTheme(): ThemeContextType{
+export function useTheme(): ThemeContextType {
     return useContext(ThemeContext);
 }

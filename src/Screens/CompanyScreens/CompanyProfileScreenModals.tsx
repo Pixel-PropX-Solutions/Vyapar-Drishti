@@ -29,7 +29,7 @@ export function CompanyInfoUpdateModal({visible, setVisible}: Props): React.JSX.
     async function handleUpdate(){
         
         if(!name) return setAlert({
-            type: 'error', massage: 'company never be empty', id: 'update-modal'
+            type: 'error', message: 'company never be empty', id: 'update-modal'
         });
 
         const id = company?._id;

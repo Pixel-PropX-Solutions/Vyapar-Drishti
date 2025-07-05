@@ -23,7 +23,7 @@ export default function LoginScreen(): React.JSX.Element {
 
     async function handleLogin(){
 
-        if(!(username && password)) return setAlert({type: 'error', massage: 'all filds are required.'})
+        if(!(username && password)) return setAlert({type: 'error', message: 'all filds are required.'})
 
         const formData = new FormData;
         formData.append('username', username);
@@ -34,7 +34,7 @@ export default function LoginScreen(): React.JSX.Element {
         if(res && res?.accessToken) {
             return navigator.reset('tab-navigation');
         } else {
-            return setAlert({type: 'error', massage: 'invalid information'})
+            return setAlert({type: 'error', message: 'invalid information'})
         }
     }
 
@@ -66,7 +66,7 @@ export default function LoginScreen(): React.JSX.Element {
 
                 <View>
                     <PasswordInput
-                        massage="Password length is too short"
+                        message="Password length is too short"
                         autoCapitalize="none"
                         onChangeText={setPassword}
                         onSubmitEditing={handleLogin}

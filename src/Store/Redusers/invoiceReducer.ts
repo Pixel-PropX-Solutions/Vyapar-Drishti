@@ -41,7 +41,7 @@ const invoiceSlice = createSlice({
             .addCase(viewAllInvoices.fulfilled, (state, {payload}: {payload: {invoices: GetAllVouchars[], pageMeta: PageMeta} | any}) => {
                 state.pageMeta = payload.pageMeta;
                 state.isInvoiceFeaching = false;
-                if(payload.pageMeta.page == 1){
+                if(payload.pageMeta.page === 1){
                     state.invoices = payload.invoices;
                 } else {
                     state.invoices = [...(state.invoices ?? []), ...(payload.invoices ?? [])]

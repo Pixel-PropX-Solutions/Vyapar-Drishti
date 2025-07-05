@@ -2,7 +2,7 @@
 import { View, ScrollView, StyleSheet, Text } from 'react-native';
 import TextTheme from '../Text/TextTheme';
 import BottomModal from '../Modal/BottomModal';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createCompany, getAllCompanies, getCompany, setCompany } from '../../Services/company';
 import { useTheme } from '../../Contexts/ThemeProvider';
 import arrayToFormData from '../../Utils/arrayToFormData';
@@ -14,6 +14,7 @@ import { getDefaultAprilFirst } from '../../Utils/functionTools';
 import AnimateButton from '../Button/AnimateButton';
 import BackgroundThemeView from '../View/BackgroundThemeView';
 import FeatherIcon from '../Icon/FeatherIcon';
+import LoadingModal from '../Modal/LoadingModal';
 
 type CompanyCreateModalType = {
     visible: boolean,
@@ -24,10 +25,12 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
     const { primaryColor } = useTheme();
     const { setAlert } = useAlert();
     const dispatch = useAppDispatch();
-    const { companies, isCompaniesFetching } = useCompanyStore();
+    const { companies, isCompaniesFetching, loading } = useCompanyStore();
 
     const [activeSection, setActiveSection] = useState<'basic' | 'address' | 'financial' | 'banking'>('basic');
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+    const [currentStep, setCurrentStep] = useState<number>(0);
+
     const [data, setData] = useState({
         user_id: '',
         name: '',
@@ -55,73 +58,120 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
         qr_code_url: '',
     });
 
+    const resetData = useCallback(() => {
+        setData({
+            user_id: '',
+            name: '',
+            mailing_name: '',
+            address_1: '',
+            address_2: '',
+            pinCode: '',
+            state: '',
+            country: '',
+            financial_year_start: getDefaultAprilFirst(),
+            books_begin_from: getDefaultAprilFirst(),
+            is_deleted: false,
+            number: '',
+            code: '',
+            email: '',
+            image: '',
+            gstin: '',
+            pan_number: '',
+            website: '',
+            account_number: '',
+            account_holder: '',
+            bank_ifsc: '',
+            bank_name: '',
+            bank_branch: '',
+            qr_code_url: '',
+        });
+        // Do NOT reset validationErrors here
+    }, []);
+
+    useEffect(() => {
+        if (visible) {
+            resetData();
+            // setValidationErrors({}); // Only reset errors when modal opens
+            setActiveSection('basic');
+        }
+    }, [visible, resetData]);
+
     const handleChange = useCallback((field: string, value: string | boolean | number) => {
         setData((prevState) => ({
             ...prevState,
             [field]: value,
         }));
 
+        // Only clear the error for the field being edited
         if (validationErrors[field]) {
-            setValidationErrors(prev => ({ ...prev, [field]: '' }));
+            setValidationErrors(prev => {
+                const { [field]: _, ...rest } = prev;
+                return rest;
+            });
         }
     }, [validationErrors]);
 
     const validateForm = useCallback(() => {
         const errors: Record<string, string> = {};
+        switch (activeSection) {
+            case 'basic':
+                if (!data.name.trim()) {
+                    errors.name = 'Company name is required';
+                }
 
-        // Basic Information Validation
-        if (!data.name.trim()) {
-            errors.name = 'Company name is required';
+                if (!data.email.trim()) {
+                    errors.email = 'Email is required';
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+                    errors.email = 'Please enter a valid email address';
+                }
+                if (data.number && !/^\d{10}$/.test(data.number)) {
+                    errors.number = 'Phone number must be 10 digits';
+                }
+                if (data.website && !/^https?:\/\//.test(data.website)) {
+                    errors.website = 'Website URL must start with http:// or https://';
+                }
+                setValidationErrors(errors);
+                return Object.keys(errors).length === 0;
+            case 'address':
+                if (!data.state.trim()) {
+                    errors.state = 'State is required';
+                }
+
+                if (!data.country.trim()) {
+                    errors.country = 'Country is required';
+                }
+                if (data.pinCode && !/^\d{6}$/.test(data.pinCode)) {
+                    errors.pinCode = 'PIN code must be 6 digits';
+                }
+                setValidationErrors(errors);
+                return Object.keys(errors).length === 0;
+            case 'financial':
+                if (data.gstin && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(data.gstin)) {
+                    errors.gstin = 'Please enter a valid GSTIN';
+                }
+
+                if (data.pan_number && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(data.pan_number)) {
+                    errors.pan_number = 'Please enter a valid PAN number';
+                }
+                setValidationErrors(errors);
+                return Object.keys(errors).length === 0;
+            case 'banking':
+                if (data.bank_ifsc && !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(data.bank_ifsc)) {
+                    errors.bank_ifsc = 'Please enter a valid IFSC code';
+                }
+                setValidationErrors(errors);
+                return Object.keys(errors).length === 0;
+            default:
+                return false;
         }
-
-        if (!data.state.trim()) {
-            errors.state = 'State is required';
-        }
-
-        if (!data.country.trim()) {
-            errors.country = 'Country is required';
-        }
-
-        if (!data.email.trim()) {
-            errors.email = 'Email is required';
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-            errors.email = 'Please enter a valid email address';
-        }
-
-        if (data.number && !/^\d{10}$/.test(data.number)) {
-            errors.number = 'Phone number must be 10 digits';
-        }
-
-        if (data.pinCode && !/^\d{6}$/.test(data.pinCode)) {
-            errors.pinCode = 'PIN code must be 6 digits';
-        }
-
-        if (data.gstin && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(data.gstin)) {
-            errors.gstin = 'Please enter a valid GSTIN';
-        }
-
-        if (data.pan_number && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(data.pan_number)) {
-            errors.pan_number = 'Please enter a valid PAN number';
-        }
-
-        if (data.website && !/^https?:\/\//.test(data.website)) {
-            errors.website = 'Website URL must start with http:// or https://';
-        }
-
-        if (data.bank_ifsc && !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(data.bank_ifsc)) {
-            errors.bank_ifsc = 'Please enter a valid IFSC code';
-        }
-
-        setValidationErrors(errors);
-        return Object.keys(errors).length === 0;
-    }, [data]);
+    }, [activeSection, data.bank_ifsc, data.country, data.email, data.gstin, data.name, data.number, data.pan_number, data.pinCode, data.state, data.website]);
 
     const getSectionProgress = useCallback(() => {
         const sections = {
             basic: ['name', 'email'],
-            address: ['address_1', 'state', 'country'],
-            financial: ['gstin', 'pan_number'],
-            banking: ['account_number', 'bank_name', 'bank_ifsc'],
+            address: ['state', 'country'],
+            financial: [],
+            banking: [],
         };
 
         const progress: Record<string, number> = {};
@@ -134,20 +184,20 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
         return progress;
     }, [data]);
 
-    async function onPress() {
-        if (!validateForm()) {
-            setAlert({
-                type: 'error',
-                massage: 'Please fix the validation errors before proceeding',
-                id: 'company-create-modal',
-            });
-            return;
+    useEffect(() => {
+        if (Object.keys(validationErrors).length > 0) {
+            // You can show an alert here if needed, or handle error display elsewhere
         }
+    }, [setAlert, validationErrors]);
 
-        if (!data.name.trim() || !data.email.trim()) {
+    async function onPress() {
+        const isValid = validateForm();
+        if (!isValid) {
+            const currentErrors = Object.keys(validationErrors);
+            const firstErrorKey = currentErrors[0];
             setAlert({
                 type: 'error',
-                massage: 'Company name and email are required',
+                message: firstErrorKey ? validationErrors[firstErrorKey] : 'Company name and email are required',
                 id: 'company-create-modal',
             });
             return;
@@ -162,13 +212,18 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
                 ]) as [string, string | boolean][]
         );
 
-        await dispatch(createCompany(formData));
-        const { payload: res } = await dispatch(getAllCompanies());
+        await dispatch(createCompany(formData)).then((res) => {
+            if (res.meta.requestStatus === 'fulfilled') {
+                // Handle successful company creation
+                dispatch(getAllCompanies());
+            }
+        });
+        // const { payload: res } = await dispatch(getAllCompanies());
 
-        if ((res?.companies ?? []).length === 1) {
-            dispatch(setIsCompanyFetching(true));
-            dispatch(setCompany(res.companies[0]._id)).then(_ => dispatch(getCompany()));
-        }
+        // if ((res?.companies ?? []).length === 1) {
+        //     dispatch(setIsCompanyFetching(true));
+        //     dispatch(setCompany(res.companies[0]._id)).then(_ => dispatch(getCompany()));
+        // }
 
         setVisible(false);
     }
@@ -332,6 +387,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
                 placeholder="GSTIN"
                 value={data.gstin}
                 field="gstin"
+                capitalize="characters"
                 handleChange={handleChange}
                 error={validationErrors.gstin}
             />
@@ -341,6 +397,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
                 placeholder="PAN Number"
                 value={data.pan_number}
                 field="pan_number"
+                capitalize="characters"
                 handleChange={handleChange}
                 error={validationErrors.pan_number}
             />
@@ -439,6 +496,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
                 placeholder="Account Holder Name"
                 value={data.account_holder}
                 field="account_holder"
+                capitalize="characters"
                 handleChange={handleChange}
                 error={validationErrors.account_holder}
             />
@@ -447,6 +505,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
                 icon="home"
                 placeholder="Bank Name"
                 value={data.bank_name}
+                capitalize="characters"
                 field="bank_name"
                 handleChange={handleChange}
                 error={validationErrors.bank_name}
@@ -457,6 +516,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
                         icon="git-branch"
                         placeholder="Bank Branch"
                         value={data.bank_branch}
+                        capitalize="words"
                         field="bank_branch"
                         handleChange={handleChange}
                         error={validationErrors.bank_branch}
@@ -468,6 +528,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
                         icon="hash"
                         placeholder="IFSC Code"
                         value={data.bank_ifsc}
+                        capitalize="characters"
                         field="bank_ifsc"
                         handleChange={handleChange}
                         error={validationErrors.bank_ifsc}
@@ -501,6 +562,31 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
         }
     };
 
+    const handleNext = () => {
+        const isValid = validateForm();
+        if (!isValid) {
+            return;
+        }
+        if (currentStep < steps.length - 1) {
+            setCurrentStep(currentStep + 1);
+            setActiveSection(steps[currentStep + 1].title as 'basic' | 'address' | 'financial' | 'banking');
+        }
+    };
+
+    const handlePrevious = () => {
+        if (currentStep > 0) {
+            setCurrentStep(currentStep - 1);
+            setActiveSection(steps[currentStep - 1].title as 'basic' | 'address' | 'financial' | 'banking');
+        }
+    };
+
+    const steps = [
+        { title: 'basic' },
+        { title: 'address' },
+        { title: 'financial' },
+        { title: 'banking' },
+    ];
+
     return (
         <BottomModal
             alertId="company-create-modal"
@@ -509,11 +595,9 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
             closeOnBack={companies.length !== 0}
             style={styles.modal}
             actionButtons={[
-                {
-                    title: 'Create Company',
-                    onPress,
-                    style: { backgroundColor: primaryColor },
-                },
+                ...(currentStep > 0 ? [{ title: 'Previous', backgroundColor: 'gray', onPress: handlePrevious }] : []),
+                ...(currentStep < steps.length - 1 ? [{ title: 'Next', backgroundColor: primaryColor, onPress: handleNext }] : []),
+                ...(currentStep === steps.length - 1 ? [{ title: 'Create Company', backgroundColor: 'rgb(50,150,250)', onPress: onPress }] : []),
             ]}
         >
             <TextTheme style={styles.modalTitle}>Create Company</TextTheme>
@@ -534,7 +618,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
                         <View
                             key={key}
                             style={styles.sectionButtonContainer}
-                            onTouchEnd={() => setActiveSection(key as any)}
+                            // onTouchEnd={() => setActiveSection(key as any)}
                         >
                             {renderSectionButton(key as any, title)}
                         </View>
@@ -550,6 +634,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
             </ScrollView>
 
             <View style={styles.bottomSpacing} />
+            <LoadingModal visible={loading} />
         </BottomModal>
     );
 }

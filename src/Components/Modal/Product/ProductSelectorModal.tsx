@@ -55,7 +55,7 @@ export default function ProductSelectorModal({visible, setVisible, billType}: Pr
     function handleProduct() {
         if(!(price && quantity)) {return setAlert({
             id: 'create-bill-product-selector-modal',
-            type: 'error', massage: 'please enter all requried information !!!',
+            type: 'error', message: 'please enter all requried information !!!',
         });}
 
         setProducts((pro) => [...pro, {

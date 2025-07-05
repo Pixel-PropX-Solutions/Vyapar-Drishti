@@ -68,7 +68,7 @@ export default function CustomerInfoScreen(): React.JSX.Element {
             <DeleteModal 
                 visible={isDeleteModalOpen} 
                 setVisible={setDeleteModalOpen} 
-                massage="Did you want to delete the customer"
+                message="Did you want to delete the customer"
                 passkey="name"
                 handleDelete={() => setDeleteModalOpen(false)}
             />

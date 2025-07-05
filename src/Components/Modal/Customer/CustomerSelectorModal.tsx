@@ -1,18 +1,19 @@
-import { FlatList } from "react-native-gesture-handler";
-import TextTheme from "../../Text/TextTheme";
-import BottomModal from "../BottomModal";
-import { useAppDispatch, useCompanyStore, useCustomerStore } from "../../../Store/ReduxStore";
-import { useEffect, useState } from "react";
-import { GetUserLedgers } from "../../../Utils/types";
-import { viewAllCustomer } from "../../../Services/customer";
-import CustomerCard, { CustomerLoadingView } from "../../Card/CustomerCard";
-import { useCreateBillContext } from "../../../Contexts/CreateBillScreenProvider";
-import ShowWhen from "../../Other/ShowWhen";
-import { View } from "react-native";
-import FeatherIcon from "../../Icon/FeatherIcon";
-import NoralTextInput from "../../TextInput/NoralTextInput";
-import { useTheme } from "../../../Contexts/ThemeProvider";
-import EmptyListView from "../../View/EmptyListView";
+/* eslint-disable react-native/no-inline-styles */
+import { FlatList } from 'react-native-gesture-handler';
+import TextTheme from '../../Text/TextTheme';
+import BottomModal from '../BottomModal';
+import { useAppDispatch, useCompanyStore, useCustomerStore } from '../../../Store/ReduxStore';
+import { useEffect, useState } from 'react';
+import { GetUserLedgers } from '../../../Utils/types';
+import { viewAllCustomer } from '../../../Services/customer';
+import CustomerCard, { CustomerLoadingView } from '../../Card/CustomerCard';
+import { useCreateBillContext } from '../../../Contexts/CreateBillScreenProvider';
+import ShowWhen from '../../Other/ShowWhen';
+import { View } from 'react-native';
+import FeatherIcon from '../../Icon/FeatherIcon';
+import NoralTextInput from '../../TextInput/NoralTextInput';
+import { useTheme } from '../../../Contexts/ThemeProvider';
+import EmptyListView from '../../View/EmptyListView';
 
 type Props = {
     visible: boolean,
@@ -20,56 +21,57 @@ type Props = {
     billType: string
 }
 
-export default function CustomerSelectorModal({visible, setVisible, billType}: Props){
+export default function CustomerSelectorModal({ visible, setVisible, billType }: Props) {
 
-    const {primaryColor} = useTheme();
+    const { primaryColor } = useTheme();
 
-    const {company} = useCompanyStore();
-    const {setCustomer, customer} = useCreateBillContext();
-    const {customers, isAllCustomerFetching, pageMeta} = useCustomerStore();
+    const { company } = useCompanyStore();
+    const { setCustomer, customer } = useCreateBillContext();
+    const { customers, isAllCustomerFetching, pageMeta } = useCustomerStore();
 
     const dispatch = useAppDispatch();
-    
+
     const [filterCustomers, setFilterCustomers] = useState<GetUserLedgers[]>([]);
 
 
-    function handleProductFetching(){
-        if(isAllCustomerFetching) return;
-        if(pageMeta.total <= pageMeta.page * pageMeta.limit) return;
-        dispatch(viewAllCustomer({company_id: company?._id ?? '', pageNumber: pageMeta.page + 1}));
+    function handleProductFetching() {
+        if (isAllCustomerFetching) { return; }
+        if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
+        dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1 }));
     }
 
     useEffect(() => {
-        dispatch(viewAllCustomer({company_id: company?._id ?? '', pageNumber: 1}))
-    }, [])
+        dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
+    }, [company?._id, dispatch]);
 
     useEffect(() => {
-        setFilterCustomers(() => customers);
-    }, [customers])
+        setFilterCustomers(() => customers.filter((ledger) => ledger.parent !== 'Sales Account' && ledger.parent !== 'Purchase Account'
+        ));
+    }, [customers]);
 
 
     return (
-        <BottomModal visible={visible} setVisible={setVisible} style={{padding: 20, gap: 20}} >
-            <TextTheme style={{fontSize: 16, fontWeight: 800}} >Select Customer</TextTheme>
+        <BottomModal visible={visible} setVisible={setVisible} style={{ padding: 20, gap: 20 }} >
+            <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >Select Customer</TextTheme>
 
             <View
-                style={{borderWidth: 2, borderColor: primaryColor, borderRadius: 100, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: "row", paddingLeft: 10, paddingRight: 16}}
+                style={{ borderWidth: 2, borderColor: primaryColor, borderRadius: 100, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', paddingLeft: 10, paddingRight: 16 }}
             >
                 <FeatherIcon name="search" size={20} />
 
-                <NoralTextInput  
+                <NoralTextInput
                     placeholder="Search"
-                    style={{flex: 1}}
+                    style={{ flex: 1 }}
                 />
             </View>
 
             <FlatList
                 ListEmptyComponent={<EmptyListView type="customer" />}
                 data={filterCustomers}
-                contentContainerStyle={{gap: 10}}
+                contentContainerStyle={{ gap: 10 }}
                 keyExtractor={item => item._id}
 
-                renderItem={({item}) => (
+                renderItem={({ item }) => (
                     <CustomerCard
                         name={item.ledger_name}
                         groupName={item.parent}
@@ -82,31 +84,31 @@ export default function CustomerSelectorModal({visible, setVisible, billType}: P
                             setCustomer(() => ({
                                 id: item._id,
                                 name: item.ledger_name,
-                                group: item.parent
-                            }))
+                                group: item.parent,
+                            }));
                         }}
                     />
                 )}
 
-                ListFooterComponentStyle={{gap: 20}}
+                ListFooterComponentStyle={{ gap: 20 }}
                 ListFooterComponent={<ShowWhen when={isAllCustomerFetching}>
-                    <CustomerLoadingView/>
-                    <CustomerLoadingView/>
+                    <CustomerLoadingView />
+                    <CustomerLoadingView />
                 </ShowWhen>}
 
-                onScroll={({nativeEvent}) => {
-                    let {contentOffset, layoutMeasurement, contentSize} = nativeEvent;
+                onScroll={({ nativeEvent }) => {
+                    let { contentOffset, layoutMeasurement, contentSize } = nativeEvent;
                     let contentOffsetY = contentOffset.y;
                     let totalHeight = contentSize.height;
                     let height = layoutMeasurement.height;
 
-                    if(totalHeight - height < contentOffsetY + 400) {
+                    if (totalHeight - height < contentOffsetY + 400) {
                         handleProductFetching();
                     }
                 }}
             />
 
-            <View style={{minHeight: 44}} />
+            <View style={{ minHeight: 44 }} />
         </BottomModal>
-    )
+    );
 }

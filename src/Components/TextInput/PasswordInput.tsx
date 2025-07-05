@@ -12,12 +12,12 @@ type Props = TextInputProps & {
     label?: string,
     onChangeText?: (text: string) => void,
     focusColor?: string,
-    massage?: string,
+    message?: string,
     massageTextColor?: string,
     checkInputText?: (text: string) => boolean
 }
 
-export default function PasswordInput({placeholder='***********', label='Password', onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkInputText, massage, ...props}: Props): React.JSX.Element {
+export default function PasswordInput({placeholder='***********', label='Password', onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkInputText, message, ...props}: Props): React.JSX.Element {
 
     const {primaryColor: color, primaryBackgroundColor: backgroundColor} = useTheme();
 
@@ -74,7 +74,7 @@ export default function PasswordInput({placeholder='***********', label='Passwor
             {
                 !(isInputTextValid || isFocus) ? (
                         <Text style={{paddingLeft: 6, fontSize: 12, color: massageTextColor}} >
-                            {massage}
+                            {message}
                         </Text>
                     ) : null
             }

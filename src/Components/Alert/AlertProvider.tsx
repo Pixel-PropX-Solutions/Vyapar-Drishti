@@ -4,7 +4,7 @@ type AlertType = 'error' | 'success' | 'info' | 'warning' | null;
 
 type AlertMsgType = {
     type: AlertType,
-    massage?: string,
+    message?: string,
     id?: string
 }
 
@@ -16,7 +16,7 @@ type AlertContextType = {
 const AlertContext = createContext<AlertContextType>({
     alert: {
         type: null,
-        massage: '',
+        message: '',
         id: ''
     },
     setAlert: () => {}

@@ -31,7 +31,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
     const { company } = useCompanyStore();
     const { user } = useUserStore();
     const { loading, pageMeta } = useProductStore();
-    const currentCompanyDetails = user?.company?.find((c: any) => c._id === user.user_settings.current_company_id);
+    const currentCompanyDetails = user?.company?.find((c: any) => c._id === user?.user_settings?.current_company_id);
     const [basicInfoExpanded, setBasicInfoExpanded] = useState<boolean>(true);
     const [additionalInfoExpanded, setAdditionalInfoExpanded] = useState<boolean>(false);
     const [gstInfoExpanded, setGstInfoExpanded] = useState<boolean>(false);
@@ -122,7 +122,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
             return setAlert({
                 type: 'error',
                 id: 'create-product-modal',
-                massage: 'Please fix the validation errors before creating the product.',
+                message: 'Please fix the validation errors before creating the product.',
             });
         }
 
@@ -162,7 +162,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
             setAlert({
                 type: 'error',
                 id: 'create-product-modal',
-                massage: res?.message || 'Failed to create product.',
+                message: res?.message || 'Failed to create product.',
             });
         }
     }

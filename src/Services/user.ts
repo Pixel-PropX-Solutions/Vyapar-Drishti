@@ -3,37 +3,38 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import userApi from '../Api/userApi'; // Your Axios instance
 import { UserSignUp } from '../Utils/types';
+import AuthStore from '../Store/AuthStore';
 
 
 
 export const getCurrentUser = createAsyncThunk(
-  "get/current/user",
+  'get/current/user',
   async (_, { rejectWithValue }) => {
     try {
       const response = await userApi.get('/auth/current/user',);
-      console.log("Current user response", response.data);
-      const user = response.data.data[0];
+      console.log('Current user response', response.data);
 
-      if (user) {
+      if (response.data.success === true) {
+        const user = response.data.data[0];
         return { user };
-      } else return rejectWithValue("Login Failed: No access token recieved.");
+      } else { return rejectWithValue('Login Failed: No access token recieved.'); }
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message ||
-        "Login failed: Invalid credentials or server error."
+        'Login failed: Invalid credentials or server error.'
       );
     }
   }
 );
 
 export const loginUser = createAsyncThunk(
-  "auth/loginUser",
+  'auth/loginUser',
   async (
     formData: FormData,
     { rejectWithValue }
   ): Promise<{ accessToken: string } | any> => {
     try {
-      const response = await userApi.post(`/auth/login?user_type=user`, formData, {
+      const response = await userApi.post('/auth/login?user_type=user', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -54,82 +55,82 @@ export const loginUser = createAsyncThunk(
 
 
 export const register = createAsyncThunk(
-  "user/register",
+  'user/register',
   async (
     userData: UserSignUp,
     { rejectWithValue }
   ): Promise<{ accessToken: string } | any> => {
     try {
-      const response = await userApi.post(`/auth/register`, userData);
-      console.log("register response", response.data);
+      const response = await userApi.post('/auth/register', userData);
+      console.log('register response', response.data);
 
-      const accessToken = response.data.accessToken;
 
-      if (accessToken) {
+      if (response.data.ok) {
+        const accessToken = response.data.accessToken;
         return { accessToken };
       }
       else {
         return rejectWithValue(
-          "Registration failed: No access token received."
+          'Registration failed: No access token received.'
         );
       }
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message || "Registration failed: Server error."
+        error.response?.data?.message || 'Registration failed: Server error.'
       );
     }
   }
 );
 
 export const updateUserSettings = createAsyncThunk(
-  "update/user/settings",
+  'update/user/settings',
   async (
     { id, data }: { id: string; data: Record<string, unknown> },
     { rejectWithValue }
   ) => {
     try {
       const response = await userApi.put(`/user/settings/update/${id}`, data);
-      console.log("updateUserSettings response", response);
+      console.log('updateUserSettings response', response);
 
       if (response.data.success === true) {
         const data = response.data.data;
         return data;
-      } else return rejectWithValue("Login Failed: No access token recieved.");
+      } else { return rejectWithValue('Login Failed: No access token recieved.'); }
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message ||
-        "Login failed: Invalid credentials or server error."
+        'Login failed: Invalid credentials or server error.'
       );
     }
   }
 );
 
 export const forgetPassword = createAsyncThunk(
-  "user/forgetPassword",
+  'user/forgetPassword',
   async ({ email }: { email: string }, { rejectWithValue }) => {
     try {
-      const response = await userApi.put("/auth/forgetPassword", {
+      const response = await userApi.put('/auth/forgetPassword', {
         email,
       });
 
       if (response.data.sucess === true) {
-        console.log("reset link share on registered mailID");
+        console.log('reset link share on registered mailID');
         return 1;
       } else {
         return rejectWithValue(
-          "Registration failed: No access token received."
+          'Registration failed: No access token received.'
         );
       }
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message || "Registration failed: Server error."
+        error.response?.data?.message || 'Registration failed: Server error.'
       );
     }
   }
 );
 
 export const resetPassword = createAsyncThunk(
-  "user/resetPassword",
+  'user/resetPassword',
   async (
     {
       password,
@@ -139,46 +140,46 @@ export const resetPassword = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await userApi.put("/auth/resetPassword", {
+      const response = await userApi.put('/auth/resetPassword', {
         password,
         confirmPassword,
         token,
       });
 
-      console.log("reset Password res", response);
+      console.log('reset Password res', response);
       if (response.data.sucess === true) {
-        console.log("reset link share on registered mailID");
+        console.log('reset link share on registered mailID');
         return 1;
       } else {
-        return rejectWithValue("Password not updated.");
+        return rejectWithValue('Password not updated.');
       }
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message ||
-        "Password updation failed: Server error."
+        'Password updation failed: Server error.'
       );
     }
   }
 );
 
 export const logout = createAsyncThunk(
-  "user/logout",
+  'user/logout',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await userApi.post("/auth/logout");
-      console.log("Response logout", response);
+      const response = await userApi.post('/auth/logout');
+      console.log('Response logout', response);
 
       if (response.status === 200) {
-        localStorage.removeItem("accessToken");
-        // localStorage.clear();
+        AuthStore.delete('accessToken');
+        AuthStore.delete('refreshToken');
         return response.data;
       } else {
-        return rejectWithValue("Login Failed: No access token recieved.");
+        return rejectWithValue('Login Failed: No access token recieved.');
       }
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message ||
-        "Login failed: Invalid credentials or server error."
+        'Login failed: Invalid credentials or server error.'
       );
     }
   }

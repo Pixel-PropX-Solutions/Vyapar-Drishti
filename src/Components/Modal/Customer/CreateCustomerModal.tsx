@@ -1,19 +1,17 @@
 /* eslint-disable react-native/no-inline-styles */
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, Text } from 'react-native';
 import BottomModal from '../BottomModal';
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import TextTheme from '../../Text/TextTheme';
-import FeatherIcon from '../../Icon/FeatherIcon';
 import { useTheme } from '../../../Contexts/ThemeProvider';
-import AnimateButton from '../../Button/AnimateButton';
 import ShowWhen from '../../Other/ShowWhen';
 import { useAlert } from '../../Alert/AlertProvider';
 import LoadingModal from '../LoadingModal';
 import { useAppDispatch, useCompanyStore, useCustomerStore, useUserStore } from '../../../Store/ReduxStore';
 import { createCustomer, viewAllCustomers } from '../../../Services/customer';
 import { accountGroups } from '../../../Utils/accountGroups';
-import { SelectField } from '../../TextInput/SelectField';
 import { InputField } from '../../TextInput/InputField';
+import { setCustomerType } from '../../../Store/Redusers/customerReduser';
 
 type Props = {
     visible: boolean,
@@ -25,16 +23,14 @@ interface ValidationErrors {
 }
 
 export default function CreateCustomerModal({ visible, setVisible }: Props): React.JSX.Element {
-    const { primaryColor, primaryBackgroundColor, secondaryBackgroundColor } = useTheme();
+    const { primaryColor } = useTheme();
     const { setAlert } = useAlert();
 
     const { company } = useCompanyStore();
-    const { loading } = useCustomerStore();
+    const { loading, customerType } = useCustomerStore();
     const { user } = useUserStore();
     const dispatch = useAppDispatch();
-    const currentCompanyDetails = user?.company?.find((c: any) => c._id === user.user_settings.current_company_id);
-
-    const [isGroupModalVisible, setGroupModalVisible] = useState<boolean>(false);
+    const currentCompanyDetails = user?.company?.find((c: any) => c._id === user?.user_settings?.current_company_id);
     const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
     const [currentStep, setCurrentStep] = useState<number>(0);
 
@@ -49,9 +45,9 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
         mailing_country: 'India',
         mailing_state: '',
         mailing_pincode: '',
-        company_id: user.user_settings.current_company_id || '',
-        parent: '',
-        parent_id: '',
+        company_id: user?.user_settings?.current_company_id || '',
+        parent: customerType?.accounting_group_name || '',
+        parent_id: customerType?._id || '',
         bank_name: '',
         account_number: '',
         bank_ifsc: '',
@@ -62,11 +58,11 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
     });
 
     const getVisibleFields = useCallback(() => {
-        const type = (accountGroups.find((group) => group._id === data.parent_id)?.user_id === '' || accountGroups.find((group) => group._id === data.parent_id)?.user_id === null)
-            ? data.parent.toLowerCase()
-            : accountGroups.find((group) => group._id === data.parent_id)?.parent?.toLowerCase() || '';
+        const type = (accountGroups.find((group) => group._id === customerType?._id)?.user_id === '' || accountGroups.find((group) => group._id === customerType?._id)?.user_id === null)
+            ? customerType?.accounting_group_name.toLowerCase()
+            : accountGroups.find((group) => group._id === customerType?._id)?.parent?.toLowerCase() || '';
 
-        if (type === 'sundry debtors' || type === 'sundry creditors') {
+        if (type === 'debtors' || type === 'creditors') {
             return {
                 showAll: true,
                 showBasicDetails: true,
@@ -181,7 +177,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                 isBankOptional: true,
                 isGSTINOptional: currentCompanyDetails?.company_settings?.features?.enable_gst ? false : true,
                 isMailingAddressOptional: true,
-                requiredFields: ['name', 'parent', 'mailing_state', 'mailing_country', ...(currentCompanyDetails?.company_settings?.features?.enable_gst ? ['gstin', 'it_pan'] : [])],
+                requiredFields: ['name', 'parent', ...(currentCompanyDetails?.company_settings?.features?.enable_gst ? ['gstin', 'it_pan'] : [])],
             };
         }
         if (type === 'cash-in-hand') {
@@ -193,7 +189,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                 showBankDetails: false,
                 isBankOptional: true,
                 isGSTINOptional: false,
-                isMailingAddressOptional: false,
+                isMailingAddressOptional: true,
                 showPAN: false,
                 showGSTIN: false,
                 requiredFields: ['name', 'parent'],
@@ -212,67 +208,143 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
             showGSTIN: true,
             requiredFields: ['name', 'mailing_state', 'parent', 'mailing_country', ...(currentCompanyDetails?.company_settings?.features?.enable_gst ? ['gstin', 'it_pan'] : [])],
         };
-    }, [currentCompanyDetails?.company_settings?.features?.enable_gst, data.parent, data.parent_id]);
+    }, [currentCompanyDetails?.company_settings?.features?.enable_gst, customerType?._id, customerType?.accounting_group_name]);
 
-    const { showBankDetails, showGSTIN, showMailingDetails, showPAN, isBankOptional, isGSTINOptional, isMailingAddressOptional, requiredFields } = getVisibleFields();
+    const { showBankDetails, showGSTIN, showMailingDetails, showPAN, isBankOptional, isGSTINOptional, isMailingAddressOptional } = getVisibleFields();
 
-    const validateField = (field: string, value: string): string => {
-        if (!value && requiredFields.includes(field)) {
-            return `${field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ')} is required`;
-        }
-        if (isMailingAddressOptional && field === 'mailing_address' && !value.trim()) { return ''; }
-        if (field === 'mailing_pincode' && value && !/^\d{1,6}$/.test(value)) { return 'Invalid pincode format'; }
-        if (field === 'code' && value && !/^\+\d{1,4}$/.test(value)) { return 'Invalid phone code format'; }
-        if (field === 'number' && value && !/^\d{10}$/.test(value)) { return 'Invalid phone number format'; }
-        if (field === 'email' && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) { return 'Invalid email format'; }
-        if (field === 'name' && value.trim().length < 2) { return 'Name must be at least 2 characters'; }
-        if (field === 'gstin' && value && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][A-Z0-9][Z][0-9A-Z]$/.test(value)) { return 'Invalid GSTIN format'; }
-        if (field === 'it_pan' && value && !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(value)) { return 'Invalid PAN format'; }
-        if (field === 'account_number' && value && !/^\d{9,18}$/.test(value)) { return 'Invalid bank account number format'; }
-        if (field === 'bank_ifsc' && value && !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(value)) { return 'Invalid IFSC code format'; }
-        return '';
-    };
-
-    const validateForm = useCallback((): boolean => {
-        const errors: ValidationErrors = {};
-        Object.keys(data).forEach(key => {
-            const field = key as keyof typeof data;
-            const error = validateField(field, String(data[field] || ''));
-            if (error) { errors[field] = error; }
+    useEffect(() => {
+        // Reset form when modal visibility changes
+        setData({
+            name: '',
+            email: '',
+            code: '+91',
+            number: '',
+            image: '',
+            mailing_name: '',
+            mailing_address: '',
+            mailing_country: 'India',
+            mailing_state: '',
+            mailing_pincode: '',
+            company_id: user?.user_settings?.current_company_id || '',
+            parent: customerType?.accounting_group_name || '',
+            parent_id: customerType?._id || '',
+            bank_name: '',
+            account_number: '',
+            bank_ifsc: '',
+            bank_branch: '',
+            account_holder: '',
+            gstin: '',
+            it_pan: '',
         });
 
-        setValidationErrors(errors);
-        return Object.keys(errors).length === 0;
-    }, [data, requiredFields]);
+    }, [customerType?._id, customerType?.accounting_group_name, user?.user_settings?.current_company_id, visible]);
 
-    const handleInputChange = (field: string, value: string | number | boolean) => {
+    const validateForm = useCallback((): boolean => {
+        const errors: Record<string, string> = {};
+        switch (currentStep) {
+            case 0:
+                if (!data.name.trim()) {
+                    errors.name = 'Customer Name is required';
+                }
+
+                if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+                    errors.email = 'Please enter a valid email address';
+                }
+                if (data.number && !/^\d{10}$/.test(data.number)) {
+                    errors.number = 'Phone number must be 10 digits';
+                }
+                setValidationErrors(errors);
+                return Object.keys(errors).length === 0;
+            case 1:
+                if (showMailingDetails && !isMailingAddressOptional && !(data.mailing_state || '').trim()) {
+                    errors.mailing_state = 'Mailing State is required';
+                }
+                if (showMailingDetails && !isMailingAddressOptional && !(data.mailing_country || '').trim()) {
+                    errors.mailing_country = 'Mailing country is required';
+                }
+                if (showMailingDetails && !isMailingAddressOptional && data.mailing_pincode && !/^\d{6}$/.test(data.mailing_pincode)) {
+                    errors.mailing_pincode = 'PIN code must be 6 digits';
+                }
+                setValidationErrors(errors);
+                return Object.keys(errors).length === 0;
+            case 2:
+                if (showBankDetails && !isBankOptional && !data.account_number.trim()) {
+                    errors.account_number = 'Account number is required';
+                }
+
+                if (showBankDetails && !isBankOptional && !data.account_holder.trim()) {
+                    errors.account_holder = 'Account holder name is required';
+                }
+
+                if (showBankDetails && !isBankOptional && !data.bank_name.trim()) {
+                    errors.bank_name = 'Bank name is required';
+                }
+
+                if (showBankDetails && !isBankOptional && !data.bank_branch.trim()) {
+                    errors.bank_branch = 'Bank branch name is required';
+                }
+
+                if (showBankDetails && !isBankOptional && !data.bank_ifsc.trim()) {
+                    errors.bank_ifsc = 'IFSC code is required';
+                }
+
+                if (showBankDetails && data.account_number && !isBankOptional && !/^\d{9,18}$/.test(data.account_number)) {
+                    errors.account_number = 'Please enter a valid bank account number';
+                }
+
+                if (data.bank_ifsc && !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(data.bank_ifsc)) {
+                    errors.bank_ifsc = 'Please enter a valid IFSC code';
+                }
+                setValidationErrors(errors);
+                return Object.keys(errors).length === 0;
+            case 3:
+                if (showGSTIN && !isGSTINOptional && !data.gstin.trim()) {
+                    errors.gstin = 'GSTIN is required';
+                }
+                if (showPAN && !isGSTINOptional && !data.it_pan.trim()) {
+                    errors.it_pan = 'PAN number is required';
+                }
+                if (showGSTIN && data.gstin && !isGSTINOptional && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][A-Z0-9][Z][0-9A-Z]$/.test(data.gstin)) {
+                    errors.gstin = 'Please enter a valid GSTIN';
+                }
+                if (showPAN && data.it_pan && !isGSTINOptional && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(data.it_pan)) {
+                    errors.it_pan = 'Please enter a valid PAN number';
+                }
+                setValidationErrors(errors);
+                return Object.keys(errors).length === 0;
+            default:
+                return false;
+        }
+    }, [currentStep, data.account_holder, data.account_number, data.bank_branch, data.bank_ifsc, data.bank_name, data.email, data.gstin, data.it_pan, data.mailing_country, data.mailing_pincode, data.mailing_state, data.name, data.number, isBankOptional, isGSTINOptional, isMailingAddressOptional, showBankDetails, showGSTIN, showMailingDetails, showPAN]);
+
+    const handleInputChange = useCallback((field: string, value: string | number | boolean) => {
         setData(prev => ({ ...prev, [field]: value }));
 
+        // Only clear the error for the field being edited
         if (validationErrors[field]) {
-            setValidationErrors(prev => ({ ...prev, [field]: '' }));
+            setValidationErrors(prev => {
+                const { [field]: _, ...rest } = prev;
+                return rest;
+            });
         }
-
-        const error = validateField(field, String(value));
-        if (error) {
-            setValidationErrors(prev => ({ ...prev, [field]: error }));
-        }
-    };
+    }, [validationErrors]);
 
     // const handleImagePicker = () => {
     //     // Image picker logic here
     //     setAlert({
     //         type: 'info',
     //         id: 'image-picker',
-    //         massage: 'Image picker functionality to be implemented',
+    //         message: 'Image picker functionality to be implemented',
     //     });
     // };
 
     async function handleOnPressCreate() {
         if (!validateForm()) {
+            // If validation fails, show an alert with the first error message
             setAlert({
                 type: 'error',
                 id: 'create-customer-modal',
-                massage: 'Please fix the validation errors before proceeding.',
+                message: Object.values(validationErrors)[0] || 'Please fill all required fields correctly.',
             });
             return;
         }
@@ -293,7 +365,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
         });
     }
 
-    const resetForm = () => {
+    const resetForm = async () => {
         setData({
             name: '',
             email: '',
@@ -316,15 +388,16 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
             gstin: '',
             it_pan: '',
         });
+        await dispatch(setCustomerType(null));
         setValidationErrors({});
         setCurrentStep(0);
     };
 
     const steps = [
-        { title: 'Basic Details', icon: 'user' },
+        { title: 'Basic', icon: 'user' },
         ...(showMailingDetails ? [{ title: 'Address', icon: 'map-pin' }] : []),
-        ...(showBankDetails ? [{ title: 'Bank Details', icon: 'credit-card' }] : []),
-        ...(showGSTIN || showPAN ? [{ title: 'Tax Details', icon: 'file-text' }] : []),
+        ...(showBankDetails ? [{ title: 'Bank', icon: 'credit-card' }] : []),
+        ...(showGSTIN || showPAN ? [{ title: 'Tax', icon: 'file-text' }] : []),
     ];
 
     const getCurrentStepFields = () => {
@@ -333,17 +406,11 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                 return (
                     <View>
                         {/* Customer Type Selection */}
-                        <View style={{ marginBottom: 0 }}>
-                            <TextTheme style={{ fontSize: 14, fontWeight: '600', marginBottom: 8 }}>
-                                Customer Type {requiredFields.includes('parent') && <TextTheme style={{ color: 'red' }}>*</TextTheme>}
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                            <TextTheme style={{ fontSize: 20, fontWeight: '900', marginBottom: 10, textAlign: 'center' }}>
+                                {customerType?.accounting_group_name}
                             </TextTheme>
-                            <SelectField
-                                icon="users"
-                                placeholder="Select Customer Type"
-                                value={data.parent}
-                                onPress={() => setGroupModalVisible(true)}
-                                error={validationErrors.parent}
-                            />
+
                         </View>
 
                         {/* Profile Image */}
@@ -384,6 +451,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                             value={data.name}
                             handleChange={handleInputChange}
                             error={validationErrors.name}
+                            capitalize="words"
                         // required={requiredFields.includes('name')}
                         />
 
@@ -440,6 +508,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                             placeholder="Mailing Name"
                             value={data.mailing_name}
                             handleChange={handleInputChange}
+                            capitalize="words"
                             error={validationErrors.mailing_name}
                         />
 
@@ -450,46 +519,44 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                             value={data.mailing_address}
                             handleChange={handleInputChange}
                             error={validationErrors.mailing_address}
+                            capitalize="words"
                             multiline
-                        // numberOfLines={3}
-                        // required={requiredFields.includes('mailing_address')}
                         />
-
+                        <InputField
+                            icon="map"
+                            field="mailing_state"
+                            placeholder="State"
+                            capitalize="words"
+                            value={data.mailing_state}
+                            handleChange={handleInputChange}
+                            error={validationErrors.mailing_state}
+                        />
                         <View style={{ flexDirection: 'row', gap: 12 }}>
-                            <View style={{ width: '45%' }}>
+                            <View style={{ flex: 1 }}>
                                 <InputField
                                     icon="globe"
                                     field="mailing_country"
                                     placeholder="Country"
+                                    capitalize="words"
                                     value={data.mailing_country}
                                     handleChange={handleInputChange}
                                     error={validationErrors.mailing_country}
-                                // required={requiredFields.includes('mailing_country')}
                                 />
                             </View>
-                            <View style={{ width: '45%' }}>
+                            <View style={{ width: '40%' }}>
                                 <InputField
-                                    icon="map"
-                                    field="mailing_state"
-                                    placeholder="State"
-                                    value={data.mailing_state}
+                                    icon="hash"
+                                    field="mailing_pincode"
+                                    placeholder="Pincode"
+                                    value={data.mailing_pincode}
                                     handleChange={handleInputChange}
-                                    error={validationErrors.mailing_state}
-                                // required={requiredFields.includes('mailing_state')}
+                                    error={validationErrors.mailing_pincode}
+                                    keyboardType="numeric"
                                 />
                             </View>
                         </View>
 
-                        <InputField
-                            icon="hash"
-                            field="mailing_pincode"
-                            placeholder="Pincode"
-                            value={data.mailing_pincode}
-                            handleChange={handleInputChange}
-                            error={validationErrors.mailing_pincode}
-                            keyboardType="numeric"
-                        // required={requiredFields.includes('mailing_pincode')}
-                        />
+
                     </View>
                 );
 
@@ -515,6 +582,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                             icon="user"
                             field="account_holder"
                             placeholder="Account Holder Name"
+                            capitalize="characters"
                             value={data.account_holder}
                             handleChange={handleInputChange}
                             error={validationErrors.account_holder}
@@ -525,6 +593,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                                     icon="credit-card"
                                     field="bank_name"
                                     placeholder="Bank Name"
+                                    capitalize="characters"
                                     value={data.bank_name}
                                     handleChange={handleInputChange}
                                     error={validationErrors.bank_name}
@@ -537,6 +606,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                                     icon="key"
                                     field="bank_ifsc"
                                     placeholder="IFSC Code"
+                                    capitalize="characters"
                                     value={data.bank_ifsc}
                                     handleChange={handleInputChange}
                                     error={validationErrors.bank_ifsc}
@@ -550,6 +620,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                             icon="map-pin"
                             field="bank_branch"
                             placeholder="Branch Name"
+                            capitalize="words"
                             value={data.bank_branch}
                             handleChange={handleInputChange}
                             error={validationErrors.bank_branch}
@@ -571,8 +642,9 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                             <InputField
                                 icon="file-text"
                                 field="gstin"
-                                placeholder={`GSTIN ${isGSTINOptional ? '(Optional)' : ''}`}
+                                placeholder={`GSTIN ${isGSTINOptional ? '(Optional)' : '*'}`}
                                 value={data.gstin}
+                                capitalize="characters"
                                 handleChange={handleInputChange}
                                 error={validationErrors.gstin}
                             // autoCapitalize="characters"
@@ -584,8 +656,9 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                             <InputField
                                 icon="credit-card"
                                 field="it_pan"
-                                placeholder="PAN Number"
+                                placeholder={`PAN Number ${isGSTINOptional ? '(Optional)' : '*'}`}
                                 value={data.it_pan}
+                                capitalize="characters"
                                 handleChange={handleInputChange}
                                 error={validationErrors.it_pan}
                             // autoCapitalize="characters"
@@ -601,6 +674,10 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
     };
 
     const handleNext = () => {
+        const isValid = validateForm();
+        if (!isValid) {
+            return;
+        }
         if (currentStep < steps.length - 1) {
             setCurrentStep(currentStep + 1);
         }
@@ -628,115 +705,61 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
             }}
             onClose={resetForm}
         >
-            <View>
-                {/* Header */}
-                <View style={{ marginBottom: 14, flexDirection: 'column', alignItems: 'center' }}>
-                    <TextTheme style={{ fontWeight: '900', fontSize: 18, marginBottom: 8 }}>
-                        Create New Customer
-                    </TextTheme>
-                    <TextTheme style={{ fontSize: 14, color: 'gray' }}>
-                        Fill in the details to add a new customer to your system.
-                    </TextTheme>
-                </View>
+            {/* Header */}
+            <View style={{ marginBottom: 14, flexDirection: 'column', alignItems: 'center' }}>
+                <TextTheme style={{ fontWeight: '900', fontSize: 18, marginBottom: 8 }}>
+                    Create {customerType?.accounting_group_name || 'Customer'}
+                </TextTheme>
+                <TextTheme style={{ fontSize: 14, color: 'gray' }}>
+                    Fill in the details to add a {customerType?.accounting_group_name || 'Customer'} to your system.
+                </TextTheme>
+            </View>
 
-                {/* Progress Steps */}
-                <View style={{ flexDirection: 'row', marginBottom: 14, justifyContent: 'space-between' }}>
+            {/* Progress Steps */}
+            <ScrollView horizontal
+                showsHorizontalScrollIndicator={false}
+            >
+                <View style={{
+                    flexDirection: 'row',
+                    gap: 12,
+                    minHeight: 50,
+                }}>
                     {steps.map((step, index) => (
-                        <View key={index} style={{ flex: 1, alignItems: 'center' }}>
+                        <View style={{
+                            minWidth: 80,
+                        }}
+                            // onTouchEnd={() => setCurrentStep(index)}
+                            key={index}>
                             <View style={{
-                                width: 30,
-                                height: 30,
-                                borderRadius: 20,
-                                backgroundColor: index <= currentStep ? primaryColor : secondaryBackgroundColor,
-                                justifyContent: 'center',
+                                paddingHorizontal: 16,
+                                paddingVertical: 8,
+                                borderRadius: 8,
+                                borderWidth: 1,
                                 alignItems: 'center',
-                                marginBottom: 8,
+                                minWidth: 80,
+                                backgroundColor: currentStep >= index ? primaryColor : '#f5f5f5',
+                                borderColor: currentStep >= index ? primaryColor : '#e0e0e0',
                             }}>
-                                <FeatherIcon
-                                    name={step.icon}
-                                    size={15}
-                                    color={index <= currentStep ? 'white' : 'gray'}
-                                />
+                                <Text style={{
+                                    fontSize: 12,
+                                    color: index <= currentStep ? 'white' : 'gray',
+                                    fontWeight: index === currentStep ? '600' : 'normal',
+                                    textAlign: 'center',
+                                }}>
+                                    {step.title}
+                                </Text>
                             </View>
-                            <TextTheme style={{
-                                fontSize: 12,
-                                color: index <= currentStep ? 'black' : 'gray',
-                                fontWeight: index === currentStep ? '600' : 'normal',
-                                textAlign: 'center',
-                            }}>
-                                {step.title}
-                            </TextTheme>
-                            {index < steps.length - 1 && (
-                                <View style={{
-                                    position: 'absolute',
-                                    top: 15,
-                                    left: '65%',
-                                    right: '-40%',
-                                    height: 2,
-                                    backgroundColor: index < currentStep ? primaryColor : 'lightgray',
-                                }} />
-                            )}
                         </View>
                     ))}
                 </View>
+            </ScrollView>
 
-                {/* Form Content */}
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    {getCurrentStepFields()}
-                </ScrollView>
-            </View>
+            {/* Form Content */}
+            <ScrollView showsVerticalScrollIndicator={false}>
+                {getCurrentStepFields()}
+            </ScrollView>
             <View style={{ height: 10 }} />
             <LoadingModal visible={loading} />
-
-            {/* Customer Type Selection Modal */}
-            <BottomModal
-                visible={isGroupModalVisible}
-                setVisible={setGroupModalVisible}
-                style={{ paddingHorizontal: 20, gap: 24 }}
-            >
-                <TextTheme style={{ fontWeight: '900', fontSize: 16 }}>
-                    Select Customer Type
-                </TextTheme>
-
-                <ScrollView style={{ maxHeight: 400 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-                        {accountGroups.map(group => (
-                            <AnimateButton
-                                key={group._id}
-                                style={{
-                                    borderWidth: 2,
-                                    borderRadius: 25,
-                                    paddingInline: 16,
-                                    paddingBlock: 10,
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    gap: 8,
-                                    borderColor: group.accounting_group_name === data.parent ? primaryColor : secondaryBackgroundColor,
-                                    backgroundColor: group.accounting_group_name === data.parent ? `${primaryColor}20` : primaryBackgroundColor,
-                                }}
-                                onPress={() => {
-                                    handleInputChange('parent', group.accounting_group_name);
-                                    handleInputChange('parent_id', group._id);
-                                    setGroupModalVisible(false);
-                                }}
-                            >
-                                <TextTheme style={{
-                                    fontWeight: '600',
-                                    fontSize: 14,
-                                    color: group.accounting_group_name === data.parent ? primaryColor : 'black',
-                                }}>
-                                    {group.accounting_group_name}
-                                </TextTheme>
-                                <FeatherIcon
-                                    name="arrow-right"
-                                    size={14}
-                                    color={group.accounting_group_name === data.parent ? primaryColor : 'gray'}
-                                />
-                            </AnimateButton>
-                        ))}
-                    </View>
-                </ScrollView>
-            </BottomModal>
         </BottomModal>
     );
 }

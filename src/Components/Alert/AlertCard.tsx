@@ -32,7 +32,7 @@ type Props = {
 export default function AlertCard({duration=5000, id}: Props): React.JSX.Element {
 
     const {alert, setAlert} = useAlert();
-    const {type, massage, id: alertId} = alert;
+    const {type, message, id: alertId} = alert;
 
     if(type == null || !type) return <></>;
 
@@ -98,7 +98,7 @@ export default function AlertCard({duration=5000, id}: Props): React.JSX.Element
                             {type.slice(1)}
                             {': '}
                         </Text>
-                        {massage}
+                        {message}
                     </Text>
                 </View>
 

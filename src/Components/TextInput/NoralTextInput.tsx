@@ -9,9 +9,10 @@ type Props = TextInputProps & {
     style?: TextStyle,
     value?: string,
     color?: string,
+    capitalize?: 'none' | 'sentences' | 'words' | 'characters',
 }
 
-export default function NoralTextInput({placeholder='', style={}, color, onChangeText,...props}: Props): React.JSX.Element {
+export default function NoralTextInput({placeholder='', style={}, color, onChangeText, capitalize='none', ...props}: Props): React.JSX.Element {
 
     const {primaryColor, secondaryColor} = useTheme();
     const [value, setValue] = useState<string>(props.value ?? '')
@@ -20,6 +21,7 @@ export default function NoralTextInput({placeholder='', style={}, color, onChang
         <TextInput
             {...props}
             placeholder={placeholder}
+            autoCapitalize={capitalize}
             placeholderTextColor={ color ?? secondaryColor}
             style={[{color: color ?? primaryColor, opacity: value ? 1 : 0.6}, style]}
             onChangeText={(text) => {

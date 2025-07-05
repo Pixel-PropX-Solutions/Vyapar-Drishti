@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import { Text, View } from 'react-native';
 import TextTheme from '../Text/TextTheme';
 import AnimateButton from '../Button/AnimateButton';
@@ -104,6 +105,24 @@ export function ProductLoadingCard({ isPrimary = false }: { isPrimary?: boolean 
                     <LoadingView isPrimary={!isPrimary} width={60} height={12} />
                     <LoadingView isPrimary={!isPrimary} width={40} height={10} />
                 </View>
+            </View>
+            <View style={{
+                position: 'absolute',
+                top: 10,
+                right: 10,
+            }} >
+                <LoadingView isPrimary={!isPrimary} width={80} height={24} />
+                <BackgroundThemeView style={{
+                    position: 'absolute',
+                    borderRadius: '50%',
+                    aspectRatio: 1,
+                    padding: 2,
+                    top: 5,
+                    right: 3,
+                    transform: 'translate(50%, -50%)',
+                }} >
+                    <AnimatePingBall size={12} backgroundColor={'grey'} />
+                </BackgroundThemeView>
             </View>
         </BackgroundThemeView>
     );

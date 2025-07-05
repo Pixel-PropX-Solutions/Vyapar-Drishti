@@ -8,7 +8,7 @@ import { useTheme } from "../../Contexts/ThemeProvider";
 type Props = TextInputProps & {
     label: string,
     focusColor?: string,
-    massage?: string,
+    message?: string,
     massageTextColor?: string,
     checkInputText?: (text: string) => boolean,
     value?: string,
@@ -16,7 +16,7 @@ type Props = TextInputProps & {
     useTrim?: boolean
 }
 
-export default function LabelTextInput({label, containerStyle, onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkInputText, massage, value='', useTrim=true, ...props}: Props): React.JSX.Element {
+export default function LabelTextInput({label, containerStyle, onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkInputText, message, value='', useTrim=true, ...props}: Props): React.JSX.Element {
 
     const {primaryColor: color, primaryBackgroundColor: backgroundColor} = useTheme();
 
@@ -63,7 +63,7 @@ export default function LabelTextInput({label, containerStyle, onChangeText, foc
             {
                 !(isInputTextValid || isFocus) ? (
                         <Text style={{paddingLeft: 6, fontSize: 12, color: massageTextColor}} >
-                            {massage}
+                            {message}
                         </Text>
                     ) : null
             }

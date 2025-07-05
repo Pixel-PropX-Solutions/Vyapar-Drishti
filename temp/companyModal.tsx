@@ -35,7 +35,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
     const { loading } = useCustomerStore();
     const { user } = useUserStore();
     const dispatch = useAppDispatch();
-    const currentCompanyDetails = user?.company?.find((c: any) => c._id === user.user_settings.current_company_id);
+    const currentCompanyDetails = user?.company?.find((c: any) => c._id === user?.user_settings?.current_company_id);
     const [isGroupModalVisible, setGroupModalVisible] = useState<boolean>(false);
     const [name, setName] = useState<string>('');
     const [phoneNo, setPhoneNo] = useState<string>('');
@@ -276,7 +276,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
             return setAlert({
                 type: 'error',
                 id: 'create-customer-modal',
-                massage: 'to add new customer name and customer type must be required.',
+                message: 'to add new customer name and customer type must be required.',
             });
         }
 

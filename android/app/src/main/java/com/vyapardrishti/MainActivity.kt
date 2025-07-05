@@ -1,4 +1,4 @@
-package com.vyapardrishti
+package com.pixelprophet.vyapardrishti
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

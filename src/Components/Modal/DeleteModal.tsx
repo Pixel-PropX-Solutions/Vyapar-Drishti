@@ -10,19 +10,19 @@ import FeatherIcon from "../Icon/FeatherIcon";
 type Props = {
     visible: boolean,
     setVisible: Dispatch<SetStateAction<boolean>>,
-    massage: string,
+    message: string,
     passkey: string,
     handleDelete: () => void
 }
 
-export default function DeleteModal({visible, setVisible, massage, passkey, handleDelete}: Props): React.JSX.Element {
+export default function DeleteModal({visible, setVisible, message, passkey, handleDelete}: Props): React.JSX.Element {
 
     const [text, setText] = useState<string>('');
     const {setAlert} = useAlert();
 
     function handleOnDelete(){
         if(text !== passkey) return setAlert({
-            id: 'delete-modal', massage: 'to delete enter valid keyword !!!', type: 'error'
+            id: 'delete-modal', message: 'to delete enter valid keyword !!!', type: 'error'
         });
 
         handleDelete();
@@ -40,7 +40,7 @@ export default function DeleteModal({visible, setVisible, massage, passkey, hand
             }]}    
         >
             <Text style={{color: 'rgb(250,10,50)', fontSize: 20, fontWeight: 900}} >Delete Warning</Text>
-            <Text style={{fontWeight: 700, fontSize: 14, color: 'rgb(250,10,50)'}} >{massage}</Text>
+            <Text style={{fontWeight: 700, fontSize: 14, color: 'rgb(250,10,50)'}} >{message}</Text>
             
             
             <View style={{marginTop: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: 'rgb(250,10,50)', gap: 12}} >

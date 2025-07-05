@@ -12,6 +12,7 @@ export const InputField = ({
     info,
     field,
     keyboardType = 'default',
+    capitalize = 'none',
     multiline = false,
     editable = true,
     handleChange,
@@ -24,6 +25,7 @@ export const InputField = ({
     value: string | number | Date | boolean,
     field: string,
     keyboardType?: 'default' | 'number-pad' | 'numeric',
+    capitalize?: 'none' | 'sentences' | 'words' | 'characters',
     multiline?: boolean,
     editable?: boolean
     handleChange: (field: string, value: string | boolean | number) => void
@@ -56,6 +58,7 @@ export const InputField = ({
                     textAlignVertical: multiline ? 'top' : 'center',
                 }}
                 value={value.toString()}
+                capitalize={capitalize}
                 keyboardType={keyboardType}
                 multiline={multiline}
                 editable={editable}
