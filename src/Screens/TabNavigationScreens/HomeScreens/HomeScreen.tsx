@@ -1,6 +1,7 @@
+/* eslint-disable react-native/no-inline-styles */
 import { ScrollView } from 'react-native-gesture-handler';
 import TextTheme from '../../../Components/Text/TextTheme';
-import { View } from 'react-native';
+import { Share, View } from 'react-native';
 import FeatherIcon from '../../../Components/Icon/FeatherIcon';
 import AnimateButton from '../../../Components/Button/AnimateButton';
 import { useTheme } from '../../../Contexts/ThemeProvider';
@@ -69,7 +70,12 @@ export default function HomeScreen(): React.JSX.Element {
                                     label="Share"
                                     text="Share app with friends"
                                     icon={<FeatherIcon name="share" size={16} />}
-                                    onPress={() => { }}
+                                    onPress={() => {
+                                        Share.share({
+                                            message: `'Check out Vyapar Drishti - A free GST billing app for small businesses. Download now from ${process.env.BASE_WEB_URL}`,
+                                            url: process.env.BASE_WEB_URL,
+                                        });
+                                    }}
                                 />
                             </View>
                         </View>

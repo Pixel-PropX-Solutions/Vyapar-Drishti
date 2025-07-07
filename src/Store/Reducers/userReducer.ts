@@ -1,5 +1,5 @@
-import { createSlice, Slice } from "@reduxjs/toolkit";
-import { loginUser, register, getCurrentUser, updateUserSettings } from "../../Services/user";
+import { createSlice, Slice } from '@reduxjs/toolkit';
+import { loginUser, register, getCurrentUser, updateUserSettings } from '../../Services/user';
 
 interface UserState {
     loading: boolean;
@@ -16,7 +16,7 @@ const initialState: UserState = {
 };
 
 const userSlice: Slice<UserState> = createSlice({
-    name: "auth",
+    name: 'auth',
     initialState,
     reducers: {},
     extraReducers: (builder) => {
@@ -31,7 +31,7 @@ const userSlice: Slice<UserState> = createSlice({
             })
             .addCase(loginUser.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message || "Login failed";
+                state.error = action.error.message || 'Login failed';
                 state.isAuthenticated = false; // Reset authentication on failure
             })
 
@@ -45,7 +45,7 @@ const userSlice: Slice<UserState> = createSlice({
             })
             .addCase(register.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message || "Registration failed";
+                state.error = action.error.message || 'Registration failed';
                 state.isAuthenticated = false;
             })
 
@@ -60,7 +60,7 @@ const userSlice: Slice<UserState> = createSlice({
             })
             .addCase(getCurrentUser.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message || "Failed to fetch current user";
+                state.error = action.error.message || 'Failed to fetch current user';
                 state.isAuthenticated = false;
             })
 
@@ -76,7 +76,7 @@ const userSlice: Slice<UserState> = createSlice({
                 state.loading = false;
             })
             ;
-    }
+    },
 });
 
 

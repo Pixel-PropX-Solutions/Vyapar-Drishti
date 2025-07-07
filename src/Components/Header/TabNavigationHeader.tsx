@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import { View } from "react-native";
 import FeatherIcon from "../Icon/FeatherIcon";
 import AnimateButton from "../Button/AnimateButton";
@@ -9,7 +10,7 @@ type Props = {
     onPress?: () => void
 }
 
-export default function TabNavigationScreenHeader({children, onPress}: Props): React.JSX.Element {
+export default function TabNavigationScreenHeader({ children, onPress }: Props): React.JSX.Element {
     return (
         <View style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'row', padding: 10, justifyContent: 'space-between' }} >
             <AnimateButton

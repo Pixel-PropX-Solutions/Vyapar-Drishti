@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import { ScrollView } from 'react-native-gesture-handler';
 import StackNavigationHeader from '../Components/Header/StackNavigationHeader';
-import { View } from 'react-native';
+import { Linking, View } from 'react-native';
 import { useTheme } from '../Contexts/ThemeProvider';
 import FeatherIcon from '../Components/Icon/FeatherIcon';
 import SectionView, { SectionRowWithIcon } from '../Components/View/SectionView';
@@ -12,12 +12,15 @@ import BottomModal from '../Components/Modal/BottomModal';
 import NoralTextInput from '../Components/TextInput/NoralTextInput';
 import { useState } from 'react';
 import { useAppStorage } from '../Contexts/AppStorageProvider';
+import MaterialIcon from '../Components/Icon/MaterialIcon';
+import { useAppDispatch } from '../Store/ReduxStore';
+import { logout } from '../Services/user';
 
 export default function SettingScreen(): React.JSX.Element {
 
     const { setTheme, theme } = useTheme();
     const { currency, billPrefix } = useAppStorage();
-
+    const dispatch = useAppDispatch();
     const [isCurrencyModalVisible, setCurrencyModalVisible] = useState<boolean>(false);
     const [isBillPrefixModalVisible, setBillPrefixModalVisible] = useState<boolean>(false);
 
@@ -30,24 +33,24 @@ export default function SettingScreen(): React.JSX.Element {
                 <SectionView label="App Prefernces" style={{ gap: 12 }} >
                     <SectionRowWithIcon
                         label="Theme"
-                        icon={<FeatherIcon name={theme == 'dark' ? 'moon' : 'sun'} size={20} />}
-                        text={`Click for trun on ${theme == 'dark' ? 'light' : 'dark'} mode.`}
-                        onPress={() => setTheme((pre) => pre == 'light' ? 'dark' : 'light')}
+                        icon={<FeatherIcon name={theme === 'dark' ? 'moon' : 'sun'} size={20} />}
+                        text={`Click for turn on ${theme === 'dark' ? 'light' : 'dark'} mode.`}
+                        onPress={() => setTheme((pre) => pre === 'light' ? 'dark' : 'light')}
                     />
 
                     <SectionRowWithIcon
                         hasArrow={true}
                         label="Notification"
-                        text="Manage your Notification"
+                        text={'Comming Soon...'}
                         icon={<FeatherIcon name="bell" size={20} />}
                         onPress={() => { }}
                     />
 
                     <SectionRowWithIcon
                         label="Currency"
-                        icon={<FeatherIcon name={'dollar-sign'} size={20} />}
-                        text={'Customize currency'}
-                        onPress={() => setCurrencyModalVisible(true)}
+                        icon={<MaterialIcon name={'currency-rupee'} size={20} />}
+                        text={'Comming Soon...'}
+                        onPress={() => { }}
                     >
                         <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
                             <TextTheme style={{ fontWeight: 900, fontSize: 16 }} >{currency}</TextTheme>
@@ -63,15 +66,15 @@ export default function SettingScreen(): React.JSX.Element {
                         hasArrow={true}
                         label="Bill Templates"
                         icon={<FeatherIcon name={'file-text'} size={20} />}
-                        text={'Customize bill templates'}
+                        text={'Comming Soon...'}
                         onPress={() => { }}
                     />
 
                     <SectionRowWithIcon
                         label="Bill Prefix"
                         icon={<FeatherIcon name={'hash'} size={20} />}
-                        text={'Customize your bill Prefix'}
-                        onPress={() => setBillPrefixModalVisible(true)}
+                        text={'Comming Soon...'}
+                        onPress={() => { }}
                     >
                         <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
                             <TextTheme style={{ fontWeight: 900, fontSize: 16 }} >{billPrefix}</TextTheme>
@@ -93,7 +96,7 @@ export default function SettingScreen(): React.JSX.Element {
                         hasArrow={true}
                         label="Group & Types"
                         icon={<FeatherIcon name={'inbox'} size={20} />}
-                        text={'Manage your all groups and types'}
+                        text={'Comming Soon...'}
                         onPress={() => { }}
                     />
                 </SectionView>
@@ -112,16 +115,18 @@ export default function SettingScreen(): React.JSX.Element {
                         label="Privacy Policy"
                         icon={<FeatherIcon name={'file-minus'} size={20} />}
                         text={'View privacy policy'}
-                        onPress={() => { }}
+                        onPress={() => {
+                            Linking.openURL('https://vyapar-drishti.vercel.app/privacy');
+                        }}
                     />
 
-                    <SectionRowWithIcon
+                    {/* <SectionRowWithIcon
                         hasArrow={true}
                         label="Github"
                         icon={<FeatherIcon name={'github'} size={20} />}
                         text={'https://github.com/Mustak24/Vyapar-Drishti'}
                         onPress={() => { }}
-                    />
+                    /> */}
 
                     <SectionRowWithIcon
                         hasArrow={true}
@@ -132,6 +137,7 @@ export default function SettingScreen(): React.JSX.Element {
                         iconContainerColor="rgb(120,200,250)"
                         color="white"
                         onPress={() => {
+                            dispatch(logout());
                             AuthStore.clearAll();
                             navigator.reset('landing-screen');
                         }}
@@ -144,7 +150,7 @@ export default function SettingScreen(): React.JSX.Element {
                         backgroundColor="rgb(255,80,100)"
                         label="Delete Data"
                         icon={<FeatherIcon name={'alert-triangle'} size={20} color="red" />}
-                        text={'Remove all information'}
+                        text={'Comming Soon...'}
                         onPress={() => { }}
                     />
 
@@ -153,7 +159,7 @@ export default function SettingScreen(): React.JSX.Element {
                         backgroundColor="rgb(255,50,80)"
                         label="Delete Account"
                         icon={<FeatherIcon name={'alert-circle'} size={20} color="red" />}
-                        text={'Delete account from database'}
+                        text={'Comming Soon...'}
                         onPress={() => { }}
                     />
                 </SectionView>
@@ -185,7 +191,7 @@ function SetCurrencyModal({ visible, setVisible }: { visible: boolean, setVisibl
 
                     setCurrency(text);
                     setVisible(false);
-                }
+                },
             }]}
         >
             <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >Set New Currency</TextTheme>
@@ -223,7 +229,7 @@ function SetBillPrefixModal({ visible, setVisible }: { visible: boolean, setVisi
 
                     setBillPrefix(text);
                     setVisible(false);
-                }
+                },
             }]}
         >
             <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >Set New Bill Prefix</TextTheme>

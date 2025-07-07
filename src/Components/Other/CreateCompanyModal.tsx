@@ -3,25 +3,26 @@ import { View, ScrollView, StyleSheet, Text } from 'react-native';
 import TextTheme from '../Text/TextTheme';
 import BottomModal from '../Modal/BottomModal';
 import { useCallback, useEffect, useState } from 'react';
-import { createCompany, getAllCompanies, getCompany, setCompany } from '../../Services/company';
+import { createCompany, getAllCompanies } from '../../Services/company';
 import { useTheme } from '../../Contexts/ThemeProvider';
 import arrayToFormData from '../../Utils/arrayToFormData';
 import { useAlert } from '../Alert/AlertProvider';
 import { useAppDispatch, useCompanyStore } from '../../Store/ReduxStore';
-import { setIsCompanyFetching } from '../../Store/Redusers/companyReduser';
 import { InputField } from '../TextInput/InputField';
 import { getDefaultAprilFirst } from '../../Utils/functionTools';
 import AnimateButton from '../Button/AnimateButton';
 import BackgroundThemeView from '../View/BackgroundThemeView';
 import FeatherIcon from '../Icon/FeatherIcon';
 import LoadingModal from '../Modal/LoadingModal';
+import { getCurrentUser } from '../../Services/user';
 
 type CompanyCreateModalType = {
     visible: boolean,
     setVisible: (vis: boolean) => void
+    setSecondaryVisible?: (vis: boolean) => void
 }
 
-export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalType) {
+export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }: CompanyCreateModalType) {
     const { primaryColor } = useTheme();
     const { setAlert } = useAlert();
     const dispatch = useAppDispatch();
@@ -85,7 +86,8 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
             bank_branch: '',
             qr_code_url: '',
         });
-        // Do NOT reset validationErrors here
+        setActiveSection('basic');
+        setCurrentStep(0);
     }, []);
 
     useEffect(() => {
@@ -190,6 +192,16 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
         }
     }, [setAlert, validationErrors]);
 
+
+    const handleClose = () => {
+        setValidationErrors({});
+        setActiveSection('basic');
+        setCurrentStep(0);
+        setVisible(false);
+        resetData();
+    };
+
+
     async function onPress() {
         const isValid = validateForm();
         if (!isValid) {
@@ -212,21 +224,21 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
                 ]) as [string, string | boolean][]
         );
 
-        await dispatch(createCompany(formData)).then((res) => {
-            if (res.meta.requestStatus === 'fulfilled') {
-                // Handle successful company creation
+        await dispatch(createCompany(formData)).unwrap().then((res) => {
+            console.log('Company created:', res);
+            if (res) {
+                dispatch(getCurrentUser());
                 dispatch(getAllCompanies());
+                handleClose();
+                setSecondaryVisible(false);
             }
+            handleClose();
+        }).finally(() => {
+            handleClose();
         });
-        // const { payload: res } = await dispatch(getAllCompanies());
-
-        // if ((res?.companies ?? []).length === 1) {
-        //     dispatch(setIsCompanyFetching(true));
-        //     dispatch(setCompany(res.companies[0]._id)).then(_ => dispatch(getCompany()));
-        // }
-
-        setVisible(false);
+        handleClose();
     }
+
 
     const renderSectionButton = (section: 'basic' | 'address' | 'financial' | 'banking', title: string) => {
         const progress = getSectionProgress()[section];
@@ -234,12 +246,12 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
 
         return (
             <View style={[styles.sectionButton, {
-                backgroundColor: isActive ? primaryColor : '#f5f5f5',
+                backgroundColor: isActive ? 'rgb(2, 2, 2)' : 'rgb(85, 85, 85)',
                 borderColor: isActive ? primaryColor : '#e0e0e0',
 
             }]}>
                 <Text style={[styles.sectionButtonText, {
-                    color: isActive ? '#fff' : '#333',
+                    color: isActive ? 'white' : 'rgb(196, 196, 196)',
                 }]}>
                     {title}
                 </Text>
@@ -255,19 +267,21 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
 
     const renderBasicSection = () => (
         <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Basic Information</Text>
+            <TextTheme style={styles.sectionTitle}>Basic Information</TextTheme>
 
             <InputField
-                icon="user"
+                icon={<FeatherIcon name="user" size={20} />}
                 placeholder="Company Name *"
                 value={data.name}
+                autoFocus={true}
                 field="name"
+                capitalize="words"
                 handleChange={handleChange}
                 error={validationErrors.name}
             />
 
             <InputField
-                icon="at-sign"
+                icon={<FeatherIcon name="at-sign" size={20} />}
                 placeholder="Company Email *"
                 value={data.email}
                 field="email"
@@ -278,7 +292,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
             <View style={{ flexDirection: 'row', gap: 12 }}>
                 <View style={{ width: '30%' }}>
                     <InputField
-                        icon="phone"
+                        icon={<FeatherIcon name="phone" size={20} />}
                         placeholder="+91"
                         value={data.code}
                         field="code"
@@ -289,7 +303,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
 
                 <View style={{ flex: 1 }}>
                     <InputField
-                        icon="phone"
+                        icon={<FeatherIcon name="phone" size={20} />}
                         placeholder="Phone Number"
                         value={data.number}
                         field="number"
@@ -302,7 +316,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
 
 
             <InputField
-                icon="globe"
+                icon={<FeatherIcon name="globe" size={20} />}
                 placeholder="Website URL"
                 value={data.website}
                 field="website"
@@ -317,36 +331,40 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
             <TextTheme style={styles.sectionTitle}>Address Information</TextTheme>
 
             <InputField
-                icon="type"
+                icon={<FeatherIcon name="type" size={20} />}
                 placeholder="Mailing Name"
                 value={data.mailing_name}
                 field="mailing_name"
+                capitalize="words"
                 handleChange={handleChange}
                 error={validationErrors.mailing_name}
             />
             <InputField
-                icon="map-pin"
+                icon={<FeatherIcon name="map-pin" size={20} />}
                 placeholder="Address Line 1"
                 value={data.address_1}
                 field="address_1"
+                capitalize="words"
                 handleChange={handleChange}
                 error={validationErrors.address_1}
             />
 
             <InputField
-                icon="map-pin"
+                icon={<FeatherIcon name="map-pin" size={20} />}
                 placeholder="Address Line 2"
                 value={data.address_2}
                 field="address_2"
+                capitalize="words"
                 handleChange={handleChange}
                 error={validationErrors.address_2}
             />
 
             <InputField
-                icon="flag"
+                icon={<FeatherIcon name="flag" size={20} />}
                 placeholder="State"
                 value={data.state}
                 field="state"
+                capitalize="words"
                 handleChange={handleChange}
                 error={validationErrors.state}
             />
@@ -354,10 +372,11 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
             <View style={{ flexDirection: 'row', gap: 12 }}>
                 <View style={{ width: '50%' }}>
                     <InputField
-                        icon="globe"
+                        icon={<FeatherIcon name="globe" size={20} />}
                         placeholder="Country"
                         value={data.country}
                         field="country"
+                        capitalize="words"
                         handleChange={handleChange}
                         error={validationErrors.country}
                     />
@@ -365,7 +384,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
 
                 <View style={{ flex: 1 }}>
                     <InputField
-                        icon="navigation"
+                        icon={<FeatherIcon name="navigation" size={20} />}
                         placeholder="PIN Code"
                         value={data.pinCode}
                         field="pinCode"
@@ -383,7 +402,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
             <TextTheme style={styles.sectionTitle}>Financial Information</TextTheme>
 
             <InputField
-                icon="file-text"
+                icon={<FeatherIcon name="file-text" size={20} />}
                 placeholder="GSTIN"
                 value={data.gstin}
                 field="gstin"
@@ -393,7 +412,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
             />
 
             <InputField
-                icon="credit-card"
+                icon={<FeatherIcon name="credit-card" size={20} />}
                 placeholder="PAN Number"
                 value={data.pan_number}
                 field="pan_number"
@@ -482,7 +501,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
             <TextTheme style={styles.sectionTitle}>Banking Information</TextTheme>
 
             <InputField
-                icon="credit-card"
+                icon={<FeatherIcon name="credit-card" size={20} />}
                 placeholder="Account Number"
                 value={data.account_number}
                 field="account_number"
@@ -492,7 +511,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
             />
 
             <InputField
-                icon="user"
+                icon={<FeatherIcon name="user" size={20} />}
                 placeholder="Account Holder Name"
                 value={data.account_holder}
                 field="account_holder"
@@ -502,7 +521,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
             />
 
             <InputField
-                icon="home"
+                icon={<FeatherIcon name="home" size={20} />}
                 placeholder="Bank Name"
                 value={data.bank_name}
                 capitalize="characters"
@@ -513,7 +532,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
             <View style={{ flexDirection: 'row', gap: 12 }}>
                 <View style={{ width: '50%' }}>
                     <InputField
-                        icon="git-branch"
+                        icon={<FeatherIcon name="git-branch" size={20} />}
                         placeholder="Bank Branch"
                         value={data.bank_branch}
                         capitalize="words"
@@ -525,7 +544,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
 
                 <View style={{ flex: 1 }}>
                     <InputField
-                        icon="hash"
+                        icon={<FeatherIcon name="hash" size={20} />}
                         placeholder="IFSC Code"
                         value={data.bank_ifsc}
                         capitalize="characters"
@@ -537,7 +556,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
             </View>
 
             {/* <InputField
-                icon="image"
+                icon={<FeatherIcon name="image" size={20} />}
                 placeholder="QR Code URL"
                 value={data.qr_code_url}
                 field="qr_code_url"
@@ -566,8 +585,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
         const isValid = validateForm();
         if (!isValid) {
             return;
-        }
-        if (currentStep < steps.length - 1) {
+        } else if (currentStep < steps.length - 1) {
             setCurrentStep(currentStep + 1);
             setActiveSection(steps[currentStep + 1].title as 'basic' | 'address' | 'financial' | 'banking');
         }
@@ -593,11 +611,12 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
             visible={isCompaniesFetching ? visible : companies.length === 0 ? true : visible}
             setVisible={setVisible}
             closeOnBack={companies.length !== 0}
+            onClose={() => resetData()}
             style={styles.modal}
             actionButtons={[
                 ...(currentStep > 0 ? [{ title: 'Previous', backgroundColor: 'gray', onPress: handlePrevious }] : []),
-                ...(currentStep < steps.length - 1 ? [{ title: 'Next', backgroundColor: primaryColor, onPress: handleNext }] : []),
-                ...(currentStep === steps.length - 1 ? [{ title: 'Create Company', backgroundColor: 'rgb(50,150,250)', onPress: onPress }] : []),
+                ...(currentStep < steps.length - 1 ? [{ title: 'Next', backgroundColor: 'rgb(85, 85, 85)', color: 'white', onPress: handleNext }] : []),
+                ...(currentStep === steps.length - 1 ? [{ title: 'Create Company', backgroundColor: 'rgb(50,200,150)', onPress: onPress }] : []),
             ]}
         >
             <TextTheme style={styles.modalTitle}>Create Company</TextTheme>
@@ -618,7 +637,7 @@ export function CompanyCreateModal({ visible, setVisible }: CompanyCreateModalTy
                         <View
                             key={key}
                             style={styles.sectionButtonContainer}
-                            // onTouchEnd={() => setActiveSection(key as any)}
+                        // onTouchEnd={() => setActiveSection(key as any)}
                         >
                             {renderSectionButton(key as any, title)}
                         </View>
@@ -692,7 +711,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '700',
         marginBottom: 16,
-        color: '#333',
     },
     bottomSpacing: {
         height: 10,

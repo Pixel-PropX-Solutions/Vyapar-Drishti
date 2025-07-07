@@ -1,12 +1,14 @@
-// services/authService.ts
-
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import userApi from '../Api/userApi'; // Your Axios instance
 import { UserSignUp } from '../Utils/types';
 import AuthStore from '../Store/AuthStore';
 
-
-
+/**
+ * This file contains the user-related async actions using createAsyncThunk.
+ * It includes actions for getting the current user, logging in, registering,
+ * updating user settings, forgetting and resetting passwords, logging out,
+ * and deleting the user account.
+ */
 export const getCurrentUser = createAsyncThunk(
   'get/current/user',
   async (_, { rejectWithValue }) => {
@@ -51,7 +53,8 @@ export const loginUser = createAsyncThunk(
         error.response?.data?.message || 'Login failed: Invalid credentials or server error.';
       return rejectWithValue(message);
     }
-  });
+  }
+);
 
 
 export const register = createAsyncThunk(
@@ -172,10 +175,34 @@ export const logout = createAsyncThunk(
       if (response.status === 200) {
         AuthStore.delete('accessToken');
         AuthStore.delete('refreshToken');
+        AuthStore.clearAll();
         return response.data;
       } else {
         return rejectWithValue('Login Failed: No access token recieved.');
       }
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+        'Login failed: Invalid credentials or server error.'
+      );
+    }
+  }
+);
+
+
+export const deleteAccount = createAsyncThunk(
+  'delete/account',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await userApi.delete('auth/delete/user');
+      console.log('deleteAccount api response', response.data);
+
+      if (response.data.success === true) {
+        AuthStore.delete('accessToken');
+        AuthStore.delete('refreshToken');
+        AuthStore.clearAll();
+        return { success: true };
+      } else { return rejectWithValue('Login Failed: No access token recieved.'); }
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message ||

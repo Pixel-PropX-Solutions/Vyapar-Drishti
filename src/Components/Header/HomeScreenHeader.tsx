@@ -1,21 +1,23 @@
-import { View } from "react-native";
-import FeatherIcon from "../Icon/FeatherIcon";
-import TextTheme from "../Text/TextTheme";
-import AnimateButton from "../Button/AnimateButton";
-import BottomModal from "../Modal/BottomModal";
-import { useEffect, useState } from "react";
-import { SectionRowWithIcon } from "../View/SectionView";
-import LogoImage from "../Image/LogoImage";
-import { ScrollView } from "react-native-gesture-handler";
-import BackgroundThemeView from "../View/BackgroundThemeView";
-import { getAllCompanies, getCompany } from "../../Services/company";
-import { useAppDispatch, useCompanyStore, useUserStore } from "../../Store/ReduxStore";
-import navigator from "../../Navigation/NavigationService";
-import LoadingView from "../View/LoadingView";
-import ShowWhen from "../Other/ShowWhen";
-import { setIsCompanyFetching } from "../../Store/Redusers/companyReduser";
-import { getCurrentUser, updateUserSettings } from "../../Services/user";
-import { CompanyCreateModal } from "../Other/CreateCompanyModal";
+/* eslint-disable react-native/no-inline-styles */
+import { View } from 'react-native';
+import FeatherIcon from '../Icon/FeatherIcon';
+import TextTheme from '../Text/TextTheme';
+import AnimateButton from '../Button/AnimateButton';
+import BottomModal from '../Modal/BottomModal';
+import { useEffect, useState } from 'react';
+import { SectionRowWithIcon } from '../View/SectionView';
+import LogoImage from '../Image/LogoImage';
+import { ScrollView } from 'react-native-gesture-handler';
+import BackgroundThemeView from '../View/BackgroundThemeView';
+import { getAllCompanies, getCompany } from '../../Services/company';
+import { useAppDispatch, useCompanyStore, useUserStore } from '../../Store/ReduxStore';
+import navigator from '../../Navigation/NavigationService';
+import LoadingView from '../View/LoadingView';
+import ShowWhen from '../Other/ShowWhen';
+import { setIsCompanyFetching } from '../../Store/Reducers/companyReducer';
+import { getCurrentUser, updateUserSettings } from '../../Services/user';
+import { CompanyCreateModal } from '../Other/CreateCompanyModal';
+import AnimatePingBall from '../View/AnimatePingBall';
 
 export default function HomeScreenHeader(): React.JSX.Element {
 
@@ -25,12 +27,13 @@ export default function HomeScreenHeader(): React.JSX.Element {
 
     const { company, companies, isCompanyFetching } = useCompanyStore();
     const { user } = useUserStore();
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         dispatch(getCompany());
+        dispatch(getCurrentUser());
         dispatch(getAllCompanies());
-    }, [])
+    }, [dispatch, user?.user_settings?.current_company_id]);
 
     return (
         <View style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'row', padding: 10, justifyContent: 'space-between' }} >
@@ -71,8 +74,14 @@ export default function HomeScreenHeader(): React.JSX.Element {
                     style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 50 }}
                 >
                     <FeatherIcon name="bell" size={20} />
-
-                    <View style={{ backgroundColor: 'rgb(250,50,50)', width: 8, aspectRatio: 1, borderRadius: 10, position: 'absolute', transform: [{ translateX: 5 }, { translateY: -5 }] }} />
+                    <BackgroundThemeView style={{
+                        position: 'absolute',
+                        transform: [{ translateX: 5 }, { translateY: -5 }],
+                        borderRadius: '50%',
+                        padding: 2,
+                    }} >
+                        <AnimatePingBall size={10} backgroundColor={'rgb(250,50,50)'} />
+                    </BackgroundThemeView>
                 </AnimateButton>
 
                 <AnimateButton
@@ -86,10 +95,13 @@ export default function HomeScreenHeader(): React.JSX.Element {
             <BottomModal
                 visible={isCompanySwitchModalVisible} setVisible={setCompanySwitchModalVisible}
                 style={{ paddingInline: 20, gap: 20 }}
-                actionButtons={companies.length >= 2 ? undefined : [{
-                    title: '+ Add New', onPress: () => {
+                actionButtons={[{
+                    title: '+ Add New',
+                    color: 'white',
+                    backgroundColor: 'rgb(50,200,150)',
+                    onPress: () => {
                         setCompanyCreateModalVisible(true);
-                    }
+                    },
                 }]}
             >
                 <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Select Company</TextTheme>
@@ -106,7 +118,7 @@ export default function HomeScreenHeader(): React.JSX.Element {
                                 backgroundColor={_id === company?._id ? 'rgb(50,150,250)' : ''}
                                 color={_id === company?._id ? 'white' : ''}
                                 onPress={() => {
-                                    if (_id === company?._id) return setCompanySwitchModalVisible(false);
+                                    if (_id === company?._id) { return setCompanySwitchModalVisible(false); }
 
                                     dispatch(setIsCompanyFetching(true));
 
@@ -129,8 +141,9 @@ export default function HomeScreenHeader(): React.JSX.Element {
             <CompanyCreateModal
                 visible={isCompanyCreateModalVisible}
                 setVisible={setCompanyCreateModalVisible}
+                setSecondaryVisible={setCompanySwitchModalVisible}
             />
 
         </View>
-    )
+    );
 }

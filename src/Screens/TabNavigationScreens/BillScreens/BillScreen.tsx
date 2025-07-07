@@ -28,13 +28,14 @@ import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 import RNPrint from 'react-native-print';
 import LoadingModal from '../../../Components/Modal/LoadingModal';
+import { useTheme } from '../../../Contexts/ThemeProvider';
 
 
 const dummyBillsType: { name: string; icon: string; color: string; description: string }[] = [
     { name: 'Sales', icon: 'trending-up', color: '#4CAF50', description: 'Record sales transactions' },
     { name: 'Purchase', icon: 'shopping-cart', color: '#2196F3', description: 'Track purchase expenses' },
-    { name: 'Payment', icon: 'credit-card', color: '#FF9800', description: 'Log payment records' },
-    { name: 'Receipt', icon: 'download', color: '#9C27B0', description: 'Create receipt vouchers' },
+    // { name: 'Payment', icon: 'credit-card', color: '#FF9800', description: 'Log payment records' },
+    // { name: 'Receipt', icon: 'download', color: '#9C27B0', description: 'Create receipt vouchers' },
 ];
 
 const billTypeFilters = ['All', 'Sales', 'Purchase', 'Payment', 'Receipt'];
@@ -42,6 +43,7 @@ const billTypeFilters = ['All', 'Sales', 'Purchase', 'Payment', 'Receipt'];
 export default function BillScreen(): React.JSX.Element {
     const dispatch = useAppDispatch();
     const { invoices, isInvoiceFeaching, pageMeta } = useInvoiceStore();
+    const { primaryColor, secondaryColor } = useTheme();
     const { company } = useCompanyStore();
     const navigation = useNavigation<StackNavigationProp<StackParamsList, 'tab-navigation'>>();
 
@@ -101,7 +103,7 @@ export default function BillScreen(): React.JSX.Element {
             );
         }
 
-        return filtered;
+        return filtered.filter((invoice)=> invoice.voucher_type === 'Sales' || invoice.voucher_type === 'Purchase');
     }
 
     const handlePrintInvoice = (invoice: GetAllVouchars) => {
@@ -454,6 +456,8 @@ export default function BillScreen(): React.JSX.Element {
             <BottomModal
                 visible={isBillTypeSelectorModalVisible}
                 setVisible={setBillTypeSelectorModalVisible}
+                backdropColor="rgba(0, 0, 0, 0.5)"
+                animationType="slide"
                 style={{ paddingHorizontal: 20, paddingBottom: 40 }}
             >
                 <View style={{ alignItems: 'center', marginBottom: 24 }}>
@@ -482,6 +486,7 @@ export default function BillScreen(): React.JSX.Element {
                                 alignItems: 'center',
                                 gap: 16,
                                 borderWidth: 1,
+                                borderColor: primaryColor,
                             }}
                             onPress={() => {
                                 navigation.navigate('create-bill-screen', { billType: billType.name });

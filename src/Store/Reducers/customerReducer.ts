@@ -154,7 +154,7 @@ const customerSlice: Slice<CustomerState> = createSlice({
 });
 
 export const { setCustomerType, resetCustomerState } = customerSlice.actions;
-const customerReduser = customerSlice.reducer;
-export default customerReduser;
+const customerReducer = customerSlice.reducer;
+export default customerReducer;
 
 // export default customerSlice.reducer ;

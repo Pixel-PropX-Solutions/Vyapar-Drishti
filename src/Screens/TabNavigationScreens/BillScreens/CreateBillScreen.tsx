@@ -1,5 +1,4 @@
 /* eslint-disable react-native/no-inline-styles */
-
 import { FlatList, KeyboardAvoidingView, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import AnimateButton from '../../../Components/Button/AnimateButton';
@@ -45,7 +44,7 @@ function Screen(): React.JSX.Element {
     const { billNo, setBillNo, createOn, setCreateOn, customer, products, totalValue, resetAllStates, setProducts } = useCreateBillContext();
     const navigation = useNavigation<StackNavigationProp<StackParamsList, 'create-bill-screen'>>();
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
-
+    console.log('Create Bill Screen Rendered', products);
     const { billType } = router.params;
 
 
@@ -377,7 +376,7 @@ function Screen(): React.JSX.Element {
                                     }}
                                     onPress={() => setProducts(pro => {
                                         let temp = [...pro];
-                                        let index = pro.findIndex(e => e.id == item.id);
+                                        let index = pro.findIndex(e => e.id === item.id);
                                         if (index >= 0) { temp.splice(index, 1); }
                                         return temp;
                                     })}
@@ -405,10 +404,6 @@ function Screen(): React.JSX.Element {
     );
 }
 
-
-
-
-
 type BillNoAndDateSelectorProps = {
     billNo: string,
     setBillNo: Dispatch<SetStateAction<string>>,
@@ -427,6 +422,7 @@ function BillNoAndDateSelector({ billNo, setBillNo, createOn, setCreateOn }: Bil
                 borderRadius: 16,
                 flex: 1,
                 flexDirection: 'row',
+                borderColor: secondaryBackgroundColor,
                 gap: 12,
                 alignItems: 'center',
                 backgroundColor: billNo ? '#4CAF5020' : secondaryBackgroundColor,
@@ -459,6 +455,7 @@ function BillNoAndDateSelector({ billNo, setBillNo, createOn, setCreateOn }: Bil
                 borderRadius: 16,
                 flex: 1,
                 flexDirection: 'row',
+                borderColor: secondaryBackgroundColor,
                 gap: 12,
                 alignItems: 'center',
                 backgroundColor: createOn ? '#4CAF5020' : secondaryBackgroundColor,
@@ -498,8 +495,8 @@ const AmountBox = ({ handleCreateInvoice, isFormValid, isCreating }: {
 
     const { totalValue, products, customer, billNo } = useCreateBillContext();
     const { currency } = useAppStorage();
+    const { secondaryBackgroundColor, primaryColor } = useTheme();
 
-    const backgroundColor = '#4CAF50';
     const disabledColor = '#E0E0E0';
     const textColor = isFormValid ? 'white' : '#9E9E9E';
 
@@ -525,20 +522,20 @@ const AmountBox = ({ handleCreateInvoice, isFormValid, isCreating }: {
                     style={{
                         flex: 1,
                         padding: 10,
-                        backgroundColor: `${backgroundColor}20`,
+                        backgroundColor: `${secondaryBackgroundColor}20`,
                         borderRadius: 16,
                         borderWidth: 1,
-                        borderColor: `${backgroundColor}40`,
+                        borderColor: `${secondaryBackgroundColor}40`,
                         marginRight: 12,
                     }}
                 >
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2, gap: 2 }}>
-                        <MaterialIcon name="currency-rupee" size={16} color={backgroundColor} />
-                        <TextTheme style={{ fontSize: 12, fontWeight: '600' }} isPrimary={false}>
+                        <MaterialIcon name="currency-rupee" size={16} />
+                        <TextTheme style={{ fontSize: 12, fontWeight: '600' }} color={primaryColor}>
                             Total Amount
                         </TextTheme>
                     </View>
-                    <TextTheme style={{ fontSize: 20, fontWeight: '700', color: backgroundColor }}>
+                    <TextTheme style={{ fontSize: 20, fontWeight: '700', color: secondaryBackgroundColor }}>
                         {totalValue.toFixed(2)} {currency}
                     </TextTheme>
                 </View>
@@ -547,19 +544,19 @@ const AmountBox = ({ handleCreateInvoice, isFormValid, isCreating }: {
                     style={{
                         flex: 1,
                         padding: 10,
-                        backgroundColor: `${backgroundColor}20`,
+                        backgroundColor: `${secondaryBackgroundColor}20`,
                         borderRadius: 16,
                         borderWidth: 1,
-                        borderColor: `${backgroundColor}40`,
+                        borderColor: `${secondaryBackgroundColor}40`,
                     }}
                 >
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2, gap: 4 }}>
-                        <FeatherIcon name="package" size={16} color={backgroundColor} />
-                        <TextTheme style={{ fontSize: 12, fontWeight: '600' }} isPrimary={false}>
+                        <FeatherIcon name="package" size={16}  />
+                        <TextTheme style={{ fontSize: 12, fontWeight: '600' }} >
                             Total Items
                         </TextTheme>
                     </View>
-                    <TextTheme style={{ fontSize: 20, fontWeight: '700', color: backgroundColor }}>
+                    <TextTheme style={{ fontSize: 20, fontWeight: '700', color: secondaryBackgroundColor }}>
                         {products.length}
                     </TextTheme>
                 </View>
@@ -570,7 +567,7 @@ const AmountBox = ({ handleCreateInvoice, isFormValid, isCreating }: {
                 onPress={handleCreateInvoice}
                 disabled={!isFormValid || isCreating}
                 style={{
-                    backgroundColor: isFormValid ? backgroundColor : disabledColor,
+                    backgroundColor: isFormValid ? '#4CAF50' : disabledColor,
                     borderRadius: 16,
                     paddingVertical: 16,
                     paddingHorizontal: 24,
@@ -578,7 +575,7 @@ const AmountBox = ({ handleCreateInvoice, isFormValid, isCreating }: {
                     alignItems: 'center',
                     justifyContent: 'center',
                     // gap: 12, // removed
-                    shadowColor: isFormValid ? backgroundColor : 'transparent',
+                    shadowColor: isFormValid ? secondaryBackgroundColor : 'transparent',
                     shadowOffset: { width: 0, height: 4 },
                     shadowOpacity: 0.3,
                     shadowRadius: 8,

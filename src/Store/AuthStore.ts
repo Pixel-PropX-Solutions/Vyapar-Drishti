@@ -1,5 +1,5 @@
-import { MMKV } from "react-native-mmkv";
+import { MMKV } from 'react-native-mmkv';
 
-const AuthStore = new MMKV({id: 'auth-storage'});
+const AuthStore = new MMKV({ id: 'auth-storage' });
 
 export default AuthStore;

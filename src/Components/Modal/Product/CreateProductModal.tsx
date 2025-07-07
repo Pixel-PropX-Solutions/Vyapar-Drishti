@@ -24,7 +24,7 @@ type Props = {
 
 export default function CreateProductModal({ visible, setVisible }: Props): React.JSX.Element {
 
-    const { primaryColor, secondaryBackgroundColor } = useTheme();
+    const { primaryColor, secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
     const { setAlert } = useAlert();
 
     const dispatch = useAppDispatch();
@@ -175,8 +175,10 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
             style={{ paddingHorizontal: 20, maxHeight: '100%', minHeight: additionalInfoExpanded ? '80%' : '60%' }}
             actionButtons={[
                 {
+                    key: 'create-product',
                     title: 'Create Product',
-                    backgroundColor: primaryColor,
+                    color: 'white',
+                    backgroundColor: 'rgb(50,200,150)',
                     onPress: handleCreate,
                 },
             ]}
@@ -194,12 +196,12 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                             width: 60,
                             height: 60,
                             borderRadius: 30,
-                            backgroundColor: primaryColor,
+                            backgroundColor: secondaryBackgroundColor,
                             justifyContent: 'center',
                             alignItems: 'center',
                             marginBottom: 12,
                         }}>
-                            <FeatherIcon name="package" size={30} color="#fff" />
+                            <FeatherIcon name="package" size={30} color={primaryColor} />
                         </View>
                         <TextTheme style={{ fontWeight: '900', fontSize: 20, textAlign: 'center' }}>
                             Create New Product
@@ -216,7 +218,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                         header="Basic Information"
                     >
                         <InputField
-                            icon="package"
+                            icon={<FeatherIcon name="package" size={20} color={primaryColor} />}
                             placeholder="Product Name *"
                             value={data.stock_item_name}
                             field="stock_item_name"
@@ -225,7 +227,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                         />
 
                         <SelectField
-                            icon="layers"
+                            icon={<FeatherIcon name="layers" size={20} color={primaryColor} />}
                             placeholder="Select Unit *"
                             value={data.unit}
                             onPress={() => setUnitModalVisible(true)}
@@ -240,7 +242,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                         header="Additional Information"
                     >
                         <InputField
-                            icon="file-text"
+                            icon={<FeatherIcon name="file-text" size={20} color={primaryColor} />}
                             placeholder="Description"
                             value={data.description}
                             field="description"
@@ -249,7 +251,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                         />
 
                         <InputField
-                            icon="folder"
+                            icon={<FeatherIcon name="folder" size={20} color={primaryColor} />}
                             placeholder="Category"
                             value={data.category}
                             field="category"
@@ -257,14 +259,14 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                         />
 
                         <InputField
-                            icon="grid"
+                            icon={<FeatherIcon name="grid" size={20} color={primaryColor} />}
                             placeholder="Group"
                             value={data.group}
                             field="group"
                             handleChange={handleChange}
                         />
                         <InputField
-                            icon="alert-triangle"
+                            icon={<FeatherIcon name="alert-triangle" size={20} color={primaryColor} />}
                             placeholder="Low Stock Alert Level"
                             value={data.low_stock_alert}
                             field="low_stock_alert"
@@ -288,7 +290,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                             >
                                 <View style={{ marginTop: 10 }}>
                                     <InputField
-                                        icon="hash"
+                                        icon={<FeatherIcon name="hash" size={20} color={primaryColor} />}
                                         placeholder="HSN/SAC Code"
                                         value={data.gst_hsn_code}
                                         field="gst_hsn_code"
@@ -297,21 +299,21 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
 
                                     {data.gst_hsn_code && <>
                                         <SelectField
-                                            icon="shield"
+                                            icon={<FeatherIcon name="shield" size={20} color={primaryColor} />}
                                             placeholder="Nature of Goods/Services"
                                             value={goodsNatureOptions.find(option => option.value === data.gst_nature_of_goods)?.label || ''}
                                             onPress={() => setGoodsNatureModalVisible(true)}
                                         />
 
                                         <SelectField
-                                            icon="percent"
+                                            icon={<FeatherIcon name="percent" size={20} color={primaryColor} />}
                                             placeholder="GST Taxability"
                                             value={taxabilityOptions.find(option => option.value === data.gst_taxability)?.label || ''}
                                             onPress={() => setTaxabilityModalVisible(true)}
                                         />
 
                                         {data.gst_taxability === 'taxable' && (<InputField
-                                            icon="percent"
+                                            icon={<FeatherIcon name="percent" size={20} color={primaryColor} />}
                                             placeholder="GST Percentage"
                                             value={data.gst_percentage}
                                             field="gst_percentage"
@@ -362,7 +364,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                                 paddingHorizontal: 20,
                                 paddingVertical: 8,
                                 borderColor: unit.value === data.unit ? primaryColor : secondaryBackgroundColor,
-                                backgroundColor: unit.value === data.unit ? primaryColor : 'transparent',
+                                backgroundColor: unit.value === data.unit ? secondaryBackgroundColor : 'transparent',
                                 marginBottom: 8,
                                 minWidth: 100,
                                 alignItems: 'center',

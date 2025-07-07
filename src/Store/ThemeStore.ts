@@ -1,4 +1,4 @@
-import { MMKV } from "react-native-mmkv";
+import { MMKV } from 'react-native-mmkv';
 
 const ThemeStore = new MMKV({ id: 'theme-storage' });
 
@@ -17,7 +17,7 @@ export function useThemeStore() {
         setPrimaryBackgroundColor: (color: string) => ThemeStore.set('primaryBackgroundColor', color),
 
         getSecondaryBackgroundColor: () => ThemeStore.getString('secondaryBackgroundColor') || '#F0F0F0',
-        setSecondaryBackgroundColor: (color: string) => ThemeStore.set('secondaryBackgroundColor', color)
+        setSecondaryBackgroundColor: (color: string) => ThemeStore.set('secondaryBackgroundColor', color),
     };
 }
 

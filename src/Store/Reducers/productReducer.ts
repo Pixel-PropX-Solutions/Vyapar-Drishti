@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AuthStates } from "../../Utils/enums";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AuthStates } from '../../Utils/enums';
 import {
   deleteProduct,
   // sellProduct,
@@ -9,8 +9,8 @@ import {
   viewProduct,
   getProduct,
   // viewProductsWithId,
-} from "../../Services/product";
-import { PageMeta, GetProduct, ProductCreate, UploadData, ProductUpdate, GetItem } from "../../utils/types";
+} from '../../Services/product';
+import { PageMeta, GetProduct, ProductCreate, UploadData, ProductUpdate, GetItem } from '../../utils/types';
 
 interface ProductState {
   authState: AuthStates;
@@ -40,7 +40,7 @@ const initialState: ProductState = {
   loading: false,
   isProductsFetching: false,
   deletionModal: false,
-  productId: "",
+  productId: '',
   pageMeta: {
     page: 1,
     limit: 10,
@@ -51,13 +51,13 @@ const initialState: ProductState = {
 };
 
 const productSlice = createSlice({
-  name: "product",
+  name: 'product',
   initialState,
   reducers: {
     setProductId(state, action: PayloadAction<any>) {
       state.productId = action.payload.productId;
       state.deletionModal = !state.deletionModal;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -110,7 +110,7 @@ const productSlice = createSlice({
           if(action.payload.pageMeta.page == 1){
             state.productsData = action.payload.productsData;
           } else {
-            state.productsData = [...(state.productsData ?? []), ...(action.payload.productsData ?? [])]
+            state.productsData = [...(state.productsData ?? []), ...(action.payload.productsData ?? [])];
           }
         }
       )
@@ -145,8 +145,8 @@ const productSlice = createSlice({
   },
 });
 
-const productReduser = productSlice.reducer;
-export default productReduser;;
+const productReducer = productSlice.reducer;
+export default productReducer;
 
 
 export const { setProductId } = productSlice.actions;

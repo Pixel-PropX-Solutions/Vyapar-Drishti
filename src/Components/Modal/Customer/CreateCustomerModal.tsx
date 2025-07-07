@@ -11,18 +11,20 @@ import { useAppDispatch, useCompanyStore, useCustomerStore, useUserStore } from 
 import { createCustomer, viewAllCustomers } from '../../../Services/customer';
 import { accountGroups } from '../../../Utils/accountGroups';
 import { InputField } from '../../TextInput/InputField';
-import { setCustomerType } from '../../../Store/Redusers/customerReduser';
+import { setCustomerType } from '../../../Store/Reducers/customerReducer';
+import FeatherIcon from '../../Icon/FeatherIcon';
 
 type Props = {
     visible: boolean,
     setVisible: Dispatch<SetStateAction<boolean>>
+    setPrimaryVisible: Dispatch<SetStateAction<boolean>>
 }
 
 interface ValidationErrors {
     [key: string]: string;
 }
 
-export default function CreateCustomerModal({ visible, setVisible }: Props): React.JSX.Element {
+export default function CreateCustomerModal({ visible, setVisible, setPrimaryVisible }: Props): React.JSX.Element {
     const { primaryColor } = useTheme();
     const { setAlert } = useAlert();
 
@@ -358,6 +360,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
             if (response) {
                 dispatch(viewAllCustomers(company?._id ?? ''));
                 setVisible(false);
+                setPrimaryVisible(false);
                 resetForm();
             }
             setVisible(false);
@@ -445,7 +448,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
 
                         {/* Name */}
                         <InputField
-                            icon="user"
+                            icon={<FeatherIcon name="user" size={20} color={primaryColor} />}
                             field="name"
                             placeholder="Customer Name"
                             value={data.name}
@@ -457,7 +460,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
 
                         {/* Email */}
                         <InputField
-                            icon="mail"
+                            icon={<FeatherIcon name="mail" size={20} color={primaryColor} />}
                             field="email"
                             placeholder="Email Address (Optional)"
                             value={data.email}
@@ -470,7 +473,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                         <View style={{ flexDirection: 'row', gap: 12 }}>
                             <View style={{ flex: 0.3 }}>
                                 <InputField
-                                    icon="phone"
+                                    icon={<FeatherIcon name="phone" size={20} color={primaryColor} />}
                                     field="code"
                                     placeholder="Code"
                                     value={data.code}
@@ -481,7 +484,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                             </View>
                             <View style={{ flex: 0.7 }}>
                                 <InputField
-                                    icon="phone"
+                                    icon={<FeatherIcon name="phone" size={20} color={primaryColor} />}
                                     field="number"
                                     placeholder="Phone Number"
                                     value={data.number}
@@ -503,7 +506,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                         </TextTheme>
 
                         <InputField
-                            icon="user"
+                            icon={<FeatherIcon name="user" size={20} color={primaryColor} />}
                             field="mailing_name"
                             placeholder="Mailing Name"
                             value={data.mailing_name}
@@ -513,7 +516,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                         />
 
                         <InputField
-                            icon="map-pin"
+                            icon={<FeatherIcon name="map-pin" size={20} color={primaryColor} />}
                             field="mailing_address"
                             placeholder={`Mailing Address ${isMailingAddressOptional ? '(Optional)' : ''}`}
                             value={data.mailing_address}
@@ -523,7 +526,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                             multiline
                         />
                         <InputField
-                            icon="map"
+                            icon={<FeatherIcon name="map" size={20} color={primaryColor} />}
                             field="mailing_state"
                             placeholder="State"
                             capitalize="words"
@@ -534,7 +537,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                         <View style={{ flexDirection: 'row', gap: 12 }}>
                             <View style={{ flex: 1 }}>
                                 <InputField
-                                    icon="globe"
+                                    icon={<FeatherIcon name="globe" size={20} color={primaryColor} />}
                                     field="mailing_country"
                                     placeholder="Country"
                                     capitalize="words"
@@ -545,7 +548,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                             </View>
                             <View style={{ width: '40%' }}>
                                 <InputField
-                                    icon="hash"
+                                    icon={<FeatherIcon name="hash" size={20} color={primaryColor} />}
                                     field="mailing_pincode"
                                     placeholder="Pincode"
                                     value={data.mailing_pincode}
@@ -569,7 +572,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                         </TextTheme>
 
                         <InputField
-                            icon="hash"
+                            icon={<FeatherIcon name="hash" size={20} color={primaryColor} />}
                             field="account_number"
                             placeholder="Account Number"
                             value={data.account_number}
@@ -579,7 +582,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                         // required={requiredFields.includes('account_number')}
                         />
                         <InputField
-                            icon="user"
+                            icon={<FeatherIcon name="user" size={20} color={primaryColor} />}
                             field="account_holder"
                             placeholder="Account Holder Name"
                             capitalize="characters"
@@ -590,7 +593,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                         <View style={{ flexDirection: 'row', gap: 12 }}>
                             <View style={{ width: '50%' }}>
                                 <InputField
-                                    icon="credit-card"
+                                    icon={<FeatherIcon name="credit-card" size={20} color={primaryColor} />}
                                     field="bank_name"
                                     placeholder="Bank Name"
                                     capitalize="characters"
@@ -603,7 +606,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
 
                             <View style={{ flex: 1 }}>
                                 <InputField
-                                    icon="key"
+                                    icon={<FeatherIcon name="key" size={20} color={primaryColor} />}
                                     field="bank_ifsc"
                                     placeholder="IFSC Code"
                                     capitalize="characters"
@@ -617,7 +620,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                         </View>
 
                         <InputField
-                            icon="map-pin"
+                            icon={<FeatherIcon name="map-pin" size={20} color={primaryColor} />}
                             field="bank_branch"
                             placeholder="Branch Name"
                             capitalize="words"
@@ -640,7 +643,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
 
                         <ShowWhen when={showGSTIN}>
                             <InputField
-                                icon="file-text"
+                                icon={<FeatherIcon name="file-text" size={20} color={primaryColor} />}
                                 field="gstin"
                                 placeholder={`GSTIN ${isGSTINOptional ? '(Optional)' : '*'}`}
                                 value={data.gstin}
@@ -654,7 +657,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
 
                         <ShowWhen when={showPAN}>
                             <InputField
-                                icon="credit-card"
+                                icon={<FeatherIcon name="credit-card" size={20} color={primaryColor} />}
                                 field="it_pan"
                                 placeholder={`PAN Number ${isGSTINOptional ? '(Optional)' : '*'}`}
                                 value={data.it_pan}
@@ -696,8 +699,8 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
             visible={visible}
             actionButtons={[
                 ...(currentStep > 0 ? [{ title: 'Previous', backgroundColor: 'gray', onPress: handlePrevious }] : []),
-                ...(currentStep < steps.length - 1 ? [{ title: 'Next', backgroundColor: primaryColor, onPress: handleNext }] : []),
-                ...(currentStep === steps.length - 1 ? [{ title: 'Create Customer', backgroundColor: 'rgb(50,150,250)', onPress: handleOnPressCreate }] : []),
+                ...(currentStep < steps.length - 1 ? [{ title: 'Next', backgroundColor: 'rgb(85, 85, 85)', color: 'white', onPress: handleNext }] : []),
+                ...(currentStep === steps.length - 1 ? [{ title: 'Create Customer', backgroundColor: 'rgb(50,200,150)', color: 'white', onPress: handleOnPressCreate }] : []),
             ]}
             style={{
                 paddingHorizontal: 20,
@@ -710,7 +713,7 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                 <TextTheme style={{ fontWeight: '900', fontSize: 18, marginBottom: 8 }}>
                     Create {customerType?.accounting_group_name || 'Customer'}
                 </TextTheme>
-                <TextTheme style={{ fontSize: 14, color: 'gray' }}>
+                <TextTheme style={{ fontSize: 14 }}>
                     Fill in the details to add a {customerType?.accounting_group_name || 'Customer'} to your system.
                 </TextTheme>
             </View>
@@ -737,12 +740,12 @@ export default function CreateCustomerModal({ visible, setVisible }: Props): Rea
                                 borderWidth: 1,
                                 alignItems: 'center',
                                 minWidth: 80,
-                                backgroundColor: currentStep >= index ? primaryColor : '#f5f5f5',
+                                backgroundColor: currentStep >= index ? 'rgb(2, 2, 2)' : 'rgb(85, 85, 85)',
                                 borderColor: currentStep >= index ? primaryColor : '#e0e0e0',
                             }}>
                                 <Text style={{
                                     fontSize: 12,
-                                    color: index <= currentStep ? 'white' : 'gray',
+                                    color: index <= currentStep ? 'white' : 'rgb(196, 196, 196)',
                                     fontWeight: index === currentStep ? '600' : 'normal',
                                     textAlign: 'center',
                                 }}>

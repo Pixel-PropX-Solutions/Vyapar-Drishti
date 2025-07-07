@@ -14,6 +14,8 @@ import FeatherIcon from '../../Icon/FeatherIcon';
 import NoralTextInput from '../../TextInput/NoralTextInput';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 import EmptyListView from '../../View/EmptyListView';
+import CustomerTypeSelectorModal from './CustomerTypeSelectorModal';
+import CreateCustomerModal from './CreateCustomerModal';
 
 type Props = {
     visible: boolean,
@@ -29,6 +31,9 @@ export default function CustomerSelectorModal({ visible, setVisible, billType }:
     const { setCustomer, customer } = useCreateBillContext();
     const { customers, isAllCustomerFetching, pageMeta } = useCustomerStore();
 
+    const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
+    const [isCustomerTypeSelectorModalOpen, setCustomerTypeSelectorModalOpen] = useState<boolean>(false);
+
     const dispatch = useAppDispatch();
 
     const [filterCustomers, setFilterCustomers] = useState<GetUserLedgers[]>([]);
@@ -42,7 +47,7 @@ export default function CustomerSelectorModal({ visible, setVisible, billType }:
 
     useEffect(() => {
         dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
-    }, [company?._id, dispatch]);
+    }, [company?._id, dispatch, isCreateCustomerModalOpen]);
 
     useEffect(() => {
         setFilterCustomers(() => customers.filter((ledger) => ledger.parent !== 'Sales Account' && ledger.parent !== 'Purchase Account'
@@ -51,7 +56,20 @@ export default function CustomerSelectorModal({ visible, setVisible, billType }:
 
 
     return (
-        <BottomModal visible={visible} setVisible={setVisible} style={{ padding: 20, gap: 20 }} >
+        <BottomModal
+            visible={visible}
+            setVisible={setVisible}
+            style={{ padding: 20, gap: 20 }}
+            actionButtons={[
+                {
+                    key: 'create-customer',
+                    title: 'Create New Customer',
+                    onPress: () => setCustomerTypeSelectorModalOpen(true),
+                    color: 'white',
+                    backgroundColor: 'rgb(50,200,150)',
+                    icon: <FeatherIcon name="user-plus" size={16} color="white" />,
+                },
+            ]}>
             <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >Select Customer</TextTheme>
 
             <View
@@ -109,6 +127,8 @@ export default function CustomerSelectorModal({ visible, setVisible, billType }:
             />
 
             <View style={{ minHeight: 44 }} />
-        </BottomModal>
+            <CustomerTypeSelectorModal visible={isCustomerTypeSelectorModalOpen} setVisible={setCustomerTypeSelectorModalOpen} setSecondaryVisible={setCreateCustomerModalOpen} />
+            <CreateCustomerModal visible={isCreateCustomerModalOpen} setVisible={setCreateCustomerModalOpen} setPrimaryVisible={setCustomerTypeSelectorModalOpen} />
+        </BottomModal >
     );
 }

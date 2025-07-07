@@ -1,4 +1,4 @@
-import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
+import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
 
 
 type Product = {
@@ -35,7 +35,7 @@ type ContextType = {
 }
 
 
-const fn = () => {}
+const fn = () => {};
 
 const Context = createContext<ContextType>({
     products: [], setProducts: fn,
@@ -43,8 +43,8 @@ const Context = createContext<ContextType>({
     totalValue: 0,
     billNo: '', setBillNo: fn,
     createOn: '', setCreateOn: fn,
-    resetAllStates: fn
-})
+    resetAllStates: fn,
+});
 
 
 
@@ -55,7 +55,7 @@ export default function CreateBillScreenProvider({children}: {children: React.Re
     const [totalValue, setTotalValue] = useState<number>(0);
     const [billNo, setBillNo] = useState<string>('#INV-2025-000');
     const [createOn, setCreateOn] = useState<string>(new Date().toLocaleDateString());
-
+    console.log('Create Bill Screen Provider Rendered', products);
     function resetAllStates(): void {
         setProducts([]); setCreateOn(new Date().toLocaleDateString());
         setCustomer(null); setTotalValue(0);
@@ -69,8 +69,8 @@ export default function CreateBillScreenProvider({children}: {children: React.Re
     useEffect(() => {
         let time = new Date();
         let year = time.getFullYear().toString().slice(2);
-        let no = time.getMonth()*30 + time.getDate()*7 + time.getDay()*24 + time.getHours()*60 + time.getMinutes()*60 + time.getSeconds();
-        setBillNo(`#INV-${year}-${no}`); 
+        let no = time.getMonth() * 30 + time.getDate() * 7 + time.getDay() * 24 + time.getHours() * 60 + time.getMinutes() * 60 + time.getSeconds();
+        setBillNo(`#INV-${year}-${no}`);
     }, []);
 
     const states = {
@@ -79,10 +79,10 @@ export default function CreateBillScreenProvider({children}: {children: React.Re
         totalValue,
         billNo, setBillNo,
         createOn, setCreateOn,
-        resetAllStates
-    }
+        resetAllStates,
+    };
 
-    return <Context.Provider children={children} value={states} />
+    return <Context.Provider children={children} value={states} />;
 }
 
 
