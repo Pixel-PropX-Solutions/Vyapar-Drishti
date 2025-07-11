@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { Dispatch, SetStateAction } from 'react';
 import {
     View,
@@ -30,9 +31,10 @@ export default function CollapsabeMenu({ header, children, expanded, setExpanded
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 width: '100%',
+                marginBottom: 10,
             }}>
                 <TextTheme style={{ color: 'white', fontSize: 18 }}>{header}</TextTheme>
-                <FeatherIcon name={expanded ? "chevron-up" : "chevron-down"} size={28} />
+                <FeatherIcon name={expanded ? 'chevron-up' : 'chevron-down'} size={28} />
             </TouchableOpacity>
 
             {expanded && (

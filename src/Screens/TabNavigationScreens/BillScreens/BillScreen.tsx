@@ -85,8 +85,9 @@ export default function BillScreen(): React.JSX.Element {
 
     function handleRefresh() {
         setRefreshing(true);
-        dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1 }))
-            .finally(() => setRefreshing(false));
+        setRefreshing(false);
+        // dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1 }))
+        //     .finally(() => setRefreshing(false));
     }
 
     function getFilteredInvoices() {
@@ -103,7 +104,7 @@ export default function BillScreen(): React.JSX.Element {
             );
         }
 
-        return filtered.filter((invoice)=> invoice.voucher_type === 'Sales' || invoice.voucher_type === 'Purchase');
+        return filtered.filter((invoice) => invoice.voucher_type === 'Sales' || invoice.voucher_type === 'Purchase');
     }
 
     const handlePrintInvoice = (invoice: GetAllVouchars) => {
@@ -279,7 +280,7 @@ export default function BillScreen(): React.JSX.Element {
 
     useEffect(() => {
         dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1 }));
-    }, [company?._id, dispatch]);
+    }, [company?._id, dispatch, isBillTypeSelectorModalVisible]);
 
     const filteredInvoices = getFilteredInvoices();
 

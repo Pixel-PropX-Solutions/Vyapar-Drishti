@@ -250,7 +250,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                             handleChange={handleChange}
                         />
 
-                        <InputField
+                        {/* <InputField
                             icon={<FeatherIcon name="folder" size={20} color={primaryColor} />}
                             placeholder="Category"
                             value={data.category}
@@ -273,7 +273,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                             keyboardType="number-pad"
                             handleChange={handleChange}
                             info="Set a threshold for low stock alert. Default is 10."
-                        />
+                        /> */}
 
                         {/* GST Information */}
                         {currentCompanyDetails?.company_settings?.features?.enable_gst && (<View style={{

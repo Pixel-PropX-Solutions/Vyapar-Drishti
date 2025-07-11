@@ -9,6 +9,7 @@ import FontAwesome6Icon from '../../../Components/Icon/FontAwesome6Icon';
 import HomeScreenHeader from '../../../Components/Header/HomeScreenHeader';
 import CreateCustomerModal from '../../../Components/Modal/Customer/CreateCustomerModal';
 import { useState } from 'react';
+import { BASE_WEB_URL, BASE_APP_URL } from '../../../../env';
 import navigator from '../../../Navigation/NavigationService';
 import { useAppStorage } from '../../../Contexts/AppStorageProvider';
 
@@ -72,8 +73,9 @@ export default function HomeScreen(): React.JSX.Element {
                                     icon={<FeatherIcon name="share" size={16} />}
                                     onPress={() => {
                                         Share.share({
-                                            message: `'Check out Vyapar Drishti - A free GST billing app for small businesses. Download now from ${process.env.BASE_WEB_URL}`,
-                                            url: process.env.BASE_WEB_URL,
+                                            message: `'Check out Vyapar Drishti - A free GST billing app for small businesses. Download now from ${BASE_WEB_URL} or ${BASE_APP_URL}'`,
+                                            title: 'Vyapar Drishti',
+                                            url: BASE_APP_URL,
                                         });
                                     }}
                                 />

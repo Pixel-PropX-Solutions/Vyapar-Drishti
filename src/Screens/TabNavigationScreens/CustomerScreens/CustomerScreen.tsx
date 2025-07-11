@@ -27,7 +27,7 @@ export default function CustomerScreen(): React.JSX.Element {
 
     useEffect(() => {
         dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
-    }, [company?._id, dispatch, isCreateCustomerModalOpen]);
+    }, [company?._id, dispatch, isCustomerTypeSelectorModalOpen]);
 
     useEffect(() => {
         setFilterCustomers(() => customers.filter((ledger) => ledger.parent !== 'Sales Account' && ledger.parent !== 'Purchase Account'
@@ -39,14 +39,6 @@ export default function CustomerScreen(): React.JSX.Element {
             <TabNavigationScreenHeader>
                 <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >Customers</TextTheme>
             </TabNavigationScreenHeader>
-
-
-            <View style={{ paddingHorizontal: 20 }}>
-                <ShowWhen when={isAllCustomerFetching} >
-                    <CustomerLoadingView />
-                    <CustomerLoadingView />
-                </ShowWhen>
-            </View>
 
             <FlatList
                 ListEmptyComponent={isAllCustomerFetching ? null : <EmptyListView type="customer" />}
@@ -63,6 +55,10 @@ export default function CustomerScreen(): React.JSX.Element {
                         />
                     );
                 }}
+                ListFooterComponent={<ShowWhen when={isAllCustomerFetching} >
+                    <CustomerLoadingView />
+                    <CustomerLoadingView />
+                </ShowWhen>}
             />
 
             <View style={{ position: 'absolute', right: 20, bottom: 20 }} >

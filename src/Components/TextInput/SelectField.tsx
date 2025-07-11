@@ -23,7 +23,7 @@ export const SelectField = ({
     onPress: () => void,
     error?: string
 }) => {
-    const { primaryColor, secondaryBackgroundColor } = useTheme();
+    const { primaryColor, primaryBackgroundColor } = useTheme();
     return (
         <View style={{ marginBottom: 16 }}>
             <AnimateButton
@@ -36,7 +36,7 @@ export const SelectField = ({
                     borderRadius: 12,
                     paddingHorizontal: 12,
                     paddingVertical: 12,
-                    backgroundColor: error ? 'transparent' : secondaryBackgroundColor,
+                    backgroundColor: error ? 'transparent' : primaryBackgroundColor,
                 }}
             >
                 {icon}

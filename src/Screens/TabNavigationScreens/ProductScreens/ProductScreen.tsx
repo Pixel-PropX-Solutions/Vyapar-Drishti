@@ -32,7 +32,7 @@ export default function ProductScreen(): React.JSX.Element {
 
     useEffect(() => {
         dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: 1 }));
-    }, [company?._id, dispatch]);
+    }, [company?._id, dispatch, isCreateModalOpen]);
 
     return (
         <View style={{ width: '100%', height: '100%' }}>
