@@ -1,24 +1,30 @@
 import { useEffect } from "react";
 import LogoImage from "../Components/Image/LogoImage";
-import LogoText from "../Components/Image/LogoText";
-import TextTheme from "../Components/Text/TextTheme";
 import { View } from "react-native";
 import { useAppDispatch } from "../Store/ReduxStore";
 import { getCurrentUser } from "../Services/user";
 import navigator from "../Navigation/NavigationService";
+import AuthStore from "../Store/AuthStore";
 
 export default function SplashScreen(): React.JSX.Element {
 
     const dispatch = useAppDispatch();
 
     async function handleNavigation(){
-
         const navigate = (isValid: boolean) => {
             if(isValid) {
                 navigator.reset('tab-navigation');
             } else {
                 navigator.reset('landing-screen');
             }
+        }
+
+        if(!AuthStore.getString('accessToken') || !AuthStore.getString("refreshToken")) {
+            setTimeout(() => {
+                navigator.reset('landing-screen');
+            }, 1500)
+
+            return;
         }
 
         const oldTime = Date.now();

@@ -9,7 +9,7 @@ import SafePaddingView from "../Components/SafeAreaView/SafePaddingView";
 import { useTheme } from "../Contexts/ThemeProvider";
 import SettingScreen from "../Screens/SettingScreen";
 import NotificationScreen from "../Screens/NotificationScreen";
-import CustomerInfoScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen";
+import CustomerInfoScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen/Screen";
 import CraeteBillScreen from "../Screens/TabNavigationScreens/BillScreens/CreateBillScreen";
 import CompanyProfileScreen from "../Screens/CompanyScreens/CompanyProfileScreen";
 import { NavigationRef } from "./NavigationService";
@@ -27,7 +27,7 @@ export type StackParamsList = {
     
     'company-profile-screen': undefined,
     'product-info-screen': {productId: string}
-    'customer-info-screen': undefined
+    'customer-info-screen': {customerId: string}
 
     'create-bill-screen': {billType: string}
 }

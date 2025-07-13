@@ -10,11 +10,12 @@ import navigator from '../Navigation/NavigationService';
 import AuthStore from '../Store/AuthStore';
 import BottomModal from '../Components/Modal/BottomModal';
 import NoralTextInput from '../Components/TextInput/NoralTextInput';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useAppStorage } from '../Contexts/AppStorageProvider';
 import MaterialIcon from '../Components/Icon/MaterialIcon';
 import { useAppDispatch } from '../Store/ReduxStore';
 import { logout } from '../Services/user';
+import { ItemSelectorModal } from '../Components/Modal/ItemSelectorModal';
 
 export default function SettingScreen(): React.JSX.Element {
 
@@ -50,7 +51,7 @@ export default function SettingScreen(): React.JSX.Element {
                         label="Currency"
                         icon={<MaterialIcon name={'currency-rupee'} size={20} />}
                         text={'Comming Soon...'}
-                        onPress={() => { }}
+                        onPress={() => { setCurrencyModalVisible(true) }}
                     >
                         <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
                             <TextTheme style={{ fontWeight: 900, fontSize: 16 }} >{currency}</TextTheme>
@@ -174,41 +175,50 @@ export default function SettingScreen(): React.JSX.Element {
     );
 }
 
-function SetCurrencyModal({ visible, setVisible }: { visible: boolean, setVisible: (vis: boolean) => void }): React.JSX.Element {
-    const { primaryColor } = useTheme();
-    const { currency, setCurrency } = useAppStorage();
+function SetCurrencyModal({ visible, setVisible }: { visible: boolean, setVisible: Dispatch<SetStateAction<boolean>> }): React.JSX.Element {
+    type currencyInfo = {currency: string, country: string, currency_name: string}
 
-    const [text, setText] = useState<string>(currency);
+    const currencyData: currencyInfo[] = require('../Assets/Jsons/currency-data.json');
+    const { currency, setCurrency } = useAppStorage();
+    const selected = (currencyData.find(item => item.currency === currency) ?? null);
+    
+    function udpateCurrency(currencyInfo: currencyInfo){
+        setCurrency(currencyInfo.currency);
+    }
+    
+    useEffect(() => {
+        console.log(currencyData)
+    }, [currencyData])
 
     return (
-        <BottomModal
+        <ItemSelectorModal<currencyInfo>
+            title='Select Currency'
+            allItems={currencyData}
+            selected={selected}
+            keyExtractor={(item) => item.country + item.currency}
+            filter={(item, val) => (
+                item.country.toLowerCase().startsWith(val) || 
+                item.currency.toLowerCase().startsWith(val)
+            )}
+            onSelect={udpateCurrency}
             visible={visible}
             setVisible={setVisible}
-            style={{ paddingHorizontal: 20 }}
-            actionButtons={[{
-                title: 'Set', onPress: () => {
-                    if (!text) { return; }
+            SelectedItemContent={
+                <View>
+                    <TextTheme color="white" style={{fontWeight: 400, fontSize: 14}} >
+                        {selected?.currency_name}
+                    </TextTheme>
+                    <TextTheme color="white" style={{fontWeight: 400, fontSize: 16}} >
+                        {selected?.currency}
+                    </TextTheme>
+                </View>
+            }
 
-                    setCurrency(text);
-                    setVisible(false);
-                },
-            }]}
-        >
-            <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >Set New Currency</TextTheme>
-
-            <View style={{ marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, width: '100%', maxWidth: 400 }} >
-                <TextTheme style={{ fontSize: 24, fontWeight: 900 }} >CURRENCY:</TextTheme>
-                <NoralTextInput
-                    value={text}
-                    placeholder="Enter Currency"
-                    maxLength={3}
-                    keyboardType="ascii-capable"
-                    style={{ fontSize: 24, fontWeight: 900, flex: 1 }}
-                    onChangeText={(val) => setText(() => val.toString().toUpperCase().trim())}
-                    autoFocus
-                />
-            </View>
-        </BottomModal>
+            renderItemContent={(item) => (<>
+                    <TextTheme style={{fontWeight: 900, fontSize: 16}}>{item.country}</TextTheme>
+                    <TextTheme style={{fontWeight: 600, fontSize: 16}}>{item.currency}</TextTheme>
+            </>)}
+        />
     );
 }
 

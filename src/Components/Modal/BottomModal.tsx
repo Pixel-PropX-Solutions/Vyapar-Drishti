@@ -19,6 +19,8 @@ type ActionButton = {
     style?: ViewStyle
 };
 
+export {type ActionButton as BottomModalActionButton}
+
 type BottomModalProps = ModalProps & {
     visible: boolean,
     setVisible: (vis: boolean) => void,
@@ -37,7 +39,7 @@ type BottomModalProps = ModalProps & {
 
 export default function BottomModal({ visible, setVisible, children, style, backdropColor = 'rgba(0, 0, 0, 0.50)', actionButtons, closeOnBack = true, animationType = 'slide', bottomOpationStyle = {}, onClose = () => { }, alertId, topMarginPrecentage = 0.25, ...props }: BottomModalProps): React.JSX.Element {
 
-    const { primaryColor, primaryBackgroundColor, secondaryBackgroundColor } = useTheme();
+    const { primaryColor, primaryBackgroundColor } = useTheme();
 
     const { height } = Dimensions.get('screen');
 
@@ -70,7 +72,7 @@ export default function BottomModal({ visible, setVisible, children, style, back
                 </View>
 
 
-                <View style={[styles.bottomOpations, { backgroundColor: primaryBackgroundColor, borderColor: primaryColor }, bottomOpationStyle]}>
+                <View style={[styles.bottomOpations, { backgroundColor: primaryBackgroundColor, borderColor: primaryColor, borderWidth: 2, }, bottomOpationStyle]}>
                     <AnimateButton style={{ borderColor: primaryColor, backgroundColor: primaryBackgroundColor, ...styles.closeBtn }} onPress={() => { setVisible(false); onClose(); }}>
                         <FeatherIcons name="plus" size={16} color={primaryColor} style={{ transform: 'rotate(45deg)' }} />
                     </AnimateButton>
@@ -78,8 +80,8 @@ export default function BottomModal({ visible, setVisible, children, style, back
                     <View style={styles.actionsButtonsBox}>
                         {
                             actionButtons?.map(({ title, onPress, icon, backgroundColor, color, style, key }, index) => (
-                                <AnimateButton bubbleColor={color || primaryColor} key={`${key + title + index}`} onPress={onPress}
-                                    style={{ height: 44, borderRadius: 100, paddingInline: 20, display: 'flex', alignItems: 'center', flexDirection: 'row', gap: 10, borderColor: color || primaryColor, backgroundColor: backgroundColor || primaryBackgroundColor, overflow: 'hidden', ...style }}
+                                <AnimateButton bubbleColor={color ?? primaryColor} key={`${key + title + index}`} onPress={onPress}
+                                    style={{ height: 44, borderRadius: 100, paddingInline: 20, display: 'flex', alignItems: 'center', flexDirection: 'row', gap: 10, borderColor: color || primaryColor, backgroundColor: backgroundColor || primaryBackgroundColor, borderWidth: 2, overflow: 'hidden', ...style }}
                                 >
                                     {icon ? icon : null}
 
@@ -135,7 +137,7 @@ const styles = StyleSheet.create({
         width: 36,
         aspectRatio: 1,
         borderRadius: 100,
-        borderWidth: 1,
+        borderWidth: 2,
         position: 'relative',
         top: -18,
     },

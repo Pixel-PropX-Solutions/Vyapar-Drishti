@@ -1,20 +1,24 @@
 /* eslint-disable react-native/no-inline-styles */
-import { Animated, useAnimatedValue, View, ViewStyle, Text } from 'react-native';
+import { Animated, useAnimatedValue, View, ViewStyle, Text, Dimensions } from 'react-native';
 import AnimateButton from '../Button/AnimateButton';
 import BackgroundThemeView from '../View/BackgroundThemeView';
 import { ReactNode } from 'react';
+import FeatherIcon from '../Icon/FeatherIcon';
 
 
 type Props = {
     label: string,
-    icon: ReactNode,
-    position: 'top' | 'bottom',
+    icon?: ReactNode,
+    iconSize?: number,
+    position?: 'top' | 'bottom',
+    alignFrom?: 'right' | 'left',
     labelLife?: number,
     isPrimary?: boolean,
-    style?: ViewStyle
+    style?: ViewStyle,
+    width?: number,
 }
 
-export default function Popover({ icon, label, position, labelLife = 1500, isPrimary = false, style = {} }: Props): React.JSX.Element {
+export default function Popover({ icon, label, iconSize=20, position='top', labelLife = 1500, isPrimary = false, style = {}, alignFrom='right', width=400, }: Props): React.JSX.Element {
 
     const animate0to1 = useAnimatedValue(0);
 
@@ -38,23 +42,22 @@ export default function Popover({ icon, label, position, labelLife = 1500, isPri
                 style={{ borderRadius: 100, ...style }}
                 onPressIn={() => showLabel()} onPressOut={() => hideLabel()}
             >
-                {icon}
+                {icon ?? <FeatherIcon name='info' size={iconSize} />}
             </AnimateButton>
 
             <Animated.View
                 style={{
                     position: 'absolute',
-                    maxWidth: 400,
-                    alignSelf: 'center',
-                    // minWidth: 100,
-                    // width: '100%',
+                    maxWidth: width,
+                    minWidth: width,
+                    alignItems: 'flex-end',
                     [position === 'top' ? 'bottom' : 'top']: '100%',
-                    right: 0,
+                    [alignFrom]: 0,
                     opacity: animate0to1,
                 }}
             >
-                <BackgroundThemeView isPrimary={isPrimary} style={{ padding: 4, borderRadius: 8, paddingHorizontal: 12 }}  >
-                    <Text style={{ fontSize: 14 }}>{label}</Text>
+                <BackgroundThemeView isPrimary={isPrimary} style={{ padding: 4, borderRadius: 8, paddingHorizontal: 12,}}  >
+                        <Text style={{ fontSize: 14 }}>{label}</Text>
                 </BackgroundThemeView>
             </Animated.View>
         </View>

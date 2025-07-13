@@ -1,8 +1,11 @@
 import { KeyboardTypeOptions, TextInputProps, View, ViewStyle } from "react-native";
 import TextTheme from "../Text/TextTheme";
-import { Ref, useState } from "react";
+import { ReactNode, Ref, useState } from "react";
 import { Text, TextInput } from "react-native-gesture-handler";
 import { useTheme } from "../../Contexts/ThemeProvider";
+import Popover from "../Other/Popover";
+import ShowWhen from "../Other/ShowWhen";
+import FeatherIcon from "../Icon/FeatherIcon";
 
 
 type Props = TextInputProps & {
@@ -13,10 +16,15 @@ type Props = TextInputProps & {
     checkInputText?: (text: string) => boolean,
     value?: string,
     containerStyle?: ViewStyle,
-    useTrim?: boolean
+    useTrim?: boolean,
+    icon?: ReactNode,
+    infoMassage?: string,
+    infoIconSize?: number,
+    infoMassageWidth?: number,
+    isRequired?: boolean
 }
 
-export default function LabelTextInput({label, containerStyle, onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkInputText, message, value='', useTrim=true, ...props}: Props): React.JSX.Element {
+export default function LabelTextInput({label, icon, containerStyle, onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkInputText, message, value='', useTrim=true, infoMassage='', infoIconSize=20, infoMassageWidth, isRequired=false, ...props}: Props): React.JSX.Element {
 
     const {primaryColor: color, primaryBackgroundColor: backgroundColor} = useTheme();
 
@@ -38,6 +46,7 @@ export default function LabelTextInput({label, containerStyle, onChangeText, foc
                 style={{
                     borderWidth: 2, paddingInline: 12, borderRadius: 12, position: 'relative',
                     borderColor: isInputTextValid ? isFocus ? focusColor : color : massageTextColor,
+                    flexDirection: 'row', alignItems: 'center', gap: 8 
                 }} 
             >
                 <TextTheme 
@@ -45,8 +54,12 @@ export default function LabelTextInput({label, containerStyle, onChangeText, foc
                     color={isInputTextValid ? isFocus ? focusColor : color : massageTextColor}
                 >
                     {label}
+                    <ShowWhen when={isRequired} >
+                        <TextTheme color="rgb(250,50,50)" > *</TextTheme>
+                    </ShowWhen>
                 </TextTheme>
 
+                {icon ?? null}
                 <TextInput  
                     {...props}
                     value={inputText}
@@ -56,9 +69,18 @@ export default function LabelTextInput({label, containerStyle, onChangeText, foc
                     onBlur={() => setFocus(false)}
                     style={{
                         opacity: inputText ? 1 : 0.7,   
-                        color, paddingTop: 14
+                        color, paddingTop: 14, flex: 1
                     }}
                 />
+
+                <ShowWhen when={!!infoMassage} >
+                    <Popover 
+                        position="top"
+                        label={infoMassage}
+                        iconSize={20} 
+                        width={infoMassageWidth}
+                    />
+                </ShowWhen>
             </View>
             {
                 !(isInputTextValid || isFocus) ? (

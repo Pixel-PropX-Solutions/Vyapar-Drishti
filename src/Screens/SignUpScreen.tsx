@@ -4,12 +4,14 @@ import LabelTextInput from "../Components/TextInput/LabelTextInput";
 import LogoImage from "../Components/Image/LogoImage";
 import NormalButton from "../Components/Button/NormalButton";
 import { ScrollView, Text } from "react-native-gesture-handler";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { isValidEmail, isValidMobileNumber } from "../Functions/StringOpations/pattenMaching";
 import { useAppDispatch, useUserStore } from "../Store/ReduxStore";
 import { getCurrentUser, register } from "../Services/user";
 import navigator from "../Navigation/NavigationService";
 import { getCompany } from "../Services/company";
+import PhoneNoTextInput from "../Components/TextInput/PhoneNoTextInput";
+import { PhoneNumber } from "../Utils/types";
 
 export default function SignUpScreen(): React.JSX.Element {
 
@@ -20,23 +22,23 @@ export default function SignUpScreen(): React.JSX.Element {
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
-    const [code, setCode] = useState<string>('91');
-    const [phoneNumber, setPhoneNumber] = useState<string>('');
+    const phone = useRef<PhoneNumber>({code: '', number: ""})
 
     async function handleSignUp() {
-        if (!(firstName && lastName && email && code && phoneNumber)) {
+        if (!(firstName && lastName && email && phone.current.code && phone.current.number)) {
             console.log('Please fill all fields');
             return;
         }
 
-        const data = { name: { first: firstName, last: lastName }, email, phone: { code, number: phoneNumber } };
+        const data = { name: { first: firstName, last: lastName }, email, phone: phone.current };
 
         await dispatch(register(data)).then((response) => {
             if (response.meta.requestStatus === 'fulfilled') {
                 dispatch((getCurrentUser()));
                 dispatch(getCompany());
-                console.log('Registration successful:', response);
                 navigator.reset('tab-navigation');
+
+                phone.current = {code: '', number: ''}
             } else {
                 console.log('Registration failed:', response);
             }
@@ -91,7 +93,7 @@ export default function SignUpScreen(): React.JSX.Element {
                     autoCapitalize="none"
                 />
 
-                <View style={{ flexDirection: 'row', gap: 12 }} >
+                {/* <View style={{ flexDirection: 'row', gap: 12 }} >
                     <LabelTextInput
                         value={code}
                         label="Code"
@@ -113,7 +115,11 @@ export default function SignUpScreen(): React.JSX.Element {
                         useTrim={true}
                     />
 
-                </View>
+                </View> */}
+
+                <PhoneNoTextInput 
+                    onChangePhoneNumber={(phoneNo) => {phone.current = phoneNo}}
+                />
                 {/* <View>
                     <PasswordInput  
                         checkInputText={(pass) => pass.length >= 8}

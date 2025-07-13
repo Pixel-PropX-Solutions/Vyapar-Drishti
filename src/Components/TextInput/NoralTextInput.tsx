@@ -6,7 +6,7 @@ import { useTheme } from '../../Contexts/ThemeProvider';
 
 type Props = TextInputProps & {
     placeholder: string,
-    onChangeText?: Dispatch<SetStateAction<string>>,
+    onChangeText?: (val: string) => void,
     style?: TextStyle,
     value?: string,
     color?: string,

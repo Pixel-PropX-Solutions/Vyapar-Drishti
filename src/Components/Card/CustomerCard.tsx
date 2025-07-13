@@ -20,7 +20,7 @@ type CustomerCardProps = {
     color?: string
 }
 
-export default function CustomerCard({ name, groupName, createOn, phoneNo = '', onPress = () => { }, backgroundColor = '', color = '' }: CustomerCardProps): React.JSX.Element {
+export default function CustomerCard({ name, groupName, createOn, phoneNo = '', onPress = () => {}, backgroundColor = '' }: CustomerCardProps): React.JSX.Element {
 
     const { secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
     backgroundColor = backgroundColor || secondaryBackgroundColor;

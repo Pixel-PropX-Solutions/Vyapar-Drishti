@@ -45,3 +45,14 @@ export const getDefaultAprilFirst = () => {
     const year = now.getFullYear();
     return new Date(year, 3, 1); // Month is 0-indexed, so 3 = April
 };
+
+
+export const capitalize = (str: string, by: 'word' | 'sentence' = "sentence"): string => {
+    if(!str) return str;
+    
+    const splitBy = by === 'word' ? ' ' : '.';
+
+    return str.split(splitBy).map(chars => chars.trim()).map(chars => (
+        chars[0].toUpperCase() + chars.slice(1)
+    )).join(splitBy + ' ');
+}

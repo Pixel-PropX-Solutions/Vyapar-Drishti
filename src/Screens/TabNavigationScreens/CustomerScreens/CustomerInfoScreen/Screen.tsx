@@ -1,0 +1,254 @@
+/* eslint-disable react-native/no-inline-styles */
+import { View } from 'react-native';
+import navigator from '../../../../Navigation/NavigationService';
+import { ScrollView } from 'react-native-gesture-handler';
+import SectionView, { SectionRow, SectionRowWithIcon } from '../../../../Components/View/SectionView';
+import TextTheme from '../../../../Components/Text/TextTheme';
+import EditButton from '../../../../Components/Button/EditButton';
+import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
+import { useState } from 'react';
+import StackNavigationHeader from '../../../../Components/Header/StackNavigationHeader';
+import DeleteModal from '../../../../Components/Modal/DeleteModal';
+import ShowWhen from '../../../../Components/Other/ShowWhen';
+import LoadingView from '../../../../Components/View/LoadingView';
+import { AddressInfoUpdateModal, BankInfoUpdateModal, CustomerInfoUpdateModal, TaxInfoUpdateModal } from './Modals';
+
+export default function CustomerInfoScreen(): React.JSX.Element {
+
+    const {customerId} = navigator.getParams('customer-info-screen') ?? {};
+    if(!customerId) navigator.goBack()
+
+    const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+    const [isInfoUpdateModalVisible, setInfoUpdateModalVisible] = useState<boolean>(false);
+    const [isAddressInfoUpdateModalVisible, setAddressInfoUpdateModalVisible] = useState<boolean>(false);
+    const [isBankInfoUpdateModalVisible, setBankInfoUpdateModalVisible] = useState<boolean>(false);
+    const [isTaxInfoUpdateModalVisible, setTaxInfoUpdateModalVisible] = useState<boolean>(false);
+
+
+    async function handleDelete(){
+        setDeleteModalVisible(false);
+        navigator.goBack();
+    }
+
+    return (
+        <View style={{width: '100%', height: '100%'}} >
+            <StackNavigationHeader title="Customer Information" />
+
+            <ScrollView
+                style={{paddingInline: 20, width: '100%', paddingTop: 16}}
+                contentContainerStyle={{gap: 32, paddingBottom: 80}}
+            >
+
+                <View style={{gap: 16}} >
+                    <View style={{flexDirection: 'row', gap: 8, alignItems: 'center'}} >
+                        <FeatherIcon name="user" size={32} />
+                        <View>
+                            <ShowWhen when={true}
+                                otherwise={<>
+                                    <LoadingView width={100} height={12} style={{marginBottom: 4}} />
+                                    <LoadingView width={80} height={8} />
+                                </>}
+                            >
+                                <TextTheme style={{fontWeight: 900, fontSize: 16}}>
+                                    {'Customer Name'}
+                                </TextTheme>
+                                <TextTheme isPrimary={false} style={{fontWeight: 500, fontSize: 12}}>
+                                    {'Customer Type'}
+                                </TextTheme>
+                            </ShowWhen>
+                        </View>
+                    </View>
+                </View>
+
+                <SectionView
+                    style={{ gap: 8 }} label="Account Information"
+                    labelContainerChildren={
+                        <EditButton onPress={() => {  }} />
+                    }
+                >
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Name</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+                </SectionView>
+
+                <SectionView
+                    style={{ gap: 8 }} label="Customer Information"
+                    labelContainerChildren={
+                        <EditButton onPress={() => { setInfoUpdateModalVisible(true) }} />
+                    }
+                >
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Name</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Email</TextTheme>
+
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+
+                    <SectionRow style={{justifyContent: 'space-between'}} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >contact</TextTheme>
+
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+                </SectionView>
+
+                <SectionView
+                    label="Address Information"
+                    style={{gap: 8}}
+                    labelContainerChildren={
+                        <EditButton onPress={() => { setAddressInfoUpdateModalVisible(true) }} />
+                    }
+                >
+                    <SectionRow style={{justifyContent: 'space-between'}} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Mailing Name</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+
+                    <SectionRow style={{justifyContent: 'space-between'}} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Mailing Address</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+
+                    <SectionRow style={{justifyContent: 'space-between'}} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Country</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+
+                    <SectionRow style={{justifyContent: 'space-between'}} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >State</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+
+                    <SectionRow style={{justifyContent: 'space-between'}} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Postal Code</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+                </SectionView>
+                
+                <SectionView
+                    label="Bank Details"
+                    style={{gap: 8}}
+                    labelContainerChildren={
+                        <EditButton onPress={() => { setBankInfoUpdateModalVisible(true) }} />
+                    }
+                >
+                    <SectionRow style={{justifyContent: 'space-between'}} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Account Holder Name</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+
+                    <SectionRow style={{justifyContent: 'space-between'}} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Account Number</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+
+                    <SectionRow style={{justifyContent: 'space-between'}} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Bank Name</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+
+                    <SectionRow style={{justifyContent: 'space-between'}} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >IFSC Code</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+
+                    <SectionRow style={{justifyContent: 'space-between'}} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Branch Name</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+                </SectionView>
+
+                <SectionView
+                    style={{ gap: 8 }} label="Tax Information"
+                    labelContainerChildren={
+                        <EditButton onPress={() => { setTaxInfoUpdateModalVisible(true) }} />
+                    }
+                >
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >GSTIN Number</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >PAN Number</TextTheme>
+
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+                </SectionView>
+
+               <SectionView label="Danger Zone" style={{gap: 12}} labelColor="red" >
+                    <SectionRowWithIcon
+                        color="white"
+                        backgroundColor="rgb(255,80,100)"
+                        label="Delete Product"
+                        icon={<FeatherIcon name={'alert-triangle'} size={20} color="red" />}
+                        text={'Once delete then on way to go back'}
+                        onPress={() => setDeleteModalVisible(true)}
+                    />
+                </SectionView>
+            </ScrollView>
+
+            <DeleteModal
+                visible={isDeleteModalVisible}
+                setVisible={setDeleteModalVisible}
+                handleDelete={handleDelete}
+                passkey={'Customer Name'}
+                message="Once you delete the product then no way to go back."
+            />
+
+            <CustomerInfoUpdateModal 
+                visible={isInfoUpdateModalVisible} setVisible={setInfoUpdateModalVisible}
+            />
+
+            <AddressInfoUpdateModal
+                visible={isAddressInfoUpdateModalVisible} setVisible={setAddressInfoUpdateModalVisible}
+            />
+
+            <BankInfoUpdateModal
+                visible={isBankInfoUpdateModalVisible} setVisible={setBankInfoUpdateModalVisible}
+            />
+
+            <TaxInfoUpdateModal
+                visible={isTaxInfoUpdateModalVisible} setVisible={setTaxInfoUpdateModalVisible}
+            />
+
+            {/* <LoadingModal visible={loading && isDeleteModalVisible} /> */}
+        </View>
+    );
+}

@@ -13,6 +13,7 @@ import ShowWhen from '../../../Components/Other/ShowWhen';
 import EmptyListView from '../../../Components/View/EmptyListView';
 import CustomerTypeSelectorModal from '../../../Components/Modal/Customer/CustomerTypeSelectorModal';
 import { GetUserLedgers } from '../../../Utils/types';
+import navigator from '../../../Navigation/NavigationService';
 
 
 export default function CustomerScreen(): React.JSX.Element {
@@ -51,7 +52,7 @@ export default function CustomerScreen(): React.JSX.Element {
                             name={item.ledger_name}
                             groupName={item.parent}
                             createOn={item.created_at}
-                        // onPress={() => navigator.navigate('customer-info-screen', {id: item._id})}
+                            onPress={() => {navigator.navigate('customer-info-screen', {customerId: item._id});}}
                         />
                     );
                 }}
