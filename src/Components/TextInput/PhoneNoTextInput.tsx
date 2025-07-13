@@ -146,7 +146,10 @@ export function DialCodeSelectorModal({visible, setVisible, onSelect, selected}:
     function handleDataFilter(inputValue: string): void {
         inputValue = inputValue.trim().toLowerCase()
         clearTimeout(timeoutId.current);
-        if(!inputValue) return;
+        if(!inputValue) {
+            setData(dialCodeData);
+            return;
+        }
 
         timeoutId.current = setTimeout(() => {
             setData(dialCodeData.filter(item => (
@@ -161,6 +164,7 @@ export function DialCodeSelectorModal({visible, setVisible, onSelect, selected}:
         <BottomModal
             visible={visible} setVisible={setVisible}
             style={{paddingInline: 20, gap: 20}}
+            topMargin={0}
         >
             <TextTheme style={{fontSize: 20, fontWeight: 900}} >
                 Select Your Country Code
@@ -200,7 +204,7 @@ export function DialCodeSelectorModal({visible, setVisible, onSelect, selected}:
             <FlatList
                 contentContainerStyle={{gap: 10}}
                 data={data}
-                
+                keyboardShouldPersistTaps='always'
                 keyExtractor={(item, index) => (
                     item.dial_code + index.toString()
                 )}
@@ -210,6 +214,7 @@ export function DialCodeSelectorModal({visible, setVisible, onSelect, selected}:
                         style={{justifyContent: 'space-between'}} 
                         onPress={() => {
                             setVisible(false)
+                            setData(dialCodeData);
                             if(onSelect) onSelect(item)
                         }}
                     >

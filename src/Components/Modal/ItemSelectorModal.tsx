@@ -49,6 +49,7 @@ export function ItemSelectorModal<item>({visible, setVisible, onSelect, allItems
             visible={visible} setVisible={setVisible}
             style={{paddingInline: 20, gap: 20}}
             actionButtons={actionButtons}
+            topMargin={0}
         >
             <TextTheme style={{fontSize: 20, fontWeight: 900}} >
                 {title}

@@ -8,6 +8,7 @@ import AlertCard from "../Alert/AlertCard";
 import { Dimensions } from "react-native";
 import { useEffect, useState } from "react";
 import AnimateButton from "../Button/AnimateButton";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ActionButton = {
     key?: string,
@@ -35,23 +36,25 @@ type BottomModalProps = ModalProps & {
     onClose?: () => void,
     alertId?: string,
     topMarginPrecentage?: number,
+    topMargin?: number
 }
 
-export default function BottomModal({ visible, setVisible, children, style, backdropColor = 'rgba(0, 0, 0, 0.50)', actionButtons, closeOnBack = true, animationType = 'slide', bottomOpationStyle = {}, onClose = () => { }, alertId, topMarginPrecentage = 0.25, ...props }: BottomModalProps): React.JSX.Element {
+export default function BottomModal({ visible, setVisible, children, style, backdropColor = 'rgba(0, 0, 0, 0.50)', actionButtons, closeOnBack = true, animationType = 'slide', bottomOpationStyle = {}, onClose = () => { }, alertId, topMarginPrecentage = 0.01, topMargin=40, ...props }: BottomModalProps): React.JSX.Element {
 
     const { primaryColor, primaryBackgroundColor } = useTheme();
 
-    const { height } = Dimensions.get('screen');
+    const { height } = Dimensions.get('window');
+    const {top, bottom} = useSafeAreaInsets();
 
-    const [maxHeight, setMaxHeight] = useState<number>(height - height * topMarginPrecentage)
+    const [maxHeight, setMaxHeight] = useState<number>(height - top - bottom - 32 - (height * topMarginPrecentage) - topMargin )
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', ({ endCoordinates }) => {
             setMaxHeight((pre) => pre - endCoordinates.height);
         });
 
-        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-            setMaxHeight(height - height * topMarginPrecentage);
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', ({ endCoordinates }) => {
+            setMaxHeight(height - top - bottom - 32 - (height * topMarginPrecentage) - topMargin);
         });
 
         return () => {
