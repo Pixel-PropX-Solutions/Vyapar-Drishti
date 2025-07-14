@@ -39,7 +39,7 @@ export default function HomeScreenHeader(): React.JSX.Element {
         <View style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'row', padding: 10, justifyContent: 'space-between' }} >
             <AnimateButton
                 onPress={() => setCompanySwitchModalVisible(true)}
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 8, height: 44, paddingLeft: 10, paddingRight: 20, borderRadius: 40 }}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 8, height: 44, paddingLeft: 10, paddingRight: 20, borderRadius: 10 }}
             >
                 <ShowWhen
                     when={!isCompanyFetching}

@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import { FlatList, KeyboardAvoidingView, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, Text } from 'react-native-gesture-handler';
 import AnimateButton from '../../../Components/Button/AnimateButton';
 import FeatherIcon from '../../../Components/Icon/FeatherIcon';
 import { useTheme } from '../../../Contexts/ThemeProvider';
@@ -14,7 +14,7 @@ import ProductSelectorModal from '../../../Components/Modal/Product/ProductSelec
 import CreateBillScreenProvider, { useCreateBillContext } from '../../../Contexts/CreateBillScreenProvider';
 import CustomerSelectorModal from '../../../Components/Modal/Customer/CustomerSelectorModal';
 import ShowWhen from '../../../Components/Other/ShowWhen';
-import { SectionRow } from '../../../Components/View/SectionView';
+import { SectionRow, SectionRowWithIcon } from '../../../Components/View/SectionView';
 import { sliceString } from '../../../Utils/functionTools';
 import { useAppStorage } from '../../../Contexts/AppStorageProvider';
 import EmptyListView from '../../../Components/View/EmptyListView';
@@ -24,6 +24,7 @@ import { createInvoice } from '../../../Services/invoice';
 import navigator from '../../../Navigation/NavigationService';
 import LoadingModal from '../../../Components/Modal/LoadingModal';
 import MaterialIcon from '../../../Components/Icon/MaterialIcon';
+import NormalButton from '../../../Components/Button/NormalButton';
 
 
 export default function CraeteBillScreen() {
@@ -183,139 +184,31 @@ function Screen(): React.JSX.Element {
                         createOn={createOn} setCreateOn={setCreateOn}
                     />
 
-                    {/* <TextTheme style={{ fontSize: 18, fontWeight: '700' }}>
-                        Customer Details
-                    </TextTheme> */}
-                    <AnimateButton
-                        style={{
-                            padding: 8,
-                            borderRadius: 12,
-                            width: '100%',
-                            backgroundColor: customer ? '#4CAF5020' : secondaryBackgroundColor,
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                        }}
-                        onPress={() => setCustomerModalVisible(true)}
-                    >
-                        <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }} >
-                            <BackgroundThemeView
-                                style={{
-                                    width: 48,
-                                    height: 48,
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    borderRadius: 12,
-                                    backgroundColor: '#4CAF50',
-                                    marginRight: 12,
-                                }}
-                            >
-                                <FeatherIcon
-                                    name="user"
-                                    size={20}
-                                />
-                            </BackgroundThemeView>
+                    <SectionRowWithIcon
+                        icon={<FeatherIcon name='user' size={20} />}
+                        label={customer?.name || 'Select Customer'}
+                        text={!!customer ? customer?.group ?? 'No Group' : 'Tab to select a customer'}
+                        backgroundColor={!!customer ? 'rgba(60,180,120, 0.5)' : ''}
+                        hasArrow={true}
+                        arrowIcon={<FeatherIcon name='chevron-right' size={20} />}
+                        onPress={() => {setCustomerModalVisible(true)}}
+                    />
 
-                            <View>
-                                <TextTheme style={{ fontSize: 16, fontWeight: '700' }}>
-                                    {customer?.name || 'Select Customer'}
-                                </TextTheme>
-                                <ShowWhen when={!!customer?.group}>
-                                    <TextTheme isPrimary={false} style={{ fontSize: 14, fontWeight: '500' }}>
-                                        {customer?.group}
-                                    </TextTheme>
-                                </ShowWhen>
-                                {!customer && (
-                                    <TextTheme isPrimary={false} style={{ fontSize: 14, fontWeight: '500' }}>
-                                        Tap to select a customer
-                                    </TextTheme>
-                                )}
-                            </View>
-                        </View>
-
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            {customer && (
-                                <View style={{
-                                    width: 20,
-                                    height: 20,
-                                    borderRadius: 10,
-                                    backgroundColor: '#4CAF50',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}>
-                                    <FeatherIcon name="check" size={12} color="white" />
-                                </View>
-                            )}
-                            <FeatherIcon name="chevron-right" size={20} />
-                        </View>
-                    </AnimateButton>
-
-                    {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <TextTheme style={{ fontSize: 18, fontWeight: '700' }}>
-                            Items ({products.length})
-                        </TextTheme>
-                        {products.length > 0 && (
-                            <TextTheme style={{ fontSize: 14, fontWeight: '600', color: '#4CAF50' }}>
-                                {totalValue.toFixed(2)} {currency}
-                            </TextTheme>
-                        )}
-                    </View> */}
-                    <AnimateButton
-                        onPress={() => setProductModalVisible(true)}
-                        style={{ padding: 8, borderRadius: 12, width: '100%', backgroundColor: products.length > 0 ? '#4CAF5020' : secondaryBackgroundColor, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
-                    >
-                        <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }} >
-                            <BackgroundThemeView
-                                style={{
-                                    width: 48,
-                                    height: 48,
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    borderRadius: 12,
-                                    backgroundColor: products.length > 0 ? '#4CAF50' : undefined,
-                                    marginRight: 12,
-                                }}
-                            >
-                                <FeatherIcon
-                                    name="plus"
-                                    size={20}
-                                />
-                            </BackgroundThemeView>
-
-                            <View>
-                                <TextTheme style={{ fontSize: 16, fontWeight: '700' }}>
-                                    Add Items
-                                </TextTheme>
-                                <TextTheme isPrimary={false} style={{ fontSize: 14, fontWeight: '500' }}>
-                                    {products.length > 0 ? `${products.length} item${products.length > 1 ? 's' : ''} added` : 'Tap to add items'}
-                                </TextTheme>
-                            </View>
-                        </View>
-
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            {/* gap: 8 replaced with marginRight on check icon */}
-                            {products.length > 0 && (
-                                <View style={{
-                                    width: 20,
-                                    height: 20,
-                                    borderRadius: 10,
-                                    backgroundColor: '#4CAF50',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    marginRight: 8,
-                                }}>
-                                    <FeatherIcon name="check" size={12} color="white" />
-                                </View>
-                            )}
-                            <FeatherIcon name="chevron-right" size={20} />
-                        </View>
-                    </AnimateButton>
+                    <SectionRowWithIcon
+                        icon={<FeatherIcon name='package' size={20} />}
+                        label='Add Items'
+                        text={products.length > 0 ? `${products.length} items added, tap to add more items` : 'Tap to add items'}
+                        hasArrow={true}
+                        arrowIcon={<FeatherIcon name='chevron-right' size={20} />}
+                        backgroundColor={products.length > 0 ? 'rgba(60,180,120, 0.5)' : ''}
+                        onPress={() => {setProductModalVisible(true)}}
+                    />
                 </View>
 
                 <FlatList
                     scrollEnabled={false}
                     contentContainerStyle={{ gap: 12 }}
-                    ListEmptyComponent={<EmptyListView title="No Items Added" text="Add items to the bill" />}
+                    ListEmptyComponent={<EmptyListView title="No Items Added" text="Add items for the bill" />}
 
                     ListHeaderComponent={<ShowWhen when={products.length !== 0}>
                         <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 4 }} >Items</TextTheme>
@@ -391,14 +284,14 @@ function Screen(): React.JSX.Element {
                 <View style={{ minHeight: 40 }} />
             </ScrollView>
 
-            {(customer && products.length > 0) && (
-                <KeyboardAvoidingView behavior="padding" >
-                    <AmountBox handleCreateInvoice={handleInvoice} isFormValid={isFormValid} isCreating={isCreating} />
-                </KeyboardAvoidingView>
-            )}
+            <ShowWhen when={(!!customer && products.length > 0)} >
+                <AmountBox handleCreateInvoice={handleInvoice} isFormValid={!!isFormValid} isCreating={isCreating} />
+            </ShowWhen>
 
             <CustomerSelectorModal visible={isCustomerModalVisible} setVisible={setCustomerModalVisible} billType={billType} />
+
             <ProductSelectorModal visible={isProductModalVisible} setVisible={setProductModalVisible} billType={billType} />
+
             <LoadingModal visible={loading} />
         </View>
     );
@@ -425,7 +318,7 @@ function BillNoAndDateSelector({ billNo, setBillNo, createOn, setCreateOn }: Bil
                 borderColor: secondaryBackgroundColor,
                 gap: 12,
                 alignItems: 'center',
-                backgroundColor: billNo ? '#4CAF5020' : secondaryBackgroundColor,
+                backgroundColor: createOn ? 'rgba(60, 180, 120, 0.5)' : secondaryBackgroundColor,
             }}>
                 <BackgroundThemeView
                     style={{
@@ -434,7 +327,6 @@ function BillNoAndDateSelector({ billNo, setBillNo, createOn, setCreateOn }: Bil
                         alignItems: 'center',
                         justifyContent: 'center',
                         borderRadius: 10,
-                        backgroundColor: '#4CAF50',
                     }}
                 >
                     <FeatherIcon name="hash" size={16} />
@@ -458,7 +350,7 @@ function BillNoAndDateSelector({ billNo, setBillNo, createOn, setCreateOn }: Bil
                 borderColor: secondaryBackgroundColor,
                 gap: 12,
                 alignItems: 'center',
-                backgroundColor: createOn ? '#4CAF5020' : secondaryBackgroundColor,
+                backgroundColor: createOn ? 'rgba(60, 180, 120, 0.5)' : secondaryBackgroundColor,
             }}>
                 <BackgroundThemeView
                     style={{
@@ -473,10 +365,10 @@ function BillNoAndDateSelector({ billNo, setBillNo, createOn, setCreateOn }: Bil
                 </BackgroundThemeView>
 
                 <View style={{ flex: 1 }}>
-                    <TextTheme style={{ fontSize: 14, fontWeight: '700', marginBottom: 2 }}>
+                    <TextTheme style={{ fontSize: 14, fontWeight: '900', marginBottom: 2 }}>
                         Date
                     </TextTheme>
-                    <TextTheme isPrimary={false} style={{ fontSize: 13, fontWeight: '500' }}>
+                    <TextTheme style={{ fontSize: 13, fontWeight: '500' }}>
                         {createOn}
                     </TextTheme>
                 </View>
@@ -493,31 +385,53 @@ const AmountBox = ({ handleCreateInvoice, isFormValid, isCreating }: {
     isCreating: boolean;
 }): React.JSX.Element => {
 
-    const { totalValue, products, customer, billNo } = useCreateBillContext();
+    const { totalValue, products } = useCreateBillContext();
     const { currency } = useAppStorage();
-    const { secondaryBackgroundColor, primaryColor } = useTheme();
-
-    const disabledColor = '#E0E0E0';
-    const textColor = isFormValid ? 'white' : '#9E9E9E';
 
     return (
-        <View
-            style={{
-                backgroundColor: 'white',
-                paddingTop: 14,
-                paddingBottom: 20,
-                paddingHorizontal: 20,
-                borderTopLeftRadius: 24,
-                borderTopRightRadius: 24,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: -4 },
-                shadowOpacity: 0.1,
-                shadowRadius: 12,
-                elevation: 10,
-            }}
+        <BackgroundThemeView
+            style={{ padding: 20, borderTopLeftRadius: 24, borderTopRightRadius: 24, shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.1, shadowRadius: 12, elevation: 10, gap: 12, borderColor: 'gray', borderWidth: 2, borderBottomWidth: 0}}
         >
+
+            <SectionRow style={{justifyContent: "space-between"}} >
+                <View>
+                    <TextTheme style={{fontSize: 12, fontWeight: 900}} >
+                        Total Bill
+                    </TextTheme>
+
+                    <TextTheme style={{fontWeight: 900, fontSize: 20}} >
+                        {totalValue.toFixed(2)} {currency}
+                    </TextTheme>
+                </View>
+                
+                <View style={{alignItems: 'flex-end'}} >
+                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}} >
+                        <TextTheme style={{fontWeight: 900, fontSize: 20}} >
+                            {products.length}
+                        </TextTheme>
+                        <FeatherIcon name='package' size={20} />
+                    </View>
+
+                    <TextTheme style={{fontSize: 12, fontWeight: 900}} >
+                        Total Items
+                    </TextTheme>
+                </View>
+            </SectionRow>
+
+            <NormalButton  
+                text='Create Bill'
+                isPrimary={true}
+                color='white'
+                backgroundColor='rgb(50,200,150)'
+                textStyle={{fontWeight: 900}}
+                isLoading={isCreating}
+                onLoadingText='Creating...'
+                onPress={handleCreateInvoice}
+            />
+
+
             {/* Summary Cards */}
-            <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+            {/* <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                 <View
                     style={{
                         flex: 1,
@@ -560,10 +474,11 @@ const AmountBox = ({ handleCreateInvoice, isFormValid, isCreating }: {
                         {products.length}
                     </TextTheme>
                 </View>
-            </View>
+            </View> */}
+
 
             {/* Create Button */}
-            <AnimateButton
+            {/* <AnimateButton
                 onPress={handleCreateInvoice}
                 disabled={!isFormValid || isCreating}
                 style={{
@@ -605,11 +520,11 @@ const AmountBox = ({ handleCreateInvoice, isFormValid, isCreating }: {
                         </TextTheme>
                     </View>
                 )}
-            </AnimateButton>
+            </AnimateButton> */}
 
             {/* Validation Messages */}
-            {!isFormValid && (
-                <View style={{ marginTop: 12, padding: 12, backgroundColor: '#FFF3E0', borderRadius: 8, borderLeftWidth: 4, borderLeftColor: '#FF9800' }}>
+            {/* {!isFormValid && (
+                <View style={{ padding: 12, backgroundColor: '#FFF3E0', borderRadius: 8, borderLeftWidth: 4, borderLeftColor: '#FF9800' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
                         <FeatherIcon name="alert-circle" size={16} color="#FF9800" style={{ marginRight: 8 }} />
                         <TextTheme style={{ fontSize: 14, fontWeight: '600', color: '#FF9800' }}>
@@ -634,7 +549,7 @@ const AmountBox = ({ handleCreateInvoice, isFormValid, isCreating }: {
                         )}
                     </View>
                 </View>
-            )}
-        </View>
+            )} */}
+        </BackgroundThemeView>
     );
 };

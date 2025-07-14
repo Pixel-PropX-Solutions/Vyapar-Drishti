@@ -185,10 +185,6 @@ function SetCurrencyModal({ visible, setVisible }: { visible: boolean, setVisibl
     function udpateCurrency(currencyInfo: currencyInfo){
         setCurrency(currencyInfo.currency);
     }
-    
-    useEffect(() => {
-        console.log(currencyData)
-    }, [currencyData])
 
     return (
         <ItemSelectorModal<currencyInfo>
@@ -249,7 +245,7 @@ function SetBillPrefixModal({ visible, setVisible }: { visible: boolean, setVisi
                 <NoralTextInput
                     value={text}
                     maxLength={4}
-                    placeholder="Enter Currency"
+                    placeholder="Enter Bill Prefix"
                     keyboardType="ascii-capable"
                     style={{ fontSize: 24, fontWeight: 900, flex: 1 }}
                     onChangeText={(val) => setText(() => val.toString().toUpperCase().trim())}

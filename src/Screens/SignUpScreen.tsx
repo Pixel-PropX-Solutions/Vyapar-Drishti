@@ -5,7 +5,7 @@ import LogoImage from "../Components/Image/LogoImage";
 import NormalButton from "../Components/Button/NormalButton";
 import { ScrollView, Text } from "react-native-gesture-handler";
 import { useRef, useState } from "react";
-import { isValidEmail, isValidMobileNumber } from "../Functions/StringOpations/pattenMaching";
+import { isValidEmail } from "../Functions/StringOpations/pattenMaching";
 import { useAppDispatch, useUserStore } from "../Store/ReduxStore";
 import { getCurrentUser, register } from "../Services/user";
 import navigator from "../Navigation/NavigationService";

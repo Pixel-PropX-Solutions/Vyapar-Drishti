@@ -5,6 +5,7 @@ import AnimateButton from "../Button/AnimateButton";
 import ShowWhen from "../Other/ShowWhen";
 import FeatherIcon from "../Icon/FeatherIcon";
 import BackgroundThemeView from "./BackgroundThemeView";
+import { ReactNode } from "react";
 
 
 type Props = { 
@@ -108,10 +109,11 @@ type SectionRowWithIcon = {
     backgroundColor?: string,
     color?: string,
     children?: React.ReactNode,
-    iconContainerColor?: string
+    iconContainerColor?: string,
+    arrowIcon?: ReactNode
 }
 
-export function SectionRowWithIcon({isPrimary=false, onPress, label, text, icon, hasArrow=false, backgroundColor='', color, children, iconContainerColor=''}: SectionRowWithIcon): React.JSX.Element {
+export function SectionRowWithIcon({isPrimary=false, onPress, label, text, icon, hasArrow=false, backgroundColor='', color, children, iconContainerColor='', arrowIcon}: SectionRowWithIcon): React.JSX.Element {
     const {secondaryBackgroundColor, primaryBackgroundColor} = useTheme();
    
     if(backgroundColor === '') backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
@@ -136,7 +138,7 @@ export function SectionRowWithIcon({isPrimary=false, onPress, label, text, icon,
             </View>
         
             <ShowWhen when={hasArrow} otherwise={children} >
-                <FeatherIcon name="arrow-right" size={20} color={color} />
+                {arrowIcon || <FeatherIcon name="arrow-right" size={20} color={color} />}
             </ShowWhen>  
         </AnimateButton>
     )
