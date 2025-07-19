@@ -1,22 +1,23 @@
 /* eslint-disable react-native/no-inline-styles */
-import { ScrollView } from 'react-native-gesture-handler';
-import StackNavigationHeader from '../../../Components/Header/StackNavigationHeader';
-import { Linking, View } from 'react-native';
-import { useTheme } from '../../../Contexts/ThemeProvider';
-import FeatherIcon from '../../../Components/Icon/FeatherIcon';
-import SectionView, { SectionRowWithIcon } from '../../../Components/View/SectionView';
-import TextTheme from '../../../Components/Text/TextTheme';
-import navigator from '../../../Navigation/NavigationService';
-import AuthStore from '../../../Store/AuthStore';
-import BottomModal from '../../../Components/Modal/BottomModal';
-import NoralTextInput from '../../../Components/TextInput/NoralTextInput';
-import { useState } from 'react';
-import { useAppStorage } from '../../../Contexts/AppStorageProvider';
-import MaterialIcon from '../../../Components/Icon/MaterialIcon';
-import { useAppDispatch } from '../../../Store/ReduxStore';
-import { logout } from '../../../Services/user';
 
-export default function SettingScreen(): React.JSX.Element {
+import { Dispatch, SetStateAction, useState } from "react";
+import { useAppStorage } from "../../../Contexts/AppStorageProvider";
+import { useTheme } from "../../../Contexts/ThemeProvider";
+import { useAppDispatch } from "../../../Store/ReduxStore";
+import { Linking, ScrollView, View } from "react-native";
+import SectionView, { SectionRowWithIcon } from "../../../Components/View/SectionView";
+import FeatherIcon from "../../../Components/Icon/FeatherIcon";
+import MaterialIcon from "../../../Components/Icon/MaterialIcon";
+import TextTheme from "../../../Components/Text/TextTheme";
+import navigator from "../../../Navigation/NavigationService";
+import { logout } from "../../../Services/user";
+import AuthStore from "../../../Store/AuthStore";
+import { ItemSelectorModal } from "../../../Components/Modal/ItemSelectorModal";
+import BottomModal from "../../../Components/Modal/BottomModal";
+import NoralTextInput from "../../../Components/TextInput/NoralTextInput";
+
+
+export default function MenuScreen(): React.JSX.Element {
 
     const { setTheme, theme } = useTheme();
     const { currency, billPrefix } = useAppStorage();
@@ -25,8 +26,7 @@ export default function SettingScreen(): React.JSX.Element {
     const [isBillPrefixModalVisible, setBillPrefixModalVisible] = useState<boolean>(false);
 
     return (
-        <View style={{ width: '100%', height: '100%' }} >
-            <StackNavigationHeader title="Menu" />
+        <View style={{ width: '100%', height: '100%', paddingTop: 20 }} >
 
             <ScrollView style={{ width: '100%', paddingInline: 20 }} contentContainerStyle={{ gap: 24 }} >
 
@@ -34,7 +34,7 @@ export default function SettingScreen(): React.JSX.Element {
                     <SectionRowWithIcon
                         label="Theme"
                         icon={<FeatherIcon name={theme === 'dark' ? 'moon' : 'sun'} size={20} />}
-                        text={`Click for trun on ${theme === 'dark' ? 'light' : 'dark'} mode.`}
+                        text={`Click for turn on ${theme === 'dark' ? 'light' : 'dark'} mode.`}
                         onPress={() => setTheme((pre) => pre === 'light' ? 'dark' : 'light')}
                     />
 
@@ -50,7 +50,7 @@ export default function SettingScreen(): React.JSX.Element {
                         label="Currency"
                         icon={<MaterialIcon name={'currency-rupee'} size={20} />}
                         text={'Comming Soon...'}
-                        onPress={() => { }}
+                        onPress={() => { setCurrencyModalVisible(true) }}
                     >
                         <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
                             <TextTheme style={{ fontWeight: 900, fontSize: 16 }} >{currency}</TextTheme>
@@ -106,7 +106,7 @@ export default function SettingScreen(): React.JSX.Element {
                         hasArrow={true}
                         label="Help Center"
                         icon={<FeatherIcon name={'help-circle'} size={20} />}
-                        text={'Comming Soon...'}
+                        text={'Access help documentation'}
                         onPress={() => { }}
                     />
 
@@ -150,7 +150,7 @@ export default function SettingScreen(): React.JSX.Element {
                         backgroundColor="rgb(255,80,100)"
                         label="Delete Data"
                         icon={<FeatherIcon name={'alert-triangle'} size={20} color="red" />}
-                        text={'Remove all information'}
+                        text={'Comming Soon...'}
                         onPress={() => { }}
                     />
 
@@ -159,7 +159,7 @@ export default function SettingScreen(): React.JSX.Element {
                         backgroundColor="rgb(255,50,80)"
                         label="Delete Account"
                         icon={<FeatherIcon name={'alert-circle'} size={20} color="red" />}
-                        text={'Delete account from database'}
+                        text={'Comming Soon...'}
                         onPress={() => { }}
                     />
                 </SectionView>
@@ -169,46 +169,52 @@ export default function SettingScreen(): React.JSX.Element {
             </ScrollView>
 
             <SetCurrencyModal visible={isCurrencyModalVisible} setVisible={setCurrencyModalVisible} />
+            
             <SetBillPrefixModal visible={isBillPrefixModalVisible} setVisible={setBillPrefixModalVisible} />
         </View>
     );
 }
 
-function SetCurrencyModal({ visible, setVisible }: { visible: boolean, setVisible: (vis: boolean) => void }): React.JSX.Element {
-    const { primaryColor } = useTheme();
-    const { currency, setCurrency } = useAppStorage();
+function SetCurrencyModal({ visible, setVisible }: { visible: boolean, setVisible: Dispatch<SetStateAction<boolean>> }): React.JSX.Element {
+    type currencyInfo = {currency: string, country: string, currency_name: string}
 
-    const [text, setText] = useState<string>(currency);
+    const currencyData: currencyInfo[] = require('../../../Assets/Jsons/currency-data.json');
+    const { currency, setCurrency } = useAppStorage();
+    const selected = (currencyData.find(item => item.currency === currency) ?? null);
+    
+    function udpateCurrency(currencyInfo: currencyInfo){
+        setCurrency(currencyInfo.currency);
+    }
 
     return (
-        <BottomModal
+        <ItemSelectorModal<currencyInfo>
+            title='Select Currency'
+            allItems={currencyData}
+            selected={selected}
+            keyExtractor={(item) => item.country + item.currency}
+            filter={(item, val) => (
+                item.country.toLowerCase().startsWith(val) || 
+                item.currency.toLowerCase().startsWith(val)
+            )}
+            onSelect={udpateCurrency}
             visible={visible}
             setVisible={setVisible}
-            style={{ paddingHorizontal: 20 }}
-            actionButtons={[{
-                title: 'Set', onPress: () => {
-                    if (!text) { return; }
+            SelectedItemContent={
+                <View>
+                    <TextTheme color="white" style={{fontWeight: 400, fontSize: 14}} >
+                        {selected?.currency_name}
+                    </TextTheme>
+                    <TextTheme color="white" style={{fontWeight: 400, fontSize: 16}} >
+                        {selected?.currency}
+                    </TextTheme>
+                </View>
+            }
 
-                    setCurrency(text);
-                    setVisible(false);
-                },
-            }]}
-        >
-            <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >Set New Currency</TextTheme>
-
-            <View style={{ marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, width: '100%', maxWidth: 400 }} >
-                <TextTheme style={{ fontSize: 24, fontWeight: 900 }} >CURRENCY:</TextTheme>
-                <NoralTextInput
-                    value={text}
-                    placeholder="Enter Currency"
-                    maxLength={3}
-                    keyboardType="ascii-capable"
-                    style={{ fontSize: 24, fontWeight: 900, flex: 1 }}
-                    onChangeText={(val) => setText(() => val.toString().toUpperCase().trim())}
-                    autoFocus
-                />
-            </View>
-        </BottomModal>
+            renderItemContent={(item) => (<>
+                    <TextTheme style={{fontWeight: 900, fontSize: 16}}>{item.country}</TextTheme>
+                    <TextTheme style={{fontWeight: 600, fontSize: 16}}>{item.currency}</TextTheme>
+            </>)}
+        />
     );
 }
 
@@ -239,7 +245,7 @@ function SetBillPrefixModal({ visible, setVisible }: { visible: boolean, setVisi
                 <NoralTextInput
                     value={text}
                     maxLength={4}
-                    placeholder="Enter Currency"
+                    placeholder="Enter Bill Prefix"
                     keyboardType="ascii-capable"
                     style={{ fontSize: 24, fontWeight: 900, flex: 1 }}
                     onChangeText={(val) => setText(() => val.toString().toUpperCase().trim())}

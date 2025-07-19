@@ -170,6 +170,7 @@ export default function SettingScreen(): React.JSX.Element {
             </ScrollView>
 
             <SetCurrencyModal visible={isCurrencyModalVisible} setVisible={setCurrencyModalVisible} />
+            
             <SetBillPrefixModal visible={isBillPrefixModalVisible} setVisible={setBillPrefixModalVisible} />
         </View>
     );
