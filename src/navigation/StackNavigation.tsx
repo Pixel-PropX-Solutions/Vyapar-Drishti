@@ -9,11 +9,11 @@ import SafePaddingView from "../Components/SafeAreaView/SafePaddingView";
 import { useTheme } from "../Contexts/ThemeProvider";
 import SettingScreen from "../Screens/SettingScreen";
 import NotificationScreen from "../Screens/NotificationScreen";
-import CustomerInfoScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen/Screen";
+import CustomerInfoScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen/CustomerInfoScreen";
 import CraeteBillScreen from "../Screens/TabNavigationScreens/BillScreens/CreateBillScreen";
 import CompanyProfileScreen from "../Screens/CompanyScreens/CompanyProfileScreen";
 import { NavigationRef } from "./NavigationService";
-import ProductInfoScreen from "../Screens/TabNavigationScreens/ProductScreens/ProductInfoScreen";
+import ProductInfoScreen from "../Screens/TabNavigationScreens/ProductScreens/ProductInfoScreen/ProductInfoScreen";
 import { ComponentProps, ElementType } from "react";
 
 export type StackParamsList = {

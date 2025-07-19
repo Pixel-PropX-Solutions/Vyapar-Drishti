@@ -1,22 +1,23 @@
 /* eslint-disable react-native/no-inline-styles */
 import { View } from 'react-native';
-import navigator from '../../../Navigation/NavigationService';
+import navigator from '../../../../Navigation/NavigationService';
 import { ScrollView } from 'react-native-gesture-handler';
-import SectionView, { SectionRow, SectionRowWithIcon } from '../../../Components/View/SectionView';
-import TextTheme from '../../../Components/Text/TextTheme';
-import EditButton from '../../../Components/Button/EditButton';
-import FeatherIcon from '../../../Components/Icon/FeatherIcon';
-import BackgroundThemeView from '../../../Components/View/BackgroundThemeView';
-import NormalButton from '../../../Components/Button/NormalButton';
-import { useAppDispatch, useCompanyStore, useProductStore } from '../../../Store/ReduxStore';
+import SectionView, { SectionRow, SectionRowWithIcon } from '../../../../Components/View/SectionView';
+import TextTheme from '../../../../Components/Text/TextTheme';
+import EditButton from '../../../../Components/Button/EditButton';
+import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
+import BackgroundThemeView from '../../../../Components/View/BackgroundThemeView';
+import NormalButton from '../../../../Components/Button/NormalButton';
+import { useAppDispatch, useCompanyStore, useProductStore } from '../../../../Store/ReduxStore';
 import { useEffect, useState } from 'react';
-import { deleteProduct, getProduct, viewAllProducts, viewProduct } from '../../../Services/product';
-import StackNavigationHeader from '../../../Components/Header/StackNavigationHeader';
-import DeleteModal from '../../../Components/Modal/DeleteModal';
-import ShowWhen from '../../../Components/Other/ShowWhen';
-import LoadingView from '../../../Components/View/LoadingView';
-import LoadingModal from '../../../Components/Modal/LoadingModal';
-import { useAppStorage } from '../../../Contexts/AppStorageProvider';
+import { getProduct, viewProduct } from '../../../../Services/product';
+import StackNavigationHeader from '../../../../Components/Header/StackNavigationHeader';
+import DeleteModal from '../../../../Components/Modal/DeleteModal';
+import ShowWhen from '../../../../Components/Other/ShowWhen';
+import LoadingView from '../../../../Components/View/LoadingView';
+import LoadingModal from '../../../../Components/Modal/LoadingModal';
+import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
+import { ClassInfoUpdateModal, InfoUpdateModal } from './Modals';
 
 export default function ProductInfoScreen(): React.JSX.Element {
 
@@ -29,6 +30,8 @@ export default function ProductInfoScreen(): React.JSX.Element {
     const dispatch = useAppDispatch();
 
     const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+    const [isInfoModalVisible, setInfoModalVisible] = useState<boolean>(false);
+    const [isClassModalVisible, setClassModalVisible] = useState<boolean>(false);
 
     useEffect(() => {
         dispatch(getProduct({company_id: company?._id ?? '', product_id: productId}));
@@ -122,7 +125,7 @@ export default function ProductInfoScreen(): React.JSX.Element {
                 <SectionView
                     style={{ gap: 8 }} label="Product Information"
                     labelContainerChildren={
-                        <EditButton onPress={() => {  }} />
+                        <EditButton onPress={() => { setInfoModalVisible(true) }} />
                     }
                 >
                     <SectionRow style={{ justifyContent: 'space-between' }} >
@@ -134,7 +137,7 @@ export default function ProductInfoScreen(): React.JSX.Element {
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Product No</TextTheme>
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >HSN Code</TextTheme>
 
                         <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
                             {product?.gst_hsn_code}
@@ -167,7 +170,7 @@ export default function ProductInfoScreen(): React.JSX.Element {
                     label="Organization & Classification"
                     style={{gap: 8}}
                     labelContainerChildren={
-                        <EditButton onPress={() => {  }} />
+                        <EditButton onPress={() => { setClassModalVisible(true) }} />
                     }
                 >
                     <SectionRow style={{justifyContent: 'space-between'}} >
@@ -196,6 +199,14 @@ export default function ProductInfoScreen(): React.JSX.Element {
                     />
                 </SectionView>
             </ScrollView>
+
+            <InfoUpdateModal
+                visible={isInfoModalVisible} setVisible={setInfoModalVisible}
+            />
+
+            <ClassInfoUpdateModal
+                visible={isClassModalVisible} setVisible={setClassModalVisible}
+            />
 
             <DeleteModal
                 visible={isDeleteModalVisible}

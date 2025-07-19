@@ -1,11 +1,11 @@
 /* eslint-disable react-native/no-inline-styles */
-import { FlatList, KeyboardAvoidingView, View } from 'react-native';
-import { ScrollView, Text } from 'react-native-gesture-handler';
+import { FlatList, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import AnimateButton from '../../../Components/Button/AnimateButton';
 import FeatherIcon from '../../../Components/Icon/FeatherIcon';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 import TextTheme from '../../../Components/Text/TextTheme';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import BackgroundThemeView from '../../../Components/View/BackgroundThemeView';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -25,6 +25,8 @@ import navigator from '../../../Navigation/NavigationService';
 import LoadingModal from '../../../Components/Modal/LoadingModal';
 import MaterialIcon from '../../../Components/Icon/MaterialIcon';
 import NormalButton from '../../../Components/Button/NormalButton';
+import BottomModal from '../../../Components/Modal/BottomModal';
+import { InputField } from '../../../Components/TextInput/InputField';
 
 
 export default function CraeteBillScreen() {
@@ -51,6 +53,9 @@ function Screen(): React.JSX.Element {
 
     const [isCustomerModalVisible, setCustomerModalVisible] = useState<boolean>(false);
     const [isProductModalVisible, setProductModalVisible] = useState<boolean>(false);
+    const [isProductEditModalVisible, setProductEditModalVisible] = useState<boolean>(false);
+    const [eidtProductIndex, setEditProductIndex] = useState<number>(0);
+
 
     const [isCreating, setIsCreating] = useState<boolean>(false);
 
@@ -217,7 +222,7 @@ function Screen(): React.JSX.Element {
                     data={products}
                     keyExtractor={(item, index) => item.id + index}
                     renderItem={({ item }) => (
-                        <SectionRow style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12, position: 'relative' }} >
+                        <SectionRow onPress={() => {setProductEditModalVisible(true)}} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12, position: 'relative' }} >
                             <View>
                                 <TextTheme style={{ fontWeight: '700', fontSize: 16 }}>
                                     {sliceString(item.name, 34)}
@@ -291,6 +296,11 @@ function Screen(): React.JSX.Element {
             <CustomerSelectorModal visible={isCustomerModalVisible} setVisible={setCustomerModalVisible} billType={billType} />
 
             <ProductSelectorModal visible={isProductModalVisible} setVisible={setProductModalVisible} billType={billType} />
+
+            <ProductInfoUpdateModal
+                visible={isProductEditModalVisible} setVisible={setProductEditModalVisible}
+                editProductIndex={eidtProductIndex}
+            />
 
             <LoadingModal visible={loading} />
         </View>
@@ -553,3 +563,88 @@ const AmountBox = ({ handleCreateInvoice, isFormValid, isCreating }: {
         </BackgroundThemeView>
     );
 };
+
+
+
+function ProductInfoUpdateModal({visible, setVisible, editProductIndex}: {
+    visible: boolean,
+    setVisible: Dispatch<SetStateAction<boolean>>,
+    editProductIndex: number
+}): React.JSX.Element { 
+
+    const {products, setProducts} = useCreateBillContext();
+    const { primaryColor } = useTheme();
+
+    const [info, _setInfo] = useState(products[editProductIndex]);
+
+    const setInfo = (field: string, value: string | number | boolean) => {
+        _setInfo(prev => ({
+            ...prev,
+            [field]: value,
+        }));
+    }
+
+    function handleSave() {
+        setVisible(false);
+        setProducts(prev => {
+            let temp = [...prev];
+            temp[editProductIndex] = info;
+            return temp;
+        });
+    }
+
+    useEffect(() => {
+        _setInfo(products[editProductIndex]);
+    }, [products, editProductIndex])
+
+    if(products.length === 0 || editProductIndex < 0 || editProductIndex >= products.length) {
+        return <></>;
+    }
+
+    return (
+        <BottomModal
+            alertId="create-bill-product-selector-modal"
+            visible={visible} setVisible={setVisible}
+            style={{ padding: 20, gap: 20 }}
+            actionButtons={[{
+                title: 'Save', onPress: handleSave, color: 'white',
+                backgroundColor: 'rgb(50,200,150)',
+            }]}
+
+        >
+            <TextTheme style={{ fontWeight: 800, fontSize: 16 }} >Select Quantity</TextTheme>
+
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }} >
+                <View style={{ flex: 1, paddingRight: 8 }} >
+                    <InputField
+                        icon={<FeatherIcon name="package" size={20} />}
+                        field="quantity"
+                        handleChange={setInfo}
+                        value={info?.quantity ?? ''}
+                        placeholder="Quantity"
+                        keyboardType="number-pad"
+                    />
+                </View>
+            </View>
+
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }} >
+                <View style={{ flex: 1, paddingRight: 8 }} >
+                    <InputField
+                        icon={<MaterialIcon name="currency-rupee" size={20} />}
+                        field="price"
+                        handleChange={setInfo}
+                        value={info?.price ?? ''}
+                        placeholder="Enter rate"
+                        keyboardType="number-pad"
+                    />
+                </View>
+
+                <AnimateButton
+                    style={{ marginBlock: 16, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, paddingLeft: 8, paddingRight: 20 }}
+                >
+                    <TextTheme style={{ fontSize: 14, fontWeight: 900 }}>/ {'Unit'}</TextTheme>
+                </AnimateButton>
+            </View>
+        </BottomModal>
+    )
+}

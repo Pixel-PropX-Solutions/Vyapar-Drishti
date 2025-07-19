@@ -62,7 +62,7 @@ export function CustomerInfoUpdateModal({visible, setVisible}: Props): React.JSX
                     <PhoneNoTextInput
                         phoneNumber={{code: '', number: ''}}
                         onChangePhoneNumber={(val) => phoneNo.current = val}
-                        />
+                    />
                 </View>
 
                 <View style={{minHeight: 40}} />
