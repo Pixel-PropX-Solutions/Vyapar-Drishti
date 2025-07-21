@@ -43,6 +43,7 @@ export const SelectField = ({
                 <TextTheme style={{
                     fontSize: 16,
                     fontWeight: '500',
+                    padding: 5,
                     flex: 1,
                     marginLeft: 12,
                     color: value ? undefined : '#999',

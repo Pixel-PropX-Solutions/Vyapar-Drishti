@@ -52,20 +52,11 @@ export default function ProductScreen(): React.JSX.Element {
                 keyExtractor={(item) => item._id}
 
                 renderItem={({ item }) => {
-                    const profit = (item.sales_value / item.sales_qty - (item.purchase_value / item.purchase_qty));
-                    const profitMargin = item.purchase_value ? ((profit / (item.sales_value / item.sales_qty)) * 100).toFixed(2) : 0;
-
                     return (<ProductCard
-                        unit={item.unit}
+                        item={item}
                         isPrimary={false}
-                        sellQuantity={item.sales_qty}
-                        productName={item.stock_item_name}
-                        productsNo={item.gst_hsn_code ?? ''}
-                        inStock={item.purchase_qty - item.sales_qty}
-                        lowStockQuantity={item.low_stock_alert ?? 10}
-                        profitValue={profitMargin}
                         onPress={() => navigator.navigate('product-info-screen', { productId: item._id })}
-                    />)
+                    />);
                 }}
 
                 ListFooterComponentStyle={{ gap: 20 }}
@@ -110,20 +101,28 @@ function SummaryCard({ highStock, lowStock }: SummaryCardProps): React.JSX.Eleme
 
     return (
         <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, marginTop: 12 }}>
-            <AnimateButton style={{ paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(50,200,150)' }}>
+            <AnimateButton style={{ paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(250,100,100)' }}>
                 <Text style={{ fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white' }}>
                     <FeatherIcon name="package" size={20} color="white" />
                     {`  ${highStock}`}
                 </Text>
-                <Text style={{ fontSize: 12, color: 'white' }}>High Stock</Text>
+                <Text style={{ fontSize: 12, color: 'white' }}>-(ve) Stock</Text>
             </AnimateButton>
 
-            <AnimateButton style={{ paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(250,100,100)' }}>
+            <AnimateButton style={{ paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(228, 205, 0)' }}>
                 <Text style={{ fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white' }}>
                     <FeatherIcon name="box" size={20} color="white" />
                     {`  ${lowStock}`}
                 </Text>
                 <Text style={{ fontSize: 12, color: 'white' }}>Low Stock</Text>
+            </AnimateButton>
+
+            <AnimateButton style={{ paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(50,200,150)' }}>
+                <Text style={{ fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white' }}>
+                    <FeatherIcon name="package" size={20} color="white" />
+                    {`  ${highStock}`}
+                </Text>
+                <Text style={{ fontSize: 12, color: 'white' }}>+(ve) Stock</Text>
             </AnimateButton>
         </View>
     );

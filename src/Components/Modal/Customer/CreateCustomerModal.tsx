@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import { View, ScrollView, Text } from 'react-native';
 import BottomModal from '../BottomModal';
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 import TextTheme from '../../Text/TextTheme';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 import ShowWhen from '../../Other/ShowWhen';
@@ -13,6 +13,14 @@ import { accountGroups } from '../../../Utils/accountGroups';
 import { InputField } from '../../TextInput/InputField';
 import { setCustomerType } from '../../../Store/Reducers/customerReducer';
 import FeatherIcon from '../../Icon/FeatherIcon';
+import CollapsabeMenu from '../../Other/CollapsabeMenu';
+import { PhoneNumber } from '../../../Utils/types';
+import PhoneNoInputField from '../../TextInput/PhoneNoInputField';
+import { ItemSelectorModal } from '../ItemSelectorModal';
+import { SelectField } from '../../TextInput/SelectField';
+type CountryInfo = { name: string, states: string[] };
+
+const countryData: CountryInfo[] = require('../../../Assets/Jsons/country-states.json');
 
 type Props = {
     visible: boolean,
@@ -35,16 +43,20 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
     const currentCompanyDetails = user?.company?.find((c: any) => c._id === user?.user_settings?.current_company_id);
     const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
     const [currentStep, setCurrentStep] = useState<number>(0);
+    const [bankExpanded, setBankExpanded] = useState<boolean>(false);
+    const [isCountryModalVisible, setCountryModalVisible] = useState<boolean>(false);
+    const [isStateModalVisible, setStateModalVisible] = useState<boolean>(false);
+    const phone = useRef<PhoneNumber>({ code: '', number: '' });
 
     const [data, setData] = useState({
         name: '',
         email: '',
-        code: '+91',
+        code: '',
         number: '',
         image: '',
         mailing_name: '',
         mailing_address: '',
-        mailing_country: 'India',
+        mailing_country: '',
         mailing_state: '',
         mailing_pincode: '',
         company_id: user?.user_settings?.current_company_id || '',
@@ -56,15 +68,33 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
         bank_branch: '',
         account_holder: '',
         gstin: '',
-        it_pan: '',
     });
+
 
     const getVisibleFields = useCallback(() => {
         const type = (accountGroups.find((group) => group._id === customerType?._id)?.user_id === '' || accountGroups.find((group) => group._id === customerType?._id)?.user_id === null)
             ? customerType?.accounting_group_name.toLowerCase()
             : accountGroups.find((group) => group._id === customerType?._id)?.parent?.toLowerCase() || '';
 
-        if (type === 'debtors' || type === 'creditors') {
+        if (type === 'debtors') {
+            return {
+                showAll: true,
+                showBasicDetails: true,
+                showProfileImage: true,
+                showMailingDetails: true,
+                showBankDetails: true,
+                isBankOptional: true,
+                isGSTINOptional: true,
+                isMailingAddressOptional: false,
+                showGSTIN: true,
+                requiredFields: [
+                    'name',
+                    'mailing_state',
+                    'parent',
+                    'mailing_country',
+                ],
+            };
+        } else {
             return {
                 showAll: true,
                 showBasicDetails: true,
@@ -74,157 +104,31 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                 isBankOptional: true,
                 isGSTINOptional: currentCompanyDetails?.company_settings?.features?.enable_gst ? false : true,
                 isMailingAddressOptional: false,
-                showPAN: true,
                 showGSTIN: true,
                 requiredFields: [
                     'name',
                     'mailing_state',
                     'parent',
                     'mailing_country',
-                    ...(currentCompanyDetails?.company_settings?.features?.enable_gst ? ['gstin', 'it_pan'] : []),
+                    ...(currentCompanyDetails?.company_settings?.features?.enable_gst ? ['gstin'] : []),
                 ],
             };
         }
-        if (type === 'bank accounts') {
-            return {
-                showAll: false,
-                showBasicDetails: true,
-                showProfileImage: false,
-                showMailingDetails: true,
-                showBankDetails: true,
-                isBankOptional: false,
-                isGSTINOptional: false,
-                isMailingAddressOptional: true,
-                showPAN: false,
-                showGSTIN: false,
-                requiredFields: ['name', 'parent', 'bank_name', 'account_number', 'bank_ifsc'],
-            };
-        }
-        if (type === 'capital account') {
-            return {
-                showAll: false,
-                showBasicDetails: true,
-                showProfileImage: false,
-                showMailingDetails: true,
-                showBankDetails: true,
-                isBankOptional: true,
-                isGSTINOptional: currentCompanyDetails?.company_settings?.features?.enable_gst ? false : true,
-                isMailingAddressOptional: true,
-                showPAN: true,
-                showGSTIN: true,
-                requiredFields: ['name', 'parent', ...(currentCompanyDetails?.company_settings?.features?.enable_gst ? ['gstin', 'it_pan'] : [])],
-            };
-        }
-        if (
-            type === 'purchase account' ||
-            type === 'sales account' ||
-            type === 'stock-in-hand' ||
-            type === 'suspense account'
-        ) {
-            return {
-                showAll: false,
-                showBasicDetails: true,
-                showProfileImage: false,
-                showMailingDetails: false,
-                showBankDetails: false,
-                isBankOptional: false,
-                isGSTINOptional: false,
-                isMailingAddressOptional: false,
-                showPAN: false,
-                showGSTIN: false,
-                requiredFields: ['name', 'parent'],
-            };
-        }
-        if (
-            type === 'direct expense' ||
-            type === 'direct income' ||
-            type === 'indirect expenses' ||
-            type === 'indirect incomes' ||
-            type === 'duties & taxes' ||
-            type === 'misc. expenses'
-        ) {
-            return {
-                showAll: false,
-                showBasicDetails: true,
-                showProfileImage: false,
-                showMailingDetails: false,
-                showBankDetails: false,
-                isBankOptional: true,
-                isGSTINOptional: false,
-                isMailingAddressOptional: true,
-                showPAN: false,
-                showGSTIN: false,
-                requiredFields: ['name', 'parent'],
-            };
-        }
-        if (
-            type === 'current assets' ||
-            type === 'current liabilities' ||
-            type === 'fixed assets' ||
-            type === 'loans (liability)' ||
-            type === 'investments' ||
-            type === 'loans & advances' ||
-            type === 'secured loans' ||
-            type === 'unsecured loans' ||
-            type === 'deposits assets'
-        ) {
-            return {
-                showAll: false,
-                showBasicDetails: true,
-                showProfileImage: false,
-                showMailingDetails: true,
-                showBankDetails: true,
-                showPAN: true,
-                showGSTIN: true,
-                isBankOptional: true,
-                isGSTINOptional: currentCompanyDetails?.company_settings?.features?.enable_gst ? false : true,
-                isMailingAddressOptional: true,
-                requiredFields: ['name', 'parent', ...(currentCompanyDetails?.company_settings?.features?.enable_gst ? ['gstin', 'it_pan'] : [])],
-            };
-        }
-        if (type === 'cash-in-hand') {
-            return {
-                showAll: false,
-                showBasicDetails: true,
-                showProfileImage: false,
-                showMailingDetails: false,
-                showBankDetails: false,
-                isBankOptional: true,
-                isGSTINOptional: false,
-                isMailingAddressOptional: true,
-                showPAN: false,
-                showGSTIN: false,
-                requiredFields: ['name', 'parent'],
-            };
-        }
-        return {
-            showAll: true,
-            showBasicDetails: true,
-            showProfileImage: true,
-            showMailingDetails: true,
-            showBankDetails: true,
-            isBankOptional: true,
-            isGSTINOptional: currentCompanyDetails?.company_settings?.features?.enable_gst ? false : true,
-            isMailingAddressOptional: true,
-            showPAN: true,
-            showGSTIN: true,
-            requiredFields: ['name', 'mailing_state', 'parent', 'mailing_country', ...(currentCompanyDetails?.company_settings?.features?.enable_gst ? ['gstin', 'it_pan'] : [])],
-        };
     }, [currentCompanyDetails?.company_settings?.features?.enable_gst, customerType?._id, customerType?.accounting_group_name]);
 
-    const { showBankDetails, showGSTIN, showMailingDetails, showPAN, isBankOptional, isGSTINOptional, isMailingAddressOptional } = getVisibleFields();
+    const { showBankDetails, showGSTIN, showMailingDetails, isBankOptional, isGSTINOptional, isMailingAddressOptional } = getVisibleFields();
 
     useEffect(() => {
         // Reset form when modal visibility changes
         setData({
             name: '',
             email: '',
-            code: '+91',
+            code: '',
             number: '',
             image: '',
             mailing_name: '',
             mailing_address: '',
-            mailing_country: 'India',
+            mailing_country: '',
             mailing_state: '',
             mailing_pincode: '',
             company_id: user?.user_settings?.current_company_id || '',
@@ -236,7 +140,6 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
             bank_branch: '',
             account_holder: '',
             gstin: '',
-            it_pan: '',
         });
 
     }, [customerType?._id, customerType?.accounting_group_name, user?.user_settings?.current_company_id, visible]);
@@ -245,6 +148,14 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
         const errors: Record<string, string> = {};
         switch (currentStep) {
             case 0:
+                if (showGSTIN && !isGSTINOptional && !data.gstin.trim()) {
+                    errors.gstin = 'GSTIN is required';
+                }
+
+                if (showGSTIN && data.gstin && !isGSTINOptional && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][A-Z0-9][Z][0-9A-Z]$/.test(data.gstin)) {
+                    errors.gstin = 'Please enter a valid GSTIN';
+                }
+
                 if (!data.name.trim()) {
                     errors.name = 'Customer Name is required';
                 }
@@ -299,29 +210,15 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                 }
                 setValidationErrors(errors);
                 return Object.keys(errors).length === 0;
-            case 3:
-                if (showGSTIN && !isGSTINOptional && !data.gstin.trim()) {
-                    errors.gstin = 'GSTIN is required';
-                }
-                if (showPAN && !isGSTINOptional && !data.it_pan.trim()) {
-                    errors.it_pan = 'PAN number is required';
-                }
-                if (showGSTIN && data.gstin && !isGSTINOptional && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][A-Z0-9][Z][0-9A-Z]$/.test(data.gstin)) {
-                    errors.gstin = 'Please enter a valid GSTIN';
-                }
-                if (showPAN && data.it_pan && !isGSTINOptional && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(data.it_pan)) {
-                    errors.it_pan = 'Please enter a valid PAN number';
-                }
-                setValidationErrors(errors);
-                return Object.keys(errors).length === 0;
             default:
                 return false;
         }
-    }, [currentStep, data.account_holder, data.account_number, data.bank_branch, data.bank_ifsc, data.bank_name, data.email, data.gstin, data.it_pan, data.mailing_country, data.mailing_pincode, data.mailing_state, data.name, data.number, isBankOptional, isGSTINOptional, isMailingAddressOptional, showBankDetails, showGSTIN, showMailingDetails, showPAN]);
+    }, [currentStep, data.account_holder, data.account_number, data.bank_branch, data.bank_ifsc, data.bank_name, data.email, data.gstin, data.mailing_country, data.mailing_pincode, data.mailing_state, data.name, data.number, isBankOptional, isGSTINOptional, isMailingAddressOptional, showBankDetails, showGSTIN, showMailingDetails]);
 
+    console.log('Data in Customer Create', data);
     const handleInputChange = useCallback((field: string, value: string | number | boolean) => {
         setData(prev => ({ ...prev, [field]: value }));
-
+        console.log('handle input change', field, value);
         // Only clear the error for the field being edited
         if (validationErrors[field]) {
             setValidationErrors(prev => {
@@ -389,9 +286,8 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
             bank_branch: '',
             account_holder: '',
             gstin: '',
-            it_pan: '',
         });
-        await dispatch(setCustomerType(null));
+        dispatch(setCustomerType(null));
         setValidationErrors({});
         setCurrentStep(0);
     };
@@ -400,7 +296,6 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
         { title: 'Basic', icon: 'user' },
         ...(showMailingDetails ? [{ title: 'Address', icon: 'map-pin' }] : []),
         ...(showBankDetails ? [{ title: 'Bank', icon: 'credit-card' }] : []),
-        ...(showGSTIN || showPAN ? [{ title: 'Tax', icon: 'file-text' }] : []),
     ];
 
     const getCurrentStepFields = () => {
@@ -446,16 +341,31 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                             </View>
                         </ShowWhen> */}
 
+                        {/* GSTIN */}
+                        <ShowWhen when={showGSTIN}>
+                            <InputField
+                                icon={<FeatherIcon name="file-text" size={20} color={primaryColor} />}
+                                field="gstin"
+                                placeholder={`GSTIN ${isGSTINOptional ? '(Optional)' : '*'}`}
+                                value={data.gstin}
+                                capitalize="characters"
+                                handleChange={handleInputChange}
+                                error={validationErrors.gstin}
+                                secondaryButton={true}
+                                secondaryButtonAction={() => { }}
+                            />
+                        </ShowWhen>
+
                         {/* Name */}
                         <InputField
                             icon={<FeatherIcon name="user" size={20} color={primaryColor} />}
                             field="name"
-                            placeholder="Customer Name"
+                            placeholder="Billing Name"
                             value={data.name}
                             handleChange={handleInputChange}
                             error={validationErrors.name}
                             capitalize="words"
-                        // required={requiredFields.includes('name')}
+                            info="This name will be used for billing and invoicing purposes."
                         />
 
                         {/* Email */}
@@ -466,34 +376,13 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                             value={data.email}
                             handleChange={handleInputChange}
                             error={validationErrors.email}
-                        // keyboardType="email-address"
                         />
 
                         {/* Phone Number */}
-                        <View style={{ flexDirection: 'row', gap: 12 }}>
-                            <View style={{ flex: 0.3 }}>
-                                <InputField
-                                    icon={<FeatherIcon name="phone" size={20} color={primaryColor} />}
-                                    field="code"
-                                    placeholder="Code"
-                                    value={data.code}
-                                    handleChange={handleInputChange}
-                                    error={validationErrors.code}
-                                    keyboardType="number-pad"
-                                />
-                            </View>
-                            <View style={{ flex: 0.7 }}>
-                                <InputField
-                                    icon={<FeatherIcon name="phone" size={20} color={primaryColor} />}
-                                    field="number"
-                                    placeholder="Phone Number"
-                                    value={data.number}
-                                    handleChange={handleInputChange}
-                                    error={validationErrors.number}
-                                    keyboardType="number-pad"
-                                />
-                            </View>
-                        </View>
+                        <PhoneNoInputField
+                            onChangePhoneNumber={(phoneNo) => { phone.current = phoneNo; }}
+                            placeholder="***** 98765"
+                        />
                     </View>
                 );
 
@@ -502,13 +391,13 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                 return (
                     <View>
                         <TextTheme style={{ fontSize: 16, fontWeight: '700', marginBottom: 8 }}>
-                            Mailing Address
+                            Contact Address
                         </TextTheme>
 
                         <InputField
                             icon={<FeatherIcon name="user" size={20} color={primaryColor} />}
                             field="mailing_name"
-                            placeholder="Mailing Name"
+                            placeholder="Contact Person Name"
                             value={data.mailing_name}
                             handleChange={handleInputChange}
                             capitalize="words"
@@ -518,32 +407,28 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                         <InputField
                             icon={<FeatherIcon name="map-pin" size={20} color={primaryColor} />}
                             field="mailing_address"
-                            placeholder={`Mailing Address ${isMailingAddressOptional ? '(Optional)' : ''}`}
+                            placeholder={`Contact Address ${isMailingAddressOptional ? '(Optional)' : ''}`}
                             value={data.mailing_address}
                             handleChange={handleInputChange}
                             error={validationErrors.mailing_address}
                             capitalize="words"
                             multiline
                         />
-                        <InputField
-                            icon={<FeatherIcon name="map" size={20} color={primaryColor} />}
-                            field="mailing_state"
-                            placeholder="State"
-                            capitalize="words"
-                            value={data.mailing_state}
-                            handleChange={handleInputChange}
-                            error={validationErrors.mailing_state}
+                        <SelectField
+                            icon={<FeatherIcon name="globe" size={20} color={primaryColor} />}
+                            placeholder="Select Country *"
+                            value={data.mailing_country}
+                            onPress={() => setCountryModalVisible(true)}
+                            error={validationErrors.mailing_country}
                         />
                         <View style={{ flexDirection: 'row', gap: 12 }}>
                             <View style={{ flex: 1 }}>
-                                <InputField
+                                <SelectField
                                     icon={<FeatherIcon name="globe" size={20} color={primaryColor} />}
-                                    field="mailing_country"
-                                    placeholder="Country"
-                                    capitalize="words"
-                                    value={data.mailing_country}
-                                    handleChange={handleInputChange}
-                                    error={validationErrors.mailing_country}
+                                    placeholder="Select State *"
+                                    value={data.mailing_state}
+                                    onPress={() => setStateModalVisible(true)}
+                                    error={validationErrors.mailing_state}
                                 />
                             </View>
                             <View style={{ width: '40%' }}>
@@ -567,107 +452,65 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                 if (!showBankDetails) { return getCurrentStepFields(); }
                 return (
                     <View>
-                        <TextTheme style={{ fontSize: 16, fontWeight: '700', marginBottom: 8 }}>
-                            Bank Details {isBankOptional && <TextTheme style={{ fontSize: 14, color: 'gray' }}>(Optional)</TextTheme>}
-                        </TextTheme>
+                        <CollapsabeMenu
+                            expanded={bankExpanded}
+                            setExpanded={setBankExpanded}
+                            header="Bank Details (Optional)"
+                        >
+                            <InputField
+                                icon={<FeatherIcon name="hash" size={20} color={primaryColor} />}
+                                field="account_number"
+                                placeholder="Account Number"
+                                value={data.account_number}
+                                handleChange={handleInputChange}
+                                error={validationErrors.account_number}
+                                keyboardType="numeric"
+                            />
+                            <InputField
+                                icon={<FeatherIcon name="user" size={20} color={primaryColor} />}
+                                field="account_holder"
+                                placeholder="Account Holder Name"
+                                capitalize="characters"
+                                value={data.account_holder}
+                                handleChange={handleInputChange}
+                                error={validationErrors.account_holder}
+                            />
+                            <View style={{ flexDirection: 'row', gap: 12 }}>
+                                <View style={{ width: '50%' }}>
+                                    <InputField
+                                        icon={<FeatherIcon name="credit-card" size={20} color={primaryColor} />}
+                                        field="bank_name"
+                                        placeholder="Bank Name"
+                                        capitalize="characters"
+                                        value={data.bank_name}
+                                        handleChange={handleInputChange}
+                                        error={validationErrors.bank_name}
+                                    />
+                                </View>
 
-                        <InputField
-                            icon={<FeatherIcon name="hash" size={20} color={primaryColor} />}
-                            field="account_number"
-                            placeholder="Account Number"
-                            value={data.account_number}
-                            handleChange={handleInputChange}
-                            error={validationErrors.account_number}
-                            keyboardType="numeric"
-                        // required={requiredFields.includes('account_number')}
-                        />
-                        <InputField
-                            icon={<FeatherIcon name="user" size={20} color={primaryColor} />}
-                            field="account_holder"
-                            placeholder="Account Holder Name"
-                            capitalize="characters"
-                            value={data.account_holder}
-                            handleChange={handleInputChange}
-                            error={validationErrors.account_holder}
-                        />
-                        <View style={{ flexDirection: 'row', gap: 12 }}>
-                            <View style={{ width: '50%' }}>
-                                <InputField
-                                    icon={<FeatherIcon name="credit-card" size={20} color={primaryColor} />}
-                                    field="bank_name"
-                                    placeholder="Bank Name"
-                                    capitalize="characters"
-                                    value={data.bank_name}
-                                    handleChange={handleInputChange}
-                                    error={validationErrors.bank_name}
-                                // required={requiredFields.includes('bank_name')}
-                                />
+                                <View style={{ flex: 1 }}>
+                                    <InputField
+                                        icon={<FeatherIcon name="key" size={20} color={primaryColor} />}
+                                        field="bank_ifsc"
+                                        placeholder="IFSC Code"
+                                        capitalize="characters"
+                                        value={data.bank_ifsc}
+                                        handleChange={handleInputChange}
+                                        error={validationErrors.bank_ifsc}
+                                    />
+                                </View>
                             </View>
 
-                            <View style={{ flex: 1 }}>
-                                <InputField
-                                    icon={<FeatherIcon name="key" size={20} color={primaryColor} />}
-                                    field="bank_ifsc"
-                                    placeholder="IFSC Code"
-                                    capitalize="characters"
-                                    value={data.bank_ifsc}
-                                    handleChange={handleInputChange}
-                                    error={validationErrors.bank_ifsc}
-                                // autoCapitalize="characters"
-                                // required={requiredFields.includes('bank_ifsc')}
-                                />
-                            </View>
-                        </View>
-
-                        <InputField
-                            icon={<FeatherIcon name="map-pin" size={20} color={primaryColor} />}
-                            field="bank_branch"
-                            placeholder="Branch Name"
-                            capitalize="words"
-                            value={data.bank_branch}
-                            handleChange={handleInputChange}
-                            error={validationErrors.bank_branch}
-                        />
-
-
-                    </View>
-                );
-
-            case 3:
-                if (!showGSTIN && !showPAN) { return getCurrentStepFields(); }
-                return (
-                    <View >
-                        <TextTheme style={{ fontSize: 16, fontWeight: '700', marginBottom: 8 }}>
-                            Tax Details
-                        </TextTheme>
-
-                        <ShowWhen when={showGSTIN}>
                             <InputField
-                                icon={<FeatherIcon name="file-text" size={20} color={primaryColor} />}
-                                field="gstin"
-                                placeholder={`GSTIN ${isGSTINOptional ? '(Optional)' : '*'}`}
-                                value={data.gstin}
-                                capitalize="characters"
+                                icon={<FeatherIcon name="map-pin" size={20} color={primaryColor} />}
+                                field="bank_branch"
+                                placeholder="Branch Name"
+                                capitalize="words"
+                                value={data.bank_branch}
                                 handleChange={handleInputChange}
-                                error={validationErrors.gstin}
-                            // autoCapitalize="characters"
-                            // required={requiredFields.includes('gstin')}
+                                error={validationErrors.bank_branch}
                             />
-                        </ShowWhen>
-
-                        <ShowWhen when={showPAN}>
-                            <InputField
-                                icon={<FeatherIcon name="credit-card" size={20} color={primaryColor} />}
-                                field="it_pan"
-                                placeholder={`PAN Number ${isGSTINOptional ? '(Optional)' : '*'}`}
-                                value={data.it_pan}
-                                capitalize="characters"
-                                handleChange={handleInputChange}
-                                error={validationErrors.it_pan}
-                            // autoCapitalize="characters"
-                            // required={requiredFields.includes('it_pan')}
-                            />
-                        </ShowWhen>
+                        </CollapsabeMenu>
                     </View>
                 );
 
@@ -721,8 +564,10 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
             {/* Progress Steps */}
             <ScrollView horizontal
                 showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ paddingHorizontal: 10, gap: 12 }}
             >
                 <View style={{
+                    display: 'flex',
                     flexDirection: 'row',
                     gap: 12,
                     minHeight: 50,
@@ -758,11 +603,106 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
             </ScrollView>
 
             {/* Form Content */}
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false} >
                 {getCurrentStepFields()}
             </ScrollView>
             <View style={{ height: 10 }} />
+            <SetCountryModal visible={isCountryModalVisible} country={data.mailing_country} setCountry={handleInputChange} setVisible={setCountryModalVisible} />
+            <SetStateModal visible={isStateModalVisible} country={data.mailing_country} state={data.mailing_state} setState={handleInputChange} setVisible={setStateModalVisible} />
             <LoadingModal visible={loading} />
         </BottomModal>
+    );
+}
+
+function SetCountryModal({ visible, setVisible, country, setCountry }: {
+    visible: boolean,
+    setVisible: Dispatch<SetStateAction<boolean>>,
+    country: string,
+    setCountry: (field: string, value: string) => void
+}): React.JSX.Element {
+
+    const selected = (countryData.find(item => item.name === country) ?? null);
+
+    function updateCountry(countryInfo: CountryInfo) {
+        setCountry('mailing_country', countryInfo.name);
+    }
+
+    return (
+        <ItemSelectorModal<CountryInfo>
+            title="Select Country"
+            allItems={countryData}
+            selected={selected}
+            keyExtractor={(item) => item.name}
+            filter={(item, val) => (
+                item.name.toLowerCase().startsWith(val) ||
+                item.states.some(state => state.toLowerCase().startsWith(val))
+            )}
+            onSelect={updateCountry}
+            visible={visible}
+            setVisible={setVisible}
+            SelectedItemContent={
+                <View>
+                    <TextTheme color="white" style={{ fontWeight: 400, fontSize: 14 }} >
+                        {selected?.name}
+                    </TextTheme>
+                </View>
+            }
+
+            renderItemContent={(item) => (<>
+                <TextTheme style={{ fontWeight: 900, fontSize: 16 }}>{item.name}</TextTheme>
+                {/* <TextTheme style={{ fontWeight: 600, fontSize: 16 }}>{item.currency}</TextTheme> */}
+            </>)}
+        />
+    );
+}
+
+
+function SetStateModal({ visible, setVisible, country, state, setState }: {
+    visible: boolean,
+    setVisible: Dispatch<SetStateAction<boolean>>,
+    country: string,
+    state: string,
+    setState: (field: string, value: string) => void
+}): React.JSX.Element {
+
+    console.log('countryData in state selector countryData.find', countryData.find(item => item.name === country));
+
+    const stateData: Array<string> = countryData.find(item => item.name === country)?.states || [];
+
+    console.log('country in state selector stateData', stateData);
+
+    const selected = (countryData.find(item => item.name === country)?.states.find((item) => item === state) ?? null);
+
+    console.log('country in state selector selected', selected);
+
+    function updateState(stateInfo: string) {
+        setState('mailing_state', stateInfo);
+    }
+
+    return (
+        <ItemSelectorModal<string>
+            title="Select State"
+            allItems={stateData}
+            selected={selected}
+            keyExtractor={(item) => item}
+            filter={(item, val) => (
+                item.toLowerCase().startsWith(val)
+            )}
+            onSelect={updateState}
+            visible={visible}
+            setVisible={setVisible}
+            SelectedItemContent={
+                <View>
+                    <TextTheme color="white" style={{ fontWeight: 400, fontSize: 14 }} >
+                        {selected}
+                    </TextTheme>
+                </View>
+            }
+
+            renderItemContent={(item) => (<>
+                <TextTheme style={{ fontWeight: 900, fontSize: 16 }}>{item}</TextTheme>
+                {/* <TextTheme style={{ fontWeight: 600, fontSize: 16 }}>{item.currency}</TextTheme> */}
+            </>)}
+        />
     );
 }

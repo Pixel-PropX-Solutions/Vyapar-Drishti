@@ -99,8 +99,7 @@ export const printInvoices = createAsyncThunk(
             console.log('printInvoices response', response.data);
 
             if (response.data.success === true) {
-                const invoceHtml = response.data.data;
-                return {invoceHtml};
+                return response.data.data;
             } else {return rejectWithValue('Login Failed: No access token recieved.');}
         } catch (error: any) {
             return rejectWithValue(
