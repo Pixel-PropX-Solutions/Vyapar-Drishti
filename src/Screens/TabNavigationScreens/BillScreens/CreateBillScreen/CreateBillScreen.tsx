@@ -1,32 +1,33 @@
 /* eslint-disable react-native/no-inline-styles */
 import { FlatList, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import AnimateButton from '../../../Components/Button/AnimateButton';
-import FeatherIcon from '../../../Components/Icon/FeatherIcon';
-import { useTheme } from '../../../Contexts/ThemeProvider';
-import TextTheme from '../../../Components/Text/TextTheme';
+import AnimateButton from '../../../../Components/Button/AnimateButton';
+import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
+import { useTheme } from '../../../../Contexts/ThemeProvider';
+import TextTheme from '../../../../Components/Text/TextTheme';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import BackgroundThemeView from '../../../Components/View/BackgroundThemeView';
+import BackgroundThemeView from '../../../../Components/View/BackgroundThemeView';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { StackParamsList } from '../../../Navigation/StackNavigation';
-import ProductSelectorModal from '../../../Components/Modal/Product/ProductSelectorModal';
-import CreateBillScreenProvider, { useCreateBillContext } from '../../../Contexts/CreateBillScreenProvider';
-import CustomerSelectorModal from '../../../Components/Modal/Customer/CustomerSelectorModal';
-import ShowWhen from '../../../Components/Other/ShowWhen';
-import { SectionRow, SectionRowWithIcon } from '../../../Components/View/SectionView';
-import { sliceString } from '../../../Utils/functionTools';
-import { useAppStorage } from '../../../Contexts/AppStorageProvider';
-import EmptyListView from '../../../Components/View/EmptyListView';
-import { CreateInvoiceData } from '../../../Utils/types';
-import { useAppDispatch, useCompanyStore, useInvoiceStore } from '../../../Store/ReduxStore';
-import { createInvoice } from '../../../Services/invoice';
-import navigator from '../../../Navigation/NavigationService';
-import LoadingModal from '../../../Components/Modal/LoadingModal';
-import MaterialIcon from '../../../Components/Icon/MaterialIcon';
-import NormalButton from '../../../Components/Button/NormalButton';
-import BottomModal from '../../../Components/Modal/BottomModal';
-import { InputField } from '../../../Components/TextInput/InputField';
+import { StackParamsList } from '../../../../Navigation/StackNavigation';
+import ProductSelectorModal from '../../../../Components/Modal/Product/ProductSelectorModal';
+import CreateBillScreenProvider, { useCreateBillContext } from './ContextProvider';
+import CustomerSelectorModal from '../../../../Components/Modal/Customer/CustomerSelectorModal';
+import ShowWhen from '../../../../Components/Other/ShowWhen';
+import { SectionRow, SectionRowWithIcon } from '../../../../Components/View/SectionView';
+import { sliceString } from '../../../../Utils/functionTools';
+import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
+import EmptyListView from '../../../../Components/View/EmptyListView';
+import { CreateInvoiceData } from '../../../../Utils/types';
+import { useAppDispatch, useCompanyStore, useInvoiceStore } from '../../../../Store/ReduxStore';
+import { createInvoice, viewAllInvoices } from '../../../../Services/invoice';
+import navigator from '../../../../Navigation/NavigationService';
+import LoadingModal from '../../../../Components/Modal/LoadingModal';
+import MaterialIcon from '../../../../Components/Icon/MaterialIcon';
+import NormalButton from '../../../../Components/Button/NormalButton';
+import BottomModal from '../../../../Components/Modal/BottomModal';
+import { InputField } from '../../../../Components/TextInput/InputField';
+import { viewAllProducts } from '../../../../Services/product';
 
 
 export default function CraeteBillScreen() {
@@ -47,8 +48,8 @@ function Screen(): React.JSX.Element {
     const { billNo, setBillNo, createOn, setCreateOn, customer, products, totalValue, resetAllStates, setProducts } = useCreateBillContext();
     const navigation = useNavigation<StackNavigationProp<StackParamsList, 'create-bill-screen'>>();
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
-    console.log('Create Bill Screen Rendered', products);
-    const { billType } = router.params;
+    
+    const { billType, id: billId } = router.params;
 
 
     const [isCustomerModalVisible, setCustomerModalVisible] = useState<boolean>(false);
@@ -71,14 +72,18 @@ function Screen(): React.JSX.Element {
         try {
             let data: CreateInvoiceData = {
                 company_id: company?._id ?? '',
-                date: createOn,
+                date: createOn.split('/').reverse().join('-'),
                 voucher_number: billNo,
                 voucher_type: billType,
-                voucher_type_id: billType,
+                voucher_type_id: billId,
                 reference_date: '',
                 narration: '',
                 place_of_supply: '',
                 reference_number: '',
+                due_date: '',
+                mode_of_transport: '',
+                status: '',
+                vehicle_number: '',
                 items: products.map(pro => ({
                     item_id: pro.id,
                     quantity: pro.quantity,
@@ -90,8 +95,8 @@ function Screen(): React.JSX.Element {
                 party_name: customer?.name ?? '',
                 party_name_id: customer?.id ?? '',
                 accounting: [
-                    { amount: totalValue, ledger: customer?.name, ledger_id: customer?.id ?? '', vouchar_id: '' },
-                    { amount: totalValue, ledger: customer?.name, ledger_id: customer?.id ?? '', vouchar_id: '' },
+                    { amount: billType === 'Sales' ? -totalValue : totalValue, ledger: customer?.name, ledger_id: customer?.id ?? '', vouchar_id: '' },
+                    { amount: billType === 'Sales' ? totalValue : -totalValue, ledger: billType, ledger_id: billId ?? '', vouchar_id: '' },
                 ],
             };
 
@@ -100,6 +105,8 @@ function Screen(): React.JSX.Element {
             if (res.success) {
                 // Success animation
                 resetAllStates();
+                dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1 }));
+                dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: 1 }));
                 navigator.goBack();
             }
         } catch (error) {
@@ -196,7 +203,7 @@ function Screen(): React.JSX.Element {
                         backgroundColor={!!customer ? 'rgba(60,180,120, 0.5)' : ''}
                         hasArrow={true}
                         arrowIcon={<FeatherIcon name='chevron-right' size={20} />}
-                        onPress={() => {setCustomerModalVisible(true)}}
+                        onPress={() => { setCustomerModalVisible(true) }}
                     />
 
                     <SectionRowWithIcon
@@ -206,7 +213,7 @@ function Screen(): React.JSX.Element {
                         hasArrow={true}
                         arrowIcon={<FeatherIcon name='chevron-right' size={20} />}
                         backgroundColor={products.length > 0 ? 'rgba(60,180,120, 0.5)' : ''}
-                        onPress={() => {setProductModalVisible(true)}}
+                        onPress={() => { setProductModalVisible(true) }}
                     />
                 </View>
 
@@ -222,7 +229,7 @@ function Screen(): React.JSX.Element {
                     data={products}
                     keyExtractor={(item, index) => item.id + index}
                     renderItem={({ item }) => (
-                        <SectionRow onPress={() => {setProductEditModalVisible(true)}} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12, position: 'relative' }} >
+                        <SectionRow onPress={() => { setProductEditModalVisible(true) }} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12, position: 'relative' }} >
                             <View>
                                 <TextTheme style={{ fontWeight: '700', fontSize: 16 }}>
                                     {sliceString(item.name, 34)}
@@ -400,40 +407,40 @@ const AmountBox = ({ handleCreateInvoice, isFormValid, isCreating }: {
 
     return (
         <BackgroundThemeView
-            style={{ padding: 20, borderTopLeftRadius: 24, borderTopRightRadius: 24, shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.1, shadowRadius: 12, elevation: 10, gap: 12, borderColor: 'gray', borderWidth: 2, borderBottomWidth: 0}}
+            style={{ padding: 20, borderTopLeftRadius: 24, borderTopRightRadius: 24, shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.1, shadowRadius: 12, elevation: 10, gap: 12, borderColor: 'gray', borderWidth: 2, borderBottomWidth: 0 }}
         >
 
-            <SectionRow style={{justifyContent: "space-between"}} >
+            <SectionRow style={{ justifyContent: "space-between" }} >
                 <View>
-                    <TextTheme style={{fontSize: 12, fontWeight: 900}} >
+                    <TextTheme style={{ fontSize: 12, fontWeight: 900 }} >
                         Total Bill
                     </TextTheme>
 
-                    <TextTheme style={{fontWeight: 900, fontSize: 20}} >
+                    <TextTheme style={{ fontWeight: 900, fontSize: 20 }} >
                         {totalValue.toFixed(2)} {currency}
                     </TextTheme>
                 </View>
-                
-                <View style={{alignItems: 'flex-end'}} >
-                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}} >
-                        <TextTheme style={{fontWeight: 900, fontSize: 20}} >
+
+                <View style={{ alignItems: 'flex-end' }} >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
+                        <TextTheme style={{ fontWeight: 900, fontSize: 20 }} >
                             {products.length}
                         </TextTheme>
                         <FeatherIcon name='package' size={20} />
                     </View>
 
-                    <TextTheme style={{fontSize: 12, fontWeight: 900}} >
+                    <TextTheme style={{ fontSize: 12, fontWeight: 900 }} >
                         Total Items
                     </TextTheme>
                 </View>
             </SectionRow>
 
-            <NormalButton  
+            <NormalButton
                 text='Create Bill'
                 isPrimary={true}
                 color='white'
                 backgroundColor='rgb(50,200,150)'
-                textStyle={{fontWeight: 900}}
+                textStyle={{ fontWeight: 900 }}
                 isLoading={isCreating}
                 onLoadingText='Creating...'
                 onPress={handleCreateInvoice}
@@ -566,13 +573,13 @@ const AmountBox = ({ handleCreateInvoice, isFormValid, isCreating }: {
 
 
 
-function ProductInfoUpdateModal({visible, setVisible, editProductIndex}: {
+function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }: {
     visible: boolean,
     setVisible: Dispatch<SetStateAction<boolean>>,
     editProductIndex: number
-}): React.JSX.Element { 
+}): React.JSX.Element {
 
-    const {products, setProducts} = useCreateBillContext();
+    const { products, setProducts } = useCreateBillContext();
     const { primaryColor } = useTheme();
 
     const [info, _setInfo] = useState(products[editProductIndex]);
@@ -597,7 +604,7 @@ function ProductInfoUpdateModal({visible, setVisible, editProductIndex}: {
         _setInfo(products[editProductIndex]);
     }, [products, editProductIndex])
 
-    if(products.length === 0 || editProductIndex < 0 || editProductIndex >= products.length) {
+    if (products.length === 0 || editProductIndex < 0 || editProductIndex >= products.length) {
         return <></>;
     }
 

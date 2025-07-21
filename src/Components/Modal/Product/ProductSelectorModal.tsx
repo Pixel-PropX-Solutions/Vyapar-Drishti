@@ -12,7 +12,7 @@ import ShowWhen from '../../Other/ShowWhen';
 import { useEffect, useState } from 'react';
 import { viewAllProducts } from '../../../Services/product';
 import { useAlert } from '../../Alert/AlertProvider';
-import { useCreateBillContext } from '../../../Contexts/CreateBillScreenProvider';
+import { useCreateBillContext } from '../../../Screens/TabNavigationScreens/BillScreens/CreateBillScreen/ContextProvider';
 import { GetProduct } from '../../../Utils/types';
 import EmptyListView from '../../View/EmptyListView';
 import CreateProductModal from './CreateProductModal';

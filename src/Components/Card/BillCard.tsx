@@ -59,7 +59,7 @@ export default function BillCard({
 
     const formatDate = (dateString: string) => {
         const parts = dateString.split('-');
-        return `${getMounthName(parseInt(parts[1]))} ${parts[2]}, ${parts[0]}`;
+        return `${getMounthName(parseInt(parts[1])-1)} ${parts[2]}, ${parts[0]}`;
     };
 
     const formatAmount = (amount: number) => {

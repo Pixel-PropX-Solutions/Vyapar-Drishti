@@ -177,7 +177,6 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                 {
                     key: 'create-product',
                     title: 'Create Product',
-                    color: 'white',
                     backgroundColor: 'rgb(50,200,150)',
                     onPress: handleCreate,
                 },
@@ -265,6 +264,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                             field="group"
                             handleChange={handleChange}
                         />
+                        */}
                         <InputField
                             icon={<FeatherIcon name="alert-triangle" size={20} color={primaryColor} />}
                             placeholder="Low Stock Alert Level"
@@ -273,7 +273,8 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                             keyboardType="number-pad"
                             handleChange={handleChange}
                             info="Set a threshold for low stock alert. Default is 10."
-                        /> */}
+                            
+                        /> 
 
                         {/* GST Information */}
                         {currentCompanyDetails?.company_settings?.features?.enable_gst && (<View style={{

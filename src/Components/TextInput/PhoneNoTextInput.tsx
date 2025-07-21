@@ -1,6 +1,6 @@
 import { Pressable, TextInputProps, View } from "react-native";
 import TextTheme from "../Text/TextTheme";
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Text, TextInput } from "react-native-gesture-handler";
 import { useTheme } from "../../Contexts/ThemeProvider";
 import ShowWhen from "../Other/ShowWhen";
@@ -31,9 +31,9 @@ type Props = TextInputProps & {
 
 }
 
-export default function PhoneNoTextInput({label='Phone No', onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkNumberIsValid, message, phoneNumber, isRequired=false, placeholder='XXXXX-XXXXX', onChangePhoneNumber, ...props}: Props): React.JSX.Element {
+export default function PhoneNoTextInput({label, onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkNumberIsValid, message, phoneNumber, isRequired=false, placeholder='XXXXX-XXXXX', onChangePhoneNumber, ...props}: Props): React.JSX.Element {
 
-    const {primaryColor: color, primaryBackgroundColor: backgroundColor, secondaryColor} = useTheme();
+    const {primaryColor: color, primaryBackgroundColor: backgroundColor} = useTheme();
 
     const [isFocus, setFocus] = useState<boolean>(false);
     const [number, setNumber] = useState<string>(phoneNumber?.number ?? '');
@@ -44,6 +44,7 @@ export default function PhoneNoTextInput({label='Phone No', onChangeText, focusC
 
     function handleOnChangeText(text: string): void {
         if(!'0123456789'.includes(text.at(-1) ?? '')) return;
+
         setNumber(text);
         text = text.trim();
 
@@ -55,63 +56,82 @@ export default function PhoneNoTextInput({label='Phone No', onChangeText, focusC
 
         if(!text) 
             setInputTextValid(true);
-
-        onChangePhoneNumber({code, number})
     }
+
+    useEffect(() => {
+        onChangePhoneNumber({code, number})
+    }, [code, number])
 
     return (
         <View>
-            <View 
-                style={{
-                    borderWidth: 2, paddingInline: 12, borderRadius: 12, position: 'relative',
-                    borderColor: isInputTextValid ? isFocus ? focusColor : color : massageTextColor,
-                    flexDirection: 'row', alignItems: 'center', gap: 8 
-                }} 
-            >
-                <TextTheme 
-                    style={{position: 'absolute', left: 16, top: 0, transform: [{translateY: '-50%'}], backgroundColor, paddingInline: 4, borderRadius: 4}}
-                    color={isInputTextValid ? isFocus ? focusColor : color : massageTextColor}
-                >
+            <ShowWhen when={!!label?.trim()} >
+                <TextTheme isPrimary={false} style={{marginBottom: 8, paddingLeft: 4, fontSize: 16, fontWeight: 900}} >
                     {label}
-                    <ShowWhen when={isRequired} >
-                        <TextTheme color="rgb(250,50,50)" > *</TextTheme>
-                    </ShowWhen>
                 </TextTheme>
+            </ShowWhen>
 
+            <View style={{flexDirection: 'row', alignItems: 'center', width: '100%', gap: 12}} >
                 <Pressable 
                     style={{
-                        borderWidth: 0, borderRightWidth: 2, paddingRight: 8,
-                        borderColor: isFocus ? 'rgb(50, 150, 250)' : secondaryColor, 
+                        borderWidth: 2, paddingInline: 12, borderRadius: 12, position: 'relative', borderColor: color,
+                        flexDirection: 'row', alignItems: 'center', height: 44, minWidth: 80
                     }} 
 
-                    onPress={() => {setCodeModalVisible(true); console.log('chilk', isCodeModalVisible)}}
+                    onPress={() => {setCodeModalVisible(true);}}
                 >
-                    <TextTheme>
-                        {code ? code.replace('+','+ ') : '+ XX'}
+                    <TextTheme 
+                        style={{position: 'absolute', left: 12, top: 0, transform: [{translateY: '-50%'}], backgroundColor, paddingInline: 4, borderRadius: 4}}
+                    >
+                        {"Code"}
+                        <ShowWhen when={isRequired} >
+                            <TextTheme color="rgb(250,50,50)" > *</TextTheme>
+                        </ShowWhen>
+                    </TextTheme>
+
+                    <TextTheme isPrimary={!!code}>
+                        + {code || 'XX'}
                     </TextTheme>
                 </Pressable>
-                
-                <TextInput  
-                    {...props}
-                    value={number}
-                    placeholder={placeholder}
-                    placeholderTextColor={color}
-                    onChangeText={handleOnChangeText}
-                    onFocus={() => setFocus(true)}
-                    onBlur={() => setFocus(false)}
-                    keyboardType="number-pad"
+
+                <View 
                     style={{
-                        opacity: number ? 1 : 0.7,   
-                        color, paddingTop: 14, flex: 1
-                    }}
-                />
+                        borderWidth: 2, paddingInline: 12, borderRadius: 12, position: 'relative',
+                        borderColor: isInputTextValid ? isFocus ? focusColor : color : massageTextColor,
+                        flexDirection: 'row', alignItems: 'center', gap: 8 , flex: 1
+                    }} 
+                >
+                    <TextTheme 
+                        style={{position: 'absolute', left: 14, top: 0, transform: [{translateY: '-50%'}], backgroundColor, paddingInline: 4, borderRadius: 4}}
+                        color={isInputTextValid ? isFocus ? focusColor : color : massageTextColor}
+                    >
+                        {'Phone No'}
+                        <ShowWhen when={isRequired} >
+                            <TextTheme color="rgb(250,50,50)" > *</TextTheme>
+                        </ShowWhen>
+                    </TextTheme>
+                    
+                    <TextInput  
+                        {...props}
+                        value={number}
+                        placeholder={placeholder}
+                        placeholderTextColor={color}
+                        onChangeText={handleOnChangeText}
+                        onFocus={() => setFocus(true)}
+                        onBlur={() => setFocus(false)}
+                        keyboardType="number-pad"
+                        style={{
+                            opacity: number ? 1 : 0.7,   
+                            color, paddingTop: 14, flex: 1
+                        }}
+                    />
+                </View>
             </View>
             {
                 !(isInputTextValid || isFocus) ? (
-                        <Text style={{paddingLeft: 6, fontSize: 12, color: massageTextColor}} >
-                            {message}
-                        </Text>
-                    ) : null
+                    <Text style={{paddingLeft: 6, fontSize: 12, color: massageTextColor}} >
+                        {message}
+                    </Text>
+                ) : null
             }
 
             <DialCodeSelectorModal
@@ -178,7 +198,7 @@ export function DialCodeSelectorModal({visible, setVisible, onSelect, selected}:
                         </TextTheme>
 
                         <TextTheme color="white" style={{fontWeight: 900, fontSize: 16}} >
-                            {selected_?.dial_code.replace('+', '+ ')}
+                            + {selected_?.dial_code}
                         </TextTheme>
                     </View>
 
@@ -219,7 +239,7 @@ export function DialCodeSelectorModal({visible, setVisible, onSelect, selected}:
                         }}
                     >
                         <TextTheme style={{fontWeight: 900, fontSize: 16}}>{item.name}</TextTheme>
-                        <TextTheme style={{fontWeight: 600, fontSize: 16}}>{item.dial_code}</TextTheme>
+                        <TextTheme style={{fontWeight: 600, fontSize: 16}}>+{item.dial_code}</TextTheme>
                     </SectionRow>
                 )}
             />

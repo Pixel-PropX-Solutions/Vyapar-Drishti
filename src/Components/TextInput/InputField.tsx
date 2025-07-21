@@ -76,12 +76,12 @@ export const InputField = ({
                         parseFloat(e.nativeEvent.text) || 0 : e.nativeEvent.text)}
                 />
 
-                {/* {info && <Popover
+                {info && <Popover
                     label={info}
                     position="top"
                     style={{ padding: 4, borderRadius: 8, paddingHorizontal: 12 }}
-                    icon={<FeatherIcon name="info" size={16} color={error ? '#ff4444' : 'black'} />}
-                />} */}
+                    icon={<FeatherIcon name="info" size={20} color={error ? '#ff4444' : ""} />}
+                />}
             </View>
             {
                 error && (

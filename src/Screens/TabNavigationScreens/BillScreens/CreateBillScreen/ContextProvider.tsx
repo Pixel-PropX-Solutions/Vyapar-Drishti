@@ -53,9 +53,9 @@ export default function CreateBillScreenProvider({children}: {children: React.Re
     const [products, setProducts] = useState<Product[]>([]);
     const [customer, setCustomer] = useState<Customer | null>(null);
     const [totalValue, setTotalValue] = useState<number>(0);
-    const [billNo, setBillNo] = useState<string>('#INV-2025-000');
+    const [billNo, setBillNo] = useState<string>('INV-000');
     const [createOn, setCreateOn] = useState<string>(new Date().toLocaleDateString());
-    console.log('Create Bill Screen Provider Rendered', products);
+    
     function resetAllStates(): void {
         setProducts([]); setCreateOn(new Date().toLocaleDateString());
         setCustomer(null); setTotalValue(0);
@@ -70,7 +70,8 @@ export default function CreateBillScreenProvider({children}: {children: React.Re
         let time = new Date();
         let year = time.getFullYear().toString().slice(2);
         let no = time.getMonth() * 30 + time.getDate() * 7 + time.getDay() * 24 + time.getHours() * 60 + time.getMinutes() * 60 + time.getSeconds();
-        setBillNo(`#INV-${year}-${no}`);
+        setBillNo(`INV-${year}${no}`);
+        setCreateOn(`${time.getDate()}/${(time.getMonth() + 1).toString().padStart(2, '0')}/${time.getFullYear()}`)
     }, []);
 
     const states = {

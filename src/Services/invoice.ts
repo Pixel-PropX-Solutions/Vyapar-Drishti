@@ -10,7 +10,7 @@ export const createInvoice = createAsyncThunk(
         { rejectWithValue }
     ): Promise<{success: boolean} | any> => {
         try {
-            const createRes = await userApi.post('user/create/vouchar', data);
+            const createRes = await userApi.post('invoices/create/vouchar', data);
             console.log('createInvoice response', createRes);
             if (createRes.data.success === true) {
                 return {success: true};
@@ -58,7 +58,7 @@ export const viewAllInvoices = createAsyncThunk(
     ): Promise<{invoices: GetAllVouchars[], pageMeta: PageMeta} | any> => {
         try {
             const response = await userApi.get(
-                `user/view/all/vouchar?company_id=${company_id}${searchQuery !== '' ? '&search=' + searchQuery : ''}${type !== 'All' ? '&type=' + type : ''}&start_date=${start_date}&end_date=${end_date}&page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder === 'asc' ? '1' : '-1'
+                `invoices/view/all/vouchar?company_id=${company_id}${searchQuery !== '' ? '&search=' + searchQuery : ''}${type !== 'All' ? '&type=' + type : ''}&start_date=${start_date}&end_date=${end_date}&page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder === 'asc' ? '1' : '-1'
                 }`
             );
             console.log('viewAllInvoices response', response.data);
@@ -94,7 +94,7 @@ export const printInvoices = createAsyncThunk(
     ) => {
         try {
             const response = await userApi.get(
-                `/user/print/vouchar?vouchar_id=${vouchar_id}&company_id=${company_id}`
+                `/invoices/print/vouchar?vouchar_id=${vouchar_id}&company_id=${company_id}`
             );
             console.log('printInvoices response', response.data);
 
@@ -127,7 +127,7 @@ export const printRecieptInvoices = createAsyncThunk(
     ) => {
         try {
             const response = await userApi.get(
-                `/user/print/vouchar/receipt?vouchar_id=${vouchar_id}&company_id=${company_id}`
+                `/invoices/print/vouchar/receipt?vouchar_id=${vouchar_id}&company_id=${company_id}`
             );
             console.log('printInvoices response', response.data);
 
@@ -161,7 +161,7 @@ export const printPaymentInvoices = createAsyncThunk(
     ) => {
         try {
             const response = await userApi.get(
-                `/user/print/vouchar/payment?vouchar_id=${vouchar_id}&company_id=${company_id}`
+                `/invoices/print/vouchar/payment?vouchar_id=${vouchar_id}&company_id=${company_id}`
             );
             console.log('printInvoices response', response.data);
 

@@ -10,7 +10,7 @@ import { useCompanyStore } from "../../Store/ReduxStore";
 import DeleteModal from "../../Components/Modal/DeleteModal";
 import { useState } from "react";
 import AnimateButton from "../../Components/Button/AnimateButton";
-import { CompanyAddressUpdateModal, CompanyContactUpdateModal, CompanyInfoUpdateModal } from "./CompanyProfileScreenModals";
+import { CompanyAddressUpdateModal, CompanyContactUpdateModal, CompanyInfoUpdateModal } from "./Modals";
 import sliceString from "../../Utils/sliceString";
 import EditButton from "../../Components/Button/EditButton";
 
@@ -84,7 +84,7 @@ export default function CompanyProfileScreen(): React.JSX.Element {
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
                             <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                                {company?.phone?.code} {company?.phone?.number ?? 'Not Set'}
+                                + {company?.phone?.code} {company?.phone?.number ?? 'Not Set'}
                             </TextTheme>
                             <FeatherIcon isPrimary={false} name="phone" size={16} />
                         </View>

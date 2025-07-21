@@ -238,6 +238,10 @@ export interface CreateInvoiceData {
   reference_number: string,
   reference_date: string,
   place_of_supply: string,
+  due_date: string,
+  mode_of_transport: string,
+  status: string,
+  vehicle_number: string,
   accounting: Array<{
     vouchar_id: string,
     ledger: string,

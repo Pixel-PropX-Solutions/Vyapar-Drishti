@@ -10,7 +10,7 @@ import { useTheme } from "../Contexts/ThemeProvider";
 import SettingScreen from "../Screens/SettingScreen";
 import NotificationScreen from "../Screens/NotificationScreen";
 import CustomerInfoScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen/CustomerInfoScreen";
-import CraeteBillScreen from "../Screens/TabNavigationScreens/BillScreens/CreateBillScreen";
+import CraeteBillScreen from "../Screens/TabNavigationScreens/BillScreens/CreateBillScreen/CreateBillScreen";
 import CompanyProfileScreen from "../Screens/CompanyScreens/CompanyProfileScreen";
 import { NavigationRef } from "./NavigationService";
 import ProductInfoScreen from "../Screens/TabNavigationScreens/ProductScreens/ProductInfoScreen/ProductInfoScreen";
@@ -29,7 +29,7 @@ export type StackParamsList = {
     'product-info-screen': {productId: string}
     'customer-info-screen': {customerId: string}
 
-    'create-bill-screen': {billType: string}
+    'create-bill-screen': {billType: string, id: string}
 }
 
 const Stack = createStackNavigator<StackParamsList>();

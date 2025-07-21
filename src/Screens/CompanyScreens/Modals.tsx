@@ -3,13 +3,15 @@ import BottomModal from "../../Components/Modal/BottomModal";
 import TextTheme from "../../Components/Text/TextTheme";
 import LabelTextInput from "../../Components/TextInput/LabelTextInput";
 import { useAppDispatch, useCompanyStore } from "../../Store/ReduxStore";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { getCompany, updateCompany } from "../../Services/company";
 import { useAlert } from "../../Components/Alert/AlertProvider";
 import arrayToFormData from "../../Utils/arrayToFormData";
 import { isValidEmail } from "../../Functions/StringOpations/pattenMaching";
 import LoadingModal from "../../Components/Modal/LoadingModal";
 import ShowWhen from "../../Components/Other/ShowWhen";
+import PhoneNoTextInput from "../../Components/TextInput/PhoneNoTextInput";
+import { PhoneNumber } from "../../Utils/types";
 
 type Props = {
     visible: boolean;
@@ -92,9 +94,9 @@ export function CompanyContactUpdateModal({visible, setVisible}: Props): React.J
     const dispatch = useAppDispatch();
 
     const [email, setEmail] = useState<string>(company?.email ?? '');
-    const [number, setNumber] = useState<string>(company?.phone?.number ?? '');
-    const [code, setCode] = useState<string>(company?.phone?.code ?? '');
     const [mailingName, setMailingName] = useState<string>(company?.mailing_name ?? '');
+
+    const phoneNumber = useRef<PhoneNumber>(company?.phone)
 
     async function handleUpdate(){
         const id = company?._id;
@@ -102,11 +104,10 @@ export function CompanyContactUpdateModal({visible, setVisible}: Props): React.J
         if(!isValidEmail(email)) return;
         
         if(!id) return console.error('company id was not found');
-        const {code, number} = company.phone ?? {}
 
         const data = arrayToFormData( Object.entries({
                 ...company, 
-                phone: '', email, number, code, pan_number: company?.pan, mailing_name: mailingName
+                phone: '', email, ...phoneNumber.current, pan_number: company?.pan, mailing_name: mailingName
         }));
         
         await dispatch(updateCompany({data, id: company?._id}));  
@@ -143,25 +144,10 @@ export function CompanyContactUpdateModal({visible, setVisible}: Props): React.J
                     useTrim={true}
                 />
 
-                <View style={{flexDirection: 'row', gap: 12, width: '100%', alignItems: 'center'}} >
-                    <LabelTextInput 
-                        label="Code" 
-                        placeholder="e.g. +1, +91" 
-                        containerStyle={{width: 120}} 
-                        value={code} onChangeText={setCode}
-                        keyboardType="number-pad"
-                        useTrim={true}
-                    />
-
-                    <LabelTextInput 
-                        label="Phone Number" 
-                        placeholder="1234567890" 
-                        containerStyle={{flex: 1}} 
-                        value={number} onChangeText={setNumber}
-                        keyboardType="number-pad"
-                        useTrim={true}
-                    />
-                </View>
+                <PhoneNoTextInput
+                    phoneNumber={company?.phone}
+                    onChangePhoneNumber={(val) => {phoneNumber.current = val; console.log(val)}}
+                />
             </View>
 
             <View style={{minHeight: 40}} />

@@ -31,9 +31,9 @@ import LoadingModal from '../../../Components/Modal/LoadingModal';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 
 
-const dummyBillsType: { name: string; icon: string; color: string; description: string }[] = [
-    { name: 'Sales', icon: 'trending-up', color: '#4CAF50', description: 'Record sales transactions' },
-    { name: 'Purchase', icon: 'shopping-cart', color: '#2196F3', description: 'Track purchase expenses' },
+const dummyBillsType: { name: string; icon: string; color: string; description: string, id: string }[] = [
+    { name: 'Sales', icon: 'trending-up', color: '#4CAF50', description: 'Record sales transactions', id: '34e81b1d-5735-437a-a475-e27265eba005' },
+    { name: 'Purchase', icon: 'shopping-cart', color: '#2196F3', description: 'Track purchase expenses', id: 'fe9221db-5990-41a0-976a-3cb4f78aef0f' },
     // { name: 'Payment', icon: 'credit-card', color: '#FF9800', description: 'Log payment records' },
     // { name: 'Receipt', icon: 'download', color: '#9C27B0', description: 'Create receipt vouchers' },
 ];
@@ -84,10 +84,11 @@ export default function BillScreen(): React.JSX.Element {
     }
 
     function handleRefresh() {
+        if(refreshing) return;
         setRefreshing(true);
-        setRefreshing(false);
-        // dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1 }))
-        //     .finally(() => setRefreshing(false));
+        dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1 }))
+            .then(res => {setRefreshing(false)})
+            .finally(() => setRefreshing(false));
     }
 
     function getFilteredInvoices() {
@@ -490,7 +491,7 @@ export default function BillScreen(): React.JSX.Element {
                                 borderColor: primaryColor,
                             }}
                             onPress={() => {
-                                navigation.navigate('create-bill-screen', { billType: billType.name });
+                                navigation.navigate('create-bill-screen', { billType: billType.name, id: billType.id });
                                 setBillTypeSelectorModalVisible(false);
                             }}
                         >

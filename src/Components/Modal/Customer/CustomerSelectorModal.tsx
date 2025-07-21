@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { GetUserLedgers } from '../../../Utils/types';
 import { viewAllCustomer } from '../../../Services/customer';
 import CustomerCard, { CustomerLoadingView } from '../../Card/CustomerCard';
-import { useCreateBillContext } from '../../../Contexts/CreateBillScreenProvider';
+import { useCreateBillContext } from '../../../Screens/TabNavigationScreens/BillScreens/CreateBillScreen/ContextProvider';
 import ShowWhen from '../../Other/ShowWhen';
 import { View } from 'react-native';
 import FeatherIcon from '../../Icon/FeatherIcon';
