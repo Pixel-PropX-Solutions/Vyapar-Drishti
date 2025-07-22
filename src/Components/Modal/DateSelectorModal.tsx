@@ -226,7 +226,7 @@ function YearSelectorModal({visible, setVisible, year, setYear, month, setMonth,
     }, [])
 
     return (
-        <ItemSelectorModal<Year>
+        <ItemSelectorModal
             allItems={data}
             isItemSelected={!!year}
             visible={visible} setVisible={setVisible}

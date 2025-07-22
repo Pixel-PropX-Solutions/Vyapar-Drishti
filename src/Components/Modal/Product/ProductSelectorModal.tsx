@@ -43,6 +43,7 @@ export default function ProductSelectorModal({ visible, setVisible, billType }: 
     const [isUnitModalVisible, setUnitModalVisible] = useState<boolean>(false);
     const [isCreateModalOpen, setCreateModalOpen] = useState<boolean>(false);
     const [itemsList, setItemsList] = useState<{ id: string; name: string; unit: string, gst: string, hsn_code: string }[]>([]);
+    const [filterItemsList, setFilterItemsList] = useState<{ id: string; name: string; unit: string, gst: string, hsn_code: string }[]>([]);
 
     const [data, setData] = useState({
         quantity: '',
@@ -52,6 +53,8 @@ export default function ProductSelectorModal({ visible, setVisible, billType }: 
         name: '',
         productNo: '',
     });
+
+
 
     const handleInputChange = (field: string, value: string | number | boolean) => {
         setData(prev => ({ ...prev, [field]: value }));
@@ -113,6 +116,10 @@ export default function ProductSelectorModal({ visible, setVisible, billType }: 
         });
     }, [dispatch, isCreateModalOpen, user?.user_settings?.current_company_id]);
 
+    useEffect(() => {
+        setFilterItemsList(itemsList.filter(item => !(products.some(pro => pro.id === item.id))))
+    }, [products, itemsList])
+
     return (
         <BottomModal
             visible={visible}
@@ -142,7 +149,7 @@ export default function ProductSelectorModal({ visible, setVisible, billType }: 
             <FlatList
                 ListEmptyComponent={<EmptyListView type="product" />}
                 contentContainerStyle={{ gap: 20, paddingBottom: 80, paddingTop: 12 }}
-                data={itemsList}
+                data={filterItemsList}
                 keyExtractor={(item) => item.id}
                 keyboardShouldPersistTaps="always"
 

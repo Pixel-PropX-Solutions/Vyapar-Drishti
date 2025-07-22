@@ -7,6 +7,7 @@ import ShowWhen from "../Other/ShowWhen";
 import BottomModal, { BottomModalActionButton } from "./BottomModal";
 import { useTheme } from "../../Contexts/ThemeProvider";
 import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from "react";
+import EmptyListView from "../View/EmptyListView";
 
 type Props<item> = {
     title: string
@@ -20,15 +21,19 @@ type Props<item> = {
     filter: (item: item, val: string) => boolean,
     actionButtons?: BottomModalActionButton[]
     isItemSelected?: boolean,
-    closeOnSelect?: boolean
+    closeOnSelect?: boolean,
     renderItemStyle?: ViewStyle,
+    whenFetchingComponent?: ReactNode,
+    loadItemsBeforeListEnd?: () => Promise<any>
 }
 
-export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItems, title, keyExtractor, filter, SelectedItemContent, renderItemContent, actionButtons, isItemSelected=false, renderItemStyle, closeOnSelect = true }: Props<item>): React.JSX.Element {
+export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItems, title, keyExtractor, filter, SelectedItemContent, renderItemContent, actionButtons, isItemSelected=false, renderItemStyle, closeOnSelect = true, whenFetchingComponent, loadItemsBeforeListEnd }: Props<item>): React.JSX.Element {
 
     const { primaryColor } = useTheme();
 
     const [data, setData] = useState<item[]>(allItems);
+    const [isFetching, setFetching] = useState<boolean>(false);
+
     const timeoutId = useRef<NodeJS.Timeout>(undefined);
 
     function handleDataFilter(inputValue: string): void {
@@ -59,7 +64,7 @@ export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItem
                 {title}
             </TextTheme>
 
-            <ShowWhen when={isItemSelected !== null} >
+            <ShowWhen when={isItemSelected} >
                 <View style={{ width: "100%", padding: 16, borderRadius: 16, backgroundColor: 'rgba(150, 50, 250, 1)', flexDirection: "row", justifyContent: 'space-between', alignItems: 'center' }} >
                     {SelectedItemContent}
 
@@ -83,7 +88,9 @@ export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItem
             </View>
 
             <FlatList
+                showsVerticalScrollIndicator={false}
                 keyboardShouldPersistTaps='always'
+                ListEmptyComponent={<EmptyListView title="Empty List" text="Don't found any item in list" />}
                 contentContainerStyle={{ gap: 10 }}
                 data={data}
 
@@ -105,6 +112,29 @@ export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItem
                         {renderItemContent(item)}
                     </SectionRow>
                 )}
+
+                ListFooterComponentStyle={{ gap: 20 }}
+                ListFooterComponent={
+                    <ShowWhen when={isFetching}>
+                        {whenFetchingComponent}
+                    </ShowWhen>
+                }
+
+                onScroll={({ nativeEvent }) => {
+                    if(!loadItemsBeforeListEnd) return;
+
+                    let { contentOffset, layoutMeasurement, contentSize } = nativeEvent;
+                    let contentOffsetY = contentOffset.y;
+                    let totalHeight = contentSize.height;
+                    let height = layoutMeasurement.height;
+
+                    if (totalHeight - height < contentOffsetY + 400) {    
+                        setFetching(true)
+                        loadItemsBeforeListEnd().finally(() => {
+                            setFetching(false)
+                        });
+                    }
+                }}
             />
 
         </BottomModal>

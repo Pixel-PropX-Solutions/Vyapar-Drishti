@@ -15,7 +15,7 @@ import CreateBillScreenProvider, { useCreateBillContext } from './ContextProvide
 import CustomerSelectorModal from '../../../../Components/Modal/Customer/CustomerSelectorModal';
 import ShowWhen from '../../../../Components/Other/ShowWhen';
 import { SectionRow, SectionRowWithIcon } from '../../../../Components/View/SectionView';
-import { sliceString } from '../../../../Utils/functionTools';
+import { formatNumberForUI, sliceString } from '../../../../Utils/functionTools';
 import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
 import EmptyListView from '../../../../Components/View/EmptyListView';
 import { CreateInvoiceData } from '../../../../Utils/types';
@@ -227,6 +227,15 @@ function Screen(): React.JSX.Element {
                         <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 4 }} >Items</TextTheme>
                     </ShowWhen>}
 
+                    ListFooterComponent={<ShowWhen when={products.length !== 0} >
+                        <NormalButton 
+                            backgroundColor='rgb(50,120,200)' color='white' 
+                            text='+ Add Product' 
+                            icon={<FeatherIcon color='white' name='package' size={16} />}
+                            onPress={() => {setProductModalVisible(true)}} 
+                        />
+                    </ShowWhen>}
+
                     data={products}
                     keyExtractor={(item, index) => item.id + index}
                     renderItem={({ item }) => (
@@ -235,11 +244,11 @@ function Screen(): React.JSX.Element {
                                 <TextTheme style={{ fontWeight: '700', fontSize: 16 }}>
                                     {sliceString(item.name, 34)}
                                 </TextTheme>
-                                {item.productNo && (
+                                {/* {item.productNo && (
                                     <TextTheme isPrimary={false} style={{ fontSize: 12, fontWeight: '500' }}>
-                                        SKU: {item.productNo}
+                                        Quantity: {item.quantity} {item.unit}
                                     </TextTheme>
-                                )}
+                                )} */}
                             </View>
 
                             <View style={{ alignItems: 'flex-end', flexDirection: 'row', gap: 28 }} >
@@ -256,15 +265,15 @@ function Screen(): React.JSX.Element {
                                         Unit Price
                                     </TextTheme>
                                     <TextTheme isPrimary={false} style={{ fontSize: 14, fontWeight: '500' }}>
-                                        {item.price.toFixed(2)} {currency}
+                                        {formatNumberForUI(item.price)} {currency}
                                     </TextTheme>
                                 </View>
                                 <View>
                                     <TextTheme style={{ fontSize: 12, fontWeight: '600', marginBottom: 2 }}>
-                                        Total
+                                        Sub Total
                                     </TextTheme>
                                     <TextTheme style={{ fontSize: 14, fontWeight: '700', color: '#4CAF50' }}>
-                                        {(item.price * item.quantity).toFixed(2)} {currency}
+                                        {formatNumberForUI(item.price * item.quantity)} {currency}
                                     </TextTheme>
                                 </View>
                             </View>
@@ -380,7 +389,7 @@ function BillNoAndDateSelector(): React.JSX.Element {
                     <TextTheme style={{ fontSize: 14, fontWeight: '900', marginBottom: 2 }}>
                         Date
                     </TextTheme>
-                    <TextTheme style={{ fontSize: 13, fontWeight: '500' }}>
+                    <TextTheme isPrimary={false} style={{ fontSize: 13, fontWeight: '500' }}>
                         {createOn}
                     </TextTheme>
                 </View>
@@ -424,7 +433,7 @@ const AmountBox = ({ handleCreateInvoice, isFormValid, isCreating }: {
                     </TextTheme>
 
                     <TextTheme style={{ fontWeight: 900, fontSize: 20 }} >
-                        {totalValue.toFixed(2)} {currency}
+                        {formatNumberForUI(totalValue, 10)} {currency}
                     </TextTheme>
                 </View>
 

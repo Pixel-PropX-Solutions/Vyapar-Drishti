@@ -56,3 +56,20 @@ export const capitalize = (str: string, by: 'word' | 'sentence' = "sentence"): s
         chars[0].toUpperCase() + chars.slice(1)
     )).join(splitBy + ' ');
 }
+
+
+export function formatNumberForUI(num: number, minLen=4, toFix=2): string {
+    const absNum = Math.abs(num);
+
+    let sign: string = num < 0 ? '-' : '';
+
+    if(Math.floor(absNum).toString().length <= minLen) return `${sign}${absNum.toFixed(toFix)}`;
+
+    if(Math.floor(absNum/1_000).toString().length <= minLen) return `${sign}${(absNum/1_000).toFixed(toFix)}K`;
+    
+    if(Math.floor(absNum/100_000).toString().length <= minLen) return `${sign}${(absNum/100_000).toFixed(toFix)}M`;
+
+    if(Math.floor(absNum/100_00_000).toString().length <= minLen) return `${sign}${(absNum/100_00_000).toFixed(toFix)}B`;
+  
+    return `${sign}${(absNum/100_00_000_000).toFixed(toFix)}T`;
+}

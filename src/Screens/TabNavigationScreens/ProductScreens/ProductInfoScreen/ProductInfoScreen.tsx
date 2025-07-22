@@ -18,6 +18,7 @@ import LoadingView from '../../../../Components/View/LoadingView';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
 import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
 import { ClassInfoUpdateModal, InfoUpdateModal } from './Modals';
+import { formatNumberForUI } from '../../../../Utils/functionTools';
 
 export default function ProductInfoScreen(): React.JSX.Element {
 
@@ -60,7 +61,7 @@ export default function ProductInfoScreen(): React.JSX.Element {
                         <View>
                             <ShowWhen when={!loading}
                                 otherwise={<>
-                                    <LoadingView width={100} height={12} style={{marginBottom: 4}} />
+                                    <LoadingView width={100} height={16} style={{marginBottom: 4}} />
                                     <LoadingView width={80} height={8} />
                                 </>}
                             >
@@ -75,10 +76,17 @@ export default function ProductInfoScreen(): React.JSX.Element {
                     </View>
 
                     <View >
-                        <TextTheme style={{fontWeight: 900, fontSize: 20}}>
-                            {currency} {((item?.purchase_value ?? 0) - (item?.sales_value ?? 0)) || '0.00'}
-                        </TextTheme>
-                        <TextTheme isPrimary={false} style={{fontWeight: 900, fontSize: 12}}>In Stock Value</TextTheme>
+                         <ShowWhen when={!loading}
+                                otherwise={<>
+                                    <LoadingView width={100} height={20} style={{marginBottom: 4}} />
+                                    <LoadingView width={80} height={12} />
+                                </>}
+                        >
+                            <TextTheme style={{fontWeight: 900, fontSize: 20}}>
+                                {currency} {formatNumberForUI(((item?.purchase_value ?? 0) - (item?.sales_value ?? 0)), 10)}
+                            </TextTheme>
+                            <TextTheme isPrimary={false} style={{fontWeight: 900, fontSize: 12}}>In Stock Value</TextTheme>
+                        </ShowWhen>
                     </View>
                 </View>
 
@@ -86,8 +94,9 @@ export default function ProductInfoScreen(): React.JSX.Element {
                     <BackgroundThemeView isPrimary={false} style={{flex: 1, padding: 12, borderRadius: 12, gap: 4, paddingTop: 20}} >
                         <View style={{paddingHorizontal: 6}} >
                             <TextTheme style={{fontSize: 14, fontWeight: 800, marginBottom: 4}} >PURCHASES</TextTheme>
+                            
                             <TextTheme isPrimary={false} style={{fontSize: 16, fontWeight: 800, marginBottom: 12}} >
-                                {currency} {item?.purchase_value || '0.00'}
+                                {currency} {loading ? '0.00' : formatNumberForUI(item?.purchase_value ?? 0, 8)}
                             </TextTheme>
 
                             <View style={{marginTop: 12}} >
@@ -105,8 +114,9 @@ export default function ProductInfoScreen(): React.JSX.Element {
                     <BackgroundThemeView isPrimary={false} style={{flex: 1, padding: 12, borderRadius: 12, gap: 4, paddingTop: 20}} >
                         <View style={{paddingHorizontal: 6}} >
                             <TextTheme style={{fontSize: 14, fontWeight: 800, marginBottom: 4}} >SELLS</TextTheme>
+                            
                             <TextTheme isPrimary={false} style={{fontSize: 16, fontWeight: 800, marginBottom: 12}} >
-                                {currency} {item?.sales_value || '0.00'}
+                                {currency} {loading ? '0.00' : formatNumberForUI(item?.sales_value ?? 0, 8)}
                             </TextTheme>
 
                             <View style={{marginTop: 12}} >
@@ -130,38 +140,35 @@ export default function ProductInfoScreen(): React.JSX.Element {
                 >
                     <SectionRow style={{ justifyContent: 'space-between' }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Name</TextTheme>
-
                         <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                            {product?.stock_item_name}
+                            {loading ? 'fetching...' : product?.stock_item_name}
                         </TextTheme>
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >HSN Code</TextTheme>
-
                         <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                            {product?.gst_hsn_code}
+                            {loading ? 'fetching..' : product?.gst_hsn_code ?? 'Not Set'}
                         </TextTheme>
                     </SectionRow>
 
                     <SectionRow style={{justifyContent: 'space-between'}} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Low Stock Alert</TextTheme>
                         <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                            {product?.low_stock_alert ?? 0} {product?.unit ?? 'Unit'}
+                            {loading ? 'fetching...' : product?.low_stock_alert ?? 0} {product?.unit ?? 'Unit'}
                         </TextTheme>
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Unit of Mesurement</TextTheme>
-
                         <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                            {product?.unit ?? 'Unit'}
+                            {loading ? 'fetching..' : product?.unit ?? 'Not Set'}
                         </TextTheme>
                     </SectionRow>
 
                     <SectionRow label="Discription" isLabelPrimary={true} gap={4} style={{ justifyContent: 'space-between' }} >
                         <TextTheme isPrimary={false} style={{ fontSize: 12, fontWeight: 900 }} >
-                            {product?.description ?? 'No Description'}
+                            {loading ? 'fetching..' : product?.description ?? 'Not Set'}
                         </TextTheme>
                     </SectionRow>
                 </SectionView>
@@ -176,14 +183,14 @@ export default function ProductInfoScreen(): React.JSX.Element {
                     <SectionRow style={{justifyContent: 'space-between'}} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Product Category</TextTheme>
                         <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                            {product?.category ?? 'Not Set'}
+                            {loading ? 'fetching..' : product?.category ?? 'Not Set'}
                         </TextTheme>
                     </SectionRow>
 
                     <SectionRow style={{justifyContent: 'space-between'}} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Product Group</TextTheme>
                         <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                            {product?.group ?? 'Not Set'}
+                            {loading ? 'fetching..' : product?.group ?? 'Not Set'}
                         </TextTheme>
                     </SectionRow>
                 </SectionView>

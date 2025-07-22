@@ -1,31 +1,24 @@
 /* eslint-disable react-native/no-inline-styles */
-import { FlatList } from 'react-native-gesture-handler';
 import TextTheme from '../../Text/TextTheme';
-import BottomModal from '../BottomModal';
 import { useAppDispatch, useCompanyStore, useCustomerStore } from '../../../Store/ReduxStore';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { GetUserLedgers } from '../../../Utils/types';
 import { viewAllCustomer } from '../../../Services/customer';
-import CustomerCard, { CustomerLoadingView } from '../../Card/CustomerCard';
 import { useCreateBillContext } from '../../../Screens/TabNavigationScreens/BillScreens/CreateBillScreen/ContextProvider';
-import ShowWhen from '../../Other/ShowWhen';
 import { View } from 'react-native';
 import FeatherIcon from '../../Icon/FeatherIcon';
-import NoralTextInput from '../../TextInput/NoralTextInput';
-import { useTheme } from '../../../Contexts/ThemeProvider';
-import EmptyListView from '../../View/EmptyListView';
 import CustomerTypeSelectorModal from './CustomerTypeSelectorModal';
 import CreateCustomerModal from './CreateCustomerModal';
+import { ItemSelectorModal } from '../ItemSelectorModal';
 
 type Props = {
     visible: boolean,
-    setVisible: (vis: boolean) => void,
+    setVisible: Dispatch<SetStateAction<boolean>>,
     billType: string
 }
 
 export default function CustomerSelectorModal({ visible, setVisible, billType }: Props) {
 
-    const { primaryColor } = useTheme();
 
     const { company } = useCompanyStore();
     const { setCustomer, customer } = useCreateBillContext();
@@ -40,9 +33,13 @@ export default function CustomerSelectorModal({ visible, setVisible, billType }:
 
 
     function handleProductFetching() {
-        if (isAllCustomerFetching) { return; }
-        if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
-        dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1 }));
+        return new Promise(res => {
+            if (isAllCustomerFetching) return res(false)
+            if (pageMeta.total <= pageMeta.page * pageMeta.limit) return res(false)
+            dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1 })).finally(() => {
+                res(true)
+            });
+        })
     }
 
     useEffect(() => {
@@ -55,11 +52,15 @@ export default function CustomerSelectorModal({ visible, setVisible, billType }:
     }, [customers]);
 
 
-    return (
-        <BottomModal
+    return (<>
+        <ItemSelectorModal<GetUserLedgers>
             visible={visible}
             setVisible={setVisible}
-            style={{ padding: 20, gap: 20 }}
+            title='Select Customer'
+            keyExtractor={item => item._id}
+            isItemSelected={!!customer?.id}
+            allItems={filterCustomers}
+
             actionButtons={[
                 {
                     key: 'create-customer',
@@ -69,66 +70,54 @@ export default function CustomerSelectorModal({ visible, setVisible, billType }:
                     backgroundColor: 'rgb(50,200,150)',
                     icon: <FeatherIcon name="user-plus" size={16} color="white" />,
                 },
-            ]}>
-            <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >Select Customer</TextTheme>
+            ]}
+            
+            SelectedItemContent={<View>
+                <TextTheme color='white' >{customer?.name}</TextTheme>
+                <TextTheme color='white' isPrimary={false} >{customer?.group}</TextTheme>
+            </View>}
 
-            <View
-                style={{ borderWidth: 2, borderColor: primaryColor, borderRadius: 100, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', paddingLeft: 10, paddingRight: 16 }}
-            >
-                <FeatherIcon name="search" size={20} />
+            renderItemContent={item => (
+                <View style={{flex: 1}} >
+                    <TextTheme>{item.ledger_name}</TextTheme>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}} >
+                        <TextTheme isPrimary={false} >{item.phone?.code} {item.phone?.number}</TextTheme>
+                        <TextTheme isPrimary={false} >{item.parent}</TextTheme>
+                    </View>
+                </View>
+            )}
+            
+            filter={(item, val) => 
+                item.phone?.number.startsWith(val) ||
+                item.phone?.number.endsWith(val) ||
+                item.ledger_name.toLowerCase().split(' ').some(word => (
+                    word.startsWith(val)
+                ))
+            }
 
-                <NoralTextInput
-                    placeholder="Search"
-                    style={{ flex: 1 }}
-                />
-            </View>
+            onSelect={item => {
+                setVisible(false);
 
-            <FlatList
-                ListEmptyComponent={<EmptyListView type="customer" />}
-                data={filterCustomers}
-                contentContainerStyle={{ gap: 10 }}
-                keyExtractor={item => item._id}
+                setCustomer(() => ({
+                    id: item._id,
+                    name: item.ledger_name,
+                    group: item.parent,
+                }));
+            }}
+            
+            loadItemsBeforeListEnd={handleProductFetching}
+            
+        />
 
-                renderItem={({ item }) => (
-                    <CustomerCard
-                        name={item.ledger_name}
-                        groupName={item.parent}
-                        createOn={item.created_at}
-                        backgroundColor={customer && customer.id === item._id ? 'rgb(50,150,250)' : ''}
-                        color={customer && customer.id === item._id ? 'white' : ''}
-                        onPress={() => {
-                            setVisible(false);
-
-                            setCustomer(() => ({
-                                id: item._id,
-                                name: item.ledger_name,
-                                group: item.parent,
-                            }));
-                        }}
-                    />
-                )}
-
-                ListFooterComponentStyle={{ gap: 20 }}
-                ListFooterComponent={<ShowWhen when={isAllCustomerFetching}>
-                    <CustomerLoadingView />
-                    <CustomerLoadingView />
-                </ShowWhen>}
-
-                onScroll={({ nativeEvent }) => {
-                    let { contentOffset, layoutMeasurement, contentSize } = nativeEvent;
-                    let contentOffsetY = contentOffset.y;
-                    let totalHeight = contentSize.height;
-                    let height = layoutMeasurement.height;
-
-                    if (totalHeight - height < contentOffsetY + 400) {
-                        handleProductFetching();
-                    }
-                }}
-            />
-
-            <View style={{ minHeight: 44 }} />
-            <CustomerTypeSelectorModal visible={isCustomerTypeSelectorModalOpen} setVisible={setCustomerTypeSelectorModalOpen} setSecondaryVisible={setCreateCustomerModalOpen} />
-            <CreateCustomerModal visible={isCreateCustomerModalOpen} setVisible={setCreateCustomerModalOpen} setPrimaryVisible={setCustomerTypeSelectorModalOpen} />
-        </BottomModal >
+        <CustomerTypeSelectorModal 
+            visible={isCustomerTypeSelectorModalOpen} setVisible={setCustomerTypeSelectorModalOpen} 
+            setSecondaryVisible={setCreateCustomerModalOpen} 
+        />
+        
+        <CreateCustomerModal 
+            visible={isCreateCustomerModalOpen} setVisible={setCreateCustomerModalOpen} 
+            setPrimaryVisible={setCustomerTypeSelectorModalOpen} 
+        />
+    </>
     );
 }

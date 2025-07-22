@@ -9,7 +9,7 @@ import AnimateButton from '../Button/AnimateButton';
 import FeatherIcon from '../Icon/FeatherIcon';
 import { useAppStorage } from '../../Contexts/AppStorageProvider';
 import LoadingView from '../View/LoadingView';
-import { sliceString } from '../../Utils/functionTools';
+import { formatNumberForUI, sliceString } from '../../Utils/functionTools';
 
 export type BillCardProps = {
     createOn: string,
@@ -94,7 +94,7 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                         <View style={{alignItems: 'flex-end'}} >
                             <TextTheme isPrimary={false} style={{fontSize: 10, fontWeight: 500}}>Total Amount</TextTheme>
                             <TextTheme style={{fontSize: 18, fontWeight: 900}} >
-                                {Math.abs(totalAmount).toFixed(2)} {currency}
+                                {formatNumberForUI(Math.abs(totalAmount))} {currency}
                             </TextTheme>
                         </View>
                     </View>
@@ -103,7 +103,7 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} >
                             <View>
                                 <TextTheme style={{fontSize: 18, fontWeight: 900}} >
-                                    {Math.abs(pendingAmount).toFixed(2)} {currency}
+                                    {formatNumberForUI(Math.abs(pendingAmount))} {currency}
                                 </TextTheme>
                                 <TextTheme isPrimary={false} style={{fontSize: 10, fontWeight: 500}}>Due Amount</TextTheme>
                             </View>
