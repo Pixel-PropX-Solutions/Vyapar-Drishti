@@ -31,7 +31,7 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
     
     const status: 'paid' | 'pending' = totalAmount === payAmount ? 'paid' : 'pending';
     
-    const rgb = status === 'pending' ? '200,150,50' : type === 'purchase' ? '200,50,50' : '50,200,150';
+    const rgb = status === 'pending' ? '200,150,50' : type.toLowerCase() === 'purchase' ? '200,50,50' : '50,200,150';
 
     const formatDate = (dateString: string) => {
         const parts = dateString.split('-');
