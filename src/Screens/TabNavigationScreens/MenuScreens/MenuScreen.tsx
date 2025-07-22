@@ -190,7 +190,7 @@ function SetCurrencyModal({ visible, setVisible }: { visible: boolean, setVisibl
         <ItemSelectorModal<currencyInfo>
             title='Select Currency'
             allItems={currencyData}
-            selected={selected}
+            isItemSelected={!!selected?.country}
             keyExtractor={(item) => item.country + item.currency}
             filter={(item, val) => (
                 item.country.toLowerCase().startsWith(val) || 

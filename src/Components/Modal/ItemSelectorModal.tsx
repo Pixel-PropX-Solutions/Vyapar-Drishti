@@ -19,12 +19,12 @@ type Props<item> = {
     keyExtractor: (item: item) => string,
     filter: (item: item, val: string) => boolean,
     actionButtons?: BottomModalActionButton[]
-    selected?: item | null,
+    isItemSelected?: boolean,
     closeOnSelect?: boolean
     renderItemStyle?: ViewStyle,
 }
 
-export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItems, title, keyExtractor, filter, SelectedItemContent, renderItemContent, actionButtons, selected = null, renderItemStyle, closeOnSelect = true }: Props<item>): React.JSX.Element {
+export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItems, title, keyExtractor, filter, SelectedItemContent, renderItemContent, actionButtons, isItemSelected=false, renderItemStyle, closeOnSelect = true }: Props<item>): React.JSX.Element {
 
     const { primaryColor } = useTheme();
 
@@ -40,7 +40,7 @@ export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItem
         }
 
         timeoutId.current = setTimeout(() => {
-            setData(allItems.filter(item => filter(item, inputValue.toLowerCase())));
+            setData(allItems.filter(item => filter(item, inputValue)));
         }, 250);
     }
 
@@ -59,7 +59,7 @@ export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItem
                 {title}
             </TextTheme>
 
-            <ShowWhen when={selected !== null} >
+            <ShowWhen when={isItemSelected !== null} >
                 <View style={{ width: "100%", padding: 16, borderRadius: 16, backgroundColor: 'rgba(150, 50, 250, 1)', flexDirection: "row", justifyContent: 'space-between', alignItems: 'center' }} >
                     {SelectedItemContent}
 
@@ -87,8 +87,8 @@ export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItem
                 contentContainerStyle={{ gap: 10 }}
                 data={data}
 
-                keyExtractor={(item, index) => (
-                    keyExtractor(item) + index.toString()
+                keyExtractor={item => (
+                    keyExtractor(item)
                 )}
 
                 renderItem={({ item }) => (

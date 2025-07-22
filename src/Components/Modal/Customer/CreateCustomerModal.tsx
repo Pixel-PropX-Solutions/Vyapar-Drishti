@@ -631,7 +631,7 @@ function SetCountryModal({ visible, setVisible, country, setCountry }: {
         <ItemSelectorModal<CountryInfo>
             title="Select Country"
             allItems={countryData}
-            selected={selected}
+            isItemSelected={!!selected}
             keyExtractor={(item) => item.name}
             filter={(item, val) => (
                 item.name.toLowerCase().startsWith(val) ||
@@ -683,7 +683,7 @@ function SetStateModal({ visible, setVisible, country, state, setState }: {
         <ItemSelectorModal<string>
             title="Select State"
             allItems={stateData}
-            selected={selected}
+            isItemSelected={!!selected}
             keyExtractor={(item) => item}
             filter={(item, val) => (
                 item.toLowerCase().startsWith(val)
