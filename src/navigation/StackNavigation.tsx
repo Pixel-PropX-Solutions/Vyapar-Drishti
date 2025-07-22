@@ -31,7 +31,7 @@ export type StackParamsList = {
     'customer-info-screen': {customerId: string}
 
     'create-bill-screen': {billType: string, id: string}
-    'bill-info-screen': undefined
+    'bill-info-screen': {id: string}
 }
 
 const Stack = createStackNavigator<StackParamsList>();
@@ -87,6 +87,7 @@ export default function StackNavigation(): React.JSX.Element {
                 />
 
                 <Stack.Screen name="bill-info-screen" 
+                    options={{animation: 'scale_from_center'}}
                     component={withSafeView(BillInfoScreen)} 
                 />
 

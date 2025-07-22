@@ -45,7 +45,7 @@ const dummyBillsType: { name: string; icon: string; color: string; description: 
 const billTypeFilters = ['All', 'Sales', 'Purchase', 'Payment', 'Receipt'];
 
 export default function BillScreen(): React.JSX.Element {
-    
+
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabParamsList, 'bill-screen'>>();
 
     const dispatch = useAppDispatch();
@@ -63,7 +63,7 @@ export default function BillScreen(): React.JSX.Element {
     const [htmlFromAPI, setHtmlFromAPI] = useState<Array<{ html: string, page_number: number }>>([]);
     const [pageNumber, setPageNumber] = useState(1);
 
-    const invoiceInfo = useRef<{invoiceId: string, downloadHtml: string, fullHtml: string}>({
+    const invoiceInfo = useRef<{ invoiceId: string, downloadHtml: string, fullHtml: string }>({
         invoiceId: '', downloadHtml: '', fullHtml: ''
     });
 
@@ -123,7 +123,7 @@ export default function BillScreen(): React.JSX.Element {
 
     const handleInvoice = (invoice: GetAllVouchars, callback: () => void) => {
         console.log('Print Invoice', invoice);
-        
+
         setIsGenerating(true);
         if (invoice.voucher_type === 'Sales' || invoice.voucher_type === 'Purchase') {
             dispatch(printInvoices({
@@ -140,11 +140,11 @@ export default function BillScreen(): React.JSX.Element {
                     setHtmlFromAPI(paginated_html);
                     setInvoiceId(invoice.voucher_number);
 
-                    invoiceInfo.current = {invoiceId: invoice.voucher_number, downloadHtml: download_html, fullHtml: fullHtml2};
+                    invoiceInfo.current = { invoiceId: invoice.voucher_number, downloadHtml: download_html, fullHtml: fullHtml2 };
 
                     // setCustomerName(invoice?.party_name);
 
-                    if(callback) callback();
+                    if (callback) callback();
                     // setHtml(true);
                 } else {
                     console.error('Failed to print invoice:', response.payload);
@@ -153,7 +153,7 @@ export default function BillScreen(): React.JSX.Element {
             ).catch((error) => {
                 console.error('Error printing invoice:', error);
             }
-            ).finally(()=>{
+            ).finally(() => {
                 setIsGenerating(false);
             })
 
@@ -174,7 +174,7 @@ export default function BillScreen(): React.JSX.Element {
         try {
             let options = {
                 html: invoiceInfo.current.downloadHtml,
-                fileName: `${invoiceInfo.current.invoiceId}-vyapar-drishti.pdf`,
+                fileName: `${invoiceInfo.current.invoiceId}-vyapar-drishti`,
                 directory: 'Download',
             };
 
@@ -309,14 +309,14 @@ export default function BillScreen(): React.JSX.Element {
     useEffect(() => {
         dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1 }));
     }, [company?._id, dispatch, isBillTypeSelectorModalVisible]);
-    
+
     const filteredInvoices = getFilteredInvoices();
-    
+
     useEffect(() => {
         const event = navigation.addListener('focus', () => {
             dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1 }));
         });
-        
+
         return event
     }, [])
 
@@ -446,17 +446,19 @@ export default function BillScreen(): React.JSX.Element {
                                 totalAmount={item.amount}
                                 payAmount={item.amount}
                                 pendingAmount={0}
-                                onPrint={() => {handleInvoice(item, () => setHtml(true))}}
-                                onShare={() => {handleInvoice(item, handleShare)}}  
+                                onPrint={() => { handleInvoice(item, () => setHtml(true)) }}
+                                onShare={() => { handleInvoice(item, handleShare) }}
+                                onPress={() => { navigator.navigate('bill-info-screen', { id: item._id }) }}
                             />
                         </Animated.View>
                     )}
                     ListFooterComponent={
                         <ShowWhen when={isInvoiceFeaching}>
                             <View style={{ gap: 12 }}>
-                                 {
+                                {
                                     Array.from({
-                                        length: Math.min(2, pageMeta.total - (invoices?.length ?? 0)) + 1}, 
+                                        length: Math.min(2, pageMeta.total - (invoices?.length ?? 0)) + 1
+                                    },
                                         (_, i) => i
                                     ).map(item => (
                                         <BillLoadingCard key={item} />
