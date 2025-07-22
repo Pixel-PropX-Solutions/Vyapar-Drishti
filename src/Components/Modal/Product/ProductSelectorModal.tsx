@@ -96,11 +96,7 @@ export default function ProductSelectorModal({ visible, setVisible, billType }: 
 
     useEffect(() => {
         setFilterProducts(() => (
-            productsData?.filter(a => (
-                products.some(b => b.id === a._id) ? false : (
-                    billType.toLowerCase() === 'sales' ? (a.purchase_qty - a.sales_qty) > 0 : true
-                )
-            ))
+            productsData?.filter(a => !products.some(b => b.id === a._id))
         ) ?? []);
     }, [productsData, products, billType]);
 

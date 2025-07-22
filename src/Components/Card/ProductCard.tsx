@@ -4,7 +4,6 @@ import TextTheme from '../Text/TextTheme';
 import AnimateButton from '../Button/AnimateButton';
 import FeatherIcon from '../Icon/FeatherIcon';
 import { useTheme } from '../../Contexts/ThemeProvider';
-import numberToString from '../../Functions/Numbers/numberToString';
 import AnimatePingBall from '../View/AnimatePingBall';
 import BackgroundThemeView from '../View/BackgroundThemeView';
 import ShowWhen from '../Other/ShowWhen';
@@ -58,7 +57,7 @@ export default function ProductCard({ productName, productsNo, unit = 'Unit', is
 
                     <View>
                         <TextTheme isPrimary={false} style={{ fontSize: 12 }} >Profit Margin</TextTheme>
-                        <TextTheme style={{ fontSize: 12 }} >{profitValue ? `${profitValue} %` : 'No Sale Yet'}</TextTheme>
+                        <TextTheme style={{ fontSize: 12 }} >{profitValue ? `${Number(profitValue).toFixed(2)} %` : 'No Sale Yet'}</TextTheme>
                     </View>
 
                 </View>

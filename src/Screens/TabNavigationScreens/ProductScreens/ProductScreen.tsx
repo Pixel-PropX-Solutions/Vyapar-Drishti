@@ -15,13 +15,18 @@ import { viewAllProducts } from '../../../Services/product';
 import navigator from '../../../Navigation/NavigationService';
 import ShowWhen from '../../../Components/Other/ShowWhen';
 import EmptyListView from '../../../Components/View/EmptyListView';
+import { useNavigation } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { BottomTabParamsList } from '../../../Navigation/BottomTabNavigation';
 
 
 export default function ProductScreen(): React.JSX.Element {
 
+    const navigation = useNavigation<BottomTabNavigationProp<BottomTabParamsList, 'product-screen'>>()
+
+    const dispatch = useAppDispatch();
     const { company } = useCompanyStore();
     const { productsData, pageMeta, isProductsFetching } = useProductStore();
-    const dispatch = useAppDispatch();
     const [isCreateModalOpen, setCreateModalOpen] = useState<boolean>(false);
 
     function handleProductFetching() {
@@ -33,6 +38,14 @@ export default function ProductScreen(): React.JSX.Element {
     useEffect(() => {
         dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: 1 }));
     }, [company?._id, dispatch, isCreateModalOpen]);
+
+    useEffect(() => {
+        const event = navigation.addListener('focus', () => {
+            dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: 1 }));
+        });
+
+        return event
+    }, [])
 
     return (
         <View style={{ width: '100%', height: '100%' }}>
@@ -69,17 +82,25 @@ export default function ProductScreen(): React.JSX.Element {
                 }}
 
                 ListFooterComponentStyle={{ gap: 20 }}
-                ListFooterComponent={<ShowWhen when={isProductsFetching}>
-                    <ProductLoadingCard />
-                    <ProductLoadingCard />
-                    <ProductLoadingCard />
-                </ShowWhen>}
+                ListFooterComponent={
+                    <ShowWhen when={isProductsFetching}>
+                        {
+                            Array.from({
+                                length: Math.min(2, pageMeta.total - (productsData?.length ?? 0)) + 1}, (_, i) => i
+                            ).map(item => (
+                                <ProductLoadingCard key={item} />
+                            ))
+                        }
+                    </ShowWhen>
+                }
 
                 onScroll={({ nativeEvent }) => {
                     let { contentOffset, layoutMeasurement, contentSize } = nativeEvent;
                     let contentOffsetY = contentOffset.y;
                     let totalHeight = contentSize.height;
                     let height = layoutMeasurement.height;
+
+                    if(pageMeta.total === productsData?.length) return;
 
                     if (totalHeight - height < contentOffsetY + 400) {
                         handleProductFetching();

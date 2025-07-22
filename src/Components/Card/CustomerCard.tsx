@@ -7,6 +7,7 @@ import AnimateButton from "../Button/AnimateButton";
 // import numberToString from "../../Functions/Numbers/numberToString";
 import ShowWhen from "../Other/ShowWhen";
 import LoadingView from "../View/LoadingView";
+import { sliceString } from "../../Utils/functionTools";
 // import BackgroundThemeView from "../View/BackgroundThemeView";
 
 
@@ -37,7 +38,7 @@ export default function CustomerCard({ name, groupName, createOn, phoneNo = '', 
                     </View>
 
                     <View>
-                        <TextTheme style={{ fontSize: 18, fontWeight: 900 }} >{name}</TextTheme>
+                        <TextTheme style={{ fontSize: 18, fontWeight: 900 }} >{sliceString(name, 20)}</TextTheme>
                         <TextTheme style={{ fontSize: 12 }} >{groupName}</TextTheme>
                     </View>
                 </View>

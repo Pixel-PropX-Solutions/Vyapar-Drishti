@@ -1,17 +1,14 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
-import { View, TouchableOpacity, Pressable } from 'react-native';
+import { View } from 'react-native';
 import TextTheme from '../Text/TextTheme';
 import { getMounthName } from '../../Functions/TimeOpration/timeByIndex';
 import BackgroundThemeView from '../View/BackgroundThemeView';
-import { Text } from 'react-native';
 import ShowWhen from '../Other/ShowWhen';
-import AnimatePingBall from '../View/AnimatePingBall';
 import AnimateButton from '../Button/AnimateButton';
 import FeatherIcon from '../Icon/FeatherIcon';
-import numberToString from '../../Functions/Numbers/numberToString';
 import { useAppStorage } from '../../Contexts/AppStorageProvider';
-import MaterialDesignIcon from '../Icon/MaterialDesignIcon';
+import LoadingView from '../View/LoadingView';
 
 export type BillCardProps = {
     createOn: string,
@@ -24,332 +21,460 @@ export type BillCardProps = {
     onPress?: () => void,
     onPrint?: () => void,
     onPayment?: () => void,
+    isPrimary?: boolean
 }
 
-export default function BillCard({
-    createOn,
-    totalAmount = 0,
-    payAmount = 0,
-    billNo,
-    customerName,
-    pendingAmount = 0,
-    type,
-    onPress,
-    onPrint,
-    onPayment,
-}: BillCardProps): React.JSX.Element {
+
+export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, billNo, customerName, pendingAmount = 0, type, onPress, onPrint, onPayment, isPrimary=true }: BillCardProps) {
 
     const { currency } = useAppStorage();
-
-    const status: 'paid' | 'pending' | 'overdue' =
-        totalAmount === payAmount ? 'paid' :
-            pendingAmount > 0 ? 'pending' : 'overdue';
-
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'paid': return { bg: 'rgb(16, 185, 129)', text: 'white' };
-            case 'pending': return { bg: 'rgb(245, 158, 11)', text: 'white' };
-            case 'overdue': return { bg: 'rgb(239, 68, 68)', text: 'white' };
-            default: return { bg: 'rgb(156, 163, 175)', text: 'white' };
-        }
-    };
-
-    const statusColors = getStatusColor(status);
-    const completionPercentage = totalAmount > 0 ? (payAmount / totalAmount) * 100 : 0;
+    
+    const status: 'paid' | 'pending' = totalAmount === payAmount ? 'paid' : 'pending';
+    
+    const rgb = status === 'pending' ? '200,150,50' : type === 'purchase' ? '200,50,50' : '50,200,150';
 
     const formatDate = (dateString: string) => {
         const parts = dateString.split('-');
         return `${getMounthName(parseInt(parts[1])-1)} ${parts[2]}, ${parts[0]}`;
     };
 
-    const formatAmount = (amount: number) => {
-        const isNegative = amount < 0;
-        const absAmount = Math.abs(amount);
-        return {
-            value: numberToString(absAmount),
-            isNegative,
-            color: isNegative ? 'rgb(239, 68, 68)' : 'rgb(16, 185, 129)',
-        };
-    };
-
-    const CardContent = () => (
-        <View style={{ gap: 8 }}>
-            {/* Header Section */}
-            <View style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                marginBottom: 4,
-            }}>
-                <View style={{ flex: 1 }}>
-                    <TextTheme style={{
-                        fontSize: 18,
-                        fontWeight: '700',
-                        marginBottom: 2,
-                    }}>
-                        {formatDate(createOn)}
-                    </TextTheme>
-                    <TextTheme style={{
-                        fontSize: 14,
-                        opacity: 0.7,
-                        fontWeight: '500',
-                    }}>
-                        {billNo}
-                    </TextTheme>
-                </View>
-
-                <View style={{ alignItems: 'flex-end' }}>
-                    <Text style={{
-                        fontWeight: '800',
-                        fontSize: 20,
-                        color: formatAmount(payAmount).color,
-                    }}>
-                        {formatAmount(payAmount).value} {currency}
-                    </Text>
-                    <TextTheme style={{
-                        fontSize: 12,
-                        opacity: 0.6,
-                        fontWeight: '500',
-                    }}>
-                        Amount Paid
-                    </TextTheme>
-                </View>
-            </View>
-
-            {/* Progress Bar */}
-            <View style={{
-                height: 4,
-                backgroundColor: 'rgba(156, 163, 175, 0.2)',
-                borderRadius: 2,
-                overflow: 'hidden',
-                marginVertical: 4,
-            }}>
-                <View style={{
-                    height: '100%',
-                    width: `${Math.min(completionPercentage, 100)}%`,
-                    backgroundColor: statusColors.bg,
-                    borderRadius: 2,
-                }} />
-            </View>
-
-            {/* Main Content */}
-            <BackgroundThemeView style={{
-                padding: 16,
-                borderRadius: 12,
-                elevation: 2,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.1,
-                shadowRadius: 4,
-            }}>
-                {/* Customer and Status Row */}
-                <View style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: 12,
-                }}>
-                    <View style={{ flex: 1 }}>
-                        <TextTheme style={{
-                            fontSize: 16,
-                            fontWeight: '700',
-                            marginBottom: 2,
-                        }}>
-                            {customerName}
-                        </TextTheme>
-                        <TextTheme style={{
-                            fontSize: 14,
-                            opacity: 0.7,
-                            fontWeight: '500',
-                        }}>
-                            {type}
-                        </TextTheme>
+    return (
+        <AnimateButton 
+            style={{borderRadius: 10, overflow: 'hidden'}} 
+            onPress={onPress} 
+        >
+            <BackgroundThemeView isPrimary={isPrimary} style={{padding: 10, gap: 8, paddingLeft: 14}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <View>
+                        <TextTheme style={{fontSize: 14, fontWeight: 800}}>{customerName}</TextTheme>
+                        <TextTheme isPrimary={isPrimary} style={{fontSize: 12, fontWeight: 800}}>{type}</TextTheme>
                     </View>
 
-                    <View style={{
-                        backgroundColor: statusColors.bg,
-                        paddingHorizontal: 12,
-                        paddingVertical: 6,
-                        borderRadius: 16,
-                        position: 'relative',
-                        minWidth: 80,
-                        alignItems: 'center',
-                    }}>
-                        <Text style={{
-                            color: statusColors.text,
-                            fontWeight: '700',
-                            fontSize: 12,
-                            textTransform: 'uppercase',
-                        }}>
-                            {status}
-                        </Text>
+                    <View style={{flexDirection: 'row', gap: 8}} >
+                        <BackgroundThemeView 
+                            isPrimary={!isPrimary} 
+                            backgroundColor={`rgb(${rgb})`}
+                            style={{flexDirection: 'row', alignItems: 'center', gap: 6, paddingLeft: 8, borderRadius: 40, paddingBlock: 6, paddingRight: 12}} 
+                            
+                        >
+                            <FeatherIcon name={status === 'paid'? 'check-circle' : 'clock'} size={16} />
+                            <TextTheme style={{fontSize: 14, fontWeight: 900}} >
+                                {status === 'paid' ? 'Paid' : 'Due'}
+                            </TextTheme>
+                        </BackgroundThemeView>
 
-                        <ShowWhen when={status === 'pending'}>
-                            <View style={{
-                                position: 'absolute',
-                                top: -2,
-                                right: -2,
-                                width: 16,
-                                height: 16,
-                                borderRadius: 8,
-                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                            }}>
-                                <AnimatePingBall size={8} backgroundColor="rgb(245, 158, 11)" />
-                            </View>
-                        </ShowWhen>
+                        <AnimateButton onPress={onPrint} style={{borderRadius: 50}} >
+                            <BackgroundThemeView isPrimary={!isPrimary} style={{alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 32}}  >
+                                <FeatherIcon name='printer' size={16} />
+                            </BackgroundThemeView>
+                        </AnimateButton>
+                        
+                        <AnimateButton style={{borderRadius: 50}} >
+                            <BackgroundThemeView isPrimary={!isPrimary} style={{alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 32}}  >
+                                <FeatherIcon name='share-2' size={16} />
+                            </BackgroundThemeView>
+                        </AnimateButton>
                     </View>
+                </View>
 
-                    <AnimateButton
-                        style={{
-                            padding: 10,
-                            borderRadius: 20,
-                            marginLeft: 8,
-                            backgroundColor: 'rgba(156, 163, 175, 0.1)',
-                        }}
-                        onPress={onPrint}
-                    >
-                        <FeatherIcon name="printer" size={18} />
-                    </AnimateButton>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} >
+                    <View>
+                        <TextTheme isPrimary={false} style={{fontSize: 10}} >{billNo}</TextTheme>
+                        <TextTheme isPrimary={false} style={{fontSize: 12}} >{formatDate(createOn)}</TextTheme>
+                    </View>
                     
-                    <ShowWhen when={pendingAmount < 0}>
-                        <TouchableOpacity
-                            onPress={onPayment}
-                            style={{
-                                backgroundColor: 'rgb(59, 130, 246)',
-                                paddingHorizontal: 16,
-                                paddingVertical: 8,
-                                borderRadius: 20,
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                gap: 6,
-                                marginLeft: 8,
-                            }}
+                    <View style={{alignItems: 'flex-end'}} >
+                        <TextTheme isPrimary={false} style={{fontSize: 10, fontWeight: 500}}>Total Amount</TextTheme>
+                        <TextTheme style={{fontSize: 18, fontWeight: 900}} >
+                            {Math.abs(totalAmount).toFixed(2)} {currency}
+                        </TextTheme>
+                    </View>
+                </View>
+                
+                <ShowWhen when={status === 'pending'} >
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} >
+                        <View>
+                            <TextTheme style={{fontSize: 18, fontWeight: 900}} >
+                                {Math.abs(pendingAmount).toFixed(2)} {currency}
+                            </TextTheme>
+                            <TextTheme isPrimary={false} style={{fontSize: 10, fontWeight: 500}}>Due Amount</TextTheme>
+                        </View>
+                        
+                        <AnimateButton 
+                            style={{flexDirection: 'row', alignItems: 'center', gap: 6, paddingInline: 12, borderRadius: 8, paddingBlock: 6, backgroundColor: 'rgb(50,120,200)'}}
+                            onPress={onPayment}      
                         >
-                            <MaterialDesignIcon name="credit-card-plus-outline" size={14} color="white" />
-                        </TouchableOpacity>
-                    </ShowWhen>
-                </View>
-
-                {/* Financial Information */}
-                <View style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    backgroundColor: 'rgba(156, 163, 175, 0.05)',
-                    borderRadius: 8,
-                    padding: 12,
-                }}>
-                    <View style={{ flex: 1 }}>
-                        <TextTheme style={{
-                            fontSize: 12,
-                            fontWeight: '600',
-                            opacity: 0.7,
-                            marginBottom: 2,
-                        }}>
-                            Total Amount
-                        </TextTheme>
-                        <Text style={{
-                            fontSize: 16,
-                            fontWeight: '700',
-                            color: formatAmount(totalAmount).color,
-                        }}>
-                            {formatAmount(totalAmount).value} {currency}
-                        </Text>
+                            <TextTheme style={{fontSize: 14, fontWeight: 900}} >
+                                Pay due amount
+                            </TextTheme>
+                        </AnimateButton>
                     </View>
-
-                    <View style={{ flex: 1, alignItems: 'center' }}>
-                        <TextTheme style={{
-                            fontSize: 12,
-                            fontWeight: '600',
-                            opacity: 0.7,
-                            marginBottom: 2,
-                        }}>
-                            Pending
-                        </TextTheme>
-                        <Text style={{
-                            fontSize: 16,
-                            fontWeight: '700',
-                            color: pendingAmount > 0 ? 'rgb(245, 158, 11)' : 'rgb(16, 185, 129)',
-                        }}>
-                            {numberToString(pendingAmount)} {currency}
-                        </Text>
-                    </View>
-
-                    <View style={{ flex: 1, alignItems: 'flex-end' }}>
-                        <TextTheme style={{
-                            fontSize: 12,
-                            fontWeight: '600',
-                            opacity: 0.7,
-                            marginBottom: 2,
-                        }}>
-                            Completion
-                        </TextTheme>
-                        <Text style={{
-                            fontSize: 16,
-                            fontWeight: '700',
-                            color: completionPercentage === 100 ? 'rgb(16, 185, 129)' : 'rgb(245, 158, 11)',
-                        }}>
-                            {Math.round(completionPercentage)}%
-                        </Text>
-                    </View>
-                </View>
-
-                {/* Action Buttons */}
-                <View style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    gap: 8,
-                }}>
-                    <ShowWhen when={pendingAmount < 0}>
-                        <TouchableOpacity
-                            onPress={onPayment}
-                            style={{
-                                backgroundColor: 'rgb(59, 130, 246)',
-                                paddingHorizontal: 16,
-                                paddingVertical: 8,
-                                borderRadius: 20,
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                gap: 6,
-                                flex: 1,
-                            }}
-                        >
-                            <FeatherIcon name="credit-card" size={14} color="white" />
-                            <Text style={{
-                                color: 'white',
-                                fontWeight: '600',
-                                fontSize: 12,
-                            }}>
-                                Add Payment
-                            </Text>
-                        </TouchableOpacity>
-                    </ShowWhen>
-                </View>
+                </ShowWhen>
             </BackgroundThemeView>
-        </View>
-    );
 
-    if (onPress) {
-        return (
-            <Pressable
-                onPress={onPress}
-                style={({ pressed }) => [
-                    {
-                        opacity: pressed ? 0.95 : 1,
-                        transform: [{ scale: pressed ? 0.98 : 1 }],
-                    },
-                ]}
-            >
-                <CardContent />
-            </Pressable>
-        );
-    }
-
-    return <CardContent />;
+            <View style={{width: 4, height: '100%', backgroundColor: `rgb(${rgb})`, position: 'absolute', left: 0, top: 0}} />
+            <View style={{width: '100%', height: '100%', backgroundColor: `rgba(${rgb},0.1)`, position: 'absolute', left: 0, top: 0}} />
+        </AnimateButton>
+    )
 }
+
+
+
+export function BillLoadingCard({isPrimary=true}: {isPrimary?: boolean}) {
+    return (
+        <BackgroundThemeView isPrimary={isPrimary} style={{padding: 12, borderRadius: 10, gap: 12}} >
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} >
+                <View style={{gap: 4}}>
+                    <LoadingView isPrimary={!isPrimary} height={16} width={150} />
+                    <LoadingView isPrimary={!isPrimary} height={12} width={100} />
+                </View>
+
+                <View style={{gap: 12, flexDirection: 'row', alignItems: 'center'}}>
+                    <LoadingView isPrimary={!isPrimary} height={32} width={60} borderRadius={40} />
+                    <LoadingView isPrimary={!isPrimary} height={32} width={32} borderRadius={40} />
+                    <LoadingView isPrimary={!isPrimary} height={32} width={32} borderRadius={40} />
+                </View>
+            </View>
+           
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} >
+                <View style={{gap: 4}}>
+                    <LoadingView isPrimary={!isPrimary} height={10} width={60} />
+                    <LoadingView isPrimary={!isPrimary} height={10} width={80} />
+                </View>
+
+                <View style={{gap: 4, alignItems: 'flex-end'}}>
+                    <LoadingView isPrimary={!isPrimary} height={10} width={60} />
+                    <LoadingView isPrimary={!isPrimary} height={16} width={100} />
+                </View>
+            </View>
+        </BackgroundThemeView>
+    )
+}
+
+// export default function BillCard({
+//     createOn,
+//     totalAmount = 0,
+//     payAmount = 0,
+//     billNo,
+//     customerName,
+//     pendingAmount = 0,
+//     type,
+//     onPress,
+//     onPrint,
+//     onPayment
+// }: BillCardProps): React.JSX.Element {
+
+//     const { currency } = useAppStorage();
+
+//     const status: 'paid' | 'pending' | 'overdue' =
+//         totalAmount === payAmount ? 'paid' :
+//             pendingAmount > 0 ? 'pending' : 'overdue';
+
+//     const getStatusColor = (status: string) => {
+//         switch (status) {
+//             case 'paid': return { bg: 'rgb(16, 185, 129)', text: 'white' };
+//             case 'pending': return { bg: 'rgb(245, 158, 11)', text: 'white' };
+//             case 'overdue': return { bg: 'rgb(239, 68, 68)', text: 'white' };
+//             default: return { bg: 'rgb(156, 163, 175)', text: 'white' };
+//         }
+//     };
+
+//     const statusColors = getStatusColor(status);
+//     const completionPercentage = totalAmount > 0 ? (payAmount / totalAmount) * 100 : 0;
+
+//     const formatDate = (dateString: string) => {
+//         const parts = dateString.split('-');
+//         return `${getMounthName(parseInt(parts[1])-1)} ${parts[2]}, ${parts[0]}`;
+//     };
+
+//     const formatAmount = (amount: number) => {
+//         const isNegative = amount < 0;
+//         const absAmount = Math.abs(amount);
+//         return {
+//             value: numberToString(absAmount),
+//             isNegative,
+//             color: isNegative ? 'rgb(239, 68, 68)' : 'rgb(16, 185, 129)',
+//         };
+//     };
+
+//     const CardContent = () => (
+//         <View style={{ gap: 8 }}>
+//             {/* Header Section */}
+//             <View style={{
+//                 flexDirection: 'row',
+//                 justifyContent: 'space-between',
+//                 alignItems: 'flex-start',
+//                 marginBottom: 4,
+//             }}>
+//                 <View style={{ flex: 1 }}>
+//                     <TextTheme style={{
+//                         fontSize: 18,
+//                         fontWeight: '700',
+//                         marginBottom: 2,
+//                     }}>
+//                         {formatDate(createOn)}
+//                     </TextTheme>
+//                     <TextTheme style={{
+//                         fontSize: 14,
+//                         opacity: 0.7,
+//                         fontWeight: '500',
+//                     }}>
+//                         {billNo}
+//                     </TextTheme>
+//                 </View>
+
+//                 <View style={{ alignItems: 'flex-end' }}>
+//                     <Text style={{
+//                         fontWeight: '800',
+//                         fontSize: 20,
+//                         color: formatAmount(payAmount).color,
+//                     }}>
+//                         {formatAmount(payAmount).value} {currency}
+//                     </Text>
+//                     <TextTheme style={{
+//                         fontSize: 12,
+//                         opacity: 0.6,
+//                         fontWeight: '500',
+//                     }}>
+//                         Amount Paid
+//                     </TextTheme>
+//                 </View>
+//             </View>
+
+//             {/* Progress Bar */}
+//             <View style={{
+//                 height: 4,
+//                 backgroundColor: 'rgba(156, 163, 175, 0.2)',
+//                 borderRadius: 2,
+//                 overflow: 'hidden',
+//                 marginVertical: 4,
+//             }}>
+//                 <View style={{
+//                     height: '100%',
+//                     width: `${Math.min(completionPercentage, 100)}%`,
+//                     backgroundColor: statusColors.bg,
+//                     borderRadius: 2,
+//                 }} />
+//             </View>
+
+//             {/* Main Content */}
+//             <BackgroundThemeView style={{
+//                 padding: 16,
+//                 borderRadius: 12,
+//                 elevation: 2,
+//                 shadowColor: '#000',
+//                 shadowOffset: { width: 0, height: 2 },
+//                 shadowOpacity: 0.1,
+//                 shadowRadius: 4,
+//             }}>
+//                 {/* Customer and Status Row */}
+//                 <View style={{
+//                     flexDirection: 'row',
+//                     justifyContent: 'space-between',
+//                     alignItems: 'center',
+//                     marginBottom: 12,
+//                 }}>
+//                     <View style={{ flex: 1 }}>
+//                         <TextTheme style={{
+//                             fontSize: 16,
+//                             fontWeight: '700',
+//                             marginBottom: 2,
+//                         }}>
+//                             {customerName}
+//                         </TextTheme>
+//                         <TextTheme style={{
+//                             fontSize: 14,
+//                             opacity: 0.7,
+//                             fontWeight: '500',
+//                         }}>
+//                             {type}
+//                         </TextTheme>
+//                     </View>
+
+//                     <View style={{
+//                         backgroundColor: statusColors.bg,
+//                         paddingHorizontal: 12,
+//                         paddingVertical: 6,
+//                         borderRadius: 16,
+//                         position: 'relative',
+//                         minWidth: 80,
+//                         alignItems: 'center',
+//                     }}>
+//                         <Text style={{
+//                             color: statusColors.text,
+//                             fontWeight: '700',
+//                             fontSize: 12,
+//                             textTransform: 'uppercase',
+//                         }}>
+//                             {status}
+//                         </Text>
+
+//                         <ShowWhen when={status === 'pending'}>
+//                             <View style={{
+//                                 position: 'absolute',
+//                                 top: -2,
+//                                 right: -2,
+//                                 width: 16,
+//                                 height: 16,
+//                                 borderRadius: 8,
+//                                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
+//                                 alignItems: 'center',
+//                                 justifyContent: 'center',
+//                             }}>
+//                                 <AnimatePingBall size={8} backgroundColor="rgb(245, 158, 11)" />
+//                             </View>
+//                         </ShowWhen>
+//                     </View>
+
+//                     <AnimateButton
+//                         style={{
+//                             padding: 10,
+//                             borderRadius: 20,
+//                             marginLeft: 8,
+//                             backgroundColor: 'rgba(156, 163, 175, 0.1)',
+//                         }}
+//                         onPress={onPrint}
+//                     >
+//                         <FeatherIcon name="printer" size={18} />
+//                     </AnimateButton>
+                    
+//                     <ShowWhen when={pendingAmount < 0}>
+//                         <TouchableOpacity
+//                             onPress={onPayment}
+//                             style={{
+//                                 backgroundColor: 'rgb(59, 130, 246)',
+//                                 paddingHorizontal: 16,
+//                                 paddingVertical: 8,
+//                                 borderRadius: 20,
+//                                 flexDirection: 'row',
+//                                 alignItems: 'center',
+//                                 gap: 6,
+//                                 marginLeft: 8,
+//                             }}
+//                         >
+//                             <MaterialDesignIcon name="credit-card-plus-outline" size={14} color="white" />
+//                         </TouchableOpacity>
+//                     </ShowWhen>
+//                 </View>
+
+//                 {/* Financial Information */}
+//                 <View style={{
+//                     flexDirection: 'row',
+//                     justifyContent: 'space-between',
+//                     alignItems: 'center',
+//                     backgroundColor: 'rgba(156, 163, 175, 0.05)',
+//                     borderRadius: 8,
+//                     padding: 12,
+//                 }}>
+//                     <View style={{ flex: 1 }}>
+//                         <TextTheme style={{
+//                             fontSize: 12,
+//                             fontWeight: '600',
+//                             opacity: 0.7,
+//                             marginBottom: 2,
+//                         }}>
+//                             Total Amount
+//                         </TextTheme>
+//                         <Text style={{
+//                             fontSize: 16,
+//                             fontWeight: '700',
+//                             color: formatAmount(totalAmount).color,
+//                         }}>
+//                             {formatAmount(totalAmount).value} {currency}
+//                         </Text>
+//                     </View>
+
+//                     <View style={{ flex: 1, alignItems: 'center' }}>
+//                         <TextTheme style={{
+//                             fontSize: 12,
+//                             fontWeight: '600',
+//                             opacity: 0.7,
+//                             marginBottom: 2,
+//                         }}>
+//                             Pending
+//                         </TextTheme>
+//                         <Text style={{
+//                             fontSize: 16,
+//                             fontWeight: '700',
+//                             color: pendingAmount > 0 ? 'rgb(245, 158, 11)' : 'rgb(16, 185, 129)',
+//                         }}>
+//                             {numberToString(pendingAmount)} {currency}
+//                         </Text>
+//                     </View>
+
+//                     <View style={{ flex: 1, alignItems: 'flex-end' }}>
+//                         <TextTheme style={{
+//                             fontSize: 12,
+//                             fontWeight: '600',
+//                             opacity: 0.7,
+//                             marginBottom: 2,
+//                         }}>
+//                             Completion
+//                         </TextTheme>
+//                         <Text style={{
+//                             fontSize: 16,
+//                             fontWeight: '700',
+//                             color: completionPercentage === 100 ? 'rgb(16, 185, 129)' : 'rgb(245, 158, 11)',
+//                         }}>
+//                             {Math.round(completionPercentage)}%
+//                         </Text>
+//                     </View>
+//                 </View>
+
+//                 {/* Action Buttons */}
+//                 <View style={{
+//                     flexDirection: 'row',
+//                     justifyContent: 'space-between',
+//                     alignItems: 'center',
+//                     gap: 8,
+//                 }}>
+//                     <ShowWhen when={pendingAmount < 0}>
+//                         <TouchableOpacity
+//                             onPress={onPayment}
+//                             style={{
+//                                 backgroundColor: 'rgb(59, 130, 246)',
+//                                 paddingHorizontal: 16,
+//                                 paddingVertical: 8,
+//                                 borderRadius: 20,
+//                                 flexDirection: 'row',
+//                                 alignItems: 'center',
+//                                 gap: 6,
+//                                 flex: 1,
+//                             }}
+//                         >
+//                             <FeatherIcon name="credit-card" size={14} color="white" />
+//                             <Text style={{
+//                                 color: 'white',
+//                                 fontWeight: '600',
+//                                 fontSize: 12,
+//                             }}>
+//                                 Add Payment
+//                             </Text>
+//                         </TouchableOpacity>
+//                     </ShowWhen>
+//                 </View>
+//             </BackgroundThemeView>
+//         </View>
+//     );
+
+//     if (onPress) {
+//         return (
+//             <Pressable
+//                 onPress={onPress}
+//                 style={({ pressed }) => [
+//                     {
+//                         opacity: pressed ? 0.95 : 1,
+//                         transform: [{ scale: pressed ? 0.98 : 1 }],
+//                     },
+//                 ]}
+//             >
+//                 <CardContent />
+//             </Pressable>
+//         );
+//     }
+
+//     return <CardContent />;
+// }
 
 // import { View } from 'react-native';
 // import TextTheme from '../Text/TextTheme';
@@ -435,3 +560,7 @@ export default function BillCard({
 //         </View >
 //     );
 // }
+
+
+
+

@@ -14,14 +14,15 @@ type Props = {
     style?: ViewStyle,
     containerStyle?: ViewStyle,
     labelColor?: string,
-    labelContainerChildren?: React.JSX.Element
+    labelContainerChildren?: React.JSX.Element,
+    labelMargin?: number
 }
 
-export default function SectionView({label, children, style, containerStyle, labelColor, labelContainerChildren}: Props): React.JSX.Element {
+export default function SectionView({label, children, style, containerStyle, labelColor, labelContainerChildren, labelMargin=12}: Props): React.JSX.Element {
 
     return (
         <View style={containerStyle}>
-            <View style={{flexDirection: 'row', alignItems: 'center', width: '100%', marginBottom: 12}} >
+            <View style={{flexDirection: 'row', alignItems: 'center', width: '100%', marginBottom: labelMargin}} >
                 <TextTheme isPrimary={false} style={{paddingLeft: 4, fontWeight: '900', fontSize: 20}} color={labelColor} >
                     {label}
                 </TextTheme>

@@ -11,10 +11,11 @@ import SettingScreen from "../Screens/SettingScreen";
 import NotificationScreen from "../Screens/NotificationScreen";
 import CustomerInfoScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen/CustomerInfoScreen";
 import CraeteBillScreen from "../Screens/TabNavigationScreens/BillScreens/CreateBillScreen/CreateBillScreen";
-import CompanyProfileScreen from "../Screens/CompanyScreens/CompanyProfileScreen";
+import CompanyProfileScreen from "../Screens/CompanyScreens/ComplanyProfile/CompanyProfileScreen";
 import { NavigationRef } from "./NavigationService";
 import ProductInfoScreen from "../Screens/TabNavigationScreens/ProductScreens/ProductInfoScreen/ProductInfoScreen";
 import { ComponentProps, ElementType } from "react";
+import BillInfoScreen from "../Screens/TabNavigationScreens/BillScreens/BillInfoScreen/BillInfoScreen";
 
 export type StackParamsList = {
     'splash-screen': undefined,
@@ -30,6 +31,7 @@ export type StackParamsList = {
     'customer-info-screen': {customerId: string}
 
     'create-bill-screen': {billType: string, id: string}
+    'bill-info-screen': undefined
 }
 
 const Stack = createStackNavigator<StackParamsList>();
@@ -82,6 +84,10 @@ export default function StackNavigation(): React.JSX.Element {
 
                 <Stack.Screen name="create-bill-screen" 
                     component={withSafeView(CraeteBillScreen)} 
+                />
+
+                <Stack.Screen name="bill-info-screen" 
+                    component={withSafeView(BillInfoScreen)} 
                 />
 
                 <Stack.Screen name="splash-screen" 

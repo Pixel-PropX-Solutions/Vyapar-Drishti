@@ -14,11 +14,17 @@ import EmptyListView from '../../../Components/View/EmptyListView';
 import CustomerTypeSelectorModal from '../../../Components/Modal/Customer/CustomerTypeSelectorModal';
 import { GetUserLedgers } from '../../../Utils/types';
 import navigator from '../../../Navigation/NavigationService';
+import { useNavigation } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { BottomTabParamsList } from '../../../Navigation/BottomTabNavigation';
 
 
 export default function CustomerScreen(): React.JSX.Element {
+
+    const navigation = useNavigation<BottomTabNavigationProp<BottomTabParamsList, 'customer-screen'>>()
+
     const dispatch = useAppDispatch();
-    const { customers, isAllCustomerFetching } = useCustomerStore();
+    const { customers, isAllCustomerFetching, pageMeta } = useCustomerStore();
     const { company } = useCompanyStore();
 
     const [filterCustomers, setFilterCustomers] = useState<GetUserLedgers[]>([]);
@@ -26,14 +32,33 @@ export default function CustomerScreen(): React.JSX.Element {
     const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
     const [isCustomerTypeSelectorModalOpen, setCustomerTypeSelectorModalOpen] = useState<boolean>(false);
 
+     function handleCustomerFetching() {
+        if (isAllCustomerFetching) return;
+        if (pageMeta.total <= pageMeta.page * pageMeta.limit) return;
+
+        dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1 }));
+    }
+
+
     useEffect(() => {
         dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
     }, [company?._id, dispatch, isCustomerTypeSelectorModalOpen]);
 
     useEffect(() => {
-        setFilterCustomers(() => customers.filter((ledger) => ledger.parent !== 'Sales Account' && ledger.parent !== 'Purchase Account'
+        setFilterCustomers(() => (
+            customers.filter((ledger) => (
+                ledger.parent !== 'Sales Account' && ledger.parent !== 'Purchase Account'
+            ))
         ));
     }, [customers]);
+
+    useEffect(() => {
+        const event = navigation.addListener('focus', () => {
+            dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
+        });
+
+        return event
+    }, [])
 
     return (
         <View style={{ width: '100%', height: '100%' }} >
@@ -57,9 +82,26 @@ export default function CustomerScreen(): React.JSX.Element {
                     );
                 }}
                 ListFooterComponent={<ShowWhen when={isAllCustomerFetching} >
-                    <CustomerLoadingView />
-                    <CustomerLoadingView />
+                    {
+                        Array.from({
+                            length: Math.min(2, pageMeta.total - (customers?.length ?? 0)) + 1}, 
+                            (_, i) => i
+                        ).map(item => (
+                            <CustomerLoadingView key={item} />
+                        ))
+                    }
                 </ShowWhen>}
+
+                onScroll={({ nativeEvent }) => {
+                    let { contentOffset, layoutMeasurement, contentSize } = nativeEvent;
+                    let contentOffsetY = contentOffset.y;
+                    let totalHeight = contentSize.height;
+                    let height = layoutMeasurement.height;
+
+                    if (totalHeight - height < contentOffsetY + 400) {
+                        handleCustomerFetching();
+                    }
+                }}
             />
 
             <View style={{ position: 'absolute', right: 20, bottom: 20 }} >
