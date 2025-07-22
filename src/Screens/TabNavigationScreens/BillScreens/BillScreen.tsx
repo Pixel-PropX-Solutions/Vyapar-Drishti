@@ -29,6 +29,7 @@ import Share from 'react-native-share';
 import RNPrint from 'react-native-print';
 import LoadingModal from '../../../Components/Modal/LoadingModal';
 import { useTheme } from '../../../Contexts/ThemeProvider';
+import PDFRenderer from '../../../Components/View/PDFRenderer';
 
 
 const dummyBillsType: { name: string; icon: string; color: string; description: string, id: string }[] = [
@@ -54,7 +55,11 @@ export default function BillScreen(): React.JSX.Element {
     const [isFilterVisible, setIsFilterVisible] = useState<boolean>(false);
     const [html, setHtml] = useState<boolean>(false);
     const [invoiceId, setInvoiceId] = useState<string>('');
-    const [htmlFromAPI, setHtmlFromAPI] = useState<string>('');
+    const [htmlFromAPI, setHtmlFromAPI] = useState<Array<{ html: string, page_number: number }>>([]);
+    const [fullHtml, setFullHtml] = useState<string>('');
+    const [pageNumber, setPageNumber] = useState(1);
+    const [downloadHtml, setDownloadHtml] = useState<string>('');
+    // const [customerName, setCustomerName] = useState<string>('');
     const [isGenerating, setIsGenerating] = useState(false);
     // const { width, height } = useWindowDimensions();
 
@@ -84,10 +89,10 @@ export default function BillScreen(): React.JSX.Element {
     }
 
     function handleRefresh() {
-        if(refreshing) return;
+        if (refreshing) return;
         setRefreshing(true);
         dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1 }))
-            .then(res => {setRefreshing(false)})
+            .then(res => { setRefreshing(false) })
             .finally(() => setRefreshing(false));
     }
 
@@ -116,10 +121,17 @@ export default function BillScreen(): React.JSX.Element {
                 company_id: company?._id || '',
             })).then((response) => {
                 if (response.meta.requestStatus === 'fulfilled') {
-                    console.log('Print Invoice Response:', response.payload);
-                    const payload = response.payload as { invoceHtml: string };
-                    setHtmlFromAPI(payload.invoceHtml);
+                    const payload = response.payload as { paginated_data: Array<{ html: string, page_number: number }>, complete_data: string, download_data: string };
+                    console.log('Print Invoice Response:', payload);
+                    const paginated_html = payload.paginated_data;
+                    const fullHtml2 = payload.complete_data;
+                    const download_html = payload.download_data;
+
+                    setHtmlFromAPI(paginated_html);
+                    setDownloadHtml(download_html);
                     setInvoiceId(invoice.voucher_number);
+                    // setCustomerName(invoice?.party_name);
+                    setFullHtml(fullHtml2);
                     setHtml(true);
                 } else {
                     console.error('Failed to print invoice:', response.payload);
@@ -139,14 +151,14 @@ export default function BillScreen(): React.JSX.Element {
             return { blob: new Blob(), filePath: '' }; // Return an empty Blob or handle accordingly
         }
 
-        if (!htmlFromAPI) {
+        if (!downloadHtml) {
             console.warn('No HTML content available for PDF generation');
             return { blob: new Blob(), filePath: '' }; // Return an empty Blob or handle accordingly
         }
 
         try {
             let options = {
-                html: htmlFromAPI,
+                html: downloadHtml,
                 fileName: `${invoiceId}-vyapar-drishti.pdf`,
                 directory: 'Download',
             };
@@ -210,7 +222,7 @@ export default function BillScreen(): React.JSX.Element {
             return;
         }
 
-        if (!htmlFromAPI) {
+        if (!fullHtml) {
             console.warn('No HTML content available for PDF generation');
             return;
         }
@@ -231,7 +243,7 @@ export default function BillScreen(): React.JSX.Element {
                     </style>
                 </head>
                 <body>
-                    ${htmlFromAPI}
+                    ${fullHtml}
                 </body>
             </html>`;
             await RNPrint.print({
@@ -254,7 +266,7 @@ export default function BillScreen(): React.JSX.Element {
             return; // Return an empty Blob or handle accordingly
         }
 
-        if (!htmlFromAPI) {
+        if (!downloadHtml) {
             console.warn('No HTML content available for PDF generation');
             return; // Return an empty Blob or handle accordingly
         }
@@ -525,7 +537,7 @@ export default function BillScreen(): React.JSX.Element {
             <BottomModal
                 visible={html}
                 setVisible={setHtml}
-                style={{ paddingHorizontal: 20, paddingBottom: 40, height: '100%' }}
+                style={{ paddingHorizontal: 20, paddingBottom: 30, height: '100%' }}
                 actionButtons={[
                     {
                         key: 'download',
@@ -563,21 +575,30 @@ export default function BillScreen(): React.JSX.Element {
                 </View>
 
                 <View style={{ flex: 1 }}>
-                    <WebView
-                        originWhitelist={['*']}
-                        source={{ html: htmlFromAPI }}
-                        style={{ flex: 1 }}
-                        scalesPageToFit={false}
-                        javaScriptEnabled={true}
-                        domStorageEnabled={true}
-                        startInLoadingState={true}
-                        bounces={false}
-                        overScrollMode="never"
-                        scrollEnabled={true}
-                        nestedScrollEnabled={true}
-                        automaticallyAdjustContentInsets={true}
+                    <PDFRenderer
+                        htmlString={htmlFromAPI.find(page => page.page_number === pageNumber)?.html ?? ''}
                     />
+                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', columnGap: 12, marginTop: 12 }}>
+                        <AnimateButton
+                            onPress={() => { setPageNumber(prev => Math.max(prev - 1, 1)); }}
+                            disabled={pageNumber <= 1}
+                            style={{ width: 30, height: 30, display: 'flex', borderColor: primaryColor, alignItems: 'center', justifyContent: 'center', borderRadius: 50, borderWidth: 1 }}
+                        >
+                            <FeatherIcon name="arrow-left" size={20} />
+                        </AnimateButton>
+                        <TextTheme style={{ textAlign: 'center', fontSize: 12, marginTop: 4, opacity: 0.7 }}>
+                            Page {pageNumber} of {htmlFromAPI?.length}
+                        </TextTheme>
+                        <AnimateButton
+                            onPress={() => { setPageNumber(prev => Math.min(prev + 1, htmlFromAPI.length)); }}
+                            disabled={pageNumber >= htmlFromAPI.length}
+                            style={{ width: 30, height: 30, display: 'flex', borderColor: primaryColor, alignItems: 'center', justifyContent: 'center', borderRadius: 50, borderWidth: 1 }}
+                        >
+                            <FeatherIcon name="arrow-right" size={20} />
+                        </AnimateButton>
+                    </View>
                 </View>
+
             </BottomModal>
             <LoadingModal visible={isGenerating} />
         </View>

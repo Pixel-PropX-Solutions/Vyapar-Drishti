@@ -19,7 +19,7 @@ import { sliceString } from '../../../../Utils/functionTools';
 import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
 import EmptyListView from '../../../../Components/View/EmptyListView';
 import { CreateInvoiceData } from '../../../../Utils/types';
-import { useAppDispatch, useCompanyStore, useInvoiceStore } from '../../../../Store/ReduxStore';
+import { useAppDispatch, useCompanyStore, useInvoiceStore, useUserStore } from '../../../../Store/ReduxStore';
 import { createInvoice, viewAllInvoices } from '../../../../Services/invoice';
 import navigator from '../../../../Navigation/NavigationService';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
@@ -44,11 +44,14 @@ function Screen(): React.JSX.Element {
     const { currency } = useAppStorage();
     const { company } = useCompanyStore();
     const { loading } = useInvoiceStore();
+    const { user } = useUserStore();
+    const currentCompanyDetails = user?.company?.find((c: any) => c._id === user?.user_settings?.current_company_id);
+    const gst_enable: boolean = currentCompanyDetails?.features?.gst_enable;
     const { secondaryBackgroundColor } = useTheme();
     const { billNo, setBillNo, createOn, setCreateOn, customer, products, totalValue, resetAllStates, setProducts } = useCreateBillContext();
     const navigation = useNavigation<StackNavigationProp<StackParamsList, 'create-bill-screen'>>();
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
-    
+
     const { billType, id: billId } = router.params;
 
 
@@ -197,23 +200,23 @@ function Screen(): React.JSX.Element {
                     />
 
                     <SectionRowWithIcon
-                        icon={<FeatherIcon name='user' size={20} />}
+                        icon={<FeatherIcon name="user" size={20} />}
                         label={customer?.name || 'Select Customer'}
-                        text={!!customer ? customer?.group ?? 'No Group' : 'Tab to select a customer'}
-                        backgroundColor={!!customer ? 'rgba(60,180,120, 0.5)' : ''}
+                        text={customer ? customer?.group ?? 'No Group' : 'Tab to select a customer'}
+                        backgroundColor={customer ? 'rgba(60,180,120, 0.5)' : ''}
                         hasArrow={true}
-                        arrowIcon={<FeatherIcon name='chevron-right' size={20} />}
-                        onPress={() => { setCustomerModalVisible(true) }}
+                        arrowIcon={<FeatherIcon name="chevron-right" size={20} />}
+                        onPress={() => { setCustomerModalVisible(true); }}
                     />
 
                     <SectionRowWithIcon
-                        icon={<FeatherIcon name='package' size={20} />}
-                        label='Add Items'
+                        icon={<FeatherIcon name="package" size={20} />}
+                        label="Add Items"
                         text={products.length > 0 ? `${products.length} items added, tap to add more items` : 'Tap to add items'}
                         hasArrow={true}
-                        arrowIcon={<FeatherIcon name='chevron-right' size={20} />}
+                        arrowIcon={<FeatherIcon name="chevron-right" size={20} />}
                         backgroundColor={products.length > 0 ? 'rgba(60,180,120, 0.5)' : ''}
-                        onPress={() => { setProductModalVisible(true) }}
+                        onPress={() => { setProductModalVisible(true); }}
                     />
                 </View>
 
@@ -229,7 +232,7 @@ function Screen(): React.JSX.Element {
                     data={products}
                     keyExtractor={(item, index) => item.id + index}
                     renderItem={({ item }) => (
-                        <SectionRow onPress={() => { setProductEditModalVisible(true) }} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12, position: 'relative' }} >
+                        <SectionRow onPress={() => { setProductEditModalVisible(true); }} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12, position: 'relative' }} >
                             <View>
                                 <TextTheme style={{ fontWeight: '700', fontSize: 16 }}>
                                     {sliceString(item.name, 34)}
@@ -410,7 +413,7 @@ const AmountBox = ({ handleCreateInvoice, isFormValid, isCreating }: {
             style={{ padding: 20, borderTopLeftRadius: 24, borderTopRightRadius: 24, shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.1, shadowRadius: 12, elevation: 10, gap: 12, borderColor: 'gray', borderWidth: 2, borderBottomWidth: 0 }}
         >
 
-            <SectionRow style={{ justifyContent: "space-between" }} >
+            <SectionRow style={{ justifyContent: 'space-between' }} >
                 <View>
                     <TextTheme style={{ fontSize: 12, fontWeight: 900 }} >
                         Total Bill
@@ -426,7 +429,7 @@ const AmountBox = ({ handleCreateInvoice, isFormValid, isCreating }: {
                         <TextTheme style={{ fontWeight: 900, fontSize: 20 }} >
                             {products.length}
                         </TextTheme>
-                        <FeatherIcon name='package' size={20} />
+                        <FeatherIcon name="package" size={20} />
                     </View>
 
                     <TextTheme style={{ fontSize: 12, fontWeight: 900 }} >
@@ -436,13 +439,13 @@ const AmountBox = ({ handleCreateInvoice, isFormValid, isCreating }: {
             </SectionRow>
 
             <NormalButton
-                text='Create Bill'
+                text="Create Bill"
                 isPrimary={true}
-                color='white'
-                backgroundColor='rgb(50,200,150)'
+                color="white"
+                backgroundColor="rgb(50,200,150)"
                 textStyle={{ fontWeight: 900 }}
                 isLoading={isCreating}
-                onLoadingText='Creating...'
+                onLoadingText="Creating..."
                 onPress={handleCreateInvoice}
             />
 
@@ -589,7 +592,7 @@ function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }: {
             ...prev,
             [field]: value,
         }));
-    }
+    };
 
     function handleSave() {
         setVisible(false);
@@ -602,7 +605,7 @@ function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }: {
 
     useEffect(() => {
         _setInfo(products[editProductIndex]);
-    }, [products, editProductIndex])
+    }, [products, editProductIndex]);
 
     if (products.length === 0 || editProductIndex < 0 || editProductIndex >= products.length) {
         return <></>;
@@ -653,5 +656,5 @@ function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }: {
                 </AnimateButton>
             </View>
         </BottomModal>
-    )
+    );
 }
