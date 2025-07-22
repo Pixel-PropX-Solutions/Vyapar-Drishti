@@ -50,7 +50,7 @@ export default function CustomerSelectorModal({ visible, setVisible, billType }:
     }, [company?._id, dispatch, isCreateCustomerModalOpen]);
 
     useEffect(() => {
-        setFilterCustomers(() => customers.filter((ledger) => ledger.parent !== 'Sales Account' && ledger.parent !== 'Purchase Account'
+        setFilterCustomers(() => customers.filter((ledger) => ledger.parent === 'Creditors' || ledger.parent === 'Debtors'
         ));
     }, [customers]);
 

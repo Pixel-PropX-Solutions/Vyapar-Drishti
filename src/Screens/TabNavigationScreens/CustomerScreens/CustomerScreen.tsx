@@ -45,10 +45,7 @@ export default function CustomerScreen(): React.JSX.Element {
     }, [company?._id, dispatch, isCustomerTypeSelectorModalOpen]);
 
     useEffect(() => {
-        setFilterCustomers(() => (
-            customers.filter((ledger) => (
-                ledger.parent !== 'Sales Account' && ledger.parent !== 'Purchase Account'
-            ))
+        setFilterCustomers(() => customers.filter((ledger) => ledger.parent === 'Creditors' || ledger.parent === 'Debtors'
         ));
     }, [customers]);
 
@@ -77,7 +74,7 @@ export default function CustomerScreen(): React.JSX.Element {
                             name={item.ledger_name}
                             groupName={item.parent}
                             createOn={item.created_at}
-                            onPress={() => {navigator.navigate('customer-info-screen', {customerId: item._id});}}
+                            onPress={() => { navigator.navigate('customer-info-screen', { customerId: item._id }); }}
                         />
                     );
                 }}

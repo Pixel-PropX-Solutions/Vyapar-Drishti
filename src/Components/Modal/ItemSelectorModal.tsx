@@ -6,7 +6,7 @@ import FeatherIcon from "../Icon/FeatherIcon";
 import ShowWhen from "../Other/ShowWhen";
 import BottomModal, { BottomModalActionButton } from "./BottomModal";
 import { useTheme } from "../../Contexts/ThemeProvider";
-import { Dispatch, ReactNode, SetStateAction, useRef, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from "react";
 
 type Props<item> = {
     title: string
@@ -24,9 +24,9 @@ type Props<item> = {
     renderItemStyle?: ViewStyle,
 }
 
-export function ItemSelectorModal<item>({visible, setVisible, onSelect, allItems, title, keyExtractor, filter, SelectedItemContent, renderItemContent, actionButtons, selected=null, renderItemStyle, closeOnSelect=true}: Props<item>) : React.JSX.Element {
+export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItems, title, keyExtractor, filter, SelectedItemContent, renderItemContent, actionButtons, selected = null, renderItemStyle, closeOnSelect = true }: Props<item>): React.JSX.Element {
 
-    const {primaryColor} = useTheme();
+    const { primaryColor } = useTheme();
 
     const [data, setData] = useState<item[]>(allItems);
     const timeoutId = useRef<NodeJS.Timeout>(undefined);
@@ -34,7 +34,7 @@ export function ItemSelectorModal<item>({visible, setVisible, onSelect, allItems
     function handleDataFilter(inputValue: string): void {
         inputValue = inputValue.trim().toLowerCase();
         clearTimeout(timeoutId.current);
-        if(!inputValue){ 
+        if (!inputValue) {
             setData(allItems);
             return;
         }
@@ -44,24 +44,28 @@ export function ItemSelectorModal<item>({visible, setVisible, onSelect, allItems
         }, 250);
     }
 
+    useEffect(() => {
+        setData(allItems);
+    }, [allItems]);
+
     return (
         <BottomModal
             visible={visible} setVisible={setVisible}
-            style={{paddingInline: 20, gap: 20}}
+            style={{ paddingInline: 20, gap: 20 }}
             actionButtons={actionButtons}
             topMargin={0}
         >
-            <TextTheme style={{fontSize: 20, fontWeight: 900}} >
+            <TextTheme style={{ fontSize: 20, fontWeight: 900 }} >
                 {title}
             </TextTheme>
 
             <ShowWhen when={selected !== null} >
-                <View style={{width: "100%", padding: 16, borderRadius: 16, backgroundColor: 'rgba(150, 50, 250, 1)', flexDirection: "row", justifyContent: 'space-between', alignItems: 'center'}} >
+                <View style={{ width: "100%", padding: 16, borderRadius: 16, backgroundColor: 'rgba(150, 50, 250, 1)', flexDirection: "row", justifyContent: 'space-between', alignItems: 'center' }} >
                     {SelectedItemContent}
 
-                    <View style={{flexDirection: 'row', gap: 8, alignItems: 'center'}} >
+                    <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }} >
                         <FeatherIcon name="check" size={20} color="white" />
-                        <TextTheme color="white" style={{fontWeight: 900}} >Selected</TextTheme>
+                        <TextTheme color="white" style={{ fontWeight: 900 }} >Selected</TextTheme>
                     </View>
                 </View>
             </ShowWhen>
@@ -80,22 +84,22 @@ export function ItemSelectorModal<item>({visible, setVisible, onSelect, allItems
 
             <FlatList
                 keyboardShouldPersistTaps='always'
-                contentContainerStyle={{gap: 10}}
+                contentContainerStyle={{ gap: 10 }}
                 data={data}
-                
+
                 keyExtractor={(item, index) => (
                     keyExtractor(item) + index.toString()
                 )}
 
-                renderItem={({item}) => (
+                renderItem={({ item }) => (
                     <SectionRow
-                        style={{justifyContent: 'space-between', ...renderItemStyle}} 
+                        style={{ justifyContent: 'space-between', ...renderItemStyle }}
                         onPress={() => {
-                            if(closeOnSelect) 
+                            if (closeOnSelect)
                                 setVisible(false)
-                            
+
                             setData(allItems)
-                            if(onSelect) onSelect(item)
+                            if (onSelect) onSelect(item)
                         }}
                     >
                         {renderItemContent(item)}

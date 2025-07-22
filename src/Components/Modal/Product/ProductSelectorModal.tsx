@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 import AnimateButton from '../../Button/AnimateButton';
 import TextTheme from '../../Text/TextTheme';
@@ -7,10 +7,10 @@ import NoralTextInput from '../../TextInput/NoralTextInput';
 import BottomModal from '../BottomModal';
 import ProductCard, { ProductLoadingCard } from '../../Card/ProductCard';
 import { FlatList } from 'react-native-gesture-handler';
-import { useAppDispatch, useCompanyStore, useProductStore } from '../../../Store/ReduxStore';
+import { useAppDispatch, useCompanyStore, useProductStore, useUserStore } from '../../../Store/ReduxStore';
 import ShowWhen from '../../Other/ShowWhen';
 import { useEffect, useState } from 'react';
-import { viewAllProducts } from '../../../Services/product';
+import { viewAllProducts, viewProductsWithId } from '../../../Services/product';
 import { useAlert } from '../../Alert/AlertProvider';
 import { useCreateBillContext } from '../../../Screens/TabNavigationScreens/BillScreens/CreateBillScreen/ContextProvider';
 import { GetProduct } from '../../../Utils/types';
@@ -19,6 +19,7 @@ import CreateProductModal from './CreateProductModal';
 import { InputField } from '../../TextInput/InputField';
 import MaterialIcon from '../../Icon/MaterialIcon';
 import FeatherIcon from '../../Icon/FeatherIcon';
+import sliceString from '../../../Utils/sliceString';
 
 type Props = {
     visible: boolean;
@@ -30,17 +31,19 @@ export default function ProductSelectorModal({ visible, setVisible, billType }: 
 
     const { setAlert } = useAlert();
 
-    const { primaryColor } = useTheme();
+    const { primaryColor, secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
     const { company } = useCompanyStore();
     const { products, setProducts } = useCreateBillContext();
-    const { productsData, isProductsFetching, pageMeta } = useProductStore();
-
+    const { isProductsFetching, pageMeta } = useProductStore();
+    const { user } = useUserStore();
+    const currentCompanyDetails = user?.company?.find((c: any) => c._id === user?.user_settings?.current_company_id);
+    const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
     const dispatch = useAppDispatch();
 
     const [isUnitModalVisible, setUnitModalVisible] = useState<boolean>(false);
     const [isCreateModalOpen, setCreateModalOpen] = useState<boolean>(false);
+    const [itemsList, setItemsList] = useState<{ id: string; name: string; unit: string, gst: string, hsn_code: string }[]>([]);
 
-    const [filterProducts, setFilterProducts] = useState<GetProduct[]>([]);
     const [data, setData] = useState({
         quantity: '',
         price: '',
@@ -91,14 +94,24 @@ export default function ProductSelectorModal({ visible, setVisible, billType }: 
     }
 
     useEffect(() => {
-        dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: 1 }));
-    }, [company?._id, dispatch, isCreateModalOpen]);
-
-    useEffect(() => {
-        setFilterProducts(() => (
-            productsData?.filter(a => !products.some(b => b.id === a._id))
-        ) ?? []);
-    }, [productsData, products, billType]);
+        dispatch(viewProductsWithId(user?.user_settings?.current_company_id || '')).then((response) => {
+            if (response.meta.requestStatus === 'fulfilled') {
+                const products = response.payload;
+                setItemsList(
+                    products.map((product: any) => ({
+                        name: product.stock_item_name,
+                        id: product._id,
+                        unit: product.unit,
+                        gst: product.rate,
+                        hsn_code: product.hsn_code || ''
+                    }))
+                );
+            }
+            return response;
+        }).catch((error) => {
+            Alert.alert(error || 'Failed to fetch products');
+        });
+    }, [dispatch, isCreateModalOpen, user?.user_settings?.current_company_id]);
 
     return (
         <BottomModal
@@ -129,28 +142,30 @@ export default function ProductSelectorModal({ visible, setVisible, billType }: 
             <FlatList
                 ListEmptyComponent={<EmptyListView type="product" />}
                 contentContainerStyle={{ gap: 20, paddingBottom: 80, paddingTop: 12 }}
-                data={filterProducts}
-                keyExtractor={(item) => item._id}
+                data={itemsList}
+                keyExtractor={(item) => item.id}
                 keyboardShouldPersistTaps="always"
 
                 renderItem={({ item }) => (
-                    <ProductCard
-                        unit={item.unit}
-                        isPrimary={false}
-                        sellQuantity={item.sales_qty}
-                        productName={item.stock_item_name}
-                        productsNo={item.gst_hsn_code ?? ''}
-                        inStock={item.purchase_qty - item.sales_qty}
-                        lowStockQuantity={item.low_stock_alert ?? 0}
-                        profitValue={item.purchase_value - item.sales_value}
+                    <AnimateButton
+                        style={{ padding: 16, borderRadius: 16, display: 'flex', alignItems: 'flex-start', gap: 16, backgroundColor: secondaryBackgroundColor }}
                         onPress={() => {
                             setUnitModalVisible(true);
-                            handleInputChange('productId', item._id);
+                            handleInputChange('productId', item.id);
                             handleInputChange('unit', item.unit);
-                            handleInputChange('name', item.stock_item_name);
-                            handleInputChange('productNo', item.gst_hsn_code ?? '');
+                            handleInputChange('name', item.name);
+                            handleInputChange('productNo', item.hsn_code ?? '');
                         }}
-                    />
+                    >
+                        <View style={{ width: '100%' }} >
+                            <TextTheme style={{ paddingLeft: 2, fontWeight: 600, fontSize: 16 }} >{sliceString(item.name, 30)}</TextTheme>
+
+                            {item.hsn_code && <TextTheme isPrimary={false} style={{ paddingLeft: 2, fontWeight: 600, fontSize: 12 }} >{item.hsn_code}</TextTheme>}
+                        </View>
+                        {gst_enable && <View style={{ width: '100%' }} >
+                            <TextTheme isPrimary={false} style={{ paddingLeft: 2, fontWeight: 600, fontSize: 12 }} >GST {item.gst} %</TextTheme>
+                        </View>}
+                    </AnimateButton>
                 )}
 
                 ListFooterComponentStyle={{ gap: 20 }}

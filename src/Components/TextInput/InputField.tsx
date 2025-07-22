@@ -5,6 +5,8 @@ import NoralTextInput from './NoralTextInput';
 import { useTheme } from '../../Contexts/ThemeProvider';
 import Popover from '../Other/Popover';
 import FeatherIcon from '../Icon/FeatherIcon';
+import AnimateButton from '../Button/AnimateButton';
+import TextTheme from '../Text/TextTheme';
 // import Popover from '../../Other/Popover';
 
 
@@ -19,8 +21,10 @@ export const InputField = ({
     multiline = false,
     autoFocus = false,
     editable = true,
+    secondaryButton = false,
     borderWidth = 1,
     handleChange,
+    secondaryButtonAction,
     error,
     // required = false,
 }: {
@@ -34,8 +38,10 @@ export const InputField = ({
     borderWidth?: number;
     multiline?: boolean,
     autoFocus?: boolean,
-    editable?: boolean
-    handleChange: (field: string, value: string | boolean | number) => void
+    editable?: boolean,
+    secondaryButton?: boolean,
+    handleChange: (field: string, value: string | boolean | number) => void;
+    secondaryButtonAction?: () => void;
     error?: string,
     // required?: boolean,
 }) => {
@@ -82,6 +88,24 @@ export const InputField = ({
                     style={{ padding: 4, borderRadius: 8, paddingHorizontal: 12 }}
                     icon={<FeatherIcon name="info" size={20} color={error ? '#ff4444' : ""} />}
                 />}
+
+                {secondaryButton && <AnimateButton
+                    style={{
+                        paddingHorizontal: 16,
+                        paddingVertical: 8,
+                        borderRadius: 8,
+                        borderWidth: 1,
+                        alignItems: 'center',
+                        minWidth: 80,
+                        backgroundColor: 'rgb(50,200,150)',
+                        borderColor: 'black',
+                    }}
+                    onPress={secondaryButtonAction}
+                >
+                    <TextTheme style={{ fontSize: 14, fontWeight: '500' }}>
+                        Fetch Details
+                    </TextTheme>
+                </AnimateButton>}
             </View>
             {
                 error && (
