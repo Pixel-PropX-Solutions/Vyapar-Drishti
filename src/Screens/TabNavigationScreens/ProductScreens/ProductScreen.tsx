@@ -127,7 +127,7 @@ function SummaryCard({ highStock, lowStock }: SummaryCardProps): React.JSX.Eleme
                     <FeatherIcon name="package" size={20} color="white" />
                     {`  ${highStock}`}
                 </Text>
-                <Text style={{ fontSize: 12, color: 'white' }}>-(ve) Stock</Text>
+                <Text style={{ fontSize: 12, color: 'white' }}>-Ve Stock</Text>
             </AnimateButton>
 
             <AnimateButton style={{ paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(228, 205, 0)' }}>
@@ -143,7 +143,7 @@ function SummaryCard({ highStock, lowStock }: SummaryCardProps): React.JSX.Eleme
                     <FeatherIcon name="package" size={20} color="white" />
                     {`  ${highStock}`}
                 </Text>
-                <Text style={{ fontSize: 12, color: 'white' }}>+(ve) Stock</Text>
+                <Text style={{ fontSize: 12, color: 'white' }}>+Ve Stock</Text>
             </AnimateButton>
         </View>
     );

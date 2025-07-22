@@ -61,9 +61,12 @@ export default function BillScreen(): React.JSX.Element {
     const [html, setHtml] = useState<boolean>(false);
     const [invoiceId, setInvoiceId] = useState<string>('');
     const [htmlFromAPI, setHtmlFromAPI] = useState<Array<{ html: string, page_number: number }>>([]);
-    const [fullHtml, setFullHtml] = useState<string>('');
     const [pageNumber, setPageNumber] = useState(1);
-    const [downloadHtml, setDownloadHtml] = useState<string>('');
+
+    const invoiceInfo = useRef<{invoiceId: string, downloadHtml: string, fullHtml: string}>({
+        invoiceId: '', downloadHtml: '', fullHtml: ''
+    });
+
     // const [customerName, setCustomerName] = useState<string>('');
     const [isGenerating, setIsGenerating] = useState(false);
     // const { width, height } = useWindowDimensions();
@@ -118,8 +121,10 @@ export default function BillScreen(): React.JSX.Element {
         return filtered.filter((invoice) => invoice.voucher_type === 'Sales' || invoice.voucher_type === 'Purchase');
     }
 
-    const handlePrintInvoice = (invoice: GetAllVouchars) => {
+    const handleInvoice = (invoice: GetAllVouchars, callback: () => void) => {
         console.log('Print Invoice', invoice);
+        
+        setIsGenerating(true);
         if (invoice.voucher_type === 'Sales' || invoice.voucher_type === 'Purchase') {
             dispatch(printInvoices({
                 vouchar_id: invoice._id,
@@ -133,11 +138,14 @@ export default function BillScreen(): React.JSX.Element {
                     const download_html = payload.download_data;
 
                     setHtmlFromAPI(paginated_html);
-                    setDownloadHtml(download_html);
                     setInvoiceId(invoice.voucher_number);
+
+                    invoiceInfo.current = {invoiceId: invoice.voucher_number, downloadHtml: download_html, fullHtml: fullHtml2};
+
                     // setCustomerName(invoice?.party_name);
-                    setFullHtml(fullHtml2);
-                    setHtml(true);
+
+                    if(callback) callback();
+                    // setHtml(true);
                 } else {
                     console.error('Failed to print invoice:', response.payload);
                 }
@@ -145,26 +153,28 @@ export default function BillScreen(): React.JSX.Element {
             ).catch((error) => {
                 console.error('Error printing invoice:', error);
             }
-            );
+            ).finally(()=>{
+                setIsGenerating(false);
+            })
 
         }
     };
 
     const generatePDF = async (): Promise<{ blob: Blob, filePath: string }> => {
-        if (!invoiceId) {
+        if (!invoiceInfo.current.invoiceId) {
             console.warn('No invoice ID provided for PDF generation');
             return { blob: new Blob(), filePath: '' }; // Return an empty Blob or handle accordingly
         }
 
-        if (!downloadHtml) {
+        if (!invoiceInfo.current.downloadHtml) {
             console.warn('No HTML content available for PDF generation');
             return { blob: new Blob(), filePath: '' }; // Return an empty Blob or handle accordingly
         }
 
         try {
             let options = {
-                html: downloadHtml,
-                fileName: `${invoiceId}-vyapar-drishti.pdf`,
+                html: invoiceInfo.current.downloadHtml,
+                fileName: `${invoiceInfo.current.invoiceId}-vyapar-drishti.pdf`,
                 directory: 'Download',
             };
 
@@ -227,7 +237,7 @@ export default function BillScreen(): React.JSX.Element {
             return;
         }
 
-        if (!fullHtml) {
+        if (!invoiceInfo.current.fullHtml) {
             console.warn('No HTML content available for PDF generation');
             return;
         }
@@ -248,7 +258,7 @@ export default function BillScreen(): React.JSX.Element {
                     </style>
                 </head>
                 <body>
-                    ${fullHtml}
+                    ${invoiceInfo.current.fullHtml}
                 </body>
             </html>`;
             await RNPrint.print({
@@ -266,12 +276,12 @@ export default function BillScreen(): React.JSX.Element {
 
     const handleShare = async () => {
 
-        if (!invoiceId) {
+        if (!invoiceInfo.current.invoiceId) {
             console.warn('No invoice ID provided for PDF generation');
             return; // Return an empty Blob or handle accordingly
         }
 
-        if (!downloadHtml) {
+        if (!invoiceInfo.current.downloadHtml) {
             console.warn('No HTML content available for PDF generation');
             return; // Return an empty Blob or handle accordingly
         }
@@ -436,7 +446,8 @@ export default function BillScreen(): React.JSX.Element {
                                 totalAmount={item.amount}
                                 payAmount={item.amount}
                                 pendingAmount={0}
-                                onPrint={() => handlePrintInvoice(item)}
+                                onPrint={() => {handleInvoice(item, () => setHtml(true))}}
+                                onShare={() => {handleInvoice(item, handleShare)}}  
                             />
                         </Animated.View>
                     )}
@@ -555,7 +566,7 @@ export default function BillScreen(): React.JSX.Element {
             <BottomModal
                 visible={html}
                 setVisible={setHtml}
-                style={{ paddingHorizontal: 20, paddingBottom: 30, height: '100%' }}
+                style={{ paddingHorizontal: 4, paddingBottom: 30, height: '100%' }}
                 actionButtons={[
                     {
                         key: 'download',

@@ -19,13 +19,14 @@ export type BillCardProps = {
     billNo: string,
     customerName: string,
     onPress?: () => void,
+    onShare?: () => void,
     onPrint?: () => void,
     onPayment?: () => void,
     isPrimary?: boolean
 }
 
 
-export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, billNo, customerName, pendingAmount = 0, type, onPress, onPrint, onPayment, isPrimary=true }: BillCardProps) {
+export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, billNo, customerName, pendingAmount = 0, type, onPress, onShare, onPrint, onPayment, isPrimary=true }: BillCardProps) {
 
     const { currency } = useAppStorage();
     
@@ -39,82 +40,84 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
     };
 
     return (
-        <AnimateButton 
-            style={{borderRadius: 10, overflow: 'hidden'}} 
-            onPress={onPress} 
-        >
-            <BackgroundThemeView isPrimary={isPrimary} style={{padding: 10, gap: 8, paddingLeft: 14}}>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <View>
-                        <TextTheme style={{fontSize: 14, fontWeight: 800}}>{customerName}</TextTheme>
-                        <TextTheme isPrimary={isPrimary} style={{fontSize: 12, fontWeight: 800}}>{type}</TextTheme>
-                    </View>
+        <BackgroundThemeView isPrimary={isPrimary} style={{borderRadius: 10, overflow: 'hidden'}} >
+            <AnimateButton onPress={onPress} >
+                <View style={{width: 4, height: '100%', backgroundColor: `rgb(${rgb})`, position: 'absolute', left: 0, top: 0}} />
+                <View style={{width: '100%', height: '100%', backgroundColor: `rgba(${rgb},0.1)`, position: 'absolute', left: 0, top: 0}} />
 
-                    <View style={{flexDirection: 'row', gap: 8}} >
-                        <BackgroundThemeView 
-                            isPrimary={!isPrimary} 
-                            backgroundColor={`rgb(${rgb})`}
-                            style={{flexDirection: 'row', alignItems: 'center', gap: 6, paddingLeft: 8, borderRadius: 40, paddingBlock: 6, paddingRight: 12}} 
+                <View style={{padding: 10, gap: 8, paddingLeft: 14}} >
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                        <View>
+                            <TextTheme style={{fontSize: 14, fontWeight: 800}}>{customerName}</TextTheme>
+                            <TextTheme isPrimary={isPrimary} style={{fontSize: 12, fontWeight: 800}}>{type}</TextTheme>
+                        </View>
+
+                        <View style={{flexDirection: 'row', gap: 8}} >
+                            <ShowWhen when={status === 'pending' || type.toLowerCase() === 'sales'} >
+                                <BackgroundThemeView 
+                                    isPrimary={!isPrimary} 
+                                    backgroundColor={`rgb(${rgb})`}
+                                    style={{flexDirection: 'row', alignItems: 'center', gap: 6, paddingLeft: 8, borderRadius: 40, paddingBlock: 6, paddingRight: 12}} 
+                                    
+                                >
+                                    <FeatherIcon name={status === 'paid'? 'check-circle' : 'clock'} size={16} />
+                                    <TextTheme style={{fontSize: 14, fontWeight: 900}} >
+                                        {status === 'paid' ? 'Paid' : 'Pending'}
+                                    </TextTheme>
+                                </BackgroundThemeView>
+                            </ShowWhen>
+
+                            <AnimateButton onPress={onPrint} style={{borderRadius: 50}} >
+                                <BackgroundThemeView isPrimary={!isPrimary} style={{alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 32}}  >
+                                    <FeatherIcon name='printer' size={16} />
+                                </BackgroundThemeView>
+                            </AnimateButton>
                             
-                        >
-                            <FeatherIcon name={status === 'paid'? 'check-circle' : 'clock'} size={16} />
-                            <TextTheme style={{fontSize: 14, fontWeight: 900}} >
-                                {status === 'paid' ? 'Paid' : 'Due'}
-                            </TextTheme>
-                        </BackgroundThemeView>
+                            <AnimateButton onPress={onShare} style={{borderRadius: 50}} >
+                                <BackgroundThemeView isPrimary={!isPrimary} style={{alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 32}}  >
+                                    <FeatherIcon name='share-2' size={16} />
+                                </BackgroundThemeView>
+                            </AnimateButton>
+        
+                        </View>
+                    </View>
 
-                        <AnimateButton onPress={onPrint} style={{borderRadius: 50}} >
-                            <BackgroundThemeView isPrimary={!isPrimary} style={{alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 32}}  >
-                                <FeatherIcon name='printer' size={16} />
-                            </BackgroundThemeView>
-                        </AnimateButton>
-                        
-                        <AnimateButton style={{borderRadius: 50}} >
-                            <BackgroundThemeView isPrimary={!isPrimary} style={{alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 32}}  >
-                                <FeatherIcon name='share-2' size={16} />
-                            </BackgroundThemeView>
-                        </AnimateButton>
-                    </View>
-                </View>
-
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} >
-                    <View>
-                        <TextTheme isPrimary={false} style={{fontSize: 10}} >{billNo}</TextTheme>
-                        <TextTheme isPrimary={false} style={{fontSize: 12}} >{formatDate(createOn)}</TextTheme>
-                    </View>
-                    
-                    <View style={{alignItems: 'flex-end'}} >
-                        <TextTheme isPrimary={false} style={{fontSize: 10, fontWeight: 500}}>Total Amount</TextTheme>
-                        <TextTheme style={{fontSize: 18, fontWeight: 900}} >
-                            {Math.abs(totalAmount).toFixed(2)} {currency}
-                        </TextTheme>
-                    </View>
-                </View>
-                
-                <ShowWhen when={status === 'pending'} >
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} >
                         <View>
-                            <TextTheme style={{fontSize: 18, fontWeight: 900}} >
-                                {Math.abs(pendingAmount).toFixed(2)} {currency}
-                            </TextTheme>
-                            <TextTheme isPrimary={false} style={{fontSize: 10, fontWeight: 500}}>Due Amount</TextTheme>
+                            <TextTheme isPrimary={false} style={{fontSize: 10}} >{billNo}</TextTheme>
+                            <TextTheme isPrimary={false} style={{fontSize: 12}} >{formatDate(createOn)}</TextTheme>
                         </View>
                         
-                        <AnimateButton 
-                            style={{flexDirection: 'row', alignItems: 'center', gap: 6, paddingInline: 12, borderRadius: 8, paddingBlock: 6, backgroundColor: 'rgb(50,120,200)'}}
-                            onPress={onPayment}      
-                        >
-                            <TextTheme style={{fontSize: 14, fontWeight: 900}} >
-                                Pay due amount
+                        <View style={{alignItems: 'flex-end'}} >
+                            <TextTheme isPrimary={false} style={{fontSize: 10, fontWeight: 500}}>Total Amount</TextTheme>
+                            <TextTheme style={{fontSize: 18, fontWeight: 900}} >
+                                {Math.abs(totalAmount).toFixed(2)} {currency}
                             </TextTheme>
-                        </AnimateButton>
+                        </View>
                     </View>
-                </ShowWhen>
-            </BackgroundThemeView>
-
-            <View style={{width: 4, height: '100%', backgroundColor: `rgb(${rgb})`, position: 'absolute', left: 0, top: 0}} />
-            <View style={{width: '100%', height: '100%', backgroundColor: `rgba(${rgb},0.1)`, position: 'absolute', left: 0, top: 0}} />
-        </AnimateButton>
+                    
+                    <ShowWhen when={status === 'pending'} >
+                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} >
+                            <View>
+                                <TextTheme style={{fontSize: 18, fontWeight: 900}} >
+                                    {Math.abs(pendingAmount).toFixed(2)} {currency}
+                                </TextTheme>
+                                <TextTheme isPrimary={false} style={{fontSize: 10, fontWeight: 500}}>Due Amount</TextTheme>
+                            </View>
+                            
+                            <AnimateButton 
+                                style={{flexDirection: 'row', alignItems: 'center', gap: 6, paddingInline: 12, borderRadius: 8, paddingBlock: 6, backgroundColor: 'rgb(50,120,200)'}}
+                                onPress={onPayment}      
+                            >
+                                <TextTheme style={{fontSize: 14, fontWeight: 900}} >
+                                    Pay pending amount
+                                </TextTheme>
+                            </AnimateButton>
+                        </View>
+                    </ShowWhen>
+                </View>
+            </AnimateButton>
+        </BackgroundThemeView>
     )
 }
 
