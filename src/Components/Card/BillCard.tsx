@@ -9,6 +9,7 @@ import AnimateButton from '../Button/AnimateButton';
 import FeatherIcon from '../Icon/FeatherIcon';
 import { useAppStorage } from '../../Contexts/AppStorageProvider';
 import LoadingView from '../View/LoadingView';
+import { sliceString } from '../../Utils/functionTools';
 
 export type BillCardProps = {
     createOn: string,
@@ -48,7 +49,9 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                 <View style={{padding: 10, gap: 8, paddingLeft: 14}} >
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                         <View>
-                            <TextTheme style={{fontSize: 14, fontWeight: 800}}>{customerName}</TextTheme>
+                            <TextTheme style={{fontSize: 14, fontWeight: 800}}>
+                                {sliceString(customerName, (status === 'pending' || type.toLowerCase() === 'sales') ? 20 : 30)}
+                            </TextTheme>
                             <TextTheme isPrimary={isPrimary} style={{fontSize: 12, fontWeight: 800}}>{type}</TextTheme>
                         </View>
 

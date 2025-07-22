@@ -28,6 +28,7 @@ import NormalButton from '../../../../Components/Button/NormalButton';
 import BottomModal from '../../../../Components/Modal/BottomModal';
 import { InputField } from '../../../../Components/TextInput/InputField';
 import { viewAllProducts } from '../../../../Services/product';
+import DateSelectorModal from '../../../../Components/Modal/DateSelectorModal';
 
 
 export default function CraeteBillScreen() {
@@ -194,10 +195,7 @@ function Screen(): React.JSX.Element {
                     <TextTheme style={{ fontSize: 18, fontWeight: '700' }}>
                         Bill Information
                     </TextTheme>
-                    <BillNoAndDateSelector
-                        billNo={billNo} setBillNo={setBillNo}
-                        createOn={createOn} setCreateOn={setCreateOn}
-                    />
+                    <BillNoAndDateSelector/>
 
                     <SectionRowWithIcon
                         icon={<FeatherIcon name="user" size={20} />}
@@ -317,16 +315,13 @@ function Screen(): React.JSX.Element {
     );
 }
 
-type BillNoAndDateSelectorProps = {
-    billNo: string,
-    setBillNo: Dispatch<SetStateAction<string>>,
-    createOn: string
-    setCreateOn: Dispatch<SetStateAction<string>>
-}
 
-function BillNoAndDateSelector({ billNo, setBillNo, createOn, setCreateOn }: BillNoAndDateSelectorProps): React.JSX.Element {
+function BillNoAndDateSelector(): React.JSX.Element {
 
     const { secondaryBackgroundColor } = useTheme();
+    const {createOn, setCreateOn, billNo} = useCreateBillContext();
+
+    const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
     return (
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 16 }} >
@@ -362,16 +357,13 @@ function BillNoAndDateSelector({ billNo, setBillNo, createOn, setCreateOn }: Bil
                 </View>
             </AnimateButton>
 
-            <AnimateButton style={{
-                padding: 8,
-                borderRadius: 16,
-                flex: 1,
-                flexDirection: 'row',
-                borderColor: secondaryBackgroundColor,
-                gap: 12,
-                alignItems: 'center',
-                backgroundColor: createOn ? 'rgba(60, 180, 120, 0.5)' : secondaryBackgroundColor,
-            }}>
+            <AnimateButton 
+                style={{
+                    padding: 8, borderRadius: 16, flex: 1, flexDirection: 'row', borderColor: secondaryBackgroundColor, gap: 12, alignItems: 'center',
+                    backgroundColor: createOn ? 'rgba(60, 180, 120, 0.5)' : secondaryBackgroundColor,
+                }}
+                onPress={() => {setModalVisible(true)}}
+            >
                 <BackgroundThemeView
                     style={{
                         width: 40,
@@ -393,6 +385,18 @@ function BillNoAndDateSelector({ billNo, setBillNo, createOn, setCreateOn }: Bil
                     </TextTheme>
                 </View>
             </AnimateButton>
+
+            <DateSelectorModal
+                visible={isModalVisible} setVisible={setModalVisible}
+                value={(() => {
+                    const [date, month, year] = createOn.split('/').map(Number);
+                    return {date, month: month - 1, year}
+                })()}
+                
+                onSelect={({year, month, date}) => {
+                    setCreateOn(`${date}/${(month + 1).toString().padStart(2, '0')}/${year}`)
+                }}
+            />
         </View>
     );
 }

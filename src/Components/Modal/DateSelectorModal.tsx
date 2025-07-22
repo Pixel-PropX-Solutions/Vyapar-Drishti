@@ -1,10 +1,9 @@
-import { Dispatch, memo, ReactNode, SetStateAction, useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { Modal, ModalProps, Pressable, View } from "react-native";
 import BackgroundThemeView from "../View/BackgroundThemeView";
 import TextTheme from "../Text/TextTheme";
 import AnimateButton from "../Button/AnimateButton";
 import NormalButton from "../Button/NormalButton";
-import DateSelector from "../Other/DateSelector";
 import FeatherIcon from "../Icon/FeatherIcon";
 import { useTheme } from "../../Contexts/ThemeProvider";
 import { ItemSelectorModal } from "./ItemSelectorModal";
@@ -14,18 +13,19 @@ type Props = ModalProps & {
     setVisible: Dispatch<SetStateAction<boolean>>,
     closeOnBack?: boolean
     onClose?: () => void,
-    onSelect: (ddmmyy: {year: number, month: number, date: number}) => void
+    onSelect: (ddmmyy: {year: number, month: number, date: number}) => void,
+    value?: {year: number, month: number, date: number}
 }
 
 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-export default function DateSelectorModal({visible, setVisible, onClose, closeOnBack=true, onSelect, ...props}: Props): React.JSX.Element {
+export default function DateSelectorModal({visible, setVisible, onClose, closeOnBack=true, onSelect, value, ...props}: Props): React.JSX.Element {
     
     const {primaryColor} = useTheme();
 
-    const [date, setDate] = useState(new Date().getDate());
-    const [month, setMonth] = useState(new Date().getMonth());
-    const [year, setYear] = useState(new Date().getFullYear());
+    const [date, setDate] = useState(value?.date ?? new Date().getDate());
+    const [month, setMonth] = useState(value?.month ?? new Date().getMonth());
+    const [year, setYear] = useState(value?.year ?? new Date().getFullYear());
 
     const [isYearModalVisible, setYearModalVisible] = useState<boolean>(false);
 
@@ -39,6 +39,14 @@ export default function DateSelectorModal({visible, setVisible, onClose, closeOn
         setYear(nextYear)
     }
 
+    useEffect(() => {
+        if(visible) return;
+
+        setDate(value?.date ?? new Date().getDate());
+        setMonth(value?.month ?? new Date().getMonth());
+        setYear(value?.year ?? new Date().getFullYear());
+
+    }, [visible])
    
     return (
         <Modal
@@ -49,6 +57,8 @@ export default function DateSelectorModal({visible, setVisible, onClose, closeOn
             backdropColor={'rgba(0,0,0,0.5)'}
         >
             <View style={{width: '100%', height: '100%', padding: 20, alignItems: 'center', justifyContent: 'center'}} >
+                <AnimateButton style={{flex: 1, width: '100%'}} onPress={() => {setVisible(!closeOnBack)}} />
+
                 <BackgroundThemeView isPrimary={false} style={{padding: 12, borderRadius: 10, width: '100%', gap: 12}} >
 
                     <TextTheme>Select Date</TextTheme>
@@ -71,7 +81,7 @@ export default function DateSelectorModal({visible, setVisible, onClose, closeOn
                         </AnimateButton>
                     </View>
 
-                    <DisplayCalender month={month} year={year} onSelect={(date) => setDate(date)} />
+                    <DisplayCalender date={date} month={month} year={year} onSelect={(date) => setDate(date)} />
 
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 12}} >
                         <NormalButton 
@@ -81,10 +91,14 @@ export default function DateSelectorModal({visible, setVisible, onClose, closeOn
                         />
                         <NormalButton 
                             text="Select" textStyle={{fontWeight: 900, fontSize: 14}} 
-                            onPress={() => {onSelect({year, month, date})}}    
+                            onPress={() => {
+                                onSelect({year, month, date}); setVisible(false)
+                            }}    
                         />
                     </View>
                 </BackgroundThemeView>
+
+                <AnimateButton style={{flex: 1, width: '100%'}} onPress={() => {setVisible(!closeOnBack)}} />
             </View>
 
             <YearSelectorModal
@@ -99,11 +113,11 @@ export default function DateSelectorModal({visible, setVisible, onClose, closeOn
 
 
 type DisplayCalenderProps = {
-    month: number, year: number,
+    date: number, month: number, year: number,
     onSelect?: (date: number) => void
 }
 
-function DisplayCalender({month, year, onSelect}: DisplayCalenderProps): React.JSX.Element {
+function DisplayCalender({date, month, year, onSelect}: DisplayCalenderProps): React.JSX.Element {
 
     const calenderMat = useMemo(() => {
         const calendar: number[][] = [];
@@ -130,7 +144,7 @@ function DisplayCalender({month, year, onSelect}: DisplayCalenderProps): React.J
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
 
-    const [selected, setSelected] = useState<number>(currentDate);
+    const [selected, setSelected] = useState<number>(date ?? currentDate);
 
     function handleSelect(date: number) {
         if(date !== 0) {
