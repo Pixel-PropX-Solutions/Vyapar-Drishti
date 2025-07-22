@@ -1,18 +1,17 @@
 import { ScrollView } from "react-native-gesture-handler";
-import TextTheme from "../../Components/Text/TextTheme";
-import StackNavigationHeader from "../../Components/Header/StackNavigationHeader";
+import TextTheme from "../../../Components/Text/TextTheme";
+import StackNavigationHeader from "../../../Components/Header/StackNavigationHeader";
 import { Text, View } from "react-native";
-import SectionView, { SectionRow } from "../../Components/View/SectionView";
-import FeatherIcon from "../../Components/Icon/FeatherIcon";
-import LogoImage from "../../Components/Image/LogoImage";
-import NormalButton from "../../Components/Button/NormalButton";
-import { useCompanyStore } from "../../Store/ReduxStore";
-import DeleteModal from "../../Components/Modal/DeleteModal";
+import SectionView, { SectionRow } from "../../../Components/View/SectionView";
+import FeatherIcon from "../../../Components/Icon/FeatherIcon";
+import LogoImage from "../../../Components/Image/LogoImage";
+import NormalButton from "../../../Components/Button/NormalButton";
+import { useCompanyStore } from "../../../Store/ReduxStore";
+import DeleteModal from "../../../Components/Modal/DeleteModal";
 import { useState } from "react";
-import AnimateButton from "../../Components/Button/AnimateButton";
-import { CompanyAddressUpdateModal, CompanyContactUpdateModal, CompanyInfoUpdateModal } from "./Modals";
-import sliceString from "../../Utils/sliceString";
-import EditButton from "../../Components/Button/EditButton";
+import { BankInfoUpdateModal, CompanyAddressUpdateModal, CompanyContactUpdateModal, CompanyInfoUpdateModal, TaxInfoUpdateModal } from "./Modals";
+import sliceString from "../../../Utils/sliceString";
+import EditButton from "../../../Components/Button/EditButton";
 
 export default function CompanyProfileScreen(): React.JSX.Element {
 
@@ -22,6 +21,8 @@ export default function CompanyProfileScreen(): React.JSX.Element {
     const [isInfoUpdateModalVisible, setInfoUdpateModalVisible] = useState<boolean>(false);
     const [isContactUpdateModalVisible, setContactUdpateModalVisible] = useState<boolean>(false);
     const [isAddressUpdateModalVisible, setAddressUdpateModalVisible] = useState<boolean>(false);
+    const [isBackInfoModalVisible, setBankInfoModalVisible] = useState<boolean>(false);
+    const [isTaxInfoModalVisible, setTaxInfoModalVisible] = useState<boolean>(false);
 
     return (
         <View style={{ width: '100%', height: '100%' }}>
@@ -33,6 +34,7 @@ export default function CompanyProfileScreen(): React.JSX.Element {
                     <LogoImage size={100} borderRadius={100} imageSrc={company?.image} />
                     <TextTheme style={{ fontSize: 22, fontWeight: 'bold' }} >{company?.name}</TextTheme>
                     <TextTheme isPrimary={false} style={{ fontSize: 16 }} >{company?.email}</TextTheme>
+                    <TextTheme isPrimary={false} style={{ fontSize: 12 }} >GST {'XXXX-XXXX-XXXX'}</TextTheme>
                 </View>
 
                 <SectionView
@@ -73,7 +75,7 @@ export default function CompanyProfileScreen(): React.JSX.Element {
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
                             <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                                {sliceString(company?.email, 35) ?? 'Not Set'}
+                                {sliceString(company?.email, 25) ?? 'Not Set'}
                             </TextTheme>
                             <FeatherIcon isPrimary={false} name="mail" size={16} />
                         </View>
@@ -84,7 +86,7 @@ export default function CompanyProfileScreen(): React.JSX.Element {
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
                             <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                                + {company?.phone?.code} {company?.phone?.number ?? 'Not Set'}
+                                {company?.phone.code.includes('+') ? null : '+'} {company?.phone?.code} {company?.phone?.number ?? 'Not Set'}
                             </TextTheme>
                             <FeatherIcon isPrimary={false} name="phone" size={16} />
                         </View>
@@ -95,7 +97,7 @@ export default function CompanyProfileScreen(): React.JSX.Element {
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
                             <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                                {sliceString(company?.mailing_name, 34) ?? 'Not Set'}
+                                {sliceString(company?.mailing_name, 25) ?? 'Not Set'}
                             </TextTheme>
                         </View>
                     </SectionRow>
@@ -129,7 +131,7 @@ export default function CompanyProfileScreen(): React.JSX.Element {
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
                             <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                                {sliceString(company?.address_1, 35) ?? 'Not Set'}
+                                {sliceString(company?.address_1, 24) ?? 'Not Set'}
                             </TextTheme>
                             <FeatherIcon isPrimary={false} name="home" size={16} />
                         </View>
@@ -144,6 +146,71 @@ export default function CompanyProfileScreen(): React.JSX.Element {
                             </TextTheme>
                             <FeatherIcon isPrimary={false} name="map-pin" size={16} />
                         </View>
+                    </SectionRow>
+                </SectionView>
+
+                <SectionView
+                    style={{ gap: 8 }} label="Tax Information"
+                    labelContainerChildren={
+                        <EditButton onPress={() => { setTaxInfoModalVisible(true) }} />
+                    }
+                >
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >GSTIN Number</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >PAN Number</TextTheme>
+
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+                </SectionView>
+
+                <SectionView
+                    label="Bank Details"
+                    style={{gap: 8}}
+                    labelContainerChildren={
+                        <EditButton onPress={() => { setBankInfoModalVisible(true) }} />
+                    }
+                >
+                    <SectionRow style={{justifyContent: 'space-between'}} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Account Holder Name</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+
+                    <SectionRow style={{justifyContent: 'space-between'}} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Account Number</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+
+                    <SectionRow style={{justifyContent: 'space-between'}} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Bank Name</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+
+                    <SectionRow style={{justifyContent: 'space-between'}} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >IFSC Code</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
+                    </SectionRow>
+
+                    <SectionRow style={{justifyContent: 'space-between'}} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Branch Name</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {'Not Set'}
+                        </TextTheme>
                     </SectionRow>
                 </SectionView>
 
@@ -179,6 +246,14 @@ export default function CompanyProfileScreen(): React.JSX.Element {
 
             <CompanyAddressUpdateModal
                 visible={isAddressUpdateModalVisible} setVisible={setAddressUdpateModalVisible}
+            />
+
+            <BankInfoUpdateModal
+                visible={isBackInfoModalVisible} setVisible={setBankInfoModalVisible}
+            />
+
+            <TaxInfoUpdateModal
+                visible={isTaxInfoModalVisible} setVisible={setTaxInfoModalVisible}
             />
         </View>
     )

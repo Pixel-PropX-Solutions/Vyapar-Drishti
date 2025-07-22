@@ -74,9 +74,13 @@ const customerSlice: Slice<CustomerState> = createSlice({
                 state.isAllCustomerFetching = true;
             })
             .addCase(viewAllCustomer.fulfilled, (state, action: PayloadAction<any>) => {
-                state.customers = action.payload.customers;
                 state.pageMeta = action.payload.pageMeta;
                 state.isAllCustomerFetching = false;
+                if(action.payload.pageMeta.page == 1){
+                    state.customers = action.payload.customers;
+                } else {
+                    state.customers = [...(state.customers ?? []), ...(action.payload.customers ?? [])];
+                }
             })
             .addCase(viewAllCustomer.rejected, (state, action) => {
                 state.error = action.payload as string;

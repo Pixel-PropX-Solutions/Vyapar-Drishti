@@ -18,7 +18,7 @@ import EmptyListView from '../../../Components/View/EmptyListView';
 import { useAppDispatch, useCompanyStore, useInvoiceStore } from '../../../Store/ReduxStore';
 import { printInvoices, viewAllInvoices } from '../../../Services/invoice';
 import { FlatList } from 'react-native-gesture-handler';
-import BillCard from '../../../Components/Card/BillCard';
+import BillCard, { BillLoadingCard } from '../../../Components/Card/BillCard';
 import ShowWhen from '../../../Components/Other/ShowWhen';
 import { ProductLoadingCard } from '../../../Components/Card/ProductCard';
 import { GetAllVouchars } from '../../../Utils/types';
@@ -30,6 +30,9 @@ import RNPrint from 'react-native-print';
 import LoadingModal from '../../../Components/Modal/LoadingModal';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 import PDFRenderer from '../../../Components/View/PDFRenderer';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { BottomTabParamsList } from '../../../Navigation/BottomTabNavigation';
+import navigator from '../../../Navigation/NavigationService';
 
 
 const dummyBillsType: { name: string; icon: string; color: string; description: string, id: string }[] = [
@@ -42,11 +45,13 @@ const dummyBillsType: { name: string; icon: string; color: string; description: 
 const billTypeFilters = ['All', 'Sales', 'Purchase', 'Payment', 'Receipt'];
 
 export default function BillScreen(): React.JSX.Element {
+    
+    const navigation = useNavigation<BottomTabNavigationProp<BottomTabParamsList, 'bill-screen'>>();
+
     const dispatch = useAppDispatch();
     const { invoices, isInvoiceFeaching, pageMeta } = useInvoiceStore();
     const { primaryColor, secondaryColor } = useTheme();
     const { company } = useCompanyStore();
-    const navigation = useNavigation<StackNavigationProp<StackParamsList, 'tab-navigation'>>();
 
     const [isBillTypeSelectorModalVisible, setBillTypeSelectorModalVisible] = useState<boolean>(false);
     const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -294,8 +299,16 @@ export default function BillScreen(): React.JSX.Element {
     useEffect(() => {
         dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1 }));
     }, [company?._id, dispatch, isBillTypeSelectorModalVisible]);
-
+    
     const filteredInvoices = getFilteredInvoices();
+    
+    useEffect(() => {
+        const event = navigation.addListener('focus', () => {
+            dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1 }));
+        });
+        
+        return event
+    }, [])
 
     return (
         <View style={{ width: '100%', height: '100%' }}>
@@ -430,9 +443,14 @@ export default function BillScreen(): React.JSX.Element {
                     ListFooterComponent={
                         <ShowWhen when={isInvoiceFeaching}>
                             <View style={{ gap: 12 }}>
-                                <ProductLoadingCard />
-                                <ProductLoadingCard />
-                                <ProductLoadingCard />
+                                 {
+                                    Array.from({
+                                        length: Math.min(2, pageMeta.total - (invoices?.length ?? 0)) + 1}, 
+                                        (_, i) => i
+                                    ).map(item => (
+                                        <BillLoadingCard key={item} />
+                                    ))
+                                }
                             </View>
                         </ShowWhen>
                     }
@@ -503,7 +521,7 @@ export default function BillScreen(): React.JSX.Element {
                                 borderColor: primaryColor,
                             }}
                             onPress={() => {
-                                navigation.navigate('create-bill-screen', { billType: billType.name, id: billType.id });
+                                navigator.navigate('create-bill-screen', { billType: billType.name, id: billType.id });
                                 setBillTypeSelectorModalVisible(false);
                             }}
                         >

@@ -7,8 +7,6 @@ import AnimateButton from '../../../Components/Button/AnimateButton';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 import FontAwesome6Icon from '../../../Components/Icon/FontAwesome6Icon';
 import HomeScreenHeader from '../../../Components/Header/HomeScreenHeader';
-import CreateCustomerModal from '../../../Components/Modal/Customer/CreateCustomerModal';
-import { useState } from 'react';
 import { BASE_WEB_URL, BASE_APP_URL } from '../../../../env';
 import navigator from '../../../Navigation/NavigationService';
 import { useAppStorage } from '../../../Contexts/AppStorageProvider';
@@ -17,14 +15,12 @@ export default function HomeScreen(): React.JSX.Element {
 
     const { currency } = useAppStorage();
 
-    const [isCustomerModalVisible, setCustomerModalVisible] = useState<boolean>(false);
-
     return (
         <View style={{ width: '100%', height: '100%' }} >
             <HomeScreenHeader />
 
-            <ScrollView style={{ marginTop: 12, width: '100%', height: '100%' }} contentContainerStyle={{ gap: 20 }}>
-                <View style={{ paddingInline: 20, gap: 32 }} >
+            <ScrollView style={{ marginTop: 12, width: '100%', height: '100%', paddingHorizontal: 20 }} contentContainerStyle={{ gap: 20 }}>
+                <View style={{gap: 32 }} >
                     <View style={{ gap: 12 }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >This Month</TextTheme>
                         <View style={{ flexDirection: 'row', gap: 12 }}>
@@ -48,14 +44,14 @@ export default function HomeScreen(): React.JSX.Element {
                                     label="Sells"
                                     text="Add new sells"
                                     icon={<FeatherIcon name="trending-up" size={16} />}
-                                    onPress={() => { navigator.navigate('create-bill-screen', { billType: 'Sells' }); }}
+                                    onPress={() => { navigator.navigate('create-bill-screen', { billType: 'Sells', id: '34e81b1d-5735-437a-a475-e27265eba005' }); }}
                                 />
 
                                 <QuickAccessBox
                                     label="Purchase"
                                     text="Add purchase"
                                     icon={<FontAwesome6Icon name="coins" size={16} />}
-                                    onPress={() => { navigator.navigate('create-bill-screen', { billType: 'Purchase' }); }}
+                                    onPress={() => { navigator.navigate('create-bill-screen', { billType: 'Purchase', id: 'fe9221db-5990-41a0-976a-3cb4f78aef0f' }); }}
                                 />
                             </View>
 
@@ -64,7 +60,7 @@ export default function HomeScreen(): React.JSX.Element {
                                     label="Customer"
                                     text="Add Customer"
                                     icon={<FeatherIcon name="users" size={16} />}
-                                    onPress={() => setCustomerModalVisible(true)}
+                                    onPress={() => {}}
                                 />
 
                                 <QuickAccessBox
@@ -83,15 +79,8 @@ export default function HomeScreen(): React.JSX.Element {
                         </View>
                     </View>
                 </View>
-
-                {/* <BackgroundThemeView isPrimary={false} style={{width: '100%', height: '100%', padding: 20, borderTopLeftRadius: 36, borderTopRightRadius: 36, marginTop: 24}} >
-                    <TextTheme style={{textAlign: 'center', fontSize: 16, marginBottom: 12, fontWeight: 900}} >Pending Bills</TextTheme>
-                    <DateSelector/>
-                    <View style={{minHeight: 80}} />
-                </BackgroundThemeView> */}
             </ScrollView>
 
-            <CreateCustomerModal visible={isCustomerModalVisible} setVisible={setCustomerModalVisible} />
         </View>
     );
 }

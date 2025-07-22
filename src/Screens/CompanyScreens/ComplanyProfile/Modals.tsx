@@ -1,17 +1,18 @@
-import { View } from "react-native";
-import BottomModal from "../../Components/Modal/BottomModal";
-import TextTheme from "../../Components/Text/TextTheme";
-import LabelTextInput from "../../Components/TextInput/LabelTextInput";
-import { useAppDispatch, useCompanyStore } from "../../Store/ReduxStore";
+import { ScrollView, View } from "react-native";
+import BottomModal from "../../../Components/Modal/BottomModal";
+import TextTheme from "../../../Components/Text/TextTheme";
+import LabelTextInput from "../../../Components/TextInput/LabelTextInput";
+import { useAppDispatch, useCompanyStore } from "../../../Store/ReduxStore";
 import { useRef, useState } from "react";
-import { getCompany, updateCompany } from "../../Services/company";
-import { useAlert } from "../../Components/Alert/AlertProvider";
-import arrayToFormData from "../../Utils/arrayToFormData";
-import { isValidEmail } from "../../Functions/StringOpations/pattenMaching";
-import LoadingModal from "../../Components/Modal/LoadingModal";
-import ShowWhen from "../../Components/Other/ShowWhen";
-import PhoneNoTextInput from "../../Components/TextInput/PhoneNoTextInput";
-import { PhoneNumber } from "../../Utils/types";
+import { getCompany, updateCompany } from "../../../Services/company";
+import { useAlert } from "../../../Components/Alert/AlertProvider";
+import arrayToFormData from "../../../Utils/arrayToFormData";
+import { isValidEmail } from "../../../Functions/StringOpations/pattenMaching";
+import LoadingModal from "../../../Components/Modal/LoadingModal";
+import ShowWhen from "../../../Components/Other/ShowWhen";
+import PhoneNoTextInput from "../../../Components/TextInput/PhoneNoTextInput";
+import { PhoneNumber } from "../../../Utils/types";
+import FeatherIcon from "../../../Components/Icon/FeatherIcon";
 
 type Props = {
     visible: boolean;
@@ -175,7 +176,7 @@ export function CompanyAddressUpdateModal({visible, setVisible}: Props): React.J
         if(!id) return console.error('company id was not found');
         const {code, number} = company.phone ?? {}
 
-        const data = arrayToFormData( Object.entries({
+        const data = arrayToFormData(Object.entries({
                 ...company, 
                 phone: '', number, code, pan_number: company?.pan,
                 country, state, address_1: address, pinCode
@@ -227,6 +228,153 @@ export function CompanyAddressUpdateModal({visible, setVisible}: Props): React.J
             <View style={{minHeight: 40}} />
             <ShowWhen when={visible} >
                 <LoadingModal visible={loading} text="Updating Wait..." />
+            </ShowWhen>
+        </BottomModal>
+    )
+}
+
+
+
+export function BankInfoUpdateModal({visible, setVisible}: Props): React.JSX.Element {
+
+    type Data = {holderName: string, accountNo: string, bankName: string, branchName: string}
+    const data = useRef<Data>({holderName: '', accountNo: '', bankName: '', branchName: ''})
+
+    function setData<Keys extends keyof Data>(key: Keys, val: Data[Keys]){
+        data.current = {...data.current, [key]: val}
+    }
+
+    function handleUpdate() {
+        console.log(data)
+    }
+
+    return (
+        <BottomModal 
+            visible={visible} setVisible={setVisible}
+            style={{paddingHorizontal: 20}} 
+            actionButtons={[{
+                title: 'Update', onPress: handleUpdate,
+                icon: <FeatherIcon name="save" size={20} />
+            }]}
+        >
+            <ScrollView showsVerticalScrollIndicator={false} >
+                <TextTheme style={{fontSize: 16, fontWeight: 800, marginBottom: 32}}>
+                    Update Bank Details
+                </TextTheme>
+
+                <View style={{gap: 24}} >
+                    <LabelTextInput 
+                        label="A/c Holder Name" 
+                        placeholder="Enter your mailing name" 
+                        icon={<FeatherIcon name="user" size={16} />}
+                        onChangeText={(val) => {setData('accountNo', val)}}
+                        useTrim={true}
+                        isRequired={true}
+                    />
+
+                    <LabelTextInput 
+                        label="A/c Number" 
+                        placeholder="123 Main St, Apt 2B" 
+                        icon={<FeatherIcon name="hash" size={16} />}
+                        onChangeText={(val) => {setData('accountNo', val)}}
+                        useTrim={true}  
+                        isRequired={true}       
+                        infoMassage="Street address for correspondence"
+                    />
+                    
+                    <LabelTextInput 
+                        label="Bank Name" 
+                        placeholder="Enter mailing country" 
+                        icon={<FeatherIcon name="credit-card" size={16} />}
+                        onChangeText={(val) => {setData('bankName', val)}}
+                        useTrim={true}  
+                        isRequired={true}
+                        infoMassage="Country of mailing address *( Required )"       
+                    />
+                    
+                    <LabelTextInput 
+                        label="IFFC Code" 
+                        placeholder="e.g. SBIN0001234" 
+                        icon={<FeatherIcon name="key" size={16} />}
+                        // onChangeText={(val) => {setData('')}}
+                        useTrim={true}  
+                        isRequired={true}     
+                        infoMassage="Country of mailing address *( Required )"  
+                    />
+                    
+                    <LabelTextInput 
+                        label="Branch Name" 
+                        placeholder="Main branch, Downtown" 
+                        icon={<FeatherIcon name="map-pin" size={16} />}
+                        // onChangeText={(val) => {branchName.current = val}}
+                        useTrim={true}  
+                        isRequired={true}
+                        infoMassage="Country of mailing address *( Required )"       
+                    />
+                </View>
+
+                <View style={{minHeight: 40}} />
+            </ScrollView>
+
+            <ShowWhen when={visible} >
+                <LoadingModal visible={false} text="Updating Wait..." />
+            </ShowWhen>
+        </BottomModal>
+    )
+}
+
+
+
+export function TaxInfoUpdateModal({visible, setVisible}: Props): React.JSX.Element {
+
+    const gstinNo = useRef<string>('');
+    const panNo = useRef<string>('');
+
+    function handleUpdate() {
+        console.log({gstinNo, panNo})
+    }
+
+    return (
+        <BottomModal 
+            visible={visible} setVisible={setVisible}
+            style={{paddingHorizontal: 20}} 
+            actionButtons={[{
+                title: 'Update', onPress: handleUpdate,
+                icon: <FeatherIcon name="save" size={20} />
+            }]}
+        >
+            <ScrollView showsVerticalScrollIndicator={false} >
+                <TextTheme style={{fontSize: 16, fontWeight: 800, marginBottom: 32}}>
+                    Update Tax Information
+                </TextTheme>
+
+                <View style={{gap: 24}} >
+                    <LabelTextInput 
+                        label="GSTIN Number" 
+                        placeholder="24XXXXXXXXXX" 
+                        icon={<FeatherIcon name="user" size={16} />}
+                        onChangeText={(val) => {gstinNo.current = val}}
+                        useTrim={true}
+                        isRequired={true}
+                        infoMassage="15 digit GSTIN number"
+                    />
+
+                    <LabelTextInput 
+                        label="Pan Number" 
+                        placeholder="AbC4242D" 
+                        icon={<FeatherIcon name="map-pin" size={16} />}
+                        onChangeText={(val) => {panNo.current = val}}
+                        useTrim={true}         
+                        isRequired={true}
+                        infoMassage="10 digit PAN number"
+                    />
+                </View>
+
+                <View style={{minHeight: 40}} />
+            </ScrollView>
+
+            <ShowWhen when={visible} >
+                <LoadingModal visible={false} text="Updating Wait..." />
             </ShowWhen>
         </BottomModal>
     )
