@@ -63,7 +63,7 @@ export default function BillInfoScreen(): React.JSX.Element {
                     <SectionView label="Items" labelMargin={4} style={{gap: 12}} >
                         {
                             [1,2,3,4,5].map(item => (         
-                                <BackgroundThemeView isPrimary={false} style={{padding: 12, borderRadius: 8, gap: 8}} >
+                                <BackgroundThemeView key={item} isPrimary={false} style={{padding: 12, borderRadius: 8, gap: 8}} >
                                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} >
                                         <View>
                                             <TextTheme style={{fontSize: 14, fontWeight: 900}} >Item Name</TextTheme>

@@ -4,14 +4,22 @@ import { useTheme } from '../../Contexts/ThemeProvider';
 
 type Props = TextProps & {
     color?: string,
-    isPrimary?: boolean
+    isPrimary?: boolean,
+    useInvertTheme?: boolean
 }
 
-export default function TextTheme({style, children, numberOfLines, color = '', isPrimary = true}: Props): React.JSX.Element {
+export default function TextTheme({style, children, numberOfLines, color = '', isPrimary = true, useInvertTheme=false}: Props): React.JSX.Element {
 
-    let {primaryColor, secondaryColor} = useTheme();
+    let {primaryColor, secondaryColor, primaryBackgroundColor, secondaryBackgroundColor} = useTheme();
 
-    color = color !== '' ? color : isPrimary ? primaryColor : secondaryColor;
+    if(!color) {
+        if(useInvertTheme) {
+            color =  isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
+        } else {
+            color =  isPrimary ? primaryColor : secondaryColor;
+        }
+
+    }
 
     return (
         <Text

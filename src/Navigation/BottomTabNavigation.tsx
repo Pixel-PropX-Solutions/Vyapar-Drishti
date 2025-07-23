@@ -2,13 +2,13 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../Screens/TabNavigationScreens/HomeScreens/HomeScreen";
 import ProductScreen from "../Screens/TabNavigationScreens/ProductScreens/ProductScreen/Screen";
 import CustomerScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerScreen";
-import BillScreen from "../Screens/TabNavigationScreens/BillScreens/BillScreen";
 import SettingScreen from "../Screens/TabNavigationScreens/MenuScreens/MenuScreen";
 import FeatherIcons from 'react-native-vector-icons/Feather'
 import { useTheme } from "../Contexts/ThemeProvider";
 import { View } from "react-native";
 import SafeAreaFromBottom from "../Components/SafeAreaView/SafeAreaFromBottom";
 import SafeAreaFromTop from "../Components/SafeAreaView/SafeAreaFromTop";
+import BillScreen from "../Screens/TabNavigationScreens/BillScreens/BillScreen/Screen";
 
 
 export type BottomTabParamsList = {

@@ -5,15 +5,20 @@ type Props = {
     children?: React.ReactNode
     style?: ViewStyle,
     isPrimary?: boolean,
-    backgroundColor?: string
+    backgroundColor?: string,
+    useInvertTheme?: boolean
 }
 
-export default function BackgroundThemeView({children, style,isPrimary=true, backgroundColor}: Props): React.JSX.Element {
+export default function BackgroundThemeView({children, style,isPrimary=true, backgroundColor, useInvertTheme=false}: Props): React.JSX.Element {
     
-    const {primaryBackgroundColor, secondaryBackgroundColor} = useTheme();
-
+    const {primaryColor, secondaryColor, primaryBackgroundColor, secondaryBackgroundColor} = useTheme()
+    
     if(!backgroundColor) {
-        backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor
+        if(useInvertTheme){
+            backgroundColor = isPrimary ? primaryColor : secondaryColor;
+        } else {
+            backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
+        }
     }
 
     return <View style={[style, {backgroundColor}]}>{children}</View>
