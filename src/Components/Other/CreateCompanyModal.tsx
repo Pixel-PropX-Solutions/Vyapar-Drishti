@@ -230,7 +230,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                 dispatch(getCurrentUser());
                 dispatch(getAllCompanies());
                 handleClose();
-                setSecondaryVisible(false);
+                if(setSecondaryVisible) setSecondaryVisible(false);
             }
             handleClose();
         }).finally(() => {

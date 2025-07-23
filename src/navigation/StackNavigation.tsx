@@ -10,10 +10,10 @@ import { useTheme } from "../Contexts/ThemeProvider";
 import SettingScreen from "../Screens/SettingScreen";
 import NotificationScreen from "../Screens/NotificationScreen";
 import CustomerInfoScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen/CustomerInfoScreen";
-import CraeteBillScreen from "../Screens/TabNavigationScreens/BillScreens/CreateBillScreen/CreateBillScreen";
+import BillCreateScreen from "../Screens/TabNavigationScreens/BillScreens/BillCreateScreen/Screen";
 import CompanyProfileScreen from "../Screens/CompanyScreens/ComplanyProfile/CompanyProfileScreen";
 import { NavigationRef } from "./NavigationService";
-import ProductInfoScreen from "../Screens/TabNavigationScreens/ProductScreens/ProductInfoScreen/ProductInfoScreen";
+import ProductInfoScreen from "../Screens/TabNavigationScreens/ProductScreens/ProductInfoScreen/Screen";
 import { ComponentProps, ElementType } from "react";
 import BillInfoScreen from "../Screens/TabNavigationScreens/BillScreens/BillInfoScreen/BillInfoScreen";
 
@@ -30,7 +30,7 @@ export type StackParamsList = {
     'product-info-screen': {productId: string}
     'customer-info-screen': {customerId: string}
 
-    'create-bill-screen': {billType: string, id: string}
+    'create-bill-screen': {type: string, id: string}
     'bill-info-screen': {id: string}
 }
 
@@ -83,7 +83,7 @@ export default function StackNavigation(): React.JSX.Element {
                 />
 
                 <Stack.Screen name="create-bill-screen" 
-                    component={withSafeView(CraeteBillScreen)} 
+                    component={withSafeView(BillCreateScreen)} 
                 />
 
                 <Stack.Screen name="bill-info-screen" 

@@ -20,7 +20,7 @@ type ActionButton = {
     style?: ViewStyle
 };
 
-export {type ActionButton as BottomModalActionButton}
+export { type ActionButton as BottomModalActionButton }
 
 type BottomModalProps = ModalProps & {
     visible: boolean,
@@ -39,14 +39,14 @@ type BottomModalProps = ModalProps & {
     topMargin?: number
 }
 
-export default function BottomModal({ visible, setVisible, children, style, backdropColor = 'rgba(0, 0, 0, 0.50)', actionButtons, closeOnBack = true, animationType = 'slide', bottomOpationStyle = {}, onClose = () => { }, alertId, topMarginPrecentage = 0.01, topMargin=40, ...props }: BottomModalProps): React.JSX.Element {
+export default function BottomModal({ visible, setVisible, children, style, backdropColor = 'rgba(0, 0, 0, 0.50)', actionButtons, closeOnBack = true, animationType = 'slide', bottomOpationStyle = {}, onClose = () => { }, alertId, topMarginPrecentage = 0.01, topMargin = 40, ...props }: BottomModalProps): React.JSX.Element {
 
     const { primaryColor, primaryBackgroundColor } = useTheme();
 
     const { height } = Dimensions.get('window');
-    const {top, bottom} = useSafeAreaInsets();
+    const { top, bottom } = useSafeAreaInsets();
 
-    const [maxHeight, setMaxHeight] = useState<number>(height - top - bottom - 32 - (height * topMarginPrecentage) - topMargin )
+    const [maxHeight, setMaxHeight] = useState<number>(height - top - bottom - 32 - (height * topMarginPrecentage) - topMargin)
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', ({ endCoordinates }) => {
@@ -68,7 +68,7 @@ export default function BottomModal({ visible, setVisible, children, style, back
         <Modal {...props} backdropColor={backdropColor} animationType={animationType} visible={visible} onRequestClose={() => { setVisible(!closeOnBack); onClose(); }}>
             {alertId && <AlertCard id={alertId} />}
             <View style={[styles.root]}>
-                <AnimateButton onPress={() => setVisible(false)} style={{ width: '100%', flex: 1 }} />
+                <AnimateButton onPress={() => { setVisible(false); onClose(); }} style={{ width: '100%', flex: 1 }} />
 
                 <View style={[styles.modalContener, { backgroundColor: primaryBackgroundColor, borderColor: primaryColor, maxHeight }, style]}>
                     {children}

@@ -24,15 +24,15 @@ type Props<item> = {
     closeOnSelect?: boolean,
     renderItemStyle?: ViewStyle,
     whenFetchingComponent?: ReactNode,
-    loadItemsBeforeListEnd?: () => Promise<any>
+    loadItemsBeforeListEnd?: () => void,
+    isFetching?: boolean
 }
 
-export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItems, title, keyExtractor, filter, SelectedItemContent, renderItemContent, actionButtons, isItemSelected=false, renderItemStyle, closeOnSelect = true, whenFetchingComponent, loadItemsBeforeListEnd }: Props<item>): React.JSX.Element {
+export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItems, title, keyExtractor, filter, SelectedItemContent, renderItemContent, actionButtons, isItemSelected=false, renderItemStyle, closeOnSelect = true, whenFetchingComponent, loadItemsBeforeListEnd, isFetching }: Props<item>): React.JSX.Element {
 
     const { primaryColor } = useTheme();
 
     const [data, setData] = useState<item[]>(allItems);
-    const [isFetching, setFetching] = useState<boolean>(false);
 
     const timeoutId = useRef<NodeJS.Timeout>(undefined);
 
@@ -90,10 +90,13 @@ export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItem
             <FlatList
                 showsVerticalScrollIndicator={false}
                 keyboardShouldPersistTaps='always'
-                ListEmptyComponent={<EmptyListView title="Empty List" text="Don't found any item in list" />}
                 contentContainerStyle={{ gap: 10 }}
                 data={data}
-
+                
+                ListEmptyComponent={
+                    <EmptyListView title="Empty List" text="Don't found any item in list" />
+                }
+                
                 keyExtractor={item => (
                     keyExtractor(item)
                 )}
@@ -115,7 +118,7 @@ export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItem
 
                 ListFooterComponentStyle={{ gap: 20 }}
                 ListFooterComponent={
-                    <ShowWhen when={isFetching}>
+                    <ShowWhen when={!!isFetching}>
                         {whenFetchingComponent}
                     </ShowWhen>
                 }
@@ -128,11 +131,8 @@ export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItem
                     let totalHeight = contentSize.height;
                     let height = layoutMeasurement.height;
 
-                    if (totalHeight - height < contentOffsetY + 400) {    
-                        setFetching(true)
-                        loadItemsBeforeListEnd().finally(() => {
-                            setFetching(false)
-                        });
+                    if (totalHeight - height < contentOffsetY + 400) {       
+                        loadItemsBeforeListEnd()
                     }
                 }}
             />

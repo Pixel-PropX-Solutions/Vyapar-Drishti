@@ -44,14 +44,14 @@ export default function HomeScreen(): React.JSX.Element {
                                     label="Sells"
                                     text="Add new sells"
                                     icon={<FeatherIcon name="trending-up" size={16} />}
-                                    onPress={() => { navigator.navigate('create-bill-screen', { billType: 'Sells', id: '34e81b1d-5735-437a-a475-e27265eba005' }); }}
+                                    onPress={() => { navigator.navigate('create-bill-screen', { type: 'Sells', id: '34e81b1d-5735-437a-a475-e27265eba005' }); }}
                                 />
 
                                 <QuickAccessBox
                                     label="Purchase"
                                     text="Add purchase"
                                     icon={<FontAwesome6Icon name="coins" size={16} />}
-                                    onPress={() => { navigator.navigate('create-bill-screen', { billType: 'Purchase', id: 'fe9221db-5990-41a0-976a-3cb4f78aef0f' }); }}
+                                    onPress={() => { navigator.navigate('create-bill-screen', { type: 'Purchase', id: 'fe9221db-5990-41a0-976a-3cb4f78aef0f' }); }}
                                 />
                             </View>
 

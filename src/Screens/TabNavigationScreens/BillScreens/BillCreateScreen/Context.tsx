@@ -6,8 +6,9 @@ type Product = {
     price: number,
     quantity: number,
     name: string,
-    productNo: string,
-    unit: string
+    hsnCode: string,
+    unit: string,
+    gstRate: string
 }
 
 type Customer = {
@@ -31,6 +32,8 @@ type ContextType = {
     createOn: string,
     setCreateOn: Dispatch<SetStateAction<string>>,
 
+    progress: number,
+
     resetAllStates: () => void
 }
 
@@ -44,23 +47,34 @@ const Context = createContext<ContextType>({
     billNo: '', setBillNo: fn,
     createOn: '', setCreateOn: fn,
     resetAllStates: fn,
+    progress: 0
 });
 
 
 
-export default function CreateBillScreenProvider({children}: {children: React.ReactNode}){
+export default function BillContextProvider({children}: {children: React.ReactNode}){
 
     const [products, setProducts] = useState<Product[]>([]);
     const [customer, setCustomer] = useState<Customer | null>(null);
     const [totalValue, setTotalValue] = useState<number>(0);
     const [billNo, setBillNo] = useState<string>('INV-000');
     const [createOn, setCreateOn] = useState<string>(new Date().toLocaleDateString());
+    const [progress, setProgress] = useState<number>(0)
     
     function resetAllStates(): void {
         setProducts([]); setCreateOn(new Date().toLocaleDateString());
         setCustomer(null); setTotalValue(0);
     }
 
+    const states = {
+        products, setProducts,
+        customer, setCustomer,
+        totalValue,
+        billNo, setBillNo,
+        createOn, setCreateOn,
+        resetAllStates,
+        progress
+    };
 
     useEffect(() => {
         setTotalValue(() => products.reduce((acc, pro) => acc + (pro.price * pro.quantity), 0));
@@ -74,19 +88,21 @@ export default function CreateBillScreenProvider({children}: {children: React.Re
         setCreateOn(`${time.getDate()}/${(time.getMonth() + 1).toString().padStart(2, '0')}/${time.getFullYear()}`)
     }, []);
 
-    const states = {
-        products, setProducts,
-        customer, setCustomer,
-        totalValue,
-        billNo, setBillNo,
-        createOn, setCreateOn,
-        resetAllStates,
-    };
+    useEffect(() => {
+        let pro = 0;
+        if(billNo) pro++;
+        if(createOn) pro++;
+        if(products.length > 0) pro++
+        if(customer?.id) pro++;
+
+        setProgress(pro / 4);
+    }, [billNo, createOn, products, customer])
+ 
 
     return <Context.Provider children={children} value={states} />;
 }
 
 
-export function useCreateBillContext(){
+export function useBillContext(){
     return useContext(Context);
 }

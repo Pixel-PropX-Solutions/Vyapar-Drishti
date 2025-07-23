@@ -73,3 +73,9 @@ export function formatNumberForUI(num: number, minLen=4, toFix=2): string {
   
     return `${sign}${(absNum/100_00_000_000).toFixed(toFix)}T`;
 }
+
+
+export function getMonthByIndex(index: number): string {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months[Math.abs(index) % 12]
+}

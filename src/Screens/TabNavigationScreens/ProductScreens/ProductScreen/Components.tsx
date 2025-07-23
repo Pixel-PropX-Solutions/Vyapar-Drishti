@@ -1,0 +1,178 @@
+import { FlatList, Pressable, Text, View } from "react-native";
+import AnimateButton from "../../../../Components/Button/AnimateButton";
+import FeatherIcon from "../../../../Components/Icon/FeatherIcon";
+import { useAppDispatch, useCompanyStore, useProductStore } from "../../../../Store/ReduxStore";
+import { useProductListingContext } from "./Context";
+import { getMonthByIndex } from "../../../../Utils/functionTools";
+import TextTheme from "../../../../Components/Text/TextTheme";
+import { useTheme } from "../../../../Contexts/ThemeProvider";
+import EmptyListView from "../../../../Components/View/EmptyListView";
+import ProductCard, { ProductLoadingCard } from "../../../../Components/Card/ProductCard";
+import navigator from "../../../../Navigation/NavigationService";
+import ShowWhen from "../../../../Components/Other/ShowWhen";
+import { viewAllProducts } from "../../../../Services/product";
+import { useEffect, useState } from "react";
+import RoundedPlusButton from "../../../../Components/Button/RoundedPlusButton";
+import CreateProductModal from "../../../../Components/Modal/Product/CreateProductModal";
+import { DateSelectorModal } from "./Modals";
+import EntityListingHeader from "../../../../Components/Header/EntityListingHeader";
+
+
+export function Header(): React.JSX.Element {
+    return (
+         <EntityListingHeader
+            title='Products'
+            onPressFilter={() => {}}
+            onPressSearch={() => {}}
+        />
+    )
+}
+
+
+export function SummaryCard(): React.JSX.Element {
+
+    const {pageMeta} = useProductStore()
+
+    const highStock = pageMeta.total - (pageMeta.low_stock ?? 0);
+    const lowStock = pageMeta.low_stock ?? 0;
+
+    return (
+        <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, marginTop: 12 }}>
+            <AnimateButton style={{ paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(250,100,100)' }}>
+                <Text style={{ fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white' }}>
+                    <FeatherIcon name="package" size={20} color="white" />
+                    {`  ${highStock}`}
+                </Text>
+                <Text style={{ fontSize: 12, color: 'white' }}>-Ve Stock</Text>
+            </AnimateButton>
+
+            <AnimateButton style={{ paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(228, 205, 0)' }}>
+                <Text style={{ fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white' }}>
+                    <FeatherIcon name="box" size={20} color="white" />
+                    {`  ${lowStock}`}
+                </Text>
+                <Text style={{ fontSize: 12, color: 'white' }}>Low Stock</Text>
+            </AnimateButton>
+
+            <AnimateButton style={{ paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(50,200,150)' }}>
+                <Text style={{ fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white' }}>
+                    <FeatherIcon name="package" size={20} color="white" />
+                    {`  ${highStock}`}
+                </Text>
+                <Text style={{ fontSize: 12, color: 'white' }}>+Ve Stock</Text>
+            </AnimateButton>
+        </View>
+    );
+}
+
+
+export function DateSelector() {
+
+    const {primaryColor} = useTheme();
+    const {date, setDate} = useProductListingContext();
+
+    const [isModalVisible, setModalVisible] = useState<boolean>(false);
+
+    function incrementMonth(by: number) {
+        const nextMonth = (date.month + by + 12) % 12;
+        const nextYear = date.year + Math.floor((date.month + by) / 12);
+        setDate({year: nextYear, month: nextMonth})
+    }
+
+    return (
+        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingInline: 10, height: 40, borderRadius: 40, borderWidth: 2, borderColor: primaryColor}} >
+            <AnimateButton style={{borderRadius: 20, padding: 4}} onPress={() => incrementMonth(-1)}>
+                <FeatherIcon name="chevron-left" size={20} />
+            </AnimateButton>
+
+            <Pressable onPress={() => {setModalVisible(true)}}>
+                <TextTheme style={{fontSize: 16, fontWeight: 900}} >{getMonthByIndex(date.month)}, {date.year}</TextTheme>
+            </Pressable>
+            
+            <AnimateButton style={{borderRadius: 20, padding: 4}} onPress={() => incrementMonth(1)}>
+                <FeatherIcon name="chevron-right" size={20} />
+            </AnimateButton>
+
+            <DateSelectorModal
+                visible={isModalVisible} setVisible={setModalVisible}
+            />
+        </View>
+    )
+}
+
+
+export function ProductListing(): React.JSX.Element {
+
+    const dispatch = useAppDispatch();
+    const {company} = useCompanyStore();
+    const {isProductsFetching, productsData, pageMeta} = useProductStore();
+
+    function handleProductFetching() {
+        if (isProductsFetching) { return; }
+        if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
+        dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1 }));
+    }
+
+    useEffect(() => {
+        dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: 1 }));
+    }, [company?._id, dispatch]);
+
+    return (
+        <FlatList
+            ListEmptyComponent={isProductsFetching ? null : <EmptyListView type="product" />}
+            contentContainerStyle={{ gap: 20, paddingBottom: 80, paddingTop: 12}}
+            data={productsData}
+            keyExtractor={(item) => item._id}
+
+            renderItem={({ item }) => (
+                <ProductCard
+                    item={item}
+                    isPrimary={false}
+                    onPress={() => navigator.navigate('product-info-screen', { productId: item._id })}
+                />
+            )}
+
+            ListFooterComponentStyle={{ gap: 20 }}
+            ListFooterComponent={
+                <ShowWhen when={isProductsFetching}>
+                    {
+                        Array.from({
+                            length: Math.min(2, pageMeta.total - (productsData?.length ?? 0)) + 1}, (_, i) => i
+                        ).map(item => (
+                            <ProductLoadingCard key={item} />
+                        ))
+                    }
+                </ShowWhen>
+            }
+
+            onScroll={({ nativeEvent }) => {
+                let { contentOffset, layoutMeasurement, contentSize } = nativeEvent;
+                let contentOffsetY = contentOffset.y;
+                let totalHeight = contentSize.height;
+                let height = layoutMeasurement.height;
+
+                if(pageMeta.total === productsData?.length) return;
+
+                if (totalHeight - height < contentOffsetY + 400) {
+                    handleProductFetching();
+                }
+            }}
+        />
+    )
+}
+
+
+export function CreateProductButton() {
+
+    const [isModalVisible, setModalVisible] = useState<boolean>(false)
+
+    return (
+         <View style={{ position: 'absolute', right: 20, bottom: 20 }} >
+            <RoundedPlusButton size={60} iconSize={24} onPress={() => setModalVisible(true)} />
+            
+            <CreateProductModal
+                visible={isModalVisible} setVisible={setModalVisible}
+            />
+        </View>   
+    )
+}

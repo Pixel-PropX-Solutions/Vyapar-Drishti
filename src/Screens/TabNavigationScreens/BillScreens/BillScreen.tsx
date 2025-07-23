@@ -15,8 +15,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { StackParamsList } from '../../../Navigation/StackNavigation';
 import TabNavigationScreenHeader from '../../../Components/Header/TabNavigationHeader';
 import EmptyListView from '../../../Components/View/EmptyListView';
-import { useAppDispatch, useCompanyStore, useInvoiceStore } from '../../../Store/ReduxStore';
-import { printInvoices, viewAllInvoices } from '../../../Services/invoice';
+import { useAppDispatch, useCompanyStore, useInvoiceStore, useUserStore } from '../../../Store/ReduxStore';
+import { printGSTInvoices, printInvoices, viewAllInvoices } from '../../../Services/invoice';
 import { FlatList } from 'react-native-gesture-handler';
 import BillCard, { BillLoadingCard } from '../../../Components/Card/BillCard';
 import ShowWhen from '../../../Components/Other/ShowWhen';
@@ -52,6 +52,9 @@ export default function BillScreen(): React.JSX.Element {
     const { invoices, isInvoiceFeaching, pageMeta } = useInvoiceStore();
     const { primaryColor, secondaryColor } = useTheme();
     const { company } = useCompanyStore();
+    const { user } = useUserStore();
+    const currentCompnayDetails = user?.company.find((c: any) => c._id === user?.user_settings?.current_company_id);
+    const gst_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_gst;
 
     const [isBillTypeSelectorModalVisible, setBillTypeSelectorModalVisible] = useState<boolean>(false);
     const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -126,36 +129,70 @@ export default function BillScreen(): React.JSX.Element {
 
         setIsGenerating(true);
         if (invoice.voucher_type === 'Sales' || invoice.voucher_type === 'Purchase') {
-            dispatch(printInvoices({
-                vouchar_id: invoice._id,
-                company_id: company?._id || '',
-            })).then((response) => {
-                if (response.meta.requestStatus === 'fulfilled') {
-                    const payload = response.payload as { paginated_data: Array<{ html: string, page_number: number }>, complete_data: string, download_data: string };
-                    console.log('Print Invoice Response:', payload);
-                    const paginated_html = payload.paginated_data;
-                    const fullHtml2 = payload.complete_data;
-                    const download_html = payload.download_data;
+            if (gst_enable) {
+                dispatch(printGSTInvoices({
+                    vouchar_id: invoice._id,
+                    company_id: company?._id || '',
+                })).then((response) => {
+                    if (response.meta.requestStatus === 'fulfilled') {
+                        const payload = response.payload as { paginated_data: Array<{ html: string, page_number: number }>, complete_data: string, download_data: string };
+                        console.log('Print GST Invoice Response:', payload);
+                        const paginated_html = payload.paginated_data;
+                        const fullHtml2 = payload.complete_data;
+                        const download_html = payload.download_data;
 
-                    setHtmlFromAPI(paginated_html);
-                    setInvoiceId(invoice.voucher_number);
+                        setHtmlFromAPI(paginated_html);
+                        setInvoiceId(invoice.voucher_number);
 
-                    invoiceInfo.current = { invoiceId: invoice.voucher_number, downloadHtml: download_html, fullHtml: fullHtml2 };
+                        invoiceInfo.current = { invoiceId: invoice.voucher_number, downloadHtml: download_html, fullHtml: fullHtml2 };
 
-                    // setCustomerName(invoice?.party_name);
+                        // setCustomerName(invoice?.party_name);
 
-                    if (callback) callback();
-                    // setHtml(true);
-                } else {
-                    console.error('Failed to print invoice:', response.payload);
+                        if (callback) callback();
+                        // setHtml(true);
+                    } else {
+                        console.error('Failed to print invoice:', response.payload);
+                    }
                 }
+                ).catch((error) => {
+                    console.error('Error printing invoice:', error);
+                }
+                ).finally(() => {
+                    setIsGenerating(false);
+                })
             }
-            ).catch((error) => {
-                console.error('Error printing invoice:', error);
+            else {
+                dispatch(printInvoices({
+                    vouchar_id: invoice._id,
+                    company_id: company?._id || '',
+                })).then((response) => {
+                    if (response.meta.requestStatus === 'fulfilled') {
+                        const payload = response.payload as { paginated_data: Array<{ html: string, page_number: number }>, complete_data: string, download_data: string };
+                        console.log('Print Invoice Response:', payload);
+                        const paginated_html = payload.paginated_data;
+                        const fullHtml2 = payload.complete_data;
+                        const download_html = payload.download_data;
+
+                        setHtmlFromAPI(paginated_html);
+                        setInvoiceId(invoice.voucher_number);
+
+                        invoiceInfo.current = { invoiceId: invoice.voucher_number, downloadHtml: download_html, fullHtml: fullHtml2 };
+
+                        // setCustomerName(invoice?.party_name);
+
+                        if (callback) callback();
+                        // setHtml(true);
+                    } else {
+                        console.error('Failed to print GST invoice:', response.payload);
+                    }
+                }
+                ).catch((error) => {
+                    console.error('Error printing invoice:', error);
+                }
+                ).finally(() => {
+                    setIsGenerating(false);
+                })
             }
-            ).finally(() => {
-                setIsGenerating(false);
-            })
 
         }
     };
@@ -176,6 +213,9 @@ export default function BillScreen(): React.JSX.Element {
                 html: invoiceInfo.current.downloadHtml,
                 fileName: `${invoiceInfo.current.invoiceId}-vyapar-drishti`,
                 directory: 'Download',
+                width: 595.28,
+                height: 841.89,
+                base64: true,
             };
 
             let file = await RNHTMLtoPDF.convert(options);
@@ -237,30 +277,14 @@ export default function BillScreen(): React.JSX.Element {
             return;
         }
 
-        if (!invoiceInfo.current.fullHtml) {
+        if (!invoiceInfo.current.downloadHtml) {
             console.warn('No HTML content available for PDF generation');
             return;
         }
 
         try {
             setIsGenerating(true);
-            const printContent = `
-            <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>Invoice ${invoiceId}</title>
-                    <style>
-                        body { margin: 20px; padding: 20px; font-family: Arial, sans-serif; }
-                        @media print {
-                            body { margin: 0; padding: 0; }
-                            .no-print { display: none !important; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    ${invoiceInfo.current.fullHtml}
-                </body>
-            </html>`;
+            const printContent = invoiceInfo.current.downloadHtml;
             await RNPrint.print({
                 html: printContent,
             });
@@ -534,7 +558,7 @@ export default function BillScreen(): React.JSX.Element {
                                 borderColor: primaryColor,
                             }}
                             onPress={() => {
-                                navigator.navigate('create-bill-screen', { billType: billType.name, id: billType.id });
+                                navigator.navigate('create-bill-screen', { type: billType.name, id: billType.id });
                                 setBillTypeSelectorModalVisible(false);
                             }}
                         >

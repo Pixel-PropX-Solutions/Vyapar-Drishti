@@ -110,6 +110,39 @@ export const printInvoices = createAsyncThunk(
     }
 );
 
+
+export const printGSTInvoices = createAsyncThunk(
+    'print/gst/invoices',
+    async (
+        {
+            vouchar_id,
+            company_id,
+
+        }: {
+            vouchar_id: string;
+            company_id: string;
+
+        },
+        { rejectWithValue }
+    ) => {
+        try {
+            const response = await userApi.get(
+                `/invoices/print/vouchar/gst?vouchar_id=${vouchar_id}&company_id=${company_id}`
+            );
+            console.log('printGSTInvoices response', response.data);
+
+            if (response.data.success === true) {
+                return response.data.data;
+            } else {return rejectWithValue('Login Failed: No access token recieved.');}
+        } catch (error: any) {
+            return rejectWithValue(
+                error.response?.data?.message ||
+                'Login failed: Invalid credentials or server error.'
+            );
+        }
+    }
+);
+
 export const printRecieptInvoices = createAsyncThunk(
     'print/receipt/invoices',
     async (

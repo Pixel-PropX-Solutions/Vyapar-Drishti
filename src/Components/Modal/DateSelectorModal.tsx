@@ -218,7 +218,7 @@ function YearSelectorModal({visible, setVisible, year, setYear, month, setMonth,
         let data: Year[] = [];
         for(let year of years) {
             for(let month=11; month>=0; month--) {
-                if(currentMonth <= month || currentYear > year)
+                if(currentMonth >= month || currentYear > year)
                     data.push({year, month})
             }
         }
