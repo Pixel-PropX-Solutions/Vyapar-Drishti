@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import TextTheme from '../../../../Components/Text/TextTheme';
+import TextTheme from '../../../../Components/Ui/Text/TextTheme';
 import BillContextProvider from './Context';
 import { AmountBox, BillNoSelector, CustomerSelector, DateSelector, Header, ProductListing, ProductSelector, ProgressBar } from './Components';
 

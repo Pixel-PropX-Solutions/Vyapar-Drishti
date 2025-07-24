@@ -2,28 +2,29 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useBillContext } from "./Context";
 import { useTheme } from "../../../../Contexts/ThemeProvider";
 import BottomModal from "../../../../Components/Modal/BottomModal";
-import TextTheme from "../../../../Components/Text/TextTheme";
+import TextTheme from "../../../../Components/Ui/Text/TextTheme";
 import { Alert, FlatList, View } from "react-native";
-import { InputField } from "../../../../Components/TextInput/InputField";
+import { InputField } from "../../../../Components/Ui/TextInput/InputField";
 import FeatherIcon from "../../../../Components/Icon/FeatherIcon";
 import MaterialIcon from "../../../../Components/Icon/MaterialIcon";
-import AnimateButton from "../../../../Components/Button/AnimateButton";
+import AnimateButton from "../../../../Components/Ui/Button/AnimateButton";
 import { useAppDispatch, useCompanyStore, useCustomerStore, useProductStore, useUserStore } from "../../../../Store/ReduxStore";
 import { GetUserLedgers } from "../../../../Utils/types";
 import { viewAllCustomer } from "../../../../Services/customer";
-import { ItemSelectorModal } from "../../../../Components/Modal/ItemSelectorModal";
-import BackgroundThemeView from "../../../../Components/View/BackgroundThemeView";
-import LoadingView from "../../../../Components/View/LoadingView";
+import { ItemSelectorModal } from "../../../../Components/Modal/Selectors/ItemSelectorModal";
+import BackgroundThemeView from "../../../../Components/Layouts/View/BackgroundThemeView";
+import LoadingView from "../../../../Components/Layouts/View/LoadingView";
 import CustomerTypeSelectorModal from "../../../../Components/Modal/Customer/CustomerTypeSelectorModal";
 import CreateCustomerModal from "../../../../Components/Modal/Customer/CreateCustomerModal";
-import { useAlert } from "../../../../Components/Alert/AlertProvider";
+import { useAlert } from "../../../../Components/Ui/Alert/AlertProvider";
 import { viewAllProducts, viewProductsWithId } from "../../../../Services/product";
-import NoralTextInput from "../../../../Components/TextInput/NoralTextInput";
-import EmptyListView from "../../../../Components/View/EmptyListView";
+import NoralTextInput from "../../../../Components/Ui/TextInput/NoralTextInput";
+import EmptyListView from "../../../../Components/Layouts/View/EmptyListView";
 import { sliceString } from "../../../../Utils/functionTools";
 import ShowWhen from "../../../../Components/Other/ShowWhen";
-import { ProductLoadingCard } from "../../../../Components/Card/ProductCard";
+import { ProductLoadingCard } from "../../../../Components/Ui/Card/ProductCard";
 import CreateProductModal from "../../../../Components/Modal/Product/CreateProductModal";
+import { CustomerLoadingView } from "../../../../Components/Ui/Card/CustomerCard";
 
 
 type Props = {
@@ -135,12 +136,14 @@ export default function CustomerSelectorModal({ visible, setVisible }: Props) {
     }
 
     useEffect(() => {
-        dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
-    }, [company?._id, dispatch, isCreateCustomerModalOpen]);
+        if(visible && !isCreateCustomerModalOpen)
+            dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
+    }, [isCreateCustomerModalOpen, visible]);
 
     useEffect(() => {
-        setFilterCustomers(() => customers.filter((ledger) => ledger.parent === 'Creditors' || ledger.parent === 'Debtors'
-        ));
+        setFilterCustomers(
+            customers.filter((ledger) => ledger.parent === 'Creditors' || ledger.parent === 'Debtors')
+        );
     }, [customers]);
 
 
@@ -200,17 +203,9 @@ export default function CustomerSelectorModal({ visible, setVisible }: Props) {
             loadItemsBeforeListEnd={handleProductFetching}
 
             isFetching={isAllCustomerFetching}
-
-            whenFetchingComponent={
-                <BackgroundThemeView isPrimary={false} style={{ padding: 12, borderRadius: 16, gap: 4 }} >
-                    <LoadingView height={14} width={150} isPrimary={true} />
-                    <View style={{ justifyContent: 'space-between', flexDirection: 'row' }} >
-                        <LoadingView height={12} width={80} isPrimary={true} />
-                        <LoadingView height={12} width={60} isPrimary={true} />
-                    </View>
-                </BackgroundThemeView>
-            }
-
+            
+            whenFetchingComponent={<CustomerLoadingView/>}
+            
         />
 
         <CustomerTypeSelectorModal

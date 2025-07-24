@@ -1,21 +1,21 @@
 /* eslint-disable react-native/no-inline-styles */
 import { View } from 'react-native';
-import AnimateButton from '../../../../Components/Button/AnimateButton';
+import AnimateButton from '../../../../Components/Ui/Button/AnimateButton';
 import navigator from '../../../../Navigation/NavigationService';
 import { useTheme } from '../../../../Contexts/ThemeProvider';
 import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
-import TextTheme from '../../../../Components/Text/TextTheme';
+import TextTheme from '../../../../Components/Ui/Text/TextTheme';
 import { useBillContext } from './Context';
-import { SectionRow, SectionRowWithIcon } from '../../../../Components/View/SectionView';
-import DateSelectorModal from '../../../../Components/Modal/DateSelectorModal';
+import { SectionRow, SectionRowWithIcon } from '../../../../Components/Layouts/View/SectionView';
+import DateSelectorModal from '../../../../Components/Modal/Selectors/DateSelectorModal';
 import { useEffect, useState } from 'react';
 import { FlatList } from 'react-native';
-import EmptyListView from '../../../../Components/View/EmptyListView';
+import EmptyListView from '../../../../Components/Layouts/View/EmptyListView';
 import ShowWhen from '../../../../Components/Other/ShowWhen';
-import NormalButton from '../../../../Components/Button/NormalButton';
+import NormalButton from '../../../../Components/Ui/Button/NormalButton';
 import { formatNumberForUI, roundToDecimal, sliceString } from '../../../../Utils/functionTools';
 import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
-import BackgroundThemeView from '../../../../Components/View/BackgroundThemeView';
+import BackgroundThemeView from '../../../../Components/Layouts/View/BackgroundThemeView';
 import { CreateInvoiceData, CreateInvoiceWithGSTData } from '../../../../Utils/types';
 import { useAppDispatch, useCompanyStore, useUserStore } from '../../../../Store/ReduxStore';
 import { RouteProp, useRoute } from '@react-navigation/native';

@@ -1,13 +1,13 @@
 import { Dispatch, SetStateAction, useRef } from "react";
 import BottomModal from "../../../../Components/Modal/BottomModal";
-import TextTheme from "../../../../Components/Text/TextTheme";
+import TextTheme from "../../../../Components/Ui/Text/TextTheme";
 import { ScrollView, View } from "react-native";
-import LabelTextInput from "../../../../Components/TextInput/LabelTextInput";
+import LabelTextInput from "../../../../Components/Ui/TextInput/LabelTextInput";
 import ShowWhen from "../../../../Components/Other/ShowWhen";
 import LoadingModal from "../../../../Components/Modal/LoadingModal";
 import FeatherIcon from "../../../../Components/Icon/FeatherIcon";
 import { PhoneNumber } from "../../../../Utils/types";
-import PhoneNoTextInput from "../../../../Components/TextInput/PhoneNoTextInput";
+import PhoneNoTextInput from "../../../../Components/Ui/Option/PhoneNoTextInput";
 
 type Props = {
     visible: boolean, 

@@ -1,19 +1,19 @@
 /* eslint-disable react-native/no-inline-styles */
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 import BottomModal from '../BottomModal';
-import TextTheme from '../../Text/TextTheme';
+import TextTheme from '../../Ui/Text/TextTheme';
 import { View, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import FeatherIcon from '../../Icon/FeatherIcon';
 import { useTheme } from '../../../Contexts/ThemeProvider';
-import { useAlert } from '../../Alert/AlertProvider';
-import AnimateButton from '../../Button/AnimateButton';
+import { useAlert } from '../../Ui/Alert/AlertProvider';
+import AnimateButton from '../../Ui/Button/AnimateButton';
 import { useAppDispatch, useCompanyStore, useProductStore, useUserStore } from '../../../Store/ReduxStore';
 import { createProduct, viewAllProducts } from '../../../Services/product';
 import LoadingModal from '../LoadingModal';
 import { units } from '../../../Utils/units';
 import CollapsabeMenu from '../../Other/CollapsabeMenu';
-import { InputField } from '../../TextInput/InputField';
-import { SelectField } from '../../TextInput/SelectField';
+import { InputField } from '../../Ui/TextInput/InputField';
+import { SelectField } from '../../Ui/TextInput/SelectField';
 // import Popover from '../../Other/Popover';
 
 type Props = {

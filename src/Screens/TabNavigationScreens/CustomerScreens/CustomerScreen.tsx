@@ -2,21 +2,20 @@
 import { FlatList } from 'react-native-gesture-handler';
 import { View } from 'react-native';
 import { useEffect, useState } from 'react';
-import RoundedPlusButton from '../../../Components/Button/RoundedPlusButton';
+import RoundedPlusButton from '../../../Components/Ui/Button/RoundedPlusButton';
 import CreateCustomerModal from '../../../Components/Modal/Customer/CreateCustomerModal';
-import TabNavigationScreenHeader from '../../../Components/Header/TabNavigationHeader';
-import TextTheme from '../../../Components/Text/TextTheme';
 import { useAppDispatch, useCompanyStore, useCustomerStore } from '../../../Store/ReduxStore';
 import { viewAllCustomer } from '../../../Services/customer';
-import CustomerCard, { CustomerLoadingView } from '../../../Components/Card/CustomerCard';
+import CustomerCard, { CustomerLoadingView } from '../../../Components/Ui/Card/CustomerCard';
 import ShowWhen from '../../../Components/Other/ShowWhen';
-import EmptyListView from '../../../Components/View/EmptyListView';
+import EmptyListView from '../../../Components/Layouts/View/EmptyListView';
 import CustomerTypeSelectorModal from '../../../Components/Modal/Customer/CustomerTypeSelectorModal';
 import { GetUserLedgers } from '../../../Utils/types';
 import navigator from '../../../Navigation/NavigationService';
 import { useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { BottomTabParamsList } from '../../../Navigation/BottomTabNavigation';
+import EntityListingHeader from '../../../Components/Layouts/Header/EntityListingHeader';
 
 
 export default function CustomerScreen(): React.JSX.Element {
@@ -59,9 +58,10 @@ export default function CustomerScreen(): React.JSX.Element {
 
     return (
         <View style={{ width: '100%', height: '100%' }} >
-            <TabNavigationScreenHeader>
-                <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >Customers</TextTheme>
-            </TabNavigationScreenHeader>
+            <EntityListingHeader
+                title='Customers'
+                onPressNotification={() => navigator.navigate('notification-screen')}
+            />
 
             <FlatList
                 ListEmptyComponent={isAllCustomerFetching ? null : <EmptyListView type="customer" />}
@@ -78,6 +78,8 @@ export default function CustomerScreen(): React.JSX.Element {
                         />
                     );
                 }}
+
+                ListFooterComponentStyle={{gap: 20}}
                 ListFooterComponent={<ShowWhen when={isAllCustomerFetching} >
                     {
                         Array.from({

@@ -1,8 +1,8 @@
 import { Pressable, View } from "react-native";
-import TextTheme from "../Components/Text/TextTheme";
-import LabelTextInput from "../Components/TextInput/LabelTextInput";
+import TextTheme from "../Components/Ui/Text/TextTheme";
+import LabelTextInput from "../Components/Ui/TextInput/LabelTextInput";
 import LogoImage from "../Components/Image/LogoImage";
-import NormalButton from "../Components/Button/NormalButton";
+import NormalButton from "../Components/Ui/Button/NormalButton";
 import { ScrollView, Text } from "react-native-gesture-handler";
 import { useRef, useState } from "react";
 import { isValidEmail } from "../Functions/StringOpations/pattenMaching";
@@ -10,7 +10,7 @@ import { useAppDispatch, useUserStore } from "../Store/ReduxStore";
 import { getCurrentUser, register } from "../Services/user";
 import navigator from "../Navigation/NavigationService";
 import { getCompany } from "../Services/company";
-import PhoneNoTextInput from "../Components/TextInput/PhoneNoTextInput";
+import PhoneNoTextInput from "../Components/Ui/Option/PhoneNoTextInput";
 import { PhoneNumber } from "../Utils/types";
 
 export default function SignUpScreen(): React.JSX.Element {

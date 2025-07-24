@@ -1,21 +1,21 @@
 import { FlatList, Pressable, Text, View } from "react-native";
-import AnimateButton from "../../../../Components/Button/AnimateButton";
+import AnimateButton from "../../../../Components/Ui/Button/AnimateButton";
 import FeatherIcon from "../../../../Components/Icon/FeatherIcon";
 import { useAppDispatch, useCompanyStore, useProductStore } from "../../../../Store/ReduxStore";
 import { useProductListingContext } from "./Context";
 import { getMonthByIndex } from "../../../../Utils/functionTools";
-import TextTheme from "../../../../Components/Text/TextTheme";
+import TextTheme from "../../../../Components/Ui/Text/TextTheme";
 import { useTheme } from "../../../../Contexts/ThemeProvider";
-import EmptyListView from "../../../../Components/View/EmptyListView";
-import ProductCard, { ProductLoadingCard } from "../../../../Components/Card/ProductCard";
+import EmptyListView from "../../../../Components/Layouts/View/EmptyListView";
+import ProductCard, { ProductLoadingCard } from "../../../../Components/Ui/Card/ProductCard";
 import navigator from "../../../../Navigation/NavigationService";
 import ShowWhen from "../../../../Components/Other/ShowWhen";
 import { viewAllProducts } from "../../../../Services/product";
 import { useEffect, useState } from "react";
-import RoundedPlusButton from "../../../../Components/Button/RoundedPlusButton";
+import RoundedPlusButton from "../../../../Components/Ui/Button/RoundedPlusButton";
 import CreateProductModal from "../../../../Components/Modal/Product/CreateProductModal";
 import { DateSelectorModal } from "./Modals";
-import EntityListingHeader from "../../../../Components/Header/EntityListingHeader";
+import EntityListingHeader from "../../../../Components/Layouts/Header/EntityListingHeader";
 
 
 export function Header(): React.JSX.Element {

@@ -4,10 +4,10 @@ import { Keyboard, Modal, ModalProps, PressableProps, StyleSheet, TouchableOpaci
 import FeatherIcons from 'react-native-vector-icons/Feather';
 import { Text } from "react-native-gesture-handler";
 import { useTheme } from "../../Contexts/ThemeProvider";
-import AlertCard from "../Alert/AlertCard";
+import AlertCard from "../Ui/Alert/AlertCard";
 import { Dimensions } from "react-native";
 import { useEffect, useState } from "react";
-import AnimateButton from "../Button/AnimateButton";
+import AnimateButton from "../Ui/Button/AnimateButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ActionButton = {

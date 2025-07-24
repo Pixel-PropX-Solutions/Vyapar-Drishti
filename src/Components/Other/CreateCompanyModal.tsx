@@ -1,17 +1,17 @@
 /* eslint-disable react-native/no-inline-styles */
 import { View, ScrollView, StyleSheet, Text } from 'react-native';
-import TextTheme from '../Text/TextTheme';
+import TextTheme from '../Ui/Text/TextTheme';
 import BottomModal from '../Modal/BottomModal';
 import { useCallback, useEffect, useState } from 'react';
 import { createCompany, getAllCompanies } from '../../Services/company';
 import { useTheme } from '../../Contexts/ThemeProvider';
 import arrayToFormData from '../../Utils/arrayToFormData';
-import { useAlert } from '../Alert/AlertProvider';
+import { useAlert } from '../Ui/Alert/AlertProvider';
 import { useAppDispatch, useCompanyStore } from '../../Store/ReduxStore';
-import { InputField } from '../TextInput/InputField';
+import { InputField } from '../Ui/TextInput/InputField';
 import { getDefaultAprilFirst } from '../../Utils/functionTools';
-import AnimateButton from '../Button/AnimateButton';
-import BackgroundThemeView from '../View/BackgroundThemeView';
+import AnimateButton from '../Ui/Button/AnimateButton';
+import BackgroundThemeView from '../Layouts/View/BackgroundThemeView';
 import FeatherIcon from '../Icon/FeatherIcon';
 import LoadingModal from '../Modal/LoadingModal';
 import { getCurrentUser } from '../../Services/user';

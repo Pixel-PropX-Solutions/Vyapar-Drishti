@@ -1,9 +1,9 @@
 import { ScrollView } from "react-native-gesture-handler";
-import TextTheme from "../Components/Text/TextTheme";
-import StackNavigationHeader from "../Components/Header/StackNavigationHeader";
+import TextTheme from "../Components/Ui/Text/TextTheme";
+import StackNavigationHeader from "../Components/Layouts/Header/StackNavigationHeader";
 import { View, Text } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { SectionRowWithIcon } from "../Components/View/SectionView";
+import { SectionRowWithIcon } from "../Components/Layouts/View/SectionView";
 import FeatherIcon from "../Components/Icon/FeatherIcon";
 import ShowWhen from "../Components/Other/ShowWhen";
 
