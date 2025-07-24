@@ -346,8 +346,6 @@ export function AmountBox(): React.JSX.Element {
                     vouchar_id: '',
                     item: pro.name,
                     amount: pro.price * pro.quantity,
-                    [pro.gstRate ? 'gst_rate' : '']: pro.gstRate,
-                    [pro.gstRate ? 'gst_amount' : '']: Number(pro.gstRate) * pro.quantity * pro.price / 100,
                     hsn_code: pro.hsnCode 
                 })),
                 party_name: customer?.name ?? '',

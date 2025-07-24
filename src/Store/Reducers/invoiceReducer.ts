@@ -37,6 +37,8 @@ const invoiceSlice = createSlice({
             .addCase(viewAllInvoices.pending, (state) => {
                 state.error = null;
                 state.isInvoiceFeaching = true;
+                if(state.invoices?.length ?? 0 < 10) 
+                    state.invoices = [];
             })
             .addCase(viewAllInvoices.fulfilled, (state, {payload}: {payload: {invoices: GetAllVouchars[], pageMeta: PageMeta} | any}) => {
                 state.pageMeta = payload.pageMeta;

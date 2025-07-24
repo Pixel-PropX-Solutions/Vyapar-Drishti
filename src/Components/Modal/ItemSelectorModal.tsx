@@ -94,7 +94,9 @@ export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItem
                 data={data}
                 
                 ListEmptyComponent={
-                    <EmptyListView title="Empty List" text="Don't found any item in list" />
+                    <ShowWhen when={!isFetching} otherwise={whenFetchingComponent} >
+                        <EmptyListView title="Empty List" text="Don't found any item in list" />
+                    </ShowWhen>
                 }
                 
                 keyExtractor={item => (

@@ -24,6 +24,7 @@ import { sliceString } from "../../../../Utils/functionTools";
 import ShowWhen from "../../../../Components/Other/ShowWhen";
 import { ProductLoadingCard } from "../../../../Components/Card/ProductCard";
 import CreateProductModal from "../../../../Components/Modal/Product/CreateProductModal";
+import { CustomerLoadingView } from "../../../../Components/Card/CustomerCard";
 
 
 type Props = {
@@ -135,12 +136,14 @@ export default function CustomerSelectorModal({ visible, setVisible }: Props) {
     }
 
     useEffect(() => {
-        dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
-    }, [company?._id, dispatch, isCreateCustomerModalOpen]);
+        if(visible && !isCreateCustomerModalOpen)
+            dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
+    }, [isCreateCustomerModalOpen, visible]);
 
     useEffect(() => {
-        setFilterCustomers(() => customers.filter((ledger) => ledger.parent === 'Creditors' || ledger.parent === 'Debtors'
-        ));
+        setFilterCustomers(
+            customers.filter((ledger) => ledger.parent === 'Creditors' || ledger.parent === 'Debtors')
+        );
     }, [customers]);
 
 
@@ -201,15 +204,7 @@ export default function CustomerSelectorModal({ visible, setVisible }: Props) {
                         
             isFetching={isAllCustomerFetching}
             
-            whenFetchingComponent={
-                <BackgroundThemeView isPrimary={false} style={{padding: 12, borderRadius: 16, gap: 4}} >
-                    <LoadingView height={14} width={150} isPrimary={true} />
-                    <View style={{justifyContent: 'space-between', flexDirection: 'row'}} >
-                        <LoadingView height={12} width={80} isPrimary={true} />
-                        <LoadingView height={12} width={60} isPrimary={true} />
-                    </View>
-                </BackgroundThemeView>
-            }
+            whenFetchingComponent={<CustomerLoadingView/>}
             
         />
 

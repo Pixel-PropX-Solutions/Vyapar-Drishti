@@ -78,6 +78,8 @@ export default function CustomerScreen(): React.JSX.Element {
                         />
                     );
                 }}
+
+                ListFooterComponentStyle={{gap: 20}}
                 ListFooterComponent={<ShowWhen when={isAllCustomerFetching} >
                     {
                         Array.from({

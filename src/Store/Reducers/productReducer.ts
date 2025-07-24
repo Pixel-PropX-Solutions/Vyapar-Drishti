@@ -75,6 +75,7 @@ const productSlice = createSlice({
 
       .addCase(viewProduct.pending, (state) => {
         state.error = null;
+        state.product = null;
         state.loading = true;
       })
       .addCase(viewProduct.fulfilled, (state, action: PayloadAction<any>) => {
@@ -88,6 +89,7 @@ const productSlice = createSlice({
 
       .addCase(getProduct.pending, (state) => {
         state.error = null;
+        state.item = null;
         state.loading = true;
       })
       .addCase(getProduct.fulfilled, (state, action: PayloadAction<any>) => {
@@ -103,6 +105,8 @@ const productSlice = createSlice({
       .addCase(viewAllProducts.pending, (state) => {
         state.error = null;
         state.isProductsFetching = true;
+        if(state.productsData?.length ?? 0 < 10)
+          state.productsData = []
       })
       .addCase(viewAllProducts.fulfilled, (state, action: PayloadAction<{productsData: GetProduct[], pageMeta: PageMeta} | any>) => {
           state.pageMeta = action.payload.pageMeta;

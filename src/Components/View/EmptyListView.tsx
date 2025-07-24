@@ -1,7 +1,8 @@
 /* eslint-disable react-native/no-inline-styles */
-import { View } from 'react-native';
+import { Animated, useAnimatedValue, View } from 'react-native';
 import FeatherIcon from '../Icon/FeatherIcon';
 import TextTheme from '../Text/TextTheme';
+import { useEffect } from 'react';
 
 
 type Info = {title: string, text: string}
@@ -27,8 +28,27 @@ const info: InfoObject = {
 type Props = {title?:string, text?: string, type?: 'invoice' | 'customer' | 'product'}
 
 export default function EmptyListView({title = '', text = '', type}: Props) {
+
+    const animate0to1 = useAnimatedValue(0);
+
+    useEffect(() => {
+        Animated.timing(animate0to1, {
+            toValue: 1, duration: 500, useNativeDriver: true
+        }).start()
+    }, [])
+
     return (
-        <View style={{padding: 30, opacity: 0.6, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <Animated.View 
+            style={{
+                padding: 30, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                opacity: animate0to1.interpolate({
+                    inputRange: [0, 1], outputRange: [0, 0.6]
+                }),
+                transform: [{scale: animate0to1.interpolate({
+                    inputRange: [0, 1], outputRange: [0.5, 1]
+                })}]
+            }}
+        >
             <FeatherIcon name="inbox" size={38} />
             <TextTheme style={{fontWeight: '900', fontSize: 18, marginTop: 10, marginBottom: 4}}>
                 {type ? info[type].title : title}
@@ -36,6 +56,6 @@ export default function EmptyListView({title = '', text = '', type}: Props) {
             <TextTheme isPrimary={false} style={{fontWeight: '800', fontSize: 12, textAlign: 'center', opacity: 0.75}}>
                 {type ? info[type].text : text}
             </TextTheme>
-        </View>
+        </Animated.View>
     );
 }

@@ -3,7 +3,6 @@ import TextTheme from "../Text/TextTheme"
 import AnimateButton from "../Button/AnimateButton"
 import FeatherIcon from "../Icon/FeatherIcon"
 import navigator from "../../Navigation/NavigationService"
-import { ReactNode } from "react"
 import ShowWhen from "../Other/ShowWhen"
 
 type Props = {
