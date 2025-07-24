@@ -67,7 +67,7 @@ export default function BillScreen(): React.JSX.Element {
     const [pageNumber, setPageNumber] = useState(1);
 
     const invoiceInfo = useRef<{ invoiceId: string, downloadHtml: string, fullHtml: string }>({
-        invoiceId: '', downloadHtml: '', fullHtml: ''
+        invoiceId: '', downloadHtml: '', fullHtml: '',
     });
 
     // const [customerName, setCustomerName] = useState<string>('');
@@ -100,10 +100,10 @@ export default function BillScreen(): React.JSX.Element {
     }
 
     function handleRefresh() {
-        if (refreshing) return;
+        if (refreshing) { return; }
         setRefreshing(true);
         dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1 }))
-            .then(res => { setRefreshing(false) })
+            .then(res => { setRefreshing(false); })
             .finally(() => setRefreshing(false));
     }
 
@@ -148,7 +148,7 @@ export default function BillScreen(): React.JSX.Element {
 
                         // setCustomerName(invoice?.party_name);
 
-                        if (callback) callback();
+                        if (callback) { callback(); }
                         // setHtml(true);
                     } else {
                         console.error('Failed to print invoice:', response.payload);
@@ -159,7 +159,7 @@ export default function BillScreen(): React.JSX.Element {
                 }
                 ).finally(() => {
                     setIsGenerating(false);
-                })
+                });
             }
             else {
                 dispatch(printInvoices({
@@ -180,7 +180,7 @@ export default function BillScreen(): React.JSX.Element {
 
                         // setCustomerName(invoice?.party_name);
 
-                        if (callback) callback();
+                        if (callback) { callback(); }
                         // setHtml(true);
                     } else {
                         console.error('Failed to print GST invoice:', response.payload);
@@ -191,7 +191,7 @@ export default function BillScreen(): React.JSX.Element {
                 }
                 ).finally(() => {
                     setIsGenerating(false);
-                })
+                });
             }
 
         }
@@ -341,8 +341,8 @@ export default function BillScreen(): React.JSX.Element {
             dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1 }));
         });
 
-        return event
-    }, [])
+        return event;
+    }, []);
 
     return (
         <View style={{ width: '100%', height: '100%' }}>
@@ -463,6 +463,7 @@ export default function BillScreen(): React.JSX.Element {
                             }}
                         >
                             <BillCard
+                                key={item._id}
                                 billNo={item.voucher_number}
                                 type={item.voucher_type}
                                 customerName={item.party_name}
@@ -470,9 +471,9 @@ export default function BillScreen(): React.JSX.Element {
                                 totalAmount={item.amount}
                                 payAmount={item.amount}
                                 pendingAmount={0}
-                                onPrint={() => { handleInvoice(item, () => setHtml(true)) }}
-                                onShare={() => { handleInvoice(item, handleShare) }}
-                                onPress={() => { navigator.navigate('bill-info-screen', { id: item._id }) }}
+                                onPrint={() => { handleInvoice(item, () => setHtml(true)); }}
+                                onShare={() => { handleInvoice(item, handleShare); }}
+                                onPress={() => { navigator.navigate('bill-info-screen', { id: item._id }); }}
                             />
                         </Animated.View>
                     )}
@@ -481,7 +482,7 @@ export default function BillScreen(): React.JSX.Element {
                             <View style={{ gap: 12 }}>
                                 {
                                     Array.from({
-                                        length: Math.min(2, pageMeta.total - (invoices?.length ?? 0)) + 1
+                                        length: Math.min(2, pageMeta.total - (invoices?.length ?? 0)) + 1,
                                     },
                                         (_, i) => i
                                     ).map(item => (

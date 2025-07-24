@@ -9,7 +9,7 @@ export function stringToNumber(str: string, pre = 2, originalType = true) {
         index++;
     }
 
-    if (index < str.length && str[index] !== '.') {return originalType ? parseInt(num) : Number(num + '.' + createString(pre, '0'));}
+    if (index < str.length && str[index] !== '.') { return originalType ? parseInt(num) : Number(num + '.' + createString(pre, '0')); }
 
     index++;
 
@@ -26,15 +26,15 @@ export function stringToNumber(str: string, pre = 2, originalType = true) {
 
 export function createString(len: number, char = ' ') {
     let str = '';
-    for (let i = 0; i < len; i++) {str += char;}
+    for (let i = 0; i < len; i++) { str += char; }
     return str;
 }
 
 
 export function sliceString(str: any, len = Infinity, rem = 2): string | undefined {
-    if (typeof str !== 'string') {return str;}
+    if (typeof str !== 'string') { return str; }
 
-    if (str.length <= len) {return str;}
+    if (str.length <= len) { return str; }
 
     return str?.slice(0, len - rem) + '...';
 }
@@ -47,35 +47,65 @@ export const getDefaultAprilFirst = () => {
 };
 
 
-export const capitalize = (str: string, by: 'word' | 'sentence' = "sentence"): string => {
-    if(!str) return str;
-    
+export const capitalize = (str: string, by: 'word' | 'sentence' = 'sentence'): string => {
+    if (!str) { return str; }
+
     const splitBy = by === 'word' ? ' ' : '.';
 
     return str.split(splitBy).map(chars => chars.trim()).map(chars => (
         chars[0].toUpperCase() + chars.slice(1)
     )).join(splitBy + ' ');
-}
+};
 
 
-export function formatNumberForUI(num: number, minLen=4, toFix=2): string {
+export function formatNumberForUI(num: number, minLen = 4, toFix = 2): string {
     const absNum = Math.abs(num);
 
     let sign: string = num < 0 ? '-' : '';
 
-    if(Math.floor(absNum).toString().length <= minLen) return `${sign}${absNum.toFixed(toFix)}`;
+    if (Math.floor(absNum).toString().length <= minLen) { return `${sign}${absNum.toFixed(toFix)}`; }
 
-    if(Math.floor(absNum/1_000).toString().length <= minLen) return `${sign}${(absNum/1_000).toFixed(toFix)}K`;
-    
-    if(Math.floor(absNum/100_000).toString().length <= minLen) return `${sign}${(absNum/100_000).toFixed(toFix)}M`;
+    if (Math.floor(absNum / 1_000).toString().length <= minLen) { return `${sign}${(absNum / 1_000).toFixed(toFix)}K`; }
 
-    if(Math.floor(absNum/100_00_000).toString().length <= minLen) return `${sign}${(absNum/100_00_000).toFixed(toFix)}B`;
-  
-    return `${sign}${(absNum/100_00_000_000).toFixed(toFix)}T`;
+    if (Math.floor(absNum / 100_000).toString().length <= minLen) { return `${sign}${(absNum / 100_000).toFixed(toFix)}M`; }
+
+    if (Math.floor(absNum / 100_00_000).toString().length <= minLen) { return `${sign}${(absNum / 100_00_000).toFixed(toFix)}B`; }
+
+    return `${sign}${(absNum / 100_00_000_000).toFixed(toFix)}T`;
 }
 
 
 export function getMonthByIndex(index: number): string {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return months[Math.abs(index) % 12]
+    return months[Math.abs(index) % 12];
 }
+
+export function roundToDecimal(num: number, decimalPlaces: number): number {
+    // Rounds a number to a specified number of decimal places.
+    const res = Number(num.toFixed(decimalPlaces));
+    return res;
+}
+
+export const formatDatewithTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hour12: true,
+    });
+};
+
+// Format the date to a readable format
+export const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    });
+};

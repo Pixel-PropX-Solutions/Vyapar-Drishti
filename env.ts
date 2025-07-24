@@ -1,7 +1,7 @@
-const BASE_URL = 'https://dristidocs-backend.onrender.com/api/v1';
-// const BASE_URL = 'http://192.168.16.123:8010/api/v1';
-const BASE_ADMIN_URL = 'https://dristidocs-backend.onrender.com/api/v1/admin';
-// const BASE_ADMIN_URL = 'http://192.168.16.123:8010/api/v1/admin';
+// const BASE_URL = 'https://dristidocs-backend.onrender.com/api/v1';
+const BASE_URL = 'http://192.168.116.123:8010/api/v1';
+// const BASE_ADMIN_URL = 'https://dristidocs-backend.onrender.com/api/v1/admin';
+const BASE_ADMIN_URL = 'http://192.168.116.123:8010/api/v1/admin';
 const BASE_WEB_URL = 'https://vyapar-drishti.vercel.app';
 const BASE_APP_URL = 'https://play.google.com/store/apps/details?id=com.pixelprophet.vyapardrishti';
 

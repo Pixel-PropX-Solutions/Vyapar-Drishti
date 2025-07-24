@@ -32,7 +32,7 @@ type Props = {
 }
 
 
-export function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }: Props & {editProductIndex: number}): React.JSX.Element {
+export function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }: Props & { editProductIndex: number }): React.JSX.Element {
 
     const { products, setProducts } = useBillContext();
     const { primaryColor } = useTheme();
@@ -163,23 +163,23 @@ export default function CustomerSelectorModal({ visible, setVisible }: Props) {
                     icon: <FeatherIcon name="user-plus" size={16} color="white" />,
                 },
             ]}
-            
+
             SelectedItemContent={<View>
                 <TextTheme color='white' >{customer?.name}</TextTheme>
                 <TextTheme color='white' isPrimary={false} >{customer?.group}</TextTheme>
             </View>}
 
             renderItemContent={item => (
-                <View style={{flex: 1}} >
+                <View style={{ flex: 1 }} >
                     <TextTheme>{item.ledger_name}</TextTheme>
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}} >
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
                         <TextTheme isPrimary={false} >{item.phone?.code} {item.phone?.number}</TextTheme>
                         <TextTheme isPrimary={false} >{item.parent}</TextTheme>
                     </View>
                 </View>
             )}
-            
-            filter={(item, val) => 
+
+            filter={(item, val) =>
                 item.phone?.number.startsWith(val) ||
                 item.phone?.number.endsWith(val) ||
                 item.ledger_name.toLowerCase().split(' ').some(word => (
@@ -196,31 +196,31 @@ export default function CustomerSelectorModal({ visible, setVisible }: Props) {
                     group: item.parent,
                 }));
             }}
-            
+
             loadItemsBeforeListEnd={handleProductFetching}
-                        
+
             isFetching={isAllCustomerFetching}
-            
+
             whenFetchingComponent={
-                <BackgroundThemeView isPrimary={false} style={{padding: 12, borderRadius: 16, gap: 4}} >
+                <BackgroundThemeView isPrimary={false} style={{ padding: 12, borderRadius: 16, gap: 4 }} >
                     <LoadingView height={14} width={150} isPrimary={true} />
-                    <View style={{justifyContent: 'space-between', flexDirection: 'row'}} >
+                    <View style={{ justifyContent: 'space-between', flexDirection: 'row' }} >
                         <LoadingView height={12} width={80} isPrimary={true} />
                         <LoadingView height={12} width={60} isPrimary={true} />
                     </View>
                 </BackgroundThemeView>
             }
-            
+
         />
 
         <CustomerTypeSelectorModal
-            visible={isCustomerTypeSelectorModalOpen} setVisible={setCustomerTypeSelectorModalOpen} 
-            setSecondaryVisible={setCreateCustomerModalOpen} 
+            visible={isCustomerTypeSelectorModalOpen} setVisible={setCustomerTypeSelectorModalOpen}
+            setSecondaryVisible={setCreateCustomerModalOpen}
         />
-        
+
         <CreateCustomerModal
-            visible={isCreateCustomerModalOpen} setVisible={setCreateCustomerModalOpen} 
-            setPrimaryVisible={setCustomerTypeSelectorModalOpen} 
+            visible={isCreateCustomerModalOpen} setVisible={setCreateCustomerModalOpen}
+            setPrimaryVisible={setCustomerTypeSelectorModalOpen}
         />
     </>);
 }

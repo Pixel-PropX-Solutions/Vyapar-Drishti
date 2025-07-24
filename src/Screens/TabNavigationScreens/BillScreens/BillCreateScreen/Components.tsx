@@ -1,37 +1,39 @@
-import { View } from "react-native";
-import AnimateButton from "../../../../Components/Button/AnimateButton";
-import navigator from "../../../../Navigation/NavigationService";
-import { useTheme } from "../../../../Contexts/ThemeProvider";
-import FeatherIcon from "../../../../Components/Icon/FeatherIcon";
-import TextTheme from "../../../../Components/Text/TextTheme";
-import { useBillContext } from "./Context";
-import { SectionRow, SectionRowWithIcon } from "../../../../Components/View/SectionView";
-import DateSelectorModal from "../../../../Components/Modal/DateSelectorModal";
-import { useState } from "react";
-import { FlatList } from "react-native";
-import EmptyListView from "../../../../Components/View/EmptyListView";
-import ShowWhen from "../../../../Components/Other/ShowWhen";
-import NormalButton from "../../../../Components/Button/NormalButton";
-import { formatNumberForUI, sliceString } from "../../../../Utils/functionTools";
-import { useAppStorage } from "../../../../Contexts/AppStorageProvider";
-import BackgroundThemeView from "../../../../Components/View/BackgroundThemeView";
-import { CreateInvoiceData } from "../../../../Utils/types";
-import { useAppDispatch, useCompanyStore } from "../../../../Store/ReduxStore";
-import { RouteProp, useRoute } from "@react-navigation/native";
-import { StackParamsList } from "../../../../Navigation/StackNavigation";
-import { createInvoice } from "../../../../Services/invoice";
-import LoadingModal from "../../../../Components/Modal/LoadingModal";
-import CustomerSelectorModal, { ProductSelectorModal } from "./Modals";
+/* eslint-disable react-native/no-inline-styles */
+import { View } from 'react-native';
+import AnimateButton from '../../../../Components/Button/AnimateButton';
+import navigator from '../../../../Navigation/NavigationService';
+import { useTheme } from '../../../../Contexts/ThemeProvider';
+import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
+import TextTheme from '../../../../Components/Text/TextTheme';
+import { useBillContext } from './Context';
+import { SectionRow, SectionRowWithIcon } from '../../../../Components/View/SectionView';
+import DateSelectorModal from '../../../../Components/Modal/DateSelectorModal';
+import { useEffect, useState } from 'react';
+import { FlatList } from 'react-native';
+import EmptyListView from '../../../../Components/View/EmptyListView';
+import ShowWhen from '../../../../Components/Other/ShowWhen';
+import NormalButton from '../../../../Components/Button/NormalButton';
+import { formatNumberForUI, roundToDecimal, sliceString } from '../../../../Utils/functionTools';
+import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
+import BackgroundThemeView from '../../../../Components/View/BackgroundThemeView';
+import { CreateInvoiceData, CreateInvoiceWithGSTData } from '../../../../Utils/types';
+import { useAppDispatch, useCompanyStore, useUserStore } from '../../../../Store/ReduxStore';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import { StackParamsList } from '../../../../Navigation/StackNavigation';
+import { createInvoice, createInvoiceWithGST, getInvoiceCounter } from '../../../../Services/invoice';
+import LoadingModal from '../../../../Components/Modal/LoadingModal';
+import CustomerSelectorModal, { ProductSelectorModal } from './Modals';
 
 export function Header() {
 
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
     const { type: billType } = router.params;
-    
-    const {secondaryBackgroundColor} = useTheme();
+
+    const { secondaryBackgroundColor } = useTheme();
 
     return (
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 20, paddingHorizontal: 20, paddingBlock: 10,
+        <View style={{
+            flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 20, paddingHorizontal: 20, paddingBlock: 10,
         }} >
             <AnimateButton
                 onPress={() => navigator.goBack()}
@@ -54,15 +56,15 @@ export function Header() {
                 <TextTheme style={{ fontSize: 14, fontWeight: 700 }} >{billType}</TextTheme>
             </View>
         </View>
-    )
+    );
 }
 
 
 
 export function ProgressBar(): React.JSX.Element {
 
-    const {secondaryBackgroundColor} = useTheme()
-    const {progress} = useBillContext();
+    const { secondaryBackgroundColor } = useTheme();
+    const { progress } = useBillContext();
 
     return (
         <View>
@@ -90,18 +92,38 @@ export function ProgressBar(): React.JSX.Element {
                 />
             </View>
         </View>
-    )
+    );
 }
 
 
 
 export function BillNoSelector() {
 
-    const {billNo} = useBillContext();
-    const {secondaryBackgroundColor} = useTheme();
+    const { billNo, setBillNo } = useBillContext();
+    const dispatch = useAppDispatch();
+    const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
+    const { type: billType } = router.params;
+    const { user } = useUserStore();
+    const { secondaryBackgroundColor } = useTheme();
+
+    useEffect(() => {
+        dispatch(getInvoiceCounter({
+            company_id: user.user_settings.current_company_id || '',
+            voucher_type: billType,
+        })).then((response) => {
+            if (response.meta.requestStatus === 'fulfilled') {
+                setBillNo(response.payload.current_number);
+            }
+        }
+        ).catch((error) => {
+            console.error('Error fetching customers:', error);
+            // toast.error(error || "An unexpected error occurred. Please try again later.");
+        });
+    }, [dispatch, user.user_settings.current_company_id, billType]);
 
     return (
-        <AnimateButton style={{ padding: 8, borderRadius: 16, flex: 1, flexDirection: 'row', borderColor: secondaryBackgroundColor, gap: 12, alignItems: 'center', backgroundColor: billNo ? 'rgba(60, 180, 120, 0.5)' : secondaryBackgroundColor,
+        <AnimateButton style={{
+            padding: 8, borderRadius: 16, flex: 1, flexDirection: 'row', borderColor: secondaryBackgroundColor, gap: 12, alignItems: 'center', backgroundColor: billNo ? 'rgba(60, 180, 120, 0.5)' : secondaryBackgroundColor,
         }}>
             <BackgroundThemeView
                 style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }}
@@ -118,27 +140,27 @@ export function BillNoSelector() {
                 </TextTheme>
             </View>
         </AnimateButton>
-    )
+    );
 }
 
 
 
 export function DateSelector() {
 
-    const {createOn, setCreateOn} = useBillContext();
-    const {secondaryBackgroundColor} = useTheme()
+    const { createOn, setCreateOn } = useBillContext();
+    const { secondaryBackgroundColor } = useTheme();
 
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
     return (<>
-        <AnimateButton 
+        <AnimateButton
             style={{
                 padding: 8, borderRadius: 16, flex: 1, flexDirection: 'row', borderColor: secondaryBackgroundColor, gap: 12, alignItems: 'center',
                 backgroundColor: createOn ? 'rgba(60, 180, 120, 0.5)' : secondaryBackgroundColor,
             }}
 
             bubbleScale={10}
-            onPress={() => {setModalVisible(true)}}
+            onPress={() => { setModalVisible(true); }}
         >
             <BackgroundThemeView
                 style={{
@@ -167,21 +189,21 @@ export function DateSelector() {
 
             value={(() => {
                 const [date, month, year] = createOn.split('/').map(Number);
-                return {date, month: month - 1, year}
+                return { date, month: month - 1, year };
             })()}
-            
-            onSelect={({year, month, date}) => {
-                setCreateOn(`${date}/${(month + 1).toString().padStart(2, '0')}/${year}`)
+
+            onSelect={({ year, month, date }) => {
+                setCreateOn(`${date}/${(month + 1).toString().padStart(2, '0')}/${year}`);
             }}
         />
-    </>)
+    </>);
 }
 
 
 
 export function CustomerSelector() {
 
-    const {customer} = useBillContext();
+    const { customer } = useBillContext();
 
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
@@ -193,22 +215,22 @@ export function CustomerSelector() {
             backgroundColor={customer ? 'rgba(60,180,120, 0.5)' : ''}
             hasArrow={true}
             arrowIcon={<FeatherIcon name="chevron-right" size={20} />}
-            onPress={() => { setModalVisible(true) }}
+            onPress={() => { setModalVisible(true); }}
         />
-    
+
         <CustomerSelectorModal visible={isModalVisible} setVisible={setModalVisible} />
-    </>)
+    </>);
 }
 
 
 
 export function ProductSelector() {
 
-    const {products} = useBillContext();
+    const { products } = useBillContext();
 
-    const [isModalVisible, setModalVisible] = useState<boolean>(false)
+    const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
-    return (<>    
+    return (<>
         <SectionRowWithIcon
             icon={<FeatherIcon name="package" size={20} />}
             label="Add Items"
@@ -216,19 +238,19 @@ export function ProductSelector() {
             hasArrow={true}
             arrowIcon={<FeatherIcon name="chevron-right" size={20} />}
             backgroundColor={products.length > 0 ? 'rgba(60,180,120, 0.5)' : ''}
-            onPress={() => { setModalVisible(true) }}
+            onPress={() => { setModalVisible(true); }}
         />
 
         <ProductSelectorModal visible={isModalVisible} setVisible={setModalVisible} />
-    </>)
+    </>);
 }
 
 
 
 export function ProductListing() {
 
-    const {currency} = useAppStorage()
-    const {products, setProducts} = useBillContext();
+    const { currency } = useAppStorage();
+    const { products, setProducts } = useBillContext();
 
     return (
         <FlatList
@@ -242,17 +264,17 @@ export function ProductListing() {
 
             ListFooterComponent={<ShowWhen when={products.length !== 0} >
                 <NormalButton
-                    backgroundColor='rgb(50,120,200)' color='white' 
-                    text='+ Add Product' 
-                    icon={<FeatherIcon color='white' name='package' size={16} />}
-                    onPress={() => {  }} 
+                    backgroundColor="rgb(50,120,200)" color="white"
+                    text="+ Add Product"
+                    icon={<FeatherIcon color="white" name="package" size={16} />}
+                    onPress={() => { }}
                 />
             </ShowWhen>}
 
             data={products}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
-                <SectionRow onPress={() => {  }} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12, position: 'relative' }} >
+                <SectionRow onPress={() => { }} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12, position: 'relative' }} >
                     <View>
                         <TextTheme style={{ fontWeight: '700', fontSize: 16 }}>
                             {sliceString(item.name, 34)}
@@ -302,22 +324,25 @@ export function ProductListing() {
                 </SectionRow>
             )}
         />
-    )
+    );
 }
 
 
 
 export function AmountBox(): React.JSX.Element {
 
-    
+
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
     const { type: billType, id: billId } = router.params;
 
-    const dispatch = useAppDispatch()
-    const {currency} = useAppStorage();
-    const {company} = useCompanyStore()
-    const {totalValue, products, progress, createOn, billNo, customer, resetAllStates} = useBillContext();
-    
+    const dispatch = useAppDispatch();
+    const { currency } = useAppStorage();
+    const { user } = useUserStore();
+    const currentCompanyDetails = user.company.find((c: any) => c._id === user.user_settings.current_company_id);
+    const gst_enabble: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
+    const { company } = useCompanyStore();
+    const { totalValue, products, progress, createOn, billNo, customer, resetAllStates } = useBillContext();
+
     const [isCreating, setCreating] = useState<boolean>(false);
 
     async function handleInvoice() {
@@ -325,51 +350,103 @@ export function AmountBox(): React.JSX.Element {
         setCreating(true);
 
         try {
-            let data: CreateInvoiceData = {
-                company_id: company?._id ?? '',
-                date: createOn.split('/').reverse().join('-'),
-                voucher_number: billNo,
-                voucher_type: billType,
-                voucher_type_id: billId,
-                reference_date: '',
-                narration: '',
-                place_of_supply: '',
-                reference_number: '',
-                due_date: '',
-                mode_of_transport: '',
-                status: '',
-                vehicle_number: '',
-                items: products.map(pro => ({
-                    item_id: pro.id,
-                    quantity: pro.quantity,
-                    rate: pro.price,
-                    vouchar_id: '',
-                    item: pro.name,
-                    amount: pro.price * pro.quantity,
-                    [pro.gstRate ? 'gst_rate' : '']: pro.gstRate,
-                    [pro.gstRate ? 'gst_amount' : '']: Number(pro.gstRate) * pro.quantity * pro.price / 100,
-                    hsn_code: pro.hsnCode 
-                })),
-                party_name: customer?.name ?? '',
-                party_name_id: customer?.id ?? '',
-                accounting: [
-                    { amount: billType === 'Sales' ? -totalValue : totalValue, ledger: customer?.name ?? '', ledger_id: customer?.id ?? '', vouchar_id: '' },
-                    { amount: billType === 'Sales' ? totalValue : -totalValue, ledger: billType, ledger_id: billId ?? '', vouchar_id: '' },
-                ],
-            };
+            if (gst_enabble) {
+                let dataToSend: CreateInvoiceWithGSTData = {
+                    company_id: company?._id ?? '',
+                    date: createOn.split('/').reverse().join('-'),
+                    voucher_number: billNo,
+                    voucher_type: billType,
+                    voucher_type_id: billId,
+                    reference_date: '',
+                    narration: '',
+                    place_of_supply: '',
+                    reference_number: '',
+                    due_date: '',
+                    mode_of_transport: '',
+                    status: '',
+                    vehicle_number: '',
+                    party_name: customer?.name ?? '',
+                    party_name_id: customer?.id ?? '',
+                    items: products.map(pro => ({
+                        vouchar_id: '',
+                        item_id: pro.id,
+                        quantity: pro.quantity,
+                        rate: pro.price,
+                        item: pro.name,
+                        amount: roundToDecimal(pro.price * pro.quantity, 2),
+                        gst_rate: pro.gstRate,
+                        gst_amount: roundToDecimal((Number(pro.gstRate) * pro.quantity * pro.price / 100), 2),
+                        hsn_code: pro.hsnCode,
+                        additional_amount: 0,
+                        discount_amount: 0,
+                        godown: '',
+                        godown_id: '',
+                        order_number: '',
+                        order_due_date: '',
+                    })),
+                    accounting: [
+                        { amount: billType === 'Sales' ? roundToDecimal(-totalValue, 2) : roundToDecimal(totalValue, 2), ledger: customer?.name ?? '', ledger_id: customer?.id ?? '', vouchar_id: '' },
+                        { amount: billType === 'Sales' ? roundToDecimal(totalValue, 2) : roundToDecimal(-totalValue, 2), ledger: billType, ledger_id: billId ?? '', vouchar_id: '' },
+                    ],
+                };
 
-            console.log(data);
+                console.log('Data to send:', dataToSend);
 
-            let { payload: res } = await dispatch(createInvoice(data));
-
-            if (res.success) {
-                resetAllStates();
-                navigator.goBack();
+                dispatch(createInvoiceWithGST(dataToSend)).then(() => {
+                    resetAllStates();
+                    navigator.goBack();
+                    setCreating(false);
+                }).catch((error) => {
+                    resetAllStates();
+                    console.error('Error creating invoice:', error);
+                    setCreating(false);
+                });
             }
+            else {
+                let dataToSend: CreateInvoiceData = {
+                    company_id: company?._id ?? '',
+                    date: createOn.split('/').reverse().join('-'),
+                    voucher_number: billNo,
+                    voucher_type: billType,
+                    voucher_type_id: billId,
+                    reference_date: '',
+                    narration: '',
+                    place_of_supply: '',
+                    reference_number: '',
+                    due_date: '',
+                    mode_of_transport: '',
+                    status: '',
+                    vehicle_number: '',
+                    party_name: customer?.name ?? '',
+                    party_name_id: customer?.id ?? '',
+                    items: products.map(pro => ({
+                        item_id: pro.id,
+                        quantity: pro.quantity,
+                        rate: pro.price,
+                        vouchar_id: '',
+                        item: pro.name,
+                        amount: roundToDecimal(pro.price * pro.quantity, 2),
+                    })),
+                    accounting: [
+                        { amount: billType === 'Sales' ? roundToDecimal(-totalValue, 2) : roundToDecimal(totalValue, 2), ledger: customer?.name ?? '', ledger_id: customer?.id ?? '', vouchar_id: '' },
+                        { amount: billType === 'Sales' ? roundToDecimal(totalValue, 2) : roundToDecimal(-totalValue, 2), ledger: billType, ledger_id: billId ?? '', vouchar_id: '' },
+                    ],
+                };
+
+                dispatch(createInvoice(dataToSend)).then(() => {
+                    resetAllStates();
+                    navigator.goBack();
+                    setCreating(false);
+                }).catch((error) => {
+                    resetAllStates();
+                    console.error('Error creating invoice:', error);
+                    setCreating(false);
+                });
+            }
+
         } catch (error) {
-            console.error('Error creating invoice:', error);
-        } finally {
             setCreating(false);
+            console.error('Error creating invoice:', error);
         }
     }
 
@@ -418,5 +495,5 @@ export function AmountBox(): React.JSX.Element {
 
             <LoadingModal visible={isCreating} />
         </ShowWhen>
-    )
+    );
 }
