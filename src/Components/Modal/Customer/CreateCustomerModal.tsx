@@ -2,22 +2,22 @@
 import { View, ScrollView, Text } from 'react-native';
 import BottomModal from '../BottomModal';
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
-import TextTheme from '../../Text/TextTheme';
+import TextTheme from '../../Ui/Text/TextTheme';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 import ShowWhen from '../../Other/ShowWhen';
-import { useAlert } from '../../Alert/AlertProvider';
+import { useAlert } from '../../Ui/Alert/AlertProvider';
 import LoadingModal from '../LoadingModal';
 import { useAppDispatch, useCompanyStore, useCustomerStore, useUserStore } from '../../../Store/ReduxStore';
 import { createCustomer, viewAllCustomers } from '../../../Services/customer';
 import { accountGroups } from '../../../Utils/accountGroups';
-import { InputField } from '../../TextInput/InputField';
+import { InputField } from '../../Ui/TextInput/InputField';
 import { setCustomerType } from '../../../Store/Reducers/customerReducer';
 import FeatherIcon from '../../Icon/FeatherIcon';
 import CollapsabeMenu from '../../Other/CollapsabeMenu';
 import { PhoneNumber } from '../../../Utils/types';
-import PhoneNoInputField from '../../TextInput/PhoneNoInputField';
-import { ItemSelectorModal } from '../ItemSelectorModal';
-import { SelectField } from '../../TextInput/SelectField';
+import PhoneNoInputField from '../../Ui/Option/PhoneNoInputField';
+import { ItemSelectorModal } from '../Selectors/ItemSelectorModal';
+import { SelectField } from '../../Ui/TextInput/SelectField';
 type CountryInfo = { name: string, states: string[] };
 
 const countryData: CountryInfo[] = require('../../../Assets/Jsons/country-states.json');

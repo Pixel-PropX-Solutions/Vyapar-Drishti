@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useMemo } from "react";
 import { useProductListingContext } from "./Context";
-import { ItemSelectorModal } from "../../../../Components/Modal/ItemSelectorModal";
-import TextTheme from "../../../../Components/Text/TextTheme";
+import { ItemSelectorModal } from "../../../../Components/Modal/Selectors/ItemSelectorModal";
+import TextTheme from "../../../../Components/Ui/Text/TextTheme";
 import { getMonthByIndex } from "../../../../Utils/functionTools";
 
 type Props = {

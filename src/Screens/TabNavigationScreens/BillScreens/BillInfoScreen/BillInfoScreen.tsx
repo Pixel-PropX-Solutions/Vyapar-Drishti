@@ -1,10 +1,10 @@
 import { ScrollView, View } from "react-native";
-import EntityInfoHeader from "../../../../Components/Header/EntityInfoHeader";
-import TextTheme from "../../../../Components/Text/TextTheme";
-import SectionView, { SectionRow } from "../../../../Components/View/SectionView";
+import EntityInfoHeader from "../../../../Components/Layouts/Header/EntityInfoHeader";
+import TextTheme from "../../../../Components/Ui/Text/TextTheme";
+import SectionView, { SectionRow } from "../../../../Components/Layouts/View/SectionView";
 import FeatherIcon from "../../../../Components/Icon/FeatherIcon";
-import BackgroundThemeView from "../../../../Components/View/BackgroundThemeView";
-import NormalButton from "../../../../Components/Button/NormalButton";
+import BackgroundThemeView from "../../../../Components/Layouts/View/BackgroundThemeView";
+import NormalButton from "../../../../Components/Ui/Button/NormalButton";
 
 export default function BillInfoScreen(): React.JSX.Element {
     return (

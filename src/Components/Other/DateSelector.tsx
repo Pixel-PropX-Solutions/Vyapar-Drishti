@@ -1,8 +1,8 @@
 import { Pressable, View } from "react-native"
 import { useTheme } from "../../Contexts/ThemeProvider"
-import AnimateButton from "../Button/AnimateButton"
+import AnimateButton from "../Ui/Button/AnimateButton"
 import FeatherIcon from "../Icon/FeatherIcon"
-import TextTheme from "../Text/TextTheme"
+import TextTheme from "../Ui/Text/TextTheme"
 
 export default function DateSelector(): React.JSX.Element {
     

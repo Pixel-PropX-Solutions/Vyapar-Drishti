@@ -5,16 +5,16 @@ import { useAppStorage } from "../../../Contexts/AppStorageProvider";
 import { useTheme } from "../../../Contexts/ThemeProvider";
 import { useAppDispatch } from "../../../Store/ReduxStore";
 import { Linking, ScrollView, View } from "react-native";
-import SectionView, { SectionRowWithIcon } from "../../../Components/View/SectionView";
+import SectionView, { SectionRowWithIcon } from "../../../Components/Layouts/View/SectionView";
 import FeatherIcon from "../../../Components/Icon/FeatherIcon";
 import MaterialIcon from "../../../Components/Icon/MaterialIcon";
-import TextTheme from "../../../Components/Text/TextTheme";
+import TextTheme from "../../../Components/Ui/Text/TextTheme";
 import navigator from "../../../Navigation/NavigationService";
 import { logout } from "../../../Services/user";
 import AuthStore from "../../../Store/AuthStore";
-import { ItemSelectorModal } from "../../../Components/Modal/ItemSelectorModal";
+import { ItemSelectorModal } from "../../../Components/Modal/Selectors/ItemSelectorModal";
 import BottomModal from "../../../Components/Modal/BottomModal";
-import NoralTextInput from "../../../Components/TextInput/NoralTextInput";
+import NoralTextInput from "../../../Components/Ui/TextInput/NoralTextInput";
 
 
 export default function MenuScreen(): React.JSX.Element {

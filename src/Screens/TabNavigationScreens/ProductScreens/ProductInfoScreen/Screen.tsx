@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useAppDispatch, useCompanyStore } from '../../../../Store/ReduxStore';
 import { useEffect } from 'react';
 import { getProduct, viewProduct } from '../../../../Services/product';
-import StackNavigationHeader from '../../../../Components/Header/StackNavigationHeader';
+import StackNavigationHeader from '../../../../Components/Layouts/Header/StackNavigationHeader';
 import { ClassificationSection, DangerSection, HeroSection, InfoSection, SalePurchaseCards } from './Components';
 
 export default function ProductInfoScreen(): React.JSX.Element {

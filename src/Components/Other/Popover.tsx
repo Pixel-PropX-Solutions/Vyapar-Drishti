@@ -1,11 +1,11 @@
 /* eslint-disable react-native/no-inline-styles */
 import { Animated, useAnimatedValue, View, ViewStyle } from 'react-native';
-import AnimateButton from '../Button/AnimateButton';
-import BackgroundThemeView from '../View/BackgroundThemeView';
+import AnimateButton from '../Ui/Button/AnimateButton';
+import BackgroundThemeView from '../Layouts/View/BackgroundThemeView';
 import { ReactNode, useState } from 'react';
 import FeatherIcon from '../Icon/FeatherIcon';
 import ShowWhen from './ShowWhen';
-import TextTheme from '../Text/TextTheme';
+import TextTheme from '../Ui/Text/TextTheme';
 
 
 type Props = {

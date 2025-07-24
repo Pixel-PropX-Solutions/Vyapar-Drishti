@@ -1,14 +1,14 @@
 /* eslint-disable react-native/no-inline-styles */
 import { Pressable, View } from 'react-native';
-import TextTheme from '../Components/Text/TextTheme';
-import LabelTextInput from '../Components/TextInput/LabelTextInput';
+import TextTheme from '../Components/Ui/Text/TextTheme';
+import LabelTextInput from '../Components/Ui/TextInput/LabelTextInput';
 import LogoImage from '../Components/Image/LogoImage';
-import NormalButton from '../Components/Button/NormalButton';
-import PasswordInput from '../Components/TextInput/PasswordInput';
+import NormalButton from '../Components/Ui/Button/NormalButton';
+import PasswordInput from '../Components/Ui/TextInput/PasswordInput';
 import { ScrollView, Text } from 'react-native-gesture-handler';
 import { useState } from 'react';
 import { loginUser } from '../Services/user';
-import { useAlert } from '../Components/Alert/AlertProvider';
+import { useAlert } from '../Components/Ui/Alert/AlertProvider';
 import { useAppDispatch, useUserStore } from '../Store/ReduxStore';
 import navigator from '../Navigation/NavigationService';
 

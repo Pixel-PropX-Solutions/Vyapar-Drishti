@@ -1,17 +1,17 @@
 import { ScrollView } from "react-native-gesture-handler";
-import TextTheme from "../../../Components/Text/TextTheme";
-import StackNavigationHeader from "../../../Components/Header/StackNavigationHeader";
+import TextTheme from "../../../Components/Ui/Text/TextTheme";
+import StackNavigationHeader from "../../../Components/Layouts/Header/StackNavigationHeader";
 import { Text, View } from "react-native";
-import SectionView, { SectionRow } from "../../../Components/View/SectionView";
+import SectionView, { SectionRow } from "../../../Components/Layouts/View/SectionView";
 import FeatherIcon from "../../../Components/Icon/FeatherIcon";
 import LogoImage from "../../../Components/Image/LogoImage";
-import NormalButton from "../../../Components/Button/NormalButton";
+import NormalButton from "../../../Components/Ui/Button/NormalButton";
 import { useCompanyStore } from "../../../Store/ReduxStore";
 import DeleteModal from "../../../Components/Modal/DeleteModal";
 import { useState } from "react";
 import { BankInfoUpdateModal, CompanyAddressUpdateModal, CompanyContactUpdateModal, CompanyInfoUpdateModal, TaxInfoUpdateModal } from "./Modals";
 import sliceString from "../../../Utils/sliceString";
-import EditButton from "../../../Components/Button/EditButton";
+import EditButton from "../../../Components/Ui/Button/EditButton";
 
 export default function CompanyProfileScreen(): React.JSX.Element {
 

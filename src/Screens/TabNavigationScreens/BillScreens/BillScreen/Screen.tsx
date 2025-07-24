@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import BillContextProvider from "./Context";
 import { BillCreateButton, BillListing, BillTypeFilter, DateSelector, Header } from "./Components";
-import BackgroundThemeView from "../../../../Components/View/BackgroundThemeView";
+import BackgroundThemeView from "../../../../Components/Layouts/View/BackgroundThemeView";
 import { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";

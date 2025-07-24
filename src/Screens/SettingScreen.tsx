@@ -1,21 +1,21 @@
 /* eslint-disable react-native/no-inline-styles */
 import { ScrollView } from 'react-native-gesture-handler';
-import StackNavigationHeader from '../Components/Header/StackNavigationHeader';
+import StackNavigationHeader from '../Components/Layouts/Header/StackNavigationHeader';
 import { Linking, View } from 'react-native';
 import { useTheme } from '../Contexts/ThemeProvider';
 import FeatherIcon from '../Components/Icon/FeatherIcon';
-import SectionView, { SectionRowWithIcon } from '../Components/View/SectionView';
-import TextTheme from '../Components/Text/TextTheme';
+import SectionView, { SectionRowWithIcon } from '../Components/Layouts/View/SectionView';
+import TextTheme from '../Components/Ui/Text/TextTheme';
 import navigator from '../Navigation/NavigationService';
 import AuthStore from '../Store/AuthStore';
 import BottomModal from '../Components/Modal/BottomModal';
-import NoralTextInput from '../Components/TextInput/NoralTextInput';
+import NoralTextInput from '../Components/Ui/TextInput/NoralTextInput';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useAppStorage } from '../Contexts/AppStorageProvider';
 import MaterialIcon from '../Components/Icon/MaterialIcon';
 import { useAppDispatch } from '../Store/ReduxStore';
 import { logout } from '../Services/user';
-import { ItemSelectorModal } from '../Components/Modal/ItemSelectorModal';
+import { ItemSelectorModal } from '../Components/Modal/Selectors/ItemSelectorModal';
 
 export default function SettingScreen(): React.JSX.Element {
 

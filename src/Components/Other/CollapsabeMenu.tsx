@@ -5,7 +5,7 @@ import {
     TouchableOpacity,
     LayoutAnimation,
 } from 'react-native';
-import TextTheme from '../Text/TextTheme';
+import TextTheme from '../Ui/Text/TextTheme';
 import FeatherIcon from '../Icon/FeatherIcon';
 
 type Props = {

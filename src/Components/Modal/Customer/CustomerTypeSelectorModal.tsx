@@ -1,10 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
 import { View } from 'react-native';
-import TextTheme from '../../../Components/Text/TextTheme';
+import TextTheme from '../../Ui/Text/TextTheme';
 import { useAppDispatch, useCustomerStore } from '../../../Store/ReduxStore';
 import BottomModal from '../../../Components/Modal/BottomModal';
 import { accountGroups } from '../../../Utils/accountGroups';
-import AnimateButton from '../../../Components/Button/AnimateButton';
+import AnimateButton from '../../Ui/Button/AnimateButton';
 import FeatherIcon from '../../../Components/Icon/FeatherIcon';
 import { setCustomerType } from '../../../Store/Reducers/customerReducer';
 import { useTheme } from '../../../Contexts/ThemeProvider';

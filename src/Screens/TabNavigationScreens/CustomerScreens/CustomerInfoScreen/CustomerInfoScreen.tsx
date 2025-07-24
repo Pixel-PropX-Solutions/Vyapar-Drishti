@@ -2,15 +2,15 @@
 import { View } from 'react-native';
 import navigator from '../../../../Navigation/NavigationService';
 import { ScrollView } from 'react-native-gesture-handler';
-import SectionView, { SectionRow, SectionRowWithIcon } from '../../../../Components/View/SectionView';
-import TextTheme from '../../../../Components/Text/TextTheme';
-import EditButton from '../../../../Components/Button/EditButton';
+import SectionView, { SectionRow, SectionRowWithIcon } from '../../../../Components/Layouts/View/SectionView';
+import TextTheme from '../../../../Components/Ui/Text/TextTheme';
+import EditButton from '../../../../Components/Ui/Button/EditButton';
 import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
 import { useState } from 'react';
-import StackNavigationHeader from '../../../../Components/Header/StackNavigationHeader';
+import StackNavigationHeader from '../../../../Components/Layouts/Header/StackNavigationHeader';
 import DeleteModal from '../../../../Components/Modal/DeleteModal';
 import ShowWhen from '../../../../Components/Other/ShowWhen';
-import LoadingView from '../../../../Components/View/LoadingView';
+import LoadingView from '../../../../Components/Layouts/View/LoadingView';
 import { AddressInfoUpdateModal, BankInfoUpdateModal, CustomerInfoUpdateModal, TaxInfoUpdateModal } from './Modals';
 
 export default function CustomerInfoScreen(): React.JSX.Element {

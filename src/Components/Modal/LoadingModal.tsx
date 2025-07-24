@@ -1,8 +1,8 @@
 /* eslint-disable react-native/no-inline-styles */
 import { Modal, ModalProps, View } from "react-native";
-import TextTheme from "../Text/TextTheme";
-import BackgroundThemeView from "../View/BackgroundThemeView";
-import AnimateSpinner from "../View/AnimateSpiner";
+import TextTheme from "../Ui/Text/TextTheme";
+import BackgroundThemeView from "../Layouts/View/BackgroundThemeView";
+import AnimateSpinner from "../Layouts/View/AnimateSpiner";
 import ShowWhen from "../Other/ShowWhen";
 
 type Props = ModalProps & {

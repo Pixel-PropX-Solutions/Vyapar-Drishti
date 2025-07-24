@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import BottomModal from "./BottomModal";
 import { Text, View } from "react-native";
-import NoralTextInput from "../TextInput/NoralTextInput";
+import NoralTextInput from "../Ui/TextInput/NoralTextInput";
 import MaterialIcon from "../Icon/MaterialIcon";
-import { useAlert } from "../Alert/AlertProvider";
+import { useAlert } from "../Ui/Alert/AlertProvider";
 import FeatherIcon from "../Icon/FeatherIcon";
 
 

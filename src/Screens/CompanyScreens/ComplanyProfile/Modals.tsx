@@ -1,16 +1,16 @@
 import { ScrollView, View } from "react-native";
 import BottomModal from "../../../Components/Modal/BottomModal";
-import TextTheme from "../../../Components/Text/TextTheme";
-import LabelTextInput from "../../../Components/TextInput/LabelTextInput";
+import TextTheme from "../../../Components/Ui/Text/TextTheme";
+import LabelTextInput from "../../../Components/Ui/TextInput/LabelTextInput";
 import { useAppDispatch, useCompanyStore } from "../../../Store/ReduxStore";
 import { useRef, useState } from "react";
 import { getCompany, updateCompany } from "../../../Services/company";
-import { useAlert } from "../../../Components/Alert/AlertProvider";
+import { useAlert } from "../../../Components/Ui/Alert/AlertProvider";
 import arrayToFormData from "../../../Utils/arrayToFormData";
 import { isValidEmail } from "../../../Functions/StringOpations/pattenMaching";
 import LoadingModal from "../../../Components/Modal/LoadingModal";
 import ShowWhen from "../../../Components/Other/ShowWhen";
-import PhoneNoTextInput from "../../../Components/TextInput/PhoneNoTextInput";
+import PhoneNoTextInput from "../../../Components/Ui/Option/PhoneNoTextInput";
 import { PhoneNumber } from "../../../Utils/types";
 import FeatherIcon from "../../../Components/Icon/FeatherIcon";
 

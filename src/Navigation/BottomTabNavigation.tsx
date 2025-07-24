@@ -6,8 +6,8 @@ import SettingScreen from "../Screens/TabNavigationScreens/MenuScreens/MenuScree
 import FeatherIcons from 'react-native-vector-icons/Feather'
 import { useTheme } from "../Contexts/ThemeProvider";
 import { View } from "react-native";
-import SafeAreaFromBottom from "../Components/SafeAreaView/SafeAreaFromBottom";
-import SafeAreaFromTop from "../Components/SafeAreaView/SafeAreaFromTop";
+import SafeAreaFromBottom from "../Components/Other/SafeAreaView/SafeAreaFromBottom";
+import SafeAreaFromTop from "../Components/Other/SafeAreaView/SafeAreaFromTop";
 import BillScreen from "../Screens/TabNavigationScreens/BillScreens/BillScreen/Screen";
 
 

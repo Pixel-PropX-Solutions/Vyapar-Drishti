@@ -1,12 +1,12 @@
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { useBillContext } from "./Context";
-import { ItemSelectorModal } from "../../../../Components/Modal/ItemSelectorModal";
-import TextTheme from "../../../../Components/Text/TextTheme";
+import { ItemSelectorModal } from "../../../../Components/Modal/Selectors/ItemSelectorModal";
+import TextTheme from "../../../../Components/Ui/Text/TextTheme";
 import { getMonthByIndex } from "../../../../Utils/functionTools";
 import BottomModal from "../../../../Components/Modal/BottomModal";
 import { View } from "react-native";
-import PDFRenderer from "../../../../Components/View/PDFRenderer";
-import AnimateButton from "../../../../Components/Button/AnimateButton";
+import PDFRenderer from "../../../../Components/Layouts/View/PDFRenderer";
+import AnimateButton from "../../../../Components/Ui/Button/AnimateButton";
 import FeatherIcon from "../../../../Components/Icon/FeatherIcon";
 import { usePDFContext } from "./PDFContext";
 import { useTheme } from "../../../../Contexts/ThemeProvider";

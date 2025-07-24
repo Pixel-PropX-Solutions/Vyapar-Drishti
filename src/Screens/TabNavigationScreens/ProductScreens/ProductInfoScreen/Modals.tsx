@@ -2,8 +2,8 @@ import { Dispatch, SetStateAction, useRef } from "react";
 import BottomModal from "../../../../Components/Modal/BottomModal";
 import FeatherIcon from "../../../../Components/Icon/FeatherIcon";
 import { ScrollView, View } from "react-native";
-import TextTheme from "../../../../Components/Text/TextTheme";
-import LabelTextInput from "../../../../Components/TextInput/LabelTextInput";
+import TextTheme from "../../../../Components/Ui/Text/TextTheme";
+import LabelTextInput from "../../../../Components/Ui/TextInput/LabelTextInput";
 import ShowWhen from "../../../../Components/Other/ShowWhen";
 import LoadingModal from "../../../../Components/Modal/LoadingModal";
 

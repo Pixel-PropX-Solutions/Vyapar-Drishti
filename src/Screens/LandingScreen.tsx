@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import { View } from 'react-native';
-import NormalButton from '../Components/Button/NormalButton';
-import TextTheme from '../Components/Text/TextTheme';
+import NormalButton from '../Components/Ui/Button/NormalButton';
+import TextTheme from '../Components/Ui/Text/TextTheme';
 import LogoImage from '../Components/Image/LogoImage';
 import navigator from '../Navigation/NavigationService';
 

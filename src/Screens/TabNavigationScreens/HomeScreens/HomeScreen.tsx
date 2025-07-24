@@ -1,12 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
 import { ScrollView } from 'react-native-gesture-handler';
-import TextTheme from '../../../Components/Text/TextTheme';
+import TextTheme from '../../../Components/Ui/Text/TextTheme';
 import { Share, View } from 'react-native';
 import FeatherIcon from '../../../Components/Icon/FeatherIcon';
-import AnimateButton from '../../../Components/Button/AnimateButton';
+import AnimateButton from '../../../Components/Ui/Button/AnimateButton';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 import FontAwesome6Icon from '../../../Components/Icon/FontAwesome6Icon';
-import HomeScreenHeader from '../../../Components/Header/HomeScreenHeader';
+import HomeScreenHeader from '../../../Components/Layouts/Header/HomeScreenHeader';
 import { BASE_WEB_URL, BASE_APP_URL } from '../../../../env';
 import navigator from '../../../Navigation/NavigationService';
 import { useAppStorage } from '../../../Contexts/AppStorageProvider';
