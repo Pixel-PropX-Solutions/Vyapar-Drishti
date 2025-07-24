@@ -4,6 +4,8 @@ import AnimateButton from "../../Ui/Button/AnimateButton"
 import FeatherIcon from "../../Icon/FeatherIcon"
 import navigator from "../../../Navigation/NavigationService"
 import ShowWhen from "../../Other/ShowWhen"
+import AnimatePingBall from "../View/AnimatePingBall"
+import BackgroundThemeView from "../View/BackgroundThemeView"
 
 type Props = {
     title: string,
@@ -41,12 +43,18 @@ export default function EntityListingHeader({title, onPressFilter, onPressSearch
                 
                 <ShowWhen when={!!onPressNotification} >
                     <AnimateButton
-                        onPress={onPressNotification}
+                        onPress={() => navigator.navigate('notification-screen')}
                         style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 50 }}
-                        >
+                    >
                         <FeatherIcon name="bell" size={20} />
-
-                        <View style={{ backgroundColor: 'rgb(250,50,50)', width: 8, aspectRatio: 1, borderRadius: 10, position: 'absolute', transform: [{ translateX: 5 }, { translateY: -5 }] }} />
+                        <BackgroundThemeView style={{
+                            position: 'absolute',
+                            transform: [{ translateX: 5 }, { translateY: -5 }],
+                            borderRadius: '50%',
+                            padding: 2,
+                        }} >
+                            <AnimatePingBall size={7} scale={2} duration={500} backgroundColor={'rgb(250,50,50)'} />
+                        </BackgroundThemeView>
                     </AnimateButton>
                 </ShowWhen>
             </View>

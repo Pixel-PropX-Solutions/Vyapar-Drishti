@@ -79,3 +79,13 @@ export function getMonthByIndex(index: number): string {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return months[Math.abs(index) % 12]
 }
+
+
+export function arrayToFormData(arr: [key: string, val: string | boolean][]): FormData {
+    const form = new FormData;
+    for(let [key, val] of arr){
+        let value = typeof val === 'boolean' ? val ? 'true' : 'false' : val || ''
+        form.append(key, value ?? '');
+    }
+    return form;
+}

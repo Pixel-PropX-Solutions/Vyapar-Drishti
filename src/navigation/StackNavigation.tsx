@@ -11,7 +11,7 @@ import SettingScreen from "../Screens/SettingScreen";
 import NotificationScreen from "../Screens/NotificationScreen";
 import CustomerInfoScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen/CustomerInfoScreen";
 import BillCreateScreen from "../Screens/TabNavigationScreens/BillScreens/BillCreateScreen/Screen";
-import CompanyProfileScreen from "../Screens/CompanyScreens/ComplanyProfile/CompanyProfileScreen";
+import CompanyScreen from "../Screens/CompanyScreen/Screen";
 import { NavigationRef } from "./NavigationService";
 import ProductInfoScreen from "../Screens/TabNavigationScreens/ProductScreens/ProductInfoScreen/Screen";
 import { ComponentProps, ElementType } from "react";
@@ -71,7 +71,7 @@ export default function StackNavigation(): React.JSX.Element {
                 />
 
                 <Stack.Screen name="company-profile-screen" 
-                    component={withSafeView(CompanyProfileScreen)} 
+                    component={withSafeView(CompanyScreen)} 
                 />
 
                 <Stack.Screen name="product-info-screen" 
