@@ -13,39 +13,39 @@ type Props = {
     onPressDelete?: () => void
 }
 
-export default function EntityInfoHeader({onPressEdit, onPressDelete}: Props): React.JSX.Element {
+export default function EntityInfoHeader({ onPressEdit, onPressDelete }: Props): React.JSX.Element {
 
-    const {secondaryBackgroundColor: color} = useTheme()
+    const { secondaryBackgroundColor: color } = useTheme();
 
     return (
-        <View style={{width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'row', paddingInline: 20, justifyContent: 'space-between'}} >
-            <AnimateButton 
-                style={{borderRadius: 50, borderWidth: 2, padding: 8, borderColor: color}}
+        <View style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'row', paddingInline: 20, justifyContent: 'space-between' }} >
+            <AnimateButton
+                style={{ borderRadius: 50, borderWidth: 2, padding: 8, borderColor: color }}
                 onPress={() => navigator.goBack()}
             >
-                <FeatherIcon name="plus" size={20} style={{transform: [{rotate: '45deg'}]}} />
+                <FeatherIcon name="plus" size={20} style={{ transform: [{ rotate: '45deg' }] }} />
             </AnimateButton>
 
-            <View style={{gap: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+            <View style={{ gap: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                 <ShowWhen when={!!onPressEdit}>
-                    <AnimateButton 
+                    <AnimateButton
                         onPress={onPressEdit}
-                        style={{borderRadius: 100, height: 44, paddingInline: 20, borderWidth: 2, borderColor: color, gap: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', backgroundColor: 'rgb(50,150,250)'}}
-                        >
+                        style={{ borderRadius: 100, height: 44, paddingInline: 20, borderWidth: 2, borderColor: color, gap: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', backgroundColor: 'rgb(50,150,250)' }}
+                    >
                         <FeatherIcon name="edit-3" size={20} color={'white'} />
-                        <Text style={{fontSize: 14, fontWeight: '900', color: 'white'}}>Edit</Text>
+                        <Text style={{ fontSize: 14, fontWeight: '900', color: 'white' }}>Edit</Text>
                     </AnimateButton>
                 </ShowWhen>
 
                 <ShowWhen when={!!onPressDelete} >
-                    <AnimateButton 
+                    <AnimateButton
                         onPress={onPressDelete}
-                        style={{width: 44, aspectRatio: 1, borderRadius: 100, backgroundColor: 'crimson', opacity: 0.9, justifyContent: 'center', alignItems: 'center'}}
-                        >
+                        style={{ width: 44, aspectRatio: 1, borderRadius: 100, backgroundColor: 'crimson', opacity: 0.9, justifyContent: 'center', alignItems: 'center' }}
+                    >
                         <MaterialIcon name="delete-outline" size={22} color={'white'} />
                     </AnimateButton>
                 </ShowWhen>
             </View>
         </View>
-    )
+    );
 }
