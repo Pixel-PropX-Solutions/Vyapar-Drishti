@@ -20,18 +20,15 @@ export default function ProductScreen() {
             dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: 1 }));
         });
 
-        return event
-    }, [])
+        return event;
+    }, []);
 
     return (
-        <ContextProvider>
-            <View style={{ width: '100%', height: '100%', paddingHorizontal: 20, gap: 20 }}>
-                <Header />
-                <SummaryCard />
-                <DateSelector />
-                <ProductListing />
-                <CreateProductButton />
-            </View>
-        </ContextProvider>
-    )
+        <View style={{ width: '100%', height: '100%', paddingHorizontal: 20, gap: 20 }}>
+            <Header />
+            <SummaryCard />
+            <ProductListing />
+            <CreateProductButton />
+        </View>
+    );
 }

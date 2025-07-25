@@ -14,12 +14,13 @@ import LoadingView from '../../../../Components/Layouts/View/LoadingView';
 import { AddressInfoUpdateModal, BankInfoUpdateModal, CustomerInfoUpdateModal, TaxInfoUpdateModal } from './Modals';
 import { useAppDispatch, useCustomerStore, useUserStore } from '../../../../Store/ReduxStore';
 import { getCustomer } from '../../../../Services/customer';
+import LoadingModal from '../../../../Components/Modal/LoadingModal';
 
 export default function CustomerInfoScreen(): React.JSX.Element {
 
     const { customerId } = navigator.getParams('customer-info-screen') ?? {};
     const dispatch = useAppDispatch();
-    const { customer } = useCustomerStore();
+    const { customer, loading } = useCustomerStore();
     const { user } = useUserStore();
     const currentCompanyDetails = user?.company?.find((company: any) => company._id === user?.user_settings?.current_company_id);
     const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
@@ -76,12 +77,12 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                         <EditButton onPress={() => { setInfoUpdateModalVisible(true); }} />
                     }
                 >
-                    {gst_enable && <SectionRow style={{ justifyContent: 'space-between' }} >
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >GSTIN Number</TextTheme>
                         <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
                             {customer?.gstin || 'Not Set'}
                         </TextTheme>
-                    </SectionRow>}
+                    </SectionRow>
                     <SectionRow style={{ justifyContent: 'space-between' }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Billing Name</TextTheme>
                         <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
@@ -192,7 +193,7 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                     </SectionRow>
                 </SectionView>
 
-                {!gst_enable && <SectionView
+                {/* {!gst_enable && <SectionView
                     style={{ gap: 8 }} label="Tax Information"
                     labelContainerChildren={
                         <EditButton onPress={() => { setTaxInfoUpdateModalVisible(true); }} />
@@ -204,7 +205,7 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                             {customer?.gstin || 'Not Set'}
                         </TextTheme>
                     </SectionRow>
-                </SectionView>}
+                </SectionView>} */}
 
                 <SectionView label="Danger Zone" style={{ gap: 12 }} labelColor="red" >
                     <SectionRowWithIcon
@@ -238,11 +239,11 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                 visible={isBankInfoUpdateModalVisible} setVisible={setBankInfoUpdateModalVisible}
             />
 
-            <TaxInfoUpdateModal
+            {/* <TaxInfoUpdateModal
                 visible={isTaxInfoUpdateModalVisible} setVisible={setTaxInfoUpdateModalVisible}
-            />
+            /> */}
 
-            {/* <LoadingModal visible={loading && isDeleteModalVisible} /> */}
+            <LoadingModal visible={loading && isDeleteModalVisible} />
         </View>
     );
 }

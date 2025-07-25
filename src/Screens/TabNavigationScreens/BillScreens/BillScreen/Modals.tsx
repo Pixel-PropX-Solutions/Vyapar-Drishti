@@ -1,70 +1,70 @@
-import { Dispatch, SetStateAction, useMemo } from "react";
-import { useBillContext } from "./Context";
-import { ItemSelectorModal } from "../../../../Components/Modal/Selectors/ItemSelectorModal";
-import TextTheme from "../../../../Components/Ui/Text/TextTheme";
-import { getMonthByIndex } from "../../../../Utils/functionTools";
-import BottomModal from "../../../../Components/Modal/BottomModal";
-import { View } from "react-native";
-import AnimateButton from "../../../../Components/Ui/Button/AnimateButton";
-import FeatherIcon from "../../../../Components/Icon/FeatherIcon";
-import { useTheme } from "../../../../Contexts/ThemeProvider";
-import navigator from "../../../../Navigation/NavigationService";
-import SectionView from "../../../../Components/Layouts/View/SectionView";
+/* eslint-disable react-native/no-inline-styles */
+import { Dispatch, SetStateAction, useMemo } from 'react';
+import { useBillContext } from './Context';
+import { ItemSelectorModal } from '../../../../Components/Modal/Selectors/ItemSelectorModal';
+import TextTheme from '../../../../Components/Ui/Text/TextTheme';
+import { getMonthByIndex } from '../../../../Utils/functionTools';
+import BottomModal from '../../../../Components/Modal/BottomModal';
+import { View } from 'react-native';
+import AnimateButton from '../../../../Components/Ui/Button/AnimateButton';
+import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
+import { useTheme } from '../../../../Contexts/ThemeProvider';
+import navigator from '../../../../Navigation/NavigationService';
+import SectionView from '../../../../Components/Layouts/View/SectionView';
 
 type Props = {
     visible: boolean,
     setVisible: Dispatch<SetStateAction<boolean>>
 }
 
-export function DateSelectorModal({visible, setVisible}: Props): React.JSX.Element {
+export function DateSelectorModal({ visible, setVisible }: Props): React.JSX.Element {
 
-    const {date, setDate} = useBillContext()
+    const { date, setDate } = useBillContext();
 
-    type Date = {year: number, month: number}
+    type Date = { year: number, month: number }
 
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth();
-    const years: number[] = Array.from({length: 20}, (_, i) => currentYear - i);
+    const years: number[] = Array.from({ length: 20 }, (_, i) => currentYear - i);
 
-    const data: Date[] =  useMemo(() => {
+    const data: Date[] = useMemo(() => {
         let data: Date[] = [];
-        for(let year of years) {
-            for(let month=11; month>=0; month--) {
-                if(currentMonth >= month || currentYear > year)
-                    data.push({year, month})
+        for (let year of years) {
+            for (let month = 11; month >= 0; month--) {
+                if (currentMonth >= month || currentYear > year) { data.push({ year, month }); }
             }
         }
         return data;
-    }, [])
-   
+    }, []);
+
     return (
         <ItemSelectorModal<Date>
             allItems={data}
             title="Select Year"
             isItemSelected={!!date.year}
             visible={visible} setVisible={setVisible}
-            onSelect={item => {setDate(item)}}
+            onSelect={item => { setDate(item); }}
             keyExtractor={item => (item.year * 100 + item.month).toString()}
             SelectedItemContent={
-                <TextTheme style={{fontWeight: 900}} >{getMonthByIndex(date.month)} {date.year}</TextTheme>
+                <TextTheme style={{ fontWeight: 900 }} >{getMonthByIndex(date.month)} {date.year}</TextTheme>
             }
 
             renderItemContent={item => (<>
-                <TextTheme isPrimary={item.year === date.year && item.month == date.month} style={{fontSize: 20, fontWeight: 900}} >
-                    {getMonthByIndex(item.month)} 
+                <TextTheme isPrimary={item.year === date.year && item.month == date.month} style={{ fontSize: 20, fontWeight: 900 }} >
+                    {getMonthByIndex(item.month)}
                 </TextTheme>
-                <TextTheme isPrimary={item.year === date.year && item.month == date.month} style={{fontSize: 20, fontWeight: 900}} >
+                <TextTheme isPrimary={item.year === date.year && item.month == date.month} style={{ fontSize: 20, fontWeight: 900 }} >
                     {item.year}
                 </TextTheme>
             </>)}
 
             filter={(item, val) => (
-                item.year.toString().startsWith(val) || 
-                item.year.toString().endsWith(val) || 
+                item.year.toString().startsWith(val) ||
+                item.year.toString().endsWith(val) ||
                 getMonthByIndex(date.month).toLowerCase().startsWith(val)
             )}
         />
-    )
+    );
 }
 
 
@@ -73,9 +73,9 @@ const dummyBillsType: { name: string; icon: string; color: string; description: 
     { name: 'Purchase', icon: 'shopping-cart', color: '#2196F3', description: 'Track purchase expenses', id: 'fe9221db-5990-41a0-976a-3cb4f78aef0f' },
 ];
 
-export function BillTypeSelectorModal({visible, setVisible}: Props) {
+export function BillTypeSelectorModal({ visible, setVisible }: Props) {
 
-    const {primaryColor} = useTheme();
+    const { primaryColor } = useTheme();
 
     return (
         <BottomModal
@@ -143,66 +143,66 @@ export function BillTypeSelectorModal({visible, setVisible}: Props) {
                 ))}
             </View>
         </BottomModal>
-    )
+    );
 }
 
 
 
-export function FilterModal({visible, setVisible}: Props) {
+export function FilterModal({ visible, setVisible }: Props) {
 
-    const {primaryColor, primaryBackgroundColor} = useTheme();
-    const {filters, handleFilter} = useBillContext();
+    const { primaryColor, primaryBackgroundColor } = useTheme();
+    const { filters, handleFilter } = useBillContext();
 
-    return (    
+    return (
         <BottomModal
             visible={visible} setVisible={setVisible}
-            style={{paddingInline: 20, gap: 24}}
+            style={{ paddingInline: 20, gap: 24 }}
         >
-            <TextTheme style={{fontSize: 20, fontWeight: 900}} >Invoice Filters</TextTheme>
+            <TextTheme style={{ fontSize: 20, fontWeight: 900 }} >Invoice Filters</TextTheme>
 
-            <SectionView label="Sort by" style={{flexDirection: 'row', gap: 12, alignItems: 'center'}} >
+            <SectionView label="Sort by" style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }} >
                 {
                     ['Default', 'Date', 'Amount', 'Type'].map(item => (
-                       <AnimateButton key={item} 
+                        <AnimateButton key={item}
                             onPress={() => handleFilter('sortBy', item)}
                             bubbleColor={item === filters.sortBy ? primaryBackgroundColor : primaryColor}
-                            
+
                             style={{
-                                alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 32, 
-                                backgroundColor: item === filters.sortBy ? primaryColor : primaryBackgroundColor
+                                alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 32,
+                                backgroundColor: item === filters.sortBy ? primaryColor : primaryBackgroundColor,
                             }}
                         >
-                            <TextTheme 
-                                isPrimary={item === filters.sortBy}  
+                            <TextTheme
+                                isPrimary={item === filters.sortBy}
                                 useInvertTheme={item === filters.sortBy}
-                                style={{fontSize: 12, fontWeight: 900}} 
+                                style={{ fontSize: 12, fontWeight: 900 }}
                             >{item}</TextTheme>
                         </AnimateButton>
                     ))
                 }
             </SectionView>
-            
-            <SectionView label="Status" style={{flexDirection: 'row', gap: 12, alignItems: 'center'}} >
+
+            <SectionView label="Status" style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }} >
                 {
                     ['All', 'Pending', 'Paid'].map(item => (
-                       <AnimateButton key={item} 
+                        <AnimateButton key={item}
                             onPress={() => handleFilter('status', item.toLowerCase() as 'all' | 'pending' | 'paid')}
                             bubbleColor={item.toLowerCase() === filters.status ? primaryBackgroundColor : primaryColor}
-                            
+
                             style={{
-                                alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 32, 
-                                backgroundColor: item.toLowerCase() === filters.status ? primaryColor : primaryBackgroundColor
+                                alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 32,
+                                backgroundColor: item.toLowerCase() === filters.status ? primaryColor : primaryBackgroundColor,
                             }}
                         >
-                            <TextTheme 
-                                isPrimary={item.toLowerCase() === filters.status}  
+                            <TextTheme
+                                isPrimary={item.toLowerCase() === filters.status}
                                 useInvertTheme={item.toLowerCase() === filters.status}
-                                style={{fontSize: 12, fontWeight: 900}} 
+                                style={{ fontSize: 12, fontWeight: 900 }}
                             >{item}</TextTheme>
                         </AnimateButton>
                     ))
                 }
             </SectionView>
         </BottomModal>
-    )
+    );
 }

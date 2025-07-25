@@ -1,25 +1,26 @@
-import { Pressable, View } from "react-native";
-import AnimateButton from "../../../../Components/Ui/Button/AnimateButton";
-import FeatherIcon from "../../../../Components/Icon/FeatherIcon";
-import TextTheme from "../../../../Components/Ui/Text/TextTheme";
-import { getMonthByIndex } from "../../../../Utils/functionTools";
-import { useTheme } from "../../../../Contexts/ThemeProvider";
-import { useState } from "react";
-import { useBillContext } from "./Context";
-import { BillTypeSelectorModal, DateSelectorModal, FilterModal } from "./Modals";
-import EntityListingHeader from "../../../../Components/Layouts/Header/EntityListingHeader";
-import { FlatList } from "react-native";
-import { RefreshControl } from "react-native";
-import EmptyListView from "../../../../Components/Layouts/View/EmptyListView";
-import BillCard, { BillLoadingCard } from "../../../../Components/Ui/Card/BillCard";
-import ShowWhen from "../../../../Components/Other/ShowWhen";
-import { useAppDispatch, useCompanyStore, useInvoiceStore, useUserStore } from "../../../../Store/ReduxStore";
-import { printGSTInvoices, printInvoices, viewAllInvoices } from "../../../../Services/invoice";
-import navigator from "../../../../Navigation/NavigationService";
-import LoadingModal from "../../../../Components/Modal/LoadingModal";
-import RoundedPlusButton from "../../../../Components/Ui/Button/RoundedPlusButton";
-import { GetAllVouchars } from "../../../../Utils/types";
-import usePDFHandler from "../../../../Hooks/usePDFHandler";
+/* eslint-disable react-native/no-inline-styles */
+import { Pressable, View } from 'react-native';
+import AnimateButton from '../../../../Components/Ui/Button/AnimateButton';
+import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
+import TextTheme from '../../../../Components/Ui/Text/TextTheme';
+import { getMonthByIndex } from '../../../../Utils/functionTools';
+import { useTheme } from '../../../../Contexts/ThemeProvider';
+import { useState } from 'react';
+import { useBillContext } from './Context';
+import { BillTypeSelectorModal, DateSelectorModal, FilterModal } from './Modals';
+import EntityListingHeader from '../../../../Components/Layouts/Header/EntityListingHeader';
+import { FlatList } from 'react-native';
+import { RefreshControl } from 'react-native';
+import EmptyListView from '../../../../Components/Layouts/View/EmptyListView';
+import BillCard, { BillLoadingCard } from '../../../../Components/Ui/Card/BillCard';
+import ShowWhen from '../../../../Components/Other/ShowWhen';
+import { useAppDispatch, useCompanyStore, useInvoiceStore, useUserStore } from '../../../../Store/ReduxStore';
+import { printGSTInvoices, printInvoices, viewAllInvoices } from '../../../../Services/invoice';
+import navigator from '../../../../Navigation/NavigationService';
+import LoadingModal from '../../../../Components/Modal/LoadingModal';
+import RoundedPlusButton from '../../../../Components/Ui/Button/RoundedPlusButton';
+import { GetAllVouchars } from '../../../../Utils/types';
+import usePDFHandler from '../../../../Hooks/usePDFHandler';
 
 
 
@@ -30,14 +31,14 @@ export function Header(): React.JSX.Element {
     return (
         <View style={{ paddingInline: 20 }} >
             <EntityListingHeader
-                title='Bills'
-                onPressFilter={() => { setFilterModalVisible(true) }}
+                title="Bills"
+                onPressFilter={() => { setFilterModalVisible(true); }}
                 onPressSearch={() => { }}
             />
 
             <FilterModal visible={isFilterModalVisible} setVisible={setFilterModalVisible} />
         </View>
-    )
+    );
 }
 
 export function BillTypeFilter(): React.JSX.Element {
@@ -45,7 +46,7 @@ export function BillTypeFilter(): React.JSX.Element {
     const { primaryColor, primaryBackgroundColor } = useTheme();
     const { filters, handleFilter } = useBillContext();
 
-    const [selected, setSelected] = useState<string>('All')
+    const [selected, setSelected] = useState<string>('All');
 
     return (
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingInline: 20 }} >
@@ -59,7 +60,7 @@ export function BillTypeFilter(): React.JSX.Element {
 
                             style={{
                                 alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 28,
-                                backgroundColor: type === selected ? primaryColor : primaryBackgroundColor
+                                backgroundColor: type === selected ? primaryColor : primaryBackgroundColor,
                             }}
                         >
                             <TextTheme
@@ -74,7 +75,7 @@ export function BillTypeFilter(): React.JSX.Element {
 
             <AnimateButton
                 style={{ height: 28, flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 40, paddingInline: 14 }}
-                onPress={() => { handleFilter('useAscOrder', !filters.useAscOrder) }}
+                onPress={() => { handleFilter('useAscOrder', !filters.useAscOrder); }}
             >
                 <FeatherIcon
                     name={filters.useAscOrder ? 'arrow-up' : 'arrow-down'}
@@ -83,7 +84,7 @@ export function BillTypeFilter(): React.JSX.Element {
                 <TextTheme style={{ fontSize: 12 }} >{filters.useAscOrder ? 'Asc' : 'Des'}</TextTheme>
             </AnimateButton>
         </View>
-    )
+    );
 }
 
 
@@ -97,7 +98,7 @@ export function DateSelector() {
     function incrementMonth(by: number) {
         const nextMonth = (date.month + by + 12) % 12;
         const nextYear = date.year + Math.floor((date.month + by) / 12);
-        setDate({ year: nextYear, month: nextMonth })
+        setDate({ year: nextYear, month: nextMonth });
     }
 
     return (
@@ -106,7 +107,7 @@ export function DateSelector() {
                 <FeatherIcon name="chevron-left" size={20} />
             </AnimateButton>
 
-            <Pressable onPress={() => { setModalVisible(true) }}>
+            <Pressable onPress={() => { setModalVisible(true); }}>
                 <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >{getMonthByIndex(date.month)}, {date.year}</TextTheme>
             </Pressable>
 
@@ -118,7 +119,7 @@ export function DateSelector() {
                 visible={isModalVisible} setVisible={setModalVisible}
             />
         </View>
-    )
+    );
 }
 
 
@@ -130,11 +131,11 @@ export function BillListing() {
     const { invoices, isInvoiceFeaching, pageMeta } = useInvoiceStore();
     const currentCompnayDetails = user?.company.find((c: any) => c._id === user?.user_settings?.current_company_id);
     const gst_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_gst;
-    
-    const {init, isGenerating, setIsGenerating, PDFViewModal, handleShare} = usePDFHandler()
 
-    const [refreshing, setRefreshing] = useState<boolean>(false)
-    const [isPDFModalVisible, setPDFModalVisible] = useState<boolean>(false)
+    const { init, isGenerating, setIsGenerating, PDFViewModal, handleShare } = usePDFHandler();
+
+    const [refreshing, setRefreshing] = useState<boolean>(false);
+    const [isPDFModalVisible, setPDFModalVisible] = useState<boolean>(false);
 
     function handleInvoiceFetching() {
         if (isInvoiceFeaching) { return; }
@@ -143,38 +144,38 @@ export function BillListing() {
     }
 
     function handleRefresh() {
-        if (refreshing) return;
+        if (refreshing) { return; }
         setRefreshing(true);
         dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1 }))
             .finally(() => setRefreshing(false));
     }
 
     async function handleInvoice(invoice: GetAllVouchars, callback: () => void) {
-        
-        if(!['Sales', 'Purchase'].includes(invoice.voucher_type)) return;
+
+        if (!['Sales', 'Purchase'].includes(invoice.voucher_type)) { return; }
 
         try {
             setIsGenerating(true);
-        
+
             const res = await dispatch((gst_enable ? printGSTInvoices : printInvoices)({
                 vouchar_id: invoice._id,
                 company_id: company?._id || '',
-            }))
+            }));
 
             if (res.meta.requestStatus !== 'fulfilled') {
                 console.error('Failed to print invoice:', res.payload);
                 return;
-            } 
+            }
 
-            const {paginated_data, download_data} = res.payload as { paginated_data: Array<{ html: string, page_number: number }>, download_data: string };
+            const { paginated_data, download_data } = res.payload as { paginated_data: Array<{ html: string, page_number: number }>, download_data: string };
 
             init({ html: paginated_data.map(item => item.html), downloadHtml: download_data, pdfName: invoice.voucher_number, title: invoice.voucher_number }, callback);
-        } catch(e) {
+        } catch (e) {
             console.error('Error printing invoice:', e);
         } finally {
             setIsGenerating(false);
         }
-    };
+    }
 
     return (<>
         <FlatList
@@ -186,7 +187,7 @@ export function BillListing() {
             }
 
             ListEmptyComponent={
-                <ShowWhen when={!isInvoiceFeaching} otherwise={<BillLoadingCard/>} >
+                <ShowWhen when={!isInvoiceFeaching} otherwise={<BillLoadingCard />} >
                     <EmptyListView type="invoice" />
                 </ShowWhen>
             }
@@ -206,9 +207,9 @@ export function BillListing() {
                     totalAmount={item.amount}
                     payAmount={item.amount}
                     pendingAmount={0}
-                    onPrint={() => { handleInvoice(item, () => { setPDFModalVisible(true) }) }}
-                    onShare={() => { handleInvoice(item, handleShare) }}
-                    onPress={() => { navigator.navigate('bill-info-screen', { id: item._id }) }}
+                    onPrint={() => { handleInvoice(item, () => { setPDFModalVisible(true); }); }}
+                    onShare={() => { handleInvoice(item, handleShare); }}
+                    onPress={() => { navigator.navigate('bill-info-screen', { id: item._id }); }}
                 />
             )}
 
@@ -256,5 +257,5 @@ export function BillCreateButton() {
 
             <BillTypeSelectorModal visible={isModalVisible} setVisible={setModalVisible} />
         </View>
-    )
+    );
 }

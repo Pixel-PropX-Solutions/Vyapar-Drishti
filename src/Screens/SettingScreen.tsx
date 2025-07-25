@@ -13,16 +13,23 @@ import NoralTextInput from '../Components/Ui/TextInput/NoralTextInput';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useAppStorage } from '../Contexts/AppStorageProvider';
 import MaterialIcon from '../Components/Icon/MaterialIcon';
-import { useAppDispatch } from '../Store/ReduxStore';
-import { logout } from '../Services/user';
+import { useAppDispatch, useUserStore } from '../Store/ReduxStore';
+import { deleteAccount, logout } from '../Services/user';
 import { ItemSelectorModal } from '../Components/Modal/Selectors/ItemSelectorModal';
+import DeleteModal from '../Components/Modal/DeleteModal';
+import { deleteCompany } from '../Services/company';
 
 export default function SettingScreen(): React.JSX.Element {
 
     const { setTheme, theme } = useTheme();
+    const { user } = useUserStore();
+    const currentCompanyDetails = user?.company.find((c: any) => c._id === user?.user_settings?.current_company_id);
     const { currency, billPrefix } = useAppStorage();
     const dispatch = useAppDispatch();
     const [isCurrencyModalVisible, setCurrencyModalVisible] = useState<boolean>(false);
+    const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+    const [deleteMessage, setDeleteMessage] = useState<string>('');
+    const [deletePasskey, setDeletePasskey] = useState<string>('');
     const [isBillPrefixModalVisible, setBillPrefixModalVisible] = useState<boolean>(false);
 
     return (
@@ -51,7 +58,7 @@ export default function SettingScreen(): React.JSX.Element {
                         label="Currency"
                         icon={<MaterialIcon name={'currency-rupee'} size={20} />}
                         text={'Comming Soon...'}
-                        onPress={() => { setCurrencyModalVisible(true) }}
+                        onPress={() => { }}
                     >
                         <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
                             <TextTheme style={{ fontWeight: 900, fontSize: 16 }} >{currency}</TextTheme>
@@ -107,7 +114,7 @@ export default function SettingScreen(): React.JSX.Element {
                         hasArrow={true}
                         label="Help Center"
                         icon={<FeatherIcon name={'help-circle'} size={20} />}
-                        text={'Access help documentation'}
+                        text={'Comming Soon...'}
                         onPress={() => { }}
                     />
 
@@ -120,14 +127,6 @@ export default function SettingScreen(): React.JSX.Element {
                             Linking.openURL('https://vyapar-drishti.vercel.app/privacy');
                         }}
                     />
-
-                    {/* <SectionRowWithIcon
-                        hasArrow={true}
-                        label="Github"
-                        icon={<FeatherIcon name={'github'} size={20} />}
-                        text={'https://github.com/Mustak24/Vyapar-Drishti'}
-                        onPress={() => { }}
-                    /> */}
 
                     <SectionRowWithIcon
                         hasArrow={true}
@@ -149,10 +148,14 @@ export default function SettingScreen(): React.JSX.Element {
                     <SectionRowWithIcon
                         color="white"
                         backgroundColor="rgb(255,80,100)"
-                        label="Delete Data"
+                        label="Delete Selected Company"
                         icon={<FeatherIcon name={'alert-triangle'} size={20} color="red" />}
-                        text={'Comming Soon...'}
-                        onPress={() => { }}
+                        text="To delete the selected company data and all its information"
+                        onPress={() => {
+                            setDeleteModalVisible(true);
+                            setDeleteMessage('Are you sure you want to delete this company? This action cannot be undone.');
+                            setDeletePasskey(currentCompanyDetails?.company_name?.toUpperCase());
+                        }}
                     />
 
                     <SectionRowWithIcon
@@ -160,8 +163,12 @@ export default function SettingScreen(): React.JSX.Element {
                         backgroundColor="rgb(255,50,80)"
                         label="Delete Account"
                         icon={<FeatherIcon name={'alert-circle'} size={20} color="red" />}
-                        text={'Comming Soon...'}
-                        onPress={() => { }}
+                        text="To delete your account and all associated information"
+                        onPress={() => {
+                            setDeleteModalVisible(true);
+                            setDeleteMessage('Are you sure you want to delete your account? This action cannot be undone.');
+                            setDeletePasskey(user?.name?.first?.toUpperCase());
+                        }}
                     />
                 </SectionView>
 
@@ -170,31 +177,50 @@ export default function SettingScreen(): React.JSX.Element {
             </ScrollView>
 
             <SetCurrencyModal visible={isCurrencyModalVisible} setVisible={setCurrencyModalVisible} />
-            
+
             <SetBillPrefixModal visible={isBillPrefixModalVisible} setVisible={setBillPrefixModalVisible} />
+
+            <DeleteModal
+                visible={isDeleteModalVisible}
+                setVisible={setDeleteModalVisible}
+                message={deleteMessage}
+                passkey={deletePasskey}
+                handleDelete={() => {
+                    if (deletePasskey === user?.name?.first?.toUpperCase()) {
+                        dispatch(deleteAccount());
+                        AuthStore.clearAll();
+                        navigator.reset('landing-screen');
+                    } else {
+                        dispatch(deleteCompany(currentCompanyDetails?._id));
+                        AuthStore.clearAll();
+                        navigator.reset('landing-screen');
+                    }
+                    setDeleteModalVisible(false);
+                }}
+            />
         </View>
     );
 }
 
 function SetCurrencyModal({ visible, setVisible }: { visible: boolean, setVisible: Dispatch<SetStateAction<boolean>> }): React.JSX.Element {
-    type currencyInfo = {currency: string, country: string, currency_name: string}
+    type currencyInfo = { currency: string, country: string, currency_name: string }
 
     const currencyData: currencyInfo[] = require('../Assets/Jsons/currency-data.json');
     const { currency, setCurrency } = useAppStorage();
     const selected = (currencyData.find(item => item.currency === currency) ?? null);
-    
-    function udpateCurrency(currencyInfo: currencyInfo){
+
+    function udpateCurrency(currencyInfo: currencyInfo) {
         setCurrency(currencyInfo.currency);
     }
 
     return (
         <ItemSelectorModal<currencyInfo>
-            title='Select Currency'
+            title="Select Currency"
             allItems={currencyData}
             isItemSelected={!!selected?.country}
             keyExtractor={(item) => item.country + item.currency}
             filter={(item, val) => (
-                item.country.toLowerCase().startsWith(val) || 
+                item.country.toLowerCase().startsWith(val) ||
                 item.currency.toLowerCase().startsWith(val)
             )}
             onSelect={udpateCurrency}
@@ -202,18 +228,18 @@ function SetCurrencyModal({ visible, setVisible }: { visible: boolean, setVisibl
             setVisible={setVisible}
             SelectedItemContent={
                 <View>
-                    <TextTheme color="white" style={{fontWeight: 400, fontSize: 14}} >
+                    <TextTheme color="white" style={{ fontWeight: 400, fontSize: 14 }} >
                         {selected?.currency_name}
                     </TextTheme>
-                    <TextTheme color="white" style={{fontWeight: 400, fontSize: 16}} >
+                    <TextTheme color="white" style={{ fontWeight: 400, fontSize: 16 }} >
                         {selected?.currency}
                     </TextTheme>
                 </View>
             }
 
             renderItemContent={(item) => (<>
-                    <TextTheme style={{fontWeight: 900, fontSize: 16}}>{item.country}</TextTheme>
-                    <TextTheme style={{fontWeight: 600, fontSize: 16}}>{item.currency}</TextTheme>
+                <TextTheme style={{ fontWeight: 900, fontSize: 16 }}>{item.country}</TextTheme>
+                <TextTheme style={{ fontWeight: 600, fontSize: 16 }}>{item.currency}</TextTheme>
             </>)}
         />
     );

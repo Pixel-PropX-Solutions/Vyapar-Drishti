@@ -1,21 +1,21 @@
-import { createStackNavigator } from "@react-navigation/stack"
-import SplashScreen from "../Screens/SplashScreen";
-import LandingScreen from "../Screens/LandingScreen";
-import SignUpScreen from "../Screens/SignUpScreen";
-import LoginScreen from "../Screens/LoginScreen";
-import { NavigationContainer } from "@react-navigation/native";
-import BottomTabNavigation from "./BottomTabNavigation";
-import SafePaddingView from "../Components/Other/SafeAreaView/SafePaddingView";
-import { useTheme } from "../Contexts/ThemeProvider";
-import SettingScreen from "../Screens/SettingScreen";
-import NotificationScreen from "../Screens/NotificationScreen";
-import CustomerInfoScreen from "../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen/CustomerInfoScreen";
-import BillCreateScreen from "../Screens/TabNavigationScreens/BillScreens/BillCreateScreen/Screen";
-import CompanyScreen from "../Screens/CompanyScreen/Screen";
-import { NavigationRef } from "./NavigationService";
-import ProductInfoScreen from "../Screens/TabNavigationScreens/ProductScreens/ProductInfoScreen/Screen";
-import { ComponentProps, ElementType } from "react";
-import BillInfoScreen from "../Screens/TabNavigationScreens/BillScreens/BillInfoScreen/BillInfoScreen";
+import { createStackNavigator } from '@react-navigation/stack';
+import SplashScreen from '../Screens/SplashScreen';
+import LandingScreen from '../Screens/LandingScreen';
+import SignUpScreen from '../Screens/SignUpScreen';
+import LoginScreen from '../Screens/LoginScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import BottomTabNavigation from './BottomTabNavigation';
+import SafePaddingView from '../Components/Other/SafeAreaView/SafePaddingView';
+import { useTheme } from '../Contexts/ThemeProvider';
+import SettingScreen from '../Screens/SettingScreen';
+import NotificationScreen from '../Screens/NotificationScreen';
+import CustomerInfoScreen from '../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen/CustomerInfoScreen';
+import BillCreateScreen from '../Screens/TabNavigationScreens/BillScreens/BillCreateScreen/Screen';
+import CompanyScreen from '../Screens/CompanyScreen/Screen';
+import { NavigationRef } from './NavigationService';
+import ProductInfoScreen from '../Screens/TabNavigationScreens/ProductScreens/ProductInfoScreen/Screen';
+import { ComponentProps, ElementType } from 'react';
+import BillInfoScreen from '../Screens/TabNavigationScreens/BillScreens/BillInfoScreen/BillInfoScreen';
 
 export type StackParamsList = {
     'splash-screen': undefined,
@@ -25,13 +25,13 @@ export type StackParamsList = {
     'tab-navigation': undefined,
     'setting-screen': undefined,
     'notification-screen': undefined,
-    
-    'company-profile-screen': undefined,
-    'product-info-screen': {productId: string}
-    'customer-info-screen': {customerId: string}
 
-    'create-bill-screen': {type: string, id: string}
-    'bill-info-screen': {id: string}
+    'company-profile-screen': undefined,
+    'product-info-screen': { productId: string }
+    'customer-info-screen': { customerId: string }
+
+    'create-bill-screen': { type: string, id: string }
+    'bill-info-screen': { id: string }
 }
 
 const Stack = createStackNavigator<StackParamsList>();
@@ -41,71 +41,71 @@ function withSafeView(Component: ElementType) {
         <SafePaddingView>
             <Component {...props} />
         </SafePaddingView>
-    )
+    );
 }
 
 export default function StackNavigation(): React.JSX.Element {
 
-    const {primaryBackgroundColor: backgroundColor} = useTheme();
+    const { primaryBackgroundColor: backgroundColor } = useTheme();
 
     return (
         <NavigationContainer ref={NavigationRef} >
             <Stack.Navigator
                 initialRouteName="splash-screen"
-                screenOptions={{headerShown: false, cardStyle: {backgroundColor}}}
+                screenOptions={{ headerShown: false, cardStyle: { backgroundColor } }}
             >
-                <Stack.Screen name="login-screen" 
-                    component={withSafeView(LoginScreen)} 
+                <Stack.Screen name="login-screen"
+                    component={withSafeView(LoginScreen)}
                 />
 
-                <Stack.Screen name="signup-screen" 
-                    component={withSafeView(SignUpScreen)} 
-                />
-                
-                <Stack.Screen name="setting-screen" 
-                    component={withSafeView(SettingScreen)} 
+                <Stack.Screen name="signup-screen"
+                    component={withSafeView(SignUpScreen)}
                 />
 
-                <Stack.Screen name="notification-screen" 
-                    component={withSafeView(NotificationScreen)} 
+                <Stack.Screen name="setting-screen"
+                    component={withSafeView(SettingScreen)}
                 />
 
-                <Stack.Screen name="company-profile-screen" 
-                    component={withSafeView(CompanyScreen)} 
+                <Stack.Screen name="notification-screen"
+                    component={withSafeView(NotificationScreen)}
                 />
 
-                <Stack.Screen name="product-info-screen" 
-                    component={withSafeView(ProductInfoScreen)} 
+                <Stack.Screen name="company-profile-screen"
+                    component={withSafeView(CompanyScreen)}
                 />
 
-                <Stack.Screen name="customer-info-screen" 
-                    component={withSafeView(CustomerInfoScreen)} 
+                <Stack.Screen name="product-info-screen"
+                    component={withSafeView(ProductInfoScreen)}
                 />
 
-                <Stack.Screen name="create-bill-screen" 
-                    component={withSafeView(BillCreateScreen)} 
+                <Stack.Screen name="customer-info-screen"
+                    component={withSafeView(CustomerInfoScreen)}
                 />
 
-                <Stack.Screen name="bill-info-screen" 
-                    options={{animation: 'scale_from_center'}}
-                    component={withSafeView(BillInfoScreen)} 
+                <Stack.Screen name="create-bill-screen"
+                    component={withSafeView(BillCreateScreen)}
                 />
 
-                <Stack.Screen name="splash-screen" 
-                    options={{animation: "scale_from_center"}} 
-                    component={withSafeView(SplashScreen)} 
+                <Stack.Screen name="bill-info-screen"
+                    options={{ animation: 'scale_from_center' }}
+                    component={withSafeView(BillInfoScreen)}
                 />
 
-                <Stack.Screen name="landing-screen" 
-                    options={{animation: "scale_from_center"}} 
+                <Stack.Screen name="splash-screen"
+                    options={{ animation: 'scale_from_center' }}
+                    component={withSafeView(SplashScreen)}
+                />
+
+                <Stack.Screen name="landing-screen"
+                    options={{ animation: 'scale_from_center' }}
                     component={withSafeView(LandingScreen)}
                 />
 
-                <Stack.Screen name="tab-navigation" 
-                    component={BottomTabNavigation} 
-                    options={{animation: 'scale_from_center'}} 
+                <Stack.Screen name="tab-navigation"
+                    component={BottomTabNavigation}
+                    options={{ animation: 'scale_from_center' }}
                 />
             </Stack.Navigator>
         </NavigationContainer>
-    )
+    );
 }

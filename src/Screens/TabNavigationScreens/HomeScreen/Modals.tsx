@@ -17,7 +17,6 @@ import FeatherIcon from '../../../Components/Icon/FeatherIcon';
 import AnimateButton from '../../../Components/Ui/Button/AnimateButton';
 import BackgroundThemeView from '../../../Components/Layouts/View/BackgroundThemeView';
 import LoadingModal from '../../../Components/Modal/LoadingModal';
-import PhoneNoTextInput from '../../../Components/Ui/Option/PhoneNoTextInput';
 import { PhoneNumber } from '../../../Utils/types';
 import PhoneNoInputField from '../../../Components/Ui/Option/PhoneNoInputField';
 import { SelectField } from '../../../Components/Ui/TextInput/SelectField';
@@ -574,7 +573,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                 expanded={isBankDetailsVisible}
                 setExpanded={setBankDetailsVisible}
                 icon={<NormalButton
-                    text={'Add Details'}
+                    text={isBankDetailsVisible ? 'Hide Details' : 'Add Details'}
                     onPress={() => setBankDetailsVisible((prev) => !prev)}
                 />}
 
@@ -590,7 +589,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                     keyboardType="numeric"
                 />
 
-                <InputField
+                {/* <InputField
                     icon={<FeatherIcon name="user" size={20} />}
                     placeholder="Account Holder Name"
                     value={data.account_holder}
@@ -598,7 +597,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                     capitalize="characters"
                     handleChange={handleChange}
                     error={validationErrors.account_holder}
-                />
+                /> */}
 
                 <InputField
                     icon={<FeatherIcon name="home" size={20} />}
@@ -609,31 +608,24 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                     handleChange={handleChange}
                     error={validationErrors.bank_name}
                 />
-                <View style={{ flexDirection: 'row', gap: 12 }}>
-                    <View style={{ width: '50%' }}>
-                        <InputField
-                            icon={<FeatherIcon name="git-branch" size={20} />}
-                            placeholder="Bank Branch"
-                            value={data.bank_branch}
-                            capitalize="words"
-                            field="bank_branch"
-                            handleChange={handleChange}
-                            error={validationErrors.bank_branch}
-                        />
-                    </View>
-
-                    <View style={{ flex: 1 }}>
-                        <InputField
-                            icon={<FeatherIcon name="hash" size={20} />}
-                            placeholder="IFSC Code"
-                            value={data.bank_ifsc}
-                            capitalize="characters"
-                            field="bank_ifsc"
-                            handleChange={handleChange}
-                            error={validationErrors.bank_ifsc}
-                        />
-                    </View>
-                </View>
+                <InputField
+                    icon={<FeatherIcon name="git-branch" size={20} />}
+                    placeholder="Bank Branch"
+                    value={data.bank_branch}
+                    capitalize="words"
+                    field="bank_branch"
+                    handleChange={handleChange}
+                    error={validationErrors.bank_branch}
+                />
+                <InputField
+                    icon={<FeatherIcon name="hash" size={20} />}
+                    placeholder="IFSC Code"
+                    value={data.bank_ifsc}
+                    capitalize="characters"
+                    field="bank_ifsc"
+                    handleChange={handleChange}
+                    error={validationErrors.bank_ifsc}
+                />
 
                 {/* <InputField
                 icon={<FeatherIcon name="image" size={20} />}

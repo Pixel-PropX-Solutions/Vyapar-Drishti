@@ -17,7 +17,7 @@ export const SelectField = ({
     error,
     containerStyle = { marginBottom: 16 },
 }: {
-    icon: React.ReactNode,
+    icon?: React.ReactNode,
     placeholder: string,
     value: string,
     containerStyle?: ViewStyle,

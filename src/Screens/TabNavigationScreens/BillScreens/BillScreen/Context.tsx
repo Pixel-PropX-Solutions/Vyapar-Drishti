@@ -1,7 +1,7 @@
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react";
-import { useUserStore } from "../../../../Store/ReduxStore";
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from 'react';
+import { useUserStore } from '../../../../Store/ReduxStore';
 
-type Date = {year: number, month: number}
+type Date = { year: number, month: number }
 
 type Filters = {
     sortBy: string,
@@ -16,40 +16,40 @@ type ContextType = {
 }
 
 
-const fn = () => {}
+const fn = () => { };
 const Context = createContext<ContextType>({
-    date: {year: 0, month: 0}, setDate: fn,
+    date: { year: 0, month: 0 }, setDate: fn,
     isGstEnable: false,
-    filters: {sortBy: '', useAscOrder: true, status: 'all'}, handleFilter: fn
-})
+    filters: { sortBy: '', useAscOrder: true, status: 'all' }, handleFilter: fn,
+});
 
 
-export default function BillContextProvider({children}: {children: ReactNode}): React.JSX.Element {
+export default function BillContextProvider({ children }: { children: ReactNode }): React.JSX.Element {
 
     const { user } = useUserStore();
     const currentCompnayDetails = user?.company.find((c: any) => c._id === user?.user_settings?.current_company_id);
     const gst_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_gst;
-    
 
-    const [date, setDate] = useState<Date>({year: new Date().getFullYear(), month: new Date().getMonth()});
-    const [filters, setFilters] = useState<Filters>({sortBy: 'Default', useAscOrder: true, status: 'all'})
+
+    const [date, setDate] = useState<Date>({ year: new Date().getFullYear(), month: new Date().getMonth() });
+    const [filters, setFilters] = useState<Filters>({ sortBy: 'Default', useAscOrder: true, status: 'all' });
 
     function handleFilter<Key extends keyof Filters>(key: Key, val: Filters[Key]) {
         setFilters(pre => ({
-            ...pre, [key]: val
-        }))
+            ...pre, [key]: val,
+        }));
     }
 
     const states = {
         date, setDate,
         isGstEnable: gst_enable,
-        filters, handleFilter
-    }
+        filters, handleFilter,
+    };
 
-    return <Context.Provider value={states} children={children} />
+    return <Context.Provider value={states} children={children} />;
 }
 
 
-export function useBillContext(){
-    return useContext(Context)
+export function useBillContext() {
+    return useContext(Context);
 }

@@ -24,6 +24,15 @@ interface ProductState {
   deletionModal: boolean;
   productId: string;
   pageMeta: PageMeta;
+  productsPageMeta: {
+    page: number,
+    limit: number,
+    total: number,
+    positive_stock: number,
+    negative_stock: number,
+    low_stock: number,
+    unique: Array<string>,
+  };
   isProductsFetching: boolean;
 
   error: string | null;
@@ -45,6 +54,15 @@ const initialState: ProductState = {
     page: 1,
     limit: 10,
     total: 0,
+    unique: [],
+  },
+  productsPageMeta: {
+    page: 1,
+    limit: 10,
+    total: 0,
+    positive_stock: 0,
+    negative_stock: 0,
+    low_stock: 0,
     unique: [],
   },
   error: null,
@@ -105,18 +123,28 @@ const productSlice = createSlice({
       .addCase(viewAllProducts.pending, (state) => {
         state.error = null;
         state.isProductsFetching = true;
-        if(state.productsData?.length ?? 0 < 10)
+        if (state.productsData?.length ?? 0 < 10)
           state.productsData = []
       })
-      .addCase(viewAllProducts.fulfilled, (state, action: PayloadAction<{productsData: GetProduct[], pageMeta: PageMeta} | any>) => {
-          state.pageMeta = action.payload.pageMeta;
-          state.isProductsFetching = false;
-          if(action.payload.pageMeta.page == 1){
-            state.productsData = action.payload.productsData;
-          } else {
-            state.productsData = [...(state.productsData ?? []), ...(action.payload.productsData ?? [])];
-          }
+      .addCase(viewAllProducts.fulfilled, (state, action: PayloadAction<{
+        productsData: GetProduct[], productsPageMeta: {
+          page: number,
+          limit: number,
+          total: number,
+          positive_stock: number,
+          negative_stock: number,
+          low_stock: number,
+          unique: Array<string>,
         }
+      } | any>) => {
+        state.productsPageMeta = action.payload.productsPageMeta;
+        state.isProductsFetching = false;
+        if (action.payload.productsPageMeta.page === 1) {
+          state.productsData = action.payload.productsData;
+        } else {
+          state.productsData = [...(state.productsData ?? []), ...(action.payload.productsData ?? [])];
+        }
+      }
       )
       .addCase(viewAllProducts.rejected, (state, action) => {
         state.error = action.payload as string;

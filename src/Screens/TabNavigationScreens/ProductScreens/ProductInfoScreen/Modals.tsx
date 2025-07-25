@@ -7,12 +7,12 @@ import TextTheme from '../../../../Components/Ui/Text/TextTheme';
 import LabelTextInput from '../../../../Components/Ui/TextInput/LabelTextInput';
 import ShowWhen from '../../../../Components/Other/ShowWhen';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
-import { useAppDispatch, useProductStore } from '../../../../Store/ReduxStore';
+import { useAppDispatch, useCompanyStore, useProductStore } from '../../../../Store/ReduxStore';
 import { units } from '../../../../Utils/units';
 import AnimateButton from '../../../../Components/Ui/Button/AnimateButton';
 import { useTheme } from '../../../../Contexts/ThemeProvider';
 import { SelectField } from '../../../../Components/Ui/TextInput/SelectField';
-import { updateProductDetails } from '../../../../Services/product';
+import { getProduct, updateProductDetails, viewProduct } from '../../../../Services/product';
 
 type Props = {
     visible: boolean,
@@ -24,6 +24,8 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
     const { primaryColor, secondaryBackgroundColor } = useTheme();
     const [isUnitModalVisible, setUnitModalVisible] = useState(false);
     const dispatch = useAppDispatch();
+    const { company } = useCompanyStore();
+
 
     const info = useRef({
         stock_item_name: '',
@@ -39,7 +41,19 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
     };
 
     function handleUpdate() {
-        dispatch(updateProductDetails({ product_details: info.current, id: product?._id ?? '' })).unwrap().then(() => {
+        const dataToSend = {
+            stock_item_name: info.current.stock_item_name,
+            // gst_hsn_code: info.current.gst_hsn_code,
+            low_stock_alert: Number(info.current.low_stock_alert),
+            unit: info.current.unit,
+            unit_id: info.current.unit_id,
+            description: info.current.description,
+        };
+        console.log('Update Product Info', dataToSend);
+
+        dispatch(updateProductDetails({ product_details: dataToSend, id: product?._id ?? '' })).unwrap().then(() => {
+            dispatch(getProduct({ company_id: company?._id ?? '', product_id: product?._id ?? '' }));
+            dispatch(viewProduct({ company_id: company?._id ?? '', product_id: product?._id ?? '' }));
             setVisible(false);
         }).catch((error) => {
             console.error('Error updating product details:', error);

@@ -1,4 +1,4 @@
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react";
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from 'react';
 
 type AlertType = 'error' | 'success' | 'info' | 'warning' | null;
 
@@ -17,26 +17,26 @@ const AlertContext = createContext<AlertContextType>({
     alert: {
         type: null,
         message: '',
-        id: ''
+        id: '',
     },
-    setAlert: () => {}
-})
+    setAlert: () => { },
+});
 
 
-export default function AlertProvider({children}: {children: ReactNode}): React.JSX.Element {
+export default function AlertProvider({ children }: { children: ReactNode }): React.JSX.Element {
 
-    const [alert, setAlert] = useState<AlertMsgType>({type: null})
+    const [alert, setAlert] = useState<AlertMsgType>({ type: null });
 
     const states: AlertContextType = {
-        alert, setAlert
-    }
+        alert, setAlert,
+    };
 
     return <AlertContext.Provider value={states} >
         {children}
-    </AlertContext.Provider>
+    </AlertContext.Provider>;
 }
 
 
-export function useAlert(): AlertContextType{
-    return useContext(AlertContext);   
+export function useAlert(): AlertContextType {
+    return useContext(AlertContext);
 }

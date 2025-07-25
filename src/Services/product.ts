@@ -76,7 +76,18 @@ export const viewAllProducts = createAsyncThunk(
       // is_deleted,
     }: ViewAllProductsType,
     { rejectWithValue }
-  ): Promise<{ productsData: GetProduct[], pageMeta: PageMeta } | any> => {
+  ): Promise<{
+    productsData: GetProduct[],
+    productsPageMeta: {
+      page: number,
+      limit: number,
+      total: number,
+      positive_stock: number,
+      negative_stock: number,
+      low_stock: number,
+      unique: Array<string>,
+    }
+  } | any> => {
     try {
       const response = await userApi.get(
         `/product/view/all/product?company_id=${company_id}&search=${searchQuery}${category === 'All' ? '' : '&category=' + category}&page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder === 'asc' ? '1' : '-1'
@@ -86,8 +97,8 @@ export const viewAllProducts = createAsyncThunk(
 
       if (response.data.success === true) {
         const productsData = response.data.data.docs;
-        const pageMeta = response.data.data.meta;
-        return { productsData, pageMeta };
+        const productsPageMeta = response.data.data.meta;
+        return { productsData, productsPageMeta };
       } else { return rejectWithValue('View All Product Failed'); }
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message ?? 'View All Product Failed');
@@ -183,6 +194,7 @@ export const updateProductDetails = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
+      console.log('updateProduct api details', product_details);
       const response = await userApi.put(`/product/update/product/details/${id}`, product_details);
       console.log('updateProduct details response', response);
 

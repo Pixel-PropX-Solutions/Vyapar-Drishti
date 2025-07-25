@@ -77,7 +77,7 @@ export default function BillContextProvider({ children }: { children: React.Reac
     };
 
     useEffect(() => {
-        setTotalValue(() => products.reduce((acc, pro) => acc + (pro.price * pro.quantity), 0));
+        setTotalValue(() => products.reduce((acc, pro) => acc + (pro.price * pro.quantity) + (((pro.price * pro.quantity) * Number(pro.gstRate)) / 100), 0));
     }, [products]);
 
     useEffect(() => {

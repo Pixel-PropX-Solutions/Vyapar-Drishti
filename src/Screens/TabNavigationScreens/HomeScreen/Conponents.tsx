@@ -1,22 +1,23 @@
-import { ReactNode, useEffect, useMemo, useState } from "react";
-import { useAppDispatch, useCompanyStore, useUserStore } from "../../../Store/ReduxStore";
-import { getAllCompanies, getCompany } from "../../../Services/company";
-import { getCurrentUser } from "../../../Services/user";
-import { Share, View } from "react-native";
-import AnimateButton from "../../../Components/Ui/Button/AnimateButton";
-import ShowWhen from "../../../Components/Other/ShowWhen";
-import LoadingView from "../../../Components/Layouts/View/LoadingView";
-import BackgroundThemeView from "../../../Components/Layouts/View/BackgroundThemeView";
-import LogoImage from "../../../Components/Image/LogoImage";
-import TextTheme from "../../../Components/Ui/Text/TextTheme";
-import navigator from "../../../Navigation/NavigationService";
-import FeatherIcon from "../../../Components/Icon/FeatherIcon";
-import AnimatePingBall from "../../../Components/Layouts/View/AnimatePingBall";
-import { CompanySwitchModal } from "./Modals";
-import { useTheme } from "../../../Contexts/ThemeProvider";
-import FontAwesome6Icon from "../../../Components/Icon/FontAwesome6Icon";
-import { BASE_APP_URL, BASE_WEB_URL } from "../../../../env";
-import { useAppStorage } from "../../../Contexts/AppStorageProvider";
+/* eslint-disable react-native/no-inline-styles */
+import { useEffect, useState } from 'react';
+import { useAppDispatch, useCompanyStore, useUserStore } from '../../../Store/ReduxStore';
+import { getAllCompanies, getCompany } from '../../../Services/company';
+import { getCurrentUser } from '../../../Services/user';
+import { Share, View } from 'react-native';
+import AnimateButton from '../../../Components/Ui/Button/AnimateButton';
+import ShowWhen from '../../../Components/Other/ShowWhen';
+import LoadingView from '../../../Components/Layouts/View/LoadingView';
+import BackgroundThemeView from '../../../Components/Layouts/View/BackgroundThemeView';
+import LogoImage from '../../../Components/Image/LogoImage';
+import TextTheme from '../../../Components/Ui/Text/TextTheme';
+import navigator from '../../../Navigation/NavigationService';
+import FeatherIcon from '../../../Components/Icon/FeatherIcon';
+import AnimatePingBall from '../../../Components/Layouts/View/AnimatePingBall';
+import { CompanySwitchModal } from './Modals';
+import { useTheme } from '../../../Contexts/ThemeProvider';
+import FontAwesome6Icon from '../../../Components/Icon/FontAwesome6Icon';
+import { BASE_APP_URL, BASE_WEB_URL } from '../../../../env';
+import { useAppStorage } from '../../../Contexts/AppStorageProvider';
 
 export function Header(): React.JSX.Element {
 
@@ -97,7 +98,7 @@ export function Header(): React.JSX.Element {
 
 export function MonthlyInfoSection(): React.JSX.Element {
 
-    const {currency} = useAppStorage()
+    const { currency } = useAppStorage();
 
     return (
         <View style={{ gap: 12 }} >
@@ -114,15 +115,16 @@ export function MonthlyInfoSection(): React.JSX.Element {
                 </View>
             </View>
         </View>
-    )
+    );
 }
 
 
 export function QuickAccessSection(): React.JSX.Element {
 
     const { secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
-    
-    type QuickAccessBoxProps = {icon: React.ReactNode, text: string, label: string, onPress: () => void}
+
+    type QuickAccessBoxProps = { icon: React.ReactNode, text: string, label: string, onPress: () => void }
+    // eslint-disable-next-line react/no-unstable-nested-components
     const QuickAccessBox = ({ icon, text, label, onPress }: QuickAccessBoxProps): React.JSX.Element => (
         <AnimateButton
             onPress={onPress}
@@ -137,17 +139,17 @@ export function QuickAccessSection(): React.JSX.Element {
             </View>
         </AnimateButton>
     );
-    
+
     return (
         <View style={{ gap: 12 }} >
             <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >Quick Access</TextTheme>
             <View style={{ gap: 12 }} >
                 <View style={{ flexDirection: 'row', gap: 12 }}>
                     <QuickAccessBox
-                        label="Sells"
-                        text="Add new sells"
+                        label="Sales"
+                        text="Add new sales bill"
                         icon={<FeatherIcon name="trending-up" size={16} />}
-                        onPress={() => { navigator.navigate('create-bill-screen', { type: 'Sells', id: '34e81b1d-5735-437a-a475-e27265eba005' }); }}
+                        onPress={() => { navigator.navigate('create-bill-screen', { type: 'Sales', id: '34e81b1d-5735-437a-a475-e27265eba005' }); }}
                     />
 
                     <QuickAccessBox
@@ -159,12 +161,12 @@ export function QuickAccessSection(): React.JSX.Element {
                 </View>
 
                 <View style={{ flexDirection: 'row', gap: 12 }}>
-                    <QuickAccessBox
+                    {/* <QuickAccessBox
                         label="Customer"
                         text="Add Customer"
                         icon={<FeatherIcon name="users" size={16} />}
-                        onPress={() => {}}
-                    />
+                        onPress={() => { }}
+                    /> */}
 
                     <QuickAccessBox
                         label="Share"
@@ -181,5 +183,5 @@ export function QuickAccessSection(): React.JSX.Element {
                 </View>
             </View>
         </View>
-    )
+    );
 }

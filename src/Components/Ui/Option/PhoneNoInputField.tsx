@@ -31,7 +31,7 @@ type Props = TextInputProps & {
 
 }
 
-export default function PhoneNoInputField({ label, onChangeText, focusColor = 'rgb(50, 150, 250)', massageTextColor = 'rgb(200,50,50)', checkNumberIsValid, message, phoneNumber, placeholder = 'XXXXX-XXXXX', onChangePhoneNumber, ...props }: Props): React.JSX.Element {
+export default function PhoneNoInputField({ label, onChangeText, focusColor = 'rgb(50, 150, 250)', massageTextColor = 'rgb(200,50,50)', checkNumberIsValid, message, phoneNumber, placeholder = 'XXXXX-97548', onChangePhoneNumber, ...props }: Props): React.JSX.Element {
 
     const { primaryColor: color } = useTheme();
 
@@ -90,7 +90,7 @@ export default function PhoneNoInputField({ label, onChangeText, focusColor = 'r
                     <FeatherIcon name="phone" size={20} />
 
                     <TextTheme isPrimary={!!code}>
-                        + {code || '91'}
+                        {code || '+91'}
                     </TextTheme>
                 </Pressable>
 
@@ -204,7 +204,7 @@ export function DialCodeSelectorModal({ visible, setVisible, onSelect, selected 
                         </TextTheme>
 
                         <TextTheme color="white" style={{ fontWeight: 900, fontSize: 16 }} >
-                            + {selected_?.dial_code}
+                            {selected_?.dial_code}
                         </TextTheme>
                     </View>
 
@@ -245,7 +245,7 @@ export function DialCodeSelectorModal({ visible, setVisible, onSelect, selected 
                         }}
                     >
                         <TextTheme style={{ fontWeight: 900, fontSize: 16 }}>{item.name}</TextTheme>
-                        <TextTheme style={{ fontWeight: 600, fontSize: 16 }}>+{item.dial_code}</TextTheme>
+                        <TextTheme style={{ fontWeight: 600, fontSize: 16 }}>{item.dial_code}</TextTheme>
                     </SectionRow>
                 )}
             />

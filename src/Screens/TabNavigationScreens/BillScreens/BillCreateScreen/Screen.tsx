@@ -13,32 +13,32 @@ export default function BillCreateScreen() {
             <View style={{ justifyContent: 'space-between', width: '100%', height: '100%' }} >
                 <Header />
 
-                <ScrollView 
-                    style={{ paddingInline: 20, paddingBlock: 10 }} 
-                    contentContainerStyle={{ gap: 24 }} 
-                    keyboardShouldPersistTaps='always' 
+                <ScrollView
+                    style={{ paddingInline: 20, paddingBlock: 10 }}
+                    contentContainerStyle={{ gap: 24 }}
+                    keyboardShouldPersistTaps="always"
                 >
                     <View style={{ gap: 16 }} >
-                        <ProgressBar/>
+                        <ProgressBar />
 
                         <TextTheme style={{ fontSize: 18, fontWeight: '700' }}>
                             Bill Information
                         </TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }} >
-                            <BillNoSelector/>
-                            <DateSelector/>
+                            <BillNoSelector />
+                            <DateSelector />
                         </View>
 
-                        <CustomerSelector/>
-                        <ProductSelector/>
+                        <CustomerSelector />
+                        <ProductSelector />
                     </View>
 
-                    <ProductListing/>
+                    <ProductListing />
                     <View style={{ minHeight: 40 }} />
                 </ScrollView>
 
-                <AmountBox/>
+                <AmountBox />
             </View>
         </BillContextProvider>
     );

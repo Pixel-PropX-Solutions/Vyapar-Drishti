@@ -9,9 +9,11 @@ import NormalButton from '../../../../Components/Ui/Button/NormalButton';
 import { StackParamsList } from '../../../../Navigation/StackNavigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useAppDispatch, useCompanyStore, useInvoiceStore, useUserStore } from '../../../../Store/ReduxStore';
-import { viewInvoice } from '../../../../Services/invoice';
-import { useEffect } from 'react';
+import { printGSTInvoices, printInvoices, viewInvoice } from '../../../../Services/invoice';
+import { useEffect, useState } from 'react';
 import { formatDate, roundToDecimal } from '../../../../Utils/functionTools';
+import usePDFHandler from '../../../../Hooks/usePDFHandler';
+import LoadingModal from '../../../../Components/Modal/LoadingModal';
 
 export default function BillInfoScreen(): React.JSX.Element {
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
@@ -22,6 +24,37 @@ export default function BillInfoScreen(): React.JSX.Element {
     const currentCompanyDetails = user?.company?.find((c: any) => c._id === user?.user_settings?.current_company_id);
     const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst || false;
     const { invoiceData } = useInvoiceStore();
+    const [isPDFModalVisible, setPDFModalVisible] = useState<boolean>(false);
+
+
+    const { init, isGenerating, setIsGenerating, PDFViewModal, handleShare } = usePDFHandler();
+
+    async function handleInvoice(invoice: any, callback: () => void) {
+
+        if (!['Sales', 'Purchase'].includes(invoice.voucher_type)) { return; }
+
+        try {
+            setIsGenerating(true);
+
+            const res = await dispatch((gst_enable ? printGSTInvoices : printInvoices)({
+                vouchar_id: invoice._id,
+                company_id: company?._id || '',
+            }));
+
+            if (res.meta.requestStatus !== 'fulfilled') {
+                console.error('Failed to print invoice:', res.payload);
+                return;
+            }
+
+            const { paginated_data, download_data } = res.payload as { paginated_data: Array<{ html: string, page_number: number }>, download_data: string };
+
+            init({ html: paginated_data.map(item => item.html), downloadHtml: download_data, pdfName: invoice.voucher_number, title: invoice.voucher_number }, callback);
+        } catch (e) {
+            console.error('Error printing invoice:', e);
+        } finally {
+            setIsGenerating(false);
+        }
+    }
 
     useEffect(() => {
         dispatch(viewInvoice({ vouchar_id: invoiceId, company_id: company?._id || '' }));
@@ -155,6 +188,7 @@ export default function BillInfoScreen(): React.JSX.Element {
                             backgroundColor="rgb(50,150,200)"
                             icon={<FeatherIcon color="white" name="share-2" size={16} />}
                             textStyle={{ fontSize: 16, fontWeight: 900 }}
+                            onPress={() => handleInvoice(invoiceData, handleShare)}
                         />
                     </View>
 
@@ -165,11 +199,13 @@ export default function BillInfoScreen(): React.JSX.Element {
                             backgroundColor="rgb(50,200,150)"
                             icon={<FeatherIcon color="white" name="printer" size={16} />}
                             textStyle={{ fontSize: 16, fontWeight: 900 }}
-                            onPress={() => { }}
+                            onPress={() => { handleInvoice(invoiceData, () => { setPDFModalVisible(true); }); }}
                         />
                     </View>
                 </View>
             </BackgroundThemeView>
+            <PDFViewModal visible={isPDFModalVisible} setVisible={setPDFModalVisible} />
+            <LoadingModal visible={isGenerating} />
         </View>
     );
 }

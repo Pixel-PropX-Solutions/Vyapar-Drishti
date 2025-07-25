@@ -331,7 +331,7 @@ export interface GetInvoiceData {
   is_order_voucher: number,
   created_at: string,
   updated_at: string,
-  party_details:{
+  party_details: {
     account_holder: string,
     account_number: string,
     alias: string,
@@ -507,6 +507,11 @@ export interface GetCompany {
   pan: string,
   is_selected: boolean,
   website: string,
+  account_holder: string,
+  account_number: string,
+  bank_branch: string,
+  bank_ifsc: string,
+  bank_name: string,
   created_at: string,
   updated_at: string,
 }

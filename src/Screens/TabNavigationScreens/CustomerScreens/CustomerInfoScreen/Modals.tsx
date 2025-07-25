@@ -10,7 +10,7 @@ import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
 import PhoneNoTextInput from '../../../../Components/Ui/Option/PhoneNoTextInput';
 import { useAppDispatch, useCustomerStore, useUserStore } from '../../../../Store/ReduxStore';
 import MaterialIcon from '../../../../Components/Icon/MaterialIcon';
-import { updateCustomerDetails } from '../../../../Services/customer';
+import { getCustomer, updateCustomerDetails } from '../../../../Services/customer';
 import navigator from '../../../../Navigation/NavigationService';
 import { SelectField } from '../../../../Components/Ui/TextInput/SelectField';
 import { CountrySelectorModal } from '../../../../Components/Modal/CountrySelectorModal';
@@ -49,12 +49,15 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
         setLoading(true);
         console.log({ ledger_details });
         dispatch(updateCustomerDetails({ ledger_details: ledger_details.current, id: customerId ?? '' })).then(() => {
+            dispatch(getCustomer(customerId ?? ''));
             setLoading(false);
             setVisible(false);
         }).catch((error) => {
+            dispatch(getCustomer(customerId ?? ''));
             console.log('Error while updating the customer details', error);
             setLoading(false);
         }).finally(() => {
+            dispatch(getCustomer(customerId ?? ''));
             setVisible(false);
             setLoading(false);
         });
@@ -113,6 +116,7 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
                         icon={<FeatherIcon name="mail" size={16} />}
                         autoCapitalize="none"
                         useTrim={true}
+                        keyboardType='email-address'
                         value={ledger_details.current.email}
                         onChangeText={(val) => { setLedgerDetails('email', val); }}
                         infoMassage="Email address for correspondence"
@@ -161,12 +165,15 @@ export function AddressInfoUpdateModal({ visible, setVisible }: Props): React.JS
         setLoading(true);
         console.log({ ledger_details });
         dispatch(updateCustomerDetails({ ledger_details: ledger_details.current, id: customerId ?? '' })).then(() => {
+            dispatch(getCustomer(customerId ?? ''));
             setLoading(false);
             setVisible(false);
         }).catch((error) => {
+            dispatch(getCustomer(customerId ?? ''));
             console.log('Error while updating the customer details', error);
             setLoading(false);
         }).finally(() => {
+            dispatch(getCustomer(customerId ?? ''));
             setVisible(false);
             setLoading(false);
         });
@@ -285,12 +292,15 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
         setLoading(true);
         console.log({ ledger_details });
         dispatch(updateCustomerDetails({ ledger_details: ledger_details.current, id: customerId ?? '' })).then(() => {
+            dispatch(getCustomer(customerId ?? ''));
             setLoading(false);
             setVisible(false);
         }).catch((error) => {
+            dispatch(getCustomer(customerId ?? ''));
             console.log('Error while updating the customer details', error);
             setLoading(false);
         }).finally(() => {
+            dispatch(getCustomer(customerId ?? ''));
             setVisible(false);
             setLoading(false);
         });
@@ -383,57 +393,57 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
 
 
 
-export function TaxInfoUpdateModal({ visible, setVisible }: Props): React.JSX.Element {
+// export function TaxInfoUpdateModal({ visible, setVisible }: Props): React.JSX.Element {
 
-    const gstinNo = useRef<string>('');
-    const panNo = useRef<string>('');
+//     const gstinNo = useRef<string>('');
+//     const panNo = useRef<string>('');
 
-    function handleUpdate() {
-        console.log({ gstinNo, panNo });
-    }
+//     function handleUpdate() {
+//         console.log({ gstinNo, panNo });
+//     }
 
-    return (
-        <BottomModal
-            visible={visible} setVisible={setVisible}
-            style={{ paddingHorizontal: 20 }}
-            actionButtons={[{
-                title: 'Update', onPress: handleUpdate,
-                icon: <FeatherIcon name="save" size={20} />,
-            }]}
-        >
-            <ScrollView showsVerticalScrollIndicator={false} >
-                <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
-                    Update Tax Information
-                </TextTheme>
+//     return (
+//         <BottomModal
+//             visible={visible} setVisible={setVisible}
+//             style={{ paddingHorizontal: 20 }}
+//             actionButtons={[{
+//                 title: 'Update', onPress: handleUpdate,
+//                 icon: <FeatherIcon name="save" size={20} />,
+//             }]}
+//         >
+//             <ScrollView showsVerticalScrollIndicator={false} >
+//                 <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
+//                     Update Tax Information
+//                 </TextTheme>
 
-                <View style={{ gap: 24 }} >
-                    <LabelTextInput
-                        label="GSTIN Number"
-                        placeholder="24XXXXXXXXXX"
-                        icon={<FeatherIcon name="user" size={16} />}
-                        onChangeText={(val) => { gstinNo.current = val; }}
-                        useTrim={true}
-                        isRequired={true}
-                        infoMassage="15 digit GSTIN number"
-                    />
+//                 <View style={{ gap: 24 }} >
+//                     <LabelTextInput
+//                         label="GSTIN Number"
+//                         placeholder="24XXXXXXXXXX"
+//                         icon={<FeatherIcon name="user" size={16} />}
+//                         onChangeText={(val) => { gstinNo.current = val; }}
+//                         useTrim={true}
+//                         isRequired={true}
+//                         infoMassage="15 digit GSTIN number"
+//                     />
 
-                    <LabelTextInput
-                        label="Pan Number"
-                        placeholder="AbC4242D"
-                        icon={<FeatherIcon name="map-pin" size={16} />}
-                        onChangeText={(val) => { panNo.current = val; }}
-                        useTrim={true}
-                        isRequired={true}
-                        infoMassage="10 digit PAN number"
-                    />
-                </View>
+//                     <LabelTextInput
+//                         label="Pan Number"
+//                         placeholder="AbC4242D"
+//                         icon={<FeatherIcon name="map-pin" size={16} />}
+//                         onChangeText={(val) => { panNo.current = val; }}
+//                         useTrim={true}
+//                         isRequired={true}
+//                         infoMassage="10 digit PAN number"
+//                     />
+//                 </View>
 
-                <View style={{ minHeight: 40 }} />
-            </ScrollView>
+//                 <View style={{ minHeight: 40 }} />
+//             </ScrollView>
 
-            <ShowWhen when={visible} >
-                <LoadingModal visible={false} text="Updating Wait..." />
-            </ShowWhen>
-        </BottomModal>
-    );
-}
+//             <ShowWhen when={visible} >
+//                 <LoadingModal visible={false} text="Updating Wait..." />
+//             </ShowWhen>
+//         </BottomModal>
+//     );
+// }

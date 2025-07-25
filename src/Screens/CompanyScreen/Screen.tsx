@@ -2,7 +2,7 @@
 import { ScrollView } from 'react-native-gesture-handler';
 import TextTheme from '../../Components/Ui/Text/TextTheme';
 import StackNavigationHeader from '../../Components/Layouts/Header/StackNavigationHeader';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import SectionView, { SectionRow } from '../../Components/Layouts/View/SectionView';
 import FeatherIcon from '../../Components/Icon/FeatherIcon';
 import LogoImage from '../../Components/Image/LogoImage';
@@ -40,6 +40,20 @@ export default function CompanyScreen(): React.JSX.Element {
                     <TextTheme isPrimary={false} style={{ fontSize: 16 }} >{company?.email}</TextTheme>
                     {gst_enable && <TextTheme isPrimary={false} style={{ fontSize: 12 }} >GST {company?.gstin}</TextTheme>}
                 </View>
+
+                {gst_enable && <SectionView
+                    style={{ gap: 8 }} label="Tax Information"
+                    labelContainerChildren={
+                        <EditButton onPress={() => { setTaxInfoModalVisible(true); }} />
+                    }
+                >
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >GSTIN Number</TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            {company?.gstin}
+                        </TextTheme>
+                    </SectionRow>
+                </SectionView>}
 
                 <SectionView
                     style={{ gap: 8 }} label="Company Info"
@@ -97,7 +111,7 @@ export default function CompanyScreen(): React.JSX.Element {
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Mailing Name</TextTheme>
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Contact Person</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
                             <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
@@ -131,11 +145,22 @@ export default function CompanyScreen(): React.JSX.Element {
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Street, City</TextTheme>
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Address 1</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
                             <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
                                 {sliceString(company?.address_1, 24) ?? 'Not Set'}
+                            </TextTheme>
+                            <FeatherIcon isPrimary={false} name="home" size={16} />
+                        </View>
+                    </SectionRow>
+
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Address 2</TextTheme>
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
+                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                                {sliceString(company?.address_2, 24) ?? 'Not Set'}
                             </TextTheme>
                             <FeatherIcon isPrimary={false} name="home" size={16} />
                         </View>
@@ -153,19 +178,19 @@ export default function CompanyScreen(): React.JSX.Element {
                     </SectionRow>
                 </SectionView>
 
-                <SectionView
+                {!gst_enable && <SectionView
                     style={{ gap: 8 }} label="Tax Information"
                     labelContainerChildren={
                         <EditButton onPress={() => { setTaxInfoModalVisible(true); }} />
                     }
                 >
-                    {gst_enable && <SectionRow style={{ justifyContent: 'space-between' }} >
+                    <SectionRow style={{ justifyContent: 'space-between' }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >GSTIN Number</TextTheme>
                         <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
                             {company?.gstin}
                         </TextTheme>
-                    </SectionRow>}
-                </SectionView>
+                    </SectionRow>
+                </SectionView>}
 
                 <SectionView
                     label="Bank Details"
@@ -175,37 +200,37 @@ export default function CompanyScreen(): React.JSX.Element {
                     }
                 >
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Account Holder Name</TextTheme>
+                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Account Name</TextTheme>
                         <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                            {'Not Set'}
+                            {company?.account_holder ?? 'Not Set'}
                         </TextTheme>
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Account Number</TextTheme>
                         <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                            {'Not Set'}
+                            {company?.account_number ?? 'Not Set'}
                         </TextTheme>
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Bank Name</TextTheme>
                         <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                            {'Not Set'}
+                            {company?.bank_name ?? 'Not Set'}
                         </TextTheme>
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >IFSC Code</TextTheme>
                         <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                            {'Not Set'}
+                            {company?.bank_ifsc ?? 'Not Set'}
                         </TextTheme>
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
                         <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Branch Name</TextTheme>
                         <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                            {'Not Set'}
+                            {company?.bank_branch ?? 'Not Set'}
                         </TextTheme>
                     </SectionRow>
                 </SectionView>

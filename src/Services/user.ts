@@ -195,19 +195,15 @@ export const deleteAccount = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await userApi.delete('auth/delete/user');
-      console.log('deleteAccount api response', response.data);
 
       if (response.data.success === true) {
-        AuthStore.delete('accessToken');
-        AuthStore.delete('refreshToken');
-        AuthStore.clearAll();
+        localStorage.clear();
         return { success: true };
       } else { return rejectWithValue('Login Failed: No access token recieved.'); }
     } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message ||
-        'Login failed: Invalid credentials or server error.'
-      );
+      return rejectWithValue(error?.response?.data?.message);
     }
   }
 );
+
+

@@ -6,15 +6,15 @@ import { ScrollView, View } from 'react-native';
 export default function HomeScreen(): React.JSX.Element {
     return (
         <View style={{ width: '100%', height: '100%' }} >
-            <Header/>
+            <Header />
 
-            <ScrollView 
-                style={{ marginTop: 12, width: '100%', height: '100%', paddingHorizontal: 20 }} 
+            <ScrollView
+                style={{ marginTop: 12, width: '100%', height: '100%', paddingHorizontal: 20 }}
                 contentContainerStyle={{ gap: 32 }}
                 keyboardShouldPersistTaps='always'
             >
-                <MonthlyInfoSection/>
-                <QuickAccessSection/>
+                {/* <MonthlyInfoSection /> */}
+                <QuickAccessSection />
             </ScrollView>
         </View>
     );

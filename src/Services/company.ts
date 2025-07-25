@@ -225,16 +225,12 @@ export const deleteCompany = createAsyncThunk(
   ) => {
     try {
       const response = await userApi.delete(`/auth/delete/user/company/${id}`);
-      console.log('deleteCompany response', response);
 
       if (response.data.success === true) {
         return;
-      } else { return rejectWithValue('Deletion Failed'); }
+      } else {return rejectWithValue('Login Failed: No access token recieved.');}
     } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message ||
-        'Deletion Failed'
-      );
+      return rejectWithValue(error?.response?.data?.message);
     }
   }
 );
