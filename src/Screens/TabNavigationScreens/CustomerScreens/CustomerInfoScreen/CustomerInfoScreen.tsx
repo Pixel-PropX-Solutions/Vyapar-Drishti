@@ -6,40 +6,45 @@ import SectionView, { SectionRow, SectionRowWithIcon } from '../../../../Compone
 import TextTheme from '../../../../Components/Ui/Text/TextTheme';
 import EditButton from '../../../../Components/Ui/Button/EditButton';
 import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import StackNavigationHeader from '../../../../Components/Layouts/Header/StackNavigationHeader';
 import DeleteModal from '../../../../Components/Modal/DeleteModal';
 import ShowWhen from '../../../../Components/Other/ShowWhen';
 import LoadingView from '../../../../Components/Layouts/View/LoadingView';
-import { AddressInfoUpdateModal, BankInfoUpdateModal, CustomerInfoUpdateModal, TaxInfoUpdateModal } from './Modals';
+import { AddressInfoUpdateModal, BankInfoUpdateModal, CustomerInfoUpdateModal } from './Modals';
 import { useAppDispatch, useCustomerStore, useUserStore } from '../../../../Store/ReduxStore';
 import { getCustomer } from '../../../../Services/customer';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function CustomerInfoScreen(): React.JSX.Element {
 
     const { customerId } = navigator.getParams('customer-info-screen') ?? {};
+
     const dispatch = useAppDispatch();
     const { customer, loading } = useCustomerStore();
-    const { user } = useUserStore();
-    const currentCompanyDetails = user?.company?.find((company: any) => company._id === user?.user_settings?.current_company_id);
-    const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
-    console.log('customer', customer);
+    // const { user } = useUserStore();
+    // const currentCompanyDetails = user?.company?.find((company: any) => company._id === user?.user_settings?.current_company_id);
+    // const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
+    
 
     const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
     const [isInfoUpdateModalVisible, setInfoUpdateModalVisible] = useState<boolean>(false);
     const [isAddressInfoUpdateModalVisible, setAddressInfoUpdateModalVisible] = useState<boolean>(false);
     const [isBankInfoUpdateModalVisible, setBankInfoUpdateModalVisible] = useState<boolean>(false);
-    const [isTaxInfoUpdateModalVisible, setTaxInfoUpdateModalVisible] = useState<boolean>(false);
+    // const [isTaxInfoUpdateModalVisible, setTaxInfoUpdateModalVisible] = useState<boolean>(false);
 
     async function handleDelete() {
         setDeleteModalVisible(false);
         navigator.goBack();
     }
 
-    useEffect(() => {
-        dispatch(getCustomer(customerId ?? ''));
-    }, [customerId, dispatch]);
+    useFocusEffect(() => {
+        if(customerId)
+            dispatch(getCustomer(customerId ?? ''));
+    });
+
+    if(!customerId) return <></>
 
     return (
         <View style={{ width: '100%', height: '100%' }} >

@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import { FlatList } from 'react-native-gesture-handler';
 import { View } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import RoundedPlusButton from '../../../Components/Ui/Button/RoundedPlusButton';
 import CreateCustomerModal from '../../../Components/Modal/Customer/CreateCustomerModal';
 import { useAppDispatch, useCompanyStore, useCustomerStore } from '../../../Store/ReduxStore';
@@ -12,15 +12,11 @@ import EmptyListView from '../../../Components/Layouts/View/EmptyListView';
 import CustomerTypeSelectorModal from '../../../Components/Modal/Customer/CustomerTypeSelectorModal';
 import { GetUserLedgers } from '../../../Utils/types';
 import navigator from '../../../Navigation/NavigationService';
-import { useNavigation } from '@react-navigation/native';
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { BottomTabParamsList } from '../../../Navigation/BottomTabNavigation';
+import { useFocusEffect } from '@react-navigation/native';
 import EntityListingHeader from '../../../Components/Layouts/Header/EntityListingHeader';
 
 
 export default function CustomerScreen(): React.JSX.Element {
-
-    const navigation = useNavigation<BottomTabNavigationProp<BottomTabParamsList, 'customer-screen'>>();
 
     const dispatch = useAppDispatch();
     const { customers, isAllCustomerFetching, pageMeta } = useCustomerStore();
@@ -48,13 +44,9 @@ export default function CustomerScreen(): React.JSX.Element {
         ));
     }, [customers]);
 
-    useEffect(() => {
-        const event = navigation.addListener('focus', () => {
-            dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
-        });
-
-        return event;
-    }, []);
+    useFocusEffect(() => {
+        dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
+    });
 
     return (
         <View style={{ width: '100%', height: '100%', paddingHorizontal: 20 }} >

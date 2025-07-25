@@ -8,7 +8,7 @@ import ProductCard, { ProductLoadingCard } from '../../../../Components/Ui/Card/
 import navigator from '../../../../Navigation/NavigationService';
 import ShowWhen from '../../../../Components/Other/ShowWhen';
 import { viewAllProducts } from '../../../../Services/product';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import RoundedPlusButton from '../../../../Components/Ui/Button/RoundedPlusButton';
 import CreateProductModal from '../../../../Components/Modal/Product/CreateProductModal';
 import EntityListingHeader from '../../../../Components/Layouts/Header/EntityListingHeader';
@@ -74,10 +74,6 @@ export function ProductListing(): React.JSX.Element {
         if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
         dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1 }));
     }
-
-    useEffect(() => {
-        dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: 1 }));
-    }, [company?._id, dispatch]);
 
     return (
         <FlatList

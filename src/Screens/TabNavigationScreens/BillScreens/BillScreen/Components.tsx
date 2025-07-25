@@ -43,6 +43,9 @@ export function Header(): React.JSX.Element {
 
 export function BillTypeFilter(): React.JSX.Element {
 
+    const dispatch = useAppDispatch();
+    const {company} = useCompanyStore()
+
     const { primaryColor, primaryBackgroundColor } = useTheme();
     const { filters, handleFilter } = useBillContext();
 
@@ -55,7 +58,10 @@ export function BillTypeFilter(): React.JSX.Element {
                 {
                     ['All', 'Sales', 'Purchase'].map(type => (
                         <AnimateButton key={type}
-                            onPress={() => setSelected(type)}
+                            onPress={() => {
+                                setSelected(type)
+                                dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1, type}));
+                            }}
                             bubbleColor={type === selected ? primaryBackgroundColor : primaryColor}
 
                             style={{

@@ -25,6 +25,7 @@ export default function MenuScreen(): React.JSX.Element {
     const { user } = useUserStore();
     const currentCompanyDetails = user?.company.find((c: any) => c._id === user?.user_settings?.current_company_id);
     const { currency, billPrefix } = useAppStorage();
+    
     const dispatch = useAppDispatch();
     const [isCurrencyModalVisible, setCurrencyModalVisible] = useState<boolean>(false);
     const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);

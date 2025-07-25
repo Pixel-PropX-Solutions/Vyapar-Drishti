@@ -140,8 +140,6 @@ export function SalePurchaseCards() {
 export function InfoSection() {
 
     const { loading, product } = useProductStore();
-    console.log('product', product);
-
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
     return (

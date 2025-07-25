@@ -1,5 +1,4 @@
 /* eslint-disable react-native/no-inline-styles */
-import MeasurementUnitsOpation from '../../../Components/Ui/Option/MeasurmentUnits';
 import { Header, MonthlyInfoSection, QuickAccessSection } from './Conponents';
 import { ScrollView, View } from 'react-native';
 
