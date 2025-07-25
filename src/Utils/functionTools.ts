@@ -111,7 +111,6 @@ export const formatDate = (dateString: string): string => {
 };
 
 
-
 export function arrayToFormData(arr: [key: string, val: string | boolean][]): FormData {
     const form = new FormData;
     for(let [key, val] of arr){
@@ -119,4 +118,15 @@ export function arrayToFormData(arr: [key: string, val: string | boolean][]): Fo
         form.append(key, value ?? '');
     }
     return form;
+}
+
+
+export function isVersionLower(current: string, target: string) {
+  const cur = current.split('.').map(Number);
+  const tgt = target.split('.').map(Number);
+  for (let i = 0; i < tgt.length; i++) {
+    if ((cur[i] ?? 0) < (tgt[i] ?? 0)) return true;
+    if ((cur[i] ?? 0) > (tgt[i] ?? 0)) return false;
+  }
+  return false;
 }

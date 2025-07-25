@@ -16,6 +16,7 @@ import { NavigationRef } from "./NavigationService";
 import ProductInfoScreen from "../Screens/TabNavigationScreens/ProductScreens/ProductInfoScreen/Screen";
 import { ComponentProps, ElementType } from "react";
 import BillInfoScreen from "../Screens/TabNavigationScreens/BillScreens/BillInfoScreen/BillInfoScreen";
+import AppUpdateScreen from "../Screens/AppUpdateScreen";
 
 export type StackParamsList = {
     'splash-screen': undefined,
@@ -31,7 +32,9 @@ export type StackParamsList = {
     'customer-info-screen': {customerId: string}
 
     'create-bill-screen': {type: string, id: string}
-    'bill-info-screen': {id: string}
+    'bill-info-screen': {id: string},
+
+    'app-update-screen': undefined
 }
 
 const Stack = createStackNavigator<StackParamsList>();
@@ -54,6 +57,14 @@ export default function StackNavigation(): React.JSX.Element {
                 initialRouteName="splash-screen"
                 screenOptions={{headerShown: false, cardStyle: {backgroundColor}}}
             >
+                <Stack.Screen name="splash-screen" component={SplashScreen} 
+                    options={{animation: "scale_from_center"}} 
+                />
+
+                <Stack.Screen name="app-update-screen" component={AppUpdateScreen} 
+                    options={{animation: 'scale_from_center'}}
+                />
+
                 <Stack.Screen name="login-screen" 
                     component={withSafeView(LoginScreen)} 
                 />
@@ -91,10 +102,6 @@ export default function StackNavigation(): React.JSX.Element {
                     component={withSafeView(BillInfoScreen)} 
                 />
 
-                <Stack.Screen name="splash-screen" 
-                    options={{animation: "scale_from_center"}} 
-                    component={withSafeView(SplashScreen)} 
-                />
 
                 <Stack.Screen name="landing-screen" 
                     options={{animation: "scale_from_center"}} 

@@ -1,15 +1,16 @@
 import { ReactNode, useEffect } from "react";
-import { Animated, useAnimatedValue } from "react-native";
+import { Animated, useAnimatedValue, ViewStyle } from "react-native";
 
 
 type Props = {
     children: ReactNode,
     duration?: number,
     delay?: number,
-    useRandomDelay?: boolean
+    useRandomDelay?: boolean,
+    style?: ViewStyle
 }
 
-export default function ScaleAnimationView({children, duration=500, delay=0, useRandomDelay=false}: Props): React.JSX.Element {
+export default function ScaleAnimationView({children, duration=500, delay=0, useRandomDelay=false, style}: Props): React.JSX.Element {
     
     const animate0to1 = useAnimatedValue(0);
     
@@ -22,6 +23,7 @@ export default function ScaleAnimationView({children, duration=500, delay=0, use
     
     return (
         <Animated.View style={{
+            ...style,
             position: 'relative',
             opacity: animate0to1,
             transform: [{scale: animate0to1.interpolate({

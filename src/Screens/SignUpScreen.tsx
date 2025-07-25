@@ -93,33 +93,10 @@ export default function SignUpScreen(): React.JSX.Element {
                     autoCapitalize="none"
                 />
 
-                {/* <View style={{ flexDirection: 'row', gap: 12 }} >
-                    <LabelTextInput
-                        value={code}
-                        label="Code"
-                        placeholder="e.g. +91, +1"
-                        keyboardType="phone-pad"
-                        onChangeText={setCode}
-                        containerStyle={{ width: 100 }}
-                        useTrim={true}
-                    />
-
-                    <LabelTextInput
-                        label="Phone Number"
-                        placeholder="e.g. 12344567890"
-                        keyboardType="phone-pad"
-                        checkInputText={isValidMobileNumber}
-                        message="Phone number only content digits"
-                        onChangeText={setPhoneNumber}
-                        containerStyle={{ flex: 1 }}
-                        useTrim={true}
-                    />
-
-                </View> */}
-
                 <PhoneNoTextInput
                     onChangePhoneNumber={(phoneNo) => { phone.current = phoneNo }}
                 />
+                
                 {/* <View>
                     <PasswordInput  
                         checkInputText={(pass) => pass.length >= 8}

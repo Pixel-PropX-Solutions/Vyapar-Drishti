@@ -61,7 +61,7 @@ export function HeroSection(): React.JSX.Element {
             <View style={{ gap: 12 }} >
                 <View style={{ alignItems: 'flex-end' }} >
                     <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >
-                        {loading ? '0.00' : formatNumberForUI((item?.sales_value ?? 0) / (item?.sales_qty ?? 1))}
+                        {loading ? '0.00' : formatNumberForUI((item?.sales_value ?? 0) / (item?.sales_qty || 1))}
                         {' ' + currency}
                     </TextTheme>
                     <TextTheme isPrimary={false} style={{ fontSize: 10, fontWeight: 900 }} >Avg. Sale Price</TextTheme>

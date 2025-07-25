@@ -1,11 +1,7 @@
-import { FlatList, Pressable, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 import AnimateButton from '../../../../Components/Ui/Button/AnimateButton';
 import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
 import { useAppDispatch, useCompanyStore, useProductStore } from '../../../../Store/ReduxStore';
-import { useProductListingContext } from './Context';
-import { getMonthByIndex } from '../../../../Utils/functionTools';
-import TextTheme from '../../../../Components/Ui/Text/TextTheme';
-import { useTheme } from '../../../../Contexts/ThemeProvider';
 import EmptyListView from '../../../../Components/Layouts/View/EmptyListView';
 import ProductCard, { ProductLoadingCard } from '../../../../Components/Ui/Card/ProductCard';
 import navigator from '../../../../Navigation/NavigationService';
@@ -14,7 +10,6 @@ import { viewAllProducts } from '../../../../Services/product';
 import { useEffect, useState } from 'react';
 import RoundedPlusButton from '../../../../Components/Ui/Button/RoundedPlusButton';
 import CreateProductModal from '../../../../Components/Modal/Product/CreateProductModal';
-import { DateSelectorModal } from './Modals';
 import EntityListingHeader from '../../../../Components/Layouts/Header/EntityListingHeader';
 
 
@@ -61,41 +56,6 @@ export function SummaryCard(): React.JSX.Element {
                 </Text>
                 <Text style={{ fontSize: 12, color: 'white' }}>+Ve Stock</Text>
             </AnimateButton>
-        </View>
-    );
-}
-
-
-export function DateSelector() {
-
-    const { primaryColor } = useTheme();
-    const { date, setDate } = useProductListingContext();
-
-    const [isModalVisible, setModalVisible] = useState<boolean>(false);
-
-    function incrementMonth(by: number) {
-        const nextMonth = (date.month + by + 12) % 12;
-        const nextYear = date.year + Math.floor((date.month + by) / 12);
-        setDate({ year: nextYear, month: nextMonth });
-    }
-
-    return (
-        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingInline: 10, height: 40, borderRadius: 40, borderWidth: 2, borderColor: primaryColor }} >
-            <AnimateButton style={{ borderRadius: 20, padding: 4 }} onPress={() => incrementMonth(-1)}>
-                <FeatherIcon name="chevron-left" size={20} />
-            </AnimateButton>
-
-            <Pressable onPress={() => { setModalVisible(true); }}>
-                <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >{getMonthByIndex(date.month)}, {date.year}</TextTheme>
-            </Pressable>
-
-            <AnimateButton style={{ borderRadius: 20, padding: 4 }} onPress={() => incrementMonth(1)}>
-                <FeatherIcon name="chevron-right" size={20} />
-            </AnimateButton>
-
-            <DateSelectorModal
-                visible={isModalVisible} setVisible={setModalVisible}
-            />
         </View>
     );
 }
