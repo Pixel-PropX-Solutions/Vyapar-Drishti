@@ -1,11 +1,11 @@
 import { updateCustomer, getCustomer, createCustomer, deleteCustomer, restoreCustomer, viewAllCustomer, viewAllCustomers } from '../../Services/customer';
-import { PageMeta, GetUserLedgers, CustomersList, AccountingGroups } from "../../utils/types";
-import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit";
+import { PageMeta, GetUserLedgers, CustomersList, AccountingGroups } from '../../utils/types';
+import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 
 interface CustomerState {
     customers: Array<GetUserLedgers>;
     isAllCustomerFetching: boolean;
-    customer: GetUserLedgers | null;
+    customer: any | null;
     customersList: Array<CustomersList> | [];
     customerType: AccountingGroups | null;
     loading: boolean,
@@ -27,10 +27,10 @@ const initialState: CustomerState = {
     },
     loading: false,
     error: null,
-}
+};
 
 const customerSlice: Slice<CustomerState> = createSlice({
-    name: "customers",
+    name: 'customers',
     initialState,
     reducers: {
         setCustomerType: (state, action: PayloadAction<AccountingGroups | null>) => {
@@ -50,7 +50,7 @@ const customerSlice: Slice<CustomerState> = createSlice({
                 total: 0,
                 unique: [],
             };
-        }
+        },
     },
 
     extraReducers: (builder) => {
@@ -72,11 +72,10 @@ const customerSlice: Slice<CustomerState> = createSlice({
             .addCase(viewAllCustomer.pending, (state) => {
                 state.error = null;
                 state.isAllCustomerFetching = true;
-                if(state.customers.length ?? 0 < 10) 
-                    state.customers = []
+                if (state.customers.length ?? 0 < 10) { state.customers = []; }
             })
             .addCase(viewAllCustomer.fulfilled, (state, action: PayloadAction<any>) => {
-                if(action.payload.pageMeta.page == 1){
+                if (action.payload.pageMeta.page == 1) {
                     state.customers = action.payload.customers;
                 } else {
                     state.customers = [...(state.customers ?? []), ...(action.payload.customers ?? [])];
@@ -108,7 +107,7 @@ const customerSlice: Slice<CustomerState> = createSlice({
                 state.loading = true;
             })
             .addCase(getCustomer.fulfilled,
-                (state, action: PayloadAction<GetUserLedgers>) => {
+                (state, action: PayloadAction<any>) => {
                     state.customer = action.payload;
                     state.loading = false;
                 }
@@ -155,8 +154,8 @@ const customerSlice: Slice<CustomerState> = createSlice({
             .addCase(restoreCustomer.rejected, (state, action) => {
                 state.error = action.payload as string;
                 state.loading = false;
-            })
-    }
+            });
+    },
 });
 
 export const { setCustomerType, resetCustomerState } = customerSlice.actions;

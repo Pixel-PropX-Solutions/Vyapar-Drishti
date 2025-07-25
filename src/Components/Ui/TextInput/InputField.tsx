@@ -33,7 +33,8 @@ export const InputField = ({
     info?: string,
     value: string | number | Date | boolean,
     field: string,
-    keyboardType?: 'default' | 'number-pad' | 'numeric',
+    keyboardType?: | 'default' | 'number-pad' | 'decimal-pad' | 'numeric' | 'email-address' | 'phone-pad' | 'url'
+    | 'ascii-capable' | 'numbers-and-punctuation' | 'name-phone-pad' | 'twitter' | 'web-search' | 'visible-password';
     capitalize?: 'none' | 'sentences' | 'words' | 'characters',
     borderWidth?: number;
     multiline?: boolean,
@@ -67,7 +68,7 @@ export const InputField = ({
                         fontSize: 16,
                         fontWeight: '500',
                         flex: 1,
-                        marginLeft: 12,
+                        marginLeft: 10,
                         minHeight: multiline ? 70 : 30,
                         transform: [{ translateY: multiline ? -10 : 0 }],
                         textAlignVertical: multiline ? 'top' : 'center',

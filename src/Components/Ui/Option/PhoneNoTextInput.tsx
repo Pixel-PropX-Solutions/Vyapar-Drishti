@@ -1,19 +1,20 @@
-import { Pressable, TextInputProps, View } from "react-native";
-import TextTheme from "../Text/TextTheme";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { Text, TextInput } from "react-native-gesture-handler";
-import { useTheme } from "../../../Contexts/ThemeProvider";
-import ShowWhen from "../../Other/ShowWhen";
-import dialCodeData from '../../../Assets/Jsons/dial-code-data.json'
-import BottomModal from "../../Modal/BottomModal";
-import { capitalize } from "../../../Utils/functionTools";
-import FeatherIcon from "../../Icon/FeatherIcon";
-import NoralTextInput from "../TextInput/NoralTextInput";
-import { FlatList } from "react-native";
-import { SectionRow } from "../../Layouts/View/SectionView";
-import { PhoneNumber } from "../../../Utils/types";
+/* eslint-disable react-native/no-inline-styles */
+import { Pressable, TextInputProps, View } from 'react-native';
+import TextTheme from '../Text/TextTheme';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Text, TextInput } from 'react-native-gesture-handler';
+import { useTheme } from '../../../Contexts/ThemeProvider';
+import ShowWhen from '../../Other/ShowWhen';
+import dialCodeData from '../../../Assets/Jsons/dial-code-data.json';
+import BottomModal from '../../Modal/BottomModal';
+import { capitalize } from '../../../Utils/functionTools';
+import FeatherIcon from '../../Icon/FeatherIcon';
+import NoralTextInput from '../TextInput/NoralTextInput';
+import { FlatList } from 'react-native';
+import { SectionRow } from '../../Layouts/View/SectionView';
+import { PhoneNumber } from '../../../Utils/types';
 
-export type DialCodeType =  {
+export type DialCodeType = {
     code?: string, name?: string, dial_code: string
 }
 
@@ -31,9 +32,9 @@ type Props = TextInputProps & {
 
 }
 
-export default function PhoneNoTextInput({label, onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkNumberIsValid, message, phoneNumber, isRequired=false, placeholder='XXXXX-XXXXX', onChangePhoneNumber, ...props}: Props): React.JSX.Element {
+export default function PhoneNoTextInput({ label, onChangeText, focusColor = 'rgb(50, 150, 250)', massageTextColor = 'rgb(200,50,50)', checkNumberIsValid, message, phoneNumber, isRequired = false, placeholder = 'XXXXX-97548', onChangePhoneNumber, ...props }: Props): React.JSX.Element {
 
-    const {primaryColor: color, primaryBackgroundColor: backgroundColor} = useTheme();
+    const { primaryColor: color, primaryBackgroundColor: backgroundColor } = useTheme();
 
     const [isFocus, setFocus] = useState<boolean>(false);
     const [number, setNumber] = useState<string>(phoneNumber?.number ?? '');
@@ -43,65 +44,62 @@ export default function PhoneNoTextInput({label, onChangeText, focusColor='rgb(5
     const [isCodeModalVisible, setCodeModalVisible] = useState<boolean>(false);
 
     function handleOnChangeText(text: string): void {
-        if(!'0123456789'.includes(text.at(-1) ?? '')) return;
+        if (!'0123456789'.includes(text.at(-1) ?? '')) { return; }
 
         setNumber(text);
         text = text.trim();
 
-        if(onChangeText) 
-            onChangeText(text);
+        if (onChangeText) { onChangeText(text); }
 
-        if(checkNumberIsValid) 
-            setInputTextValid(checkNumberIsValid(text));
+        if (checkNumberIsValid) { setInputTextValid(checkNumberIsValid(text)); }
 
-        if(!text) 
-            setInputTextValid(true);
+        if (!text) { setInputTextValid(true); }
     }
 
     useEffect(() => {
-        onChangePhoneNumber({code, number})
-    }, [code, number])
+        onChangePhoneNumber({ code, number });
+    }, [code, number]);
 
     return (
         <View>
             <ShowWhen when={!!label?.trim()} >
-                <TextTheme isPrimary={false} style={{marginBottom: 8, paddingLeft: 4, fontSize: 16, fontWeight: 900}} >
+                <TextTheme isPrimary={false} style={{ marginBottom: 8, paddingLeft: 4, fontSize: 16, fontWeight: 900 }} >
                     {label}
                 </TextTheme>
             </ShowWhen>
 
-            <View style={{flexDirection: 'row', alignItems: 'center', width: '100%', gap: 12}} >
-                <Pressable 
+            <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%', gap: 12 }} >
+                <Pressable
                     style={{
                         borderWidth: 2, paddingInline: 12, borderRadius: 12, position: 'relative', borderColor: color,
-                        flexDirection: 'row', alignItems: 'center', height: 44, minWidth: 80
-                    }} 
+                        flexDirection: 'row', alignItems: 'center', height: 44, minWidth: 80,
+                    }}
 
-                    onPress={() => {setCodeModalVisible(true);}}
+                    onPress={() => { setCodeModalVisible(true); }}
                 >
-                    <TextTheme 
-                        style={{position: 'absolute', left: 12, top: 0, transform: [{translateY: '-50%'}], backgroundColor, paddingInline: 4, borderRadius: 4}}
+                    <TextTheme
+                        style={{ position: 'absolute', left: 12, top: 0, transform: [{ translateY: '-50%' }], backgroundColor, paddingInline: 4, borderRadius: 4 }}
                     >
-                        {"Code"}
+                        {'Code'}
                         <ShowWhen when={isRequired} >
                             <TextTheme color="rgb(250,50,50)" > *</TextTheme>
                         </ShowWhen>
                     </TextTheme>
 
                     <TextTheme isPrimary={!!code}>
-                        + {code || 'XX'}
+                        {code || '+ 91'}
                     </TextTheme>
                 </Pressable>
 
-                <View 
+                <View
                     style={{
                         borderWidth: 2, paddingInline: 12, borderRadius: 12, position: 'relative',
                         borderColor: isInputTextValid ? isFocus ? focusColor : color : massageTextColor,
-                        flexDirection: 'row', alignItems: 'center', gap: 8 , flex: 1
-                    }} 
+                        flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1,
+                    }}
                 >
-                    <TextTheme 
-                        style={{position: 'absolute', left: 14, top: 0, transform: [{translateY: '-50%'}], backgroundColor, paddingInline: 4, borderRadius: 4}}
+                    <TextTheme
+                        style={{ position: 'absolute', left: 14, top: 0, transform: [{ translateY: '-50%' }], backgroundColor, paddingInline: 4, borderRadius: 4 }}
                         color={isInputTextValid ? isFocus ? focusColor : color : massageTextColor}
                     >
                         {'Phone No'}
@@ -109,8 +107,8 @@ export default function PhoneNoTextInput({label, onChangeText, focusColor='rgb(5
                             <TextTheme color="rgb(250,50,50)" > *</TextTheme>
                         </ShowWhen>
                     </TextTheme>
-                    
-                    <TextInput  
+
+                    <TextInput
                         {...props}
                         value={number}
                         placeholder={placeholder}
@@ -120,15 +118,15 @@ export default function PhoneNoTextInput({label, onChangeText, focusColor='rgb(5
                         onBlur={() => setFocus(false)}
                         keyboardType="number-pad"
                         style={{
-                            opacity: number ? 1 : 0.7,   
-                            color, paddingTop: 14, flex: 1
+                            opacity: number ? 1 : 0.7,
+                            color, paddingTop: 14, flex: 1,
                         }}
                     />
                 </View>
             </View>
             {
                 !(isInputTextValid || isFocus) ? (
-                    <Text style={{paddingLeft: 6, fontSize: 12, color: massageTextColor}} >
+                    <Text style={{ paddingLeft: 6, fontSize: 12, color: massageTextColor }} >
                         {message}
                     </Text>
                 ) : null
@@ -136,11 +134,11 @@ export default function PhoneNoTextInput({label, onChangeText, focusColor='rgb(5
 
             <DialCodeSelectorModal
                 visible={isCodeModalVisible} setVisible={setCodeModalVisible}
-                selected={{dial_code: code}}
-                onSelect={({dial_code}) => {setCode(dial_code)}}
+                selected={{ dial_code: code }}
+                onSelect={({ dial_code }) => { setCode(dial_code); }}
             />
         </View>
-    )
+    );
 }
 
 
@@ -152,11 +150,11 @@ type DialCodeModalProps = {
     selected?: DialCodeType
 }
 
-export function DialCodeSelectorModal({visible, setVisible, onSelect, selected}: DialCodeModalProps) : React.JSX.Element {
+export function DialCodeSelectorModal({ visible, setVisible, onSelect, selected }: DialCodeModalProps): React.JSX.Element {
 
-    const {primaryColor} = useTheme();
+    const { primaryColor } = useTheme();
 
-    const selected_ : DialCodeType | undefined = (
+    const selected_: DialCodeType | undefined = (
         dialCodeData.find(item => item.dial_code === selected?.dial_code)
     );
 
@@ -164,9 +162,9 @@ export function DialCodeSelectorModal({visible, setVisible, onSelect, selected}:
     const timeoutId = useRef<NodeJS.Timeout>(undefined);
 
     function handleDataFilter(inputValue: string): void {
-        inputValue = inputValue.trim().toLowerCase()
+        inputValue = inputValue.trim().toLowerCase();
         clearTimeout(timeoutId.current);
-        if(!inputValue) {
+        if (!inputValue) {
             setData(dialCodeData);
             return;
         }
@@ -183,28 +181,28 @@ export function DialCodeSelectorModal({visible, setVisible, onSelect, selected}:
     return (
         <BottomModal
             visible={visible} setVisible={setVisible}
-            style={{paddingInline: 20, gap: 20}}
+            style={{ paddingInline: 20, gap: 20 }}
             topMargin={0}
         >
-            <TextTheme style={{fontSize: 20, fontWeight: 900}} >
+            <TextTheme style={{ fontSize: 20, fontWeight: 900 }} >
                 Select Your Country Code
             </TextTheme>
 
             <ShowWhen when={!!selected?.dial_code} >
-                <View style={{width: "100%", padding: 16, borderRadius: 16, backgroundColor: 'rgba(150, 50, 250, 1)', flexDirection: "row", justifyContent: 'space-between', alignItems: 'center'}} >
+                <View style={{ width: '100%', padding: 16, borderRadius: 16, backgroundColor: 'rgba(150, 50, 250, 1)', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
                     <View>
-                        <TextTheme color="white" style={{fontWeight: 400, fontSize: 14}} >
+                        <TextTheme color="white" style={{ fontWeight: 400, fontSize: 14 }} >
                             {capitalize(selected_?.name ?? '')} Country
                         </TextTheme>
 
-                        <TextTheme color="white" style={{fontWeight: 900, fontSize: 16}} >
-                            + {selected_?.dial_code}
+                        <TextTheme color="white" style={{ fontWeight: 900, fontSize: 16 }} >
+                            {selected_?.dial_code}
                         </TextTheme>
                     </View>
 
-                    <View style={{flexDirection: 'row', gap: 8, alignItems: 'center'}} >
+                    <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }} >
                         <FeatherIcon name="check" size={20} color="white" />
-                        <TextTheme color="white" style={{fontWeight: 900}} >Selected</TextTheme>
+                        <TextTheme color="white" style={{ fontWeight: 900 }} >Selected</TextTheme>
                     </View>
                 </View>
             </ShowWhen>
@@ -222,28 +220,28 @@ export function DialCodeSelectorModal({visible, setVisible, onSelect, selected}:
             </View>
 
             <FlatList
-                contentContainerStyle={{gap: 10}}
+                contentContainerStyle={{ gap: 10 }}
                 data={data}
-                keyboardShouldPersistTaps='always'
+                keyboardShouldPersistTaps="always"
                 keyExtractor={(item, index) => (
                     item.dial_code + index.toString()
                 )}
 
-                renderItem={({item}) => (
+                renderItem={({ item }) => (
                     <SectionRow
-                        style={{justifyContent: 'space-between'}} 
+                        style={{ justifyContent: 'space-between' }}
                         onPress={() => {
-                            setVisible(false)
+                            setVisible(false);
                             setData(dialCodeData);
-                            if(onSelect) onSelect(item)
+                            if (onSelect) { onSelect(item); }
                         }}
                     >
-                        <TextTheme style={{fontWeight: 900, fontSize: 16}}>{item.name}</TextTheme>
-                        <TextTheme style={{fontWeight: 600, fontSize: 16}}>+{item.dial_code}</TextTheme>
+                        <TextTheme style={{ fontWeight: 900, fontSize: 16 }}>{item.name}</TextTheme>
+                        <TextTheme style={{ fontWeight: 600, fontSize: 16 }}>{item.dial_code}</TextTheme>
                     </SectionRow>
                 )}
             />
 
         </BottomModal>
-    )
+    );
 }

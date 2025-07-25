@@ -13,28 +13,28 @@ type AnimateButtonProps = PressableProps & {
 }
 
 
-export default function AnimateButton({children, style={}, duration=300, bubbleScale=10, onPress=()=>{}, bubbleColor, ...props}: AnimateButtonProps ): React.JSX.Element {
+export default function AnimateButton({ children, style = {}, duration = 300, bubbleScale = 10, onPress = () => { }, bubbleColor, ...props }: AnimateButtonProps): React.JSX.Element {
 
-    const {secondaryColor} = useTheme()
+    const { secondaryColor } = useTheme()
 
     bubbleColor = bubbleColor ?? secondaryColor;
 
-    const [pressPoints, setPressPoints] = useState<{x: number, y: number}>({x: -1, y: -1});
+    const [pressPoints, setPressPoints] = useState<{ x: number, y: number }>({ x: -1, y: -1 });
 
     const opacityAnime = useRef<Animated.Value>(new Animated.Value(.5)).current;
     const scaleAnime = useRef<Animated.Value>(new Animated.Value(0)).current;
     const button = useRef<View>(null);
 
-    function animate(event: GestureResponderEvent): void{
-        let {nativeEvent} = event;
-        let {pageX, pageY} = nativeEvent;    
+    function animate(event: GestureResponderEvent): void {
+        let { nativeEvent } = event;
+        let { pageX, pageY } = nativeEvent;
 
         let nodeHandler = findNodeHandle(button.current);
-        if(!nodeHandler) return;
+        if (!nodeHandler) return;
 
         UIManager.measure(nodeHandler, (x, y, w, h, px, py) => {
             pageX -= px; pageY -= py;
-            setPressPoints({x: pageX, y: pageY});
+            setPressPoints({ x: pageX, y: pageY });
         });
 
         onPress(event);
@@ -42,8 +42,8 @@ export default function AnimateButton({children, style={}, duration=300, bubbleS
 
     useEffect(() => {
 
-        if(pressPoints.x < 0 && pressPoints.y < 0) return;
-        
+        if (pressPoints.x < 0 && pressPoints.y < 0) return;
+
         Animated.parallel([
             Animated.timing(opacityAnime, {
                 toValue: 0, duration, useNativeDriver: true
@@ -59,10 +59,10 @@ export default function AnimateButton({children, style={}, duration=300, bubbleS
     }, [pressPoints])
 
     return (
-        <Pressable ref={button} onPress={animate} style={[style, {position: 'relative', overflow: "hidden"}]} {...props} >
-            <Animated.View  style={{
-                position: 'absolute', aspectRatio: 1, borderRadius: 10000, left: pressPoints.x - 5, top: pressPoints.y - 5, 
-                opacity: opacityAnime, transform: [{scale: scaleAnime}],
+        <Pressable ref={button} onPress={animate} style={[style, { position: 'relative', overflow: "hidden" }]} {...props} >
+            <Animated.View style={{
+                position: 'absolute', aspectRatio: 1, borderRadius: 10000, left: pressPoints.x - 5, top: pressPoints.y - 5,
+                opacity: opacityAnime, transform: [{ scale: scaleAnime }],
                 borderWidth: 10, borderColor: bubbleColor
             }}></Animated.View>
             {children}

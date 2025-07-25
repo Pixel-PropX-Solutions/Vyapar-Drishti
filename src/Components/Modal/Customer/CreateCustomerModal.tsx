@@ -18,6 +18,8 @@ import { PhoneNumber } from '../../../Utils/types';
 import PhoneNoInputField from '../../Ui/Option/PhoneNoInputField';
 import { ItemSelectorModal } from '../Selectors/ItemSelectorModal';
 import { SelectField } from '../../Ui/TextInput/SelectField';
+import { CountrySelectorModal } from '../CountrySelectorModal';
+import { StateSelectorModal } from '../StateSelectorModal';
 type CountryInfo = { name: string, states: string[] };
 
 const countryData: CountryInfo[] = require('../../../Assets/Jsons/country-states.json');
@@ -607,102 +609,102 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                 {getCurrentStepFields()}
             </ScrollView>
             <View style={{ height: 10 }} />
-            <SetCountryModal visible={isCountryModalVisible} country={data.mailing_country} setCountry={handleInputChange} setVisible={setCountryModalVisible} />
-            <SetStateModal visible={isStateModalVisible} country={data.mailing_country} state={data.mailing_state} setState={handleInputChange} setVisible={setStateModalVisible} />
+            <CountrySelectorModal visible={isCountryModalVisible} country={data.mailing_country} setCountry={handleInputChange} setVisible={setCountryModalVisible} />
+            <StateSelectorModal visible={isStateModalVisible} country={data.mailing_country} state={data.mailing_state} setState={handleInputChange} setVisible={setStateModalVisible} />
             <LoadingModal visible={loading} />
         </BottomModal>
     );
 }
 
-function SetCountryModal({ visible, setVisible, country, setCountry }: {
-    visible: boolean,
-    setVisible: Dispatch<SetStateAction<boolean>>,
-    country: string,
-    setCountry: (field: string, value: string) => void
-}): React.JSX.Element {
+// function SetCountryModal({ visible, setVisible, country, setCountry }: {
+//     visible: boolean,
+//     setVisible: Dispatch<SetStateAction<boolean>>,
+//     country: string,
+//     setCountry: (field: string, value: string) => void
+// }): React.JSX.Element {
 
-    const selected = (countryData.find(item => item.name === country) ?? null);
+//     const selected = (countryData.find(item => item.name === country) ?? null);
 
-    function updateCountry(countryInfo: CountryInfo) {
-        setCountry('mailing_country', countryInfo.name);
-    }
+//     function updateCountry(countryInfo: CountryInfo) {
+//         setCountry('mailing_country', countryInfo.name);
+//     }
 
-    return (
-        <ItemSelectorModal<CountryInfo>
-            title="Select Country"
-            allItems={countryData}
-            isItemSelected={!!selected}
-            keyExtractor={(item) => item.name}
-            filter={(item, val) => (
-                item.name.toLowerCase().startsWith(val) ||
-                item.states.some(state => state.toLowerCase().startsWith(val))
-            )}
-            onSelect={updateCountry}
-            visible={visible}
-            setVisible={setVisible}
-            SelectedItemContent={
-                <View>
-                    <TextTheme color="white" style={{ fontWeight: 400, fontSize: 14 }} >
-                        {selected?.name}
-                    </TextTheme>
-                </View>
-            }
+//     return (
+//         <ItemSelectorModal<CountryInfo>
+//             title="Select Country"
+//             allItems={countryData}
+//             isItemSelected={!!selected}
+//             keyExtractor={(item) => item.name}
+//             filter={(item, val) => (
+//                 item.name.toLowerCase().startsWith(val) ||
+//                 item.states.some(state => state.toLowerCase().startsWith(val))
+//             )}
+//             onSelect={updateCountry}
+//             visible={visible}
+//             setVisible={setVisible}
+//             SelectedItemContent={
+//                 <View>
+//                     <TextTheme color="white" style={{ fontWeight: 400, fontSize: 14 }} >
+//                         {selected?.name}
+//                     </TextTheme>
+//                 </View>
+//             }
 
-            renderItemContent={(item) => (<>
-                <TextTheme style={{ fontWeight: 900, fontSize: 16 }}>{item.name}</TextTheme>
-                {/* <TextTheme style={{ fontWeight: 600, fontSize: 16 }}>{item.currency}</TextTheme> */}
-            </>)}
-        />
-    );
-}
+//             renderItemContent={(item) => (<>
+//                 <TextTheme style={{ fontWeight: 900, fontSize: 16 }}>{item.name}</TextTheme>
+//                 {/* <TextTheme style={{ fontWeight: 600, fontSize: 16 }}>{item.currency}</TextTheme> */}
+//             </>)}
+//         />
+//     );
+// }
 
 
-function SetStateModal({ visible, setVisible, country, state, setState }: {
-    visible: boolean,
-    setVisible: Dispatch<SetStateAction<boolean>>,
-    country: string,
-    state: string,
-    setState: (field: string, value: string) => void
-}): React.JSX.Element {
+// function SetStateModal({ visible, setVisible, country, state, setState }: {
+//     visible: boolean,
+//     setVisible: Dispatch<SetStateAction<boolean>>,
+//     country: string,
+//     state: string,
+//     setState: (field: string, value: string) => void
+// }): React.JSX.Element {
 
-    console.log('countryData in state selector countryData.find', countryData.find(item => item.name === country));
+//     console.log('countryData in state selector countryData.find', countryData.find(item => item.name === country));
 
-    const stateData: Array<string> = countryData.find(item => item.name === country)?.states || [];
+//     const stateData: Array<string> = countryData.find(item => item.name === country)?.states || [];
 
-    console.log('country in state selector stateData', stateData);
+//     console.log('country in state selector stateData', stateData);
 
-    const selected = (countryData.find(item => item.name === country)?.states.find((item) => item === state) ?? null);
+//     const selected = (countryData.find(item => item.name === country)?.states.find((item) => item === state) ?? null);
 
-    console.log('country in state selector selected', selected);
+//     console.log('country in state selector selected', selected);
 
-    function updateState(stateInfo: string) {
-        setState('mailing_state', stateInfo);
-    }
+//     function updateState(stateInfo: string) {
+//         setState('mailing_state', stateInfo);
+//     }
 
-    return (
-        <ItemSelectorModal<string>
-            title="Select State"
-            allItems={stateData}
-            isItemSelected={!!selected}
-            keyExtractor={(item) => item}
-            filter={(item, val) => (
-                item.toLowerCase().startsWith(val)
-            )}
-            onSelect={updateState}
-            visible={visible}
-            setVisible={setVisible}
-            SelectedItemContent={
-                <View>
-                    <TextTheme color="white" style={{ fontWeight: 400, fontSize: 14 }} >
-                        {selected}
-                    </TextTheme>
-                </View>
-            }
+//     return (
+//         <ItemSelectorModal<string>
+//             title="Select State"
+//             allItems={stateData}
+//             isItemSelected={!!selected}
+//             keyExtractor={(item) => item}
+//             filter={(item, val) => (
+//                 item.toLowerCase().startsWith(val)
+//             )}
+//             onSelect={updateState}
+//             visible={visible}
+//             setVisible={setVisible}
+//             SelectedItemContent={
+//                 <View>
+//                     <TextTheme color="white" style={{ fontWeight: 400, fontSize: 14 }} >
+//                         {selected}
+//                     </TextTheme>
+//                 </View>
+//             }
 
-            renderItemContent={(item) => (<>
-                <TextTheme style={{ fontWeight: 900, fontSize: 16 }}>{item}</TextTheme>
-                {/* <TextTheme style={{ fontWeight: 600, fontSize: 16 }}>{item.currency}</TextTheme> */}
-            </>)}
-        />
-    );
-}
+//             renderItemContent={(item) => (<>
+//                 <TextTheme style={{ fontWeight: 900, fontSize: 16 }}>{item}</TextTheme>
+//                 {/* <TextTheme style={{ fontWeight: 600, fontSize: 16 }}>{item.currency}</TextTheme> */}
+//             </>)}
+//         />
+//     );
+// }

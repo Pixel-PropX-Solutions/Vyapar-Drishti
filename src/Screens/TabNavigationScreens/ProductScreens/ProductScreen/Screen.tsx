@@ -14,7 +14,7 @@ export default function ProductScreen() {
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabParamsList, 'product-screen'>>();
 
     const dispatch = useAppDispatch();
-    const {company} = useCompanyStore();
+    const { company } = useCompanyStore();
 
     useEffect(() => {
         const event = navigation.addListener('focus', () => {
@@ -27,11 +27,11 @@ export default function ProductScreen() {
     return (
         <ContextProvider>
             <View style={{ width: '100%', height: '100%', paddingHorizontal: 20, gap: 20 }}>
-                <Header/>
-                <SummaryCard/>
-                <DateSelector/>
-                <ProductListing/>
-                <CreateProductButton/>         
+                <Header />
+                <SummaryCard />
+                <DateSelector />
+                <ProductListing />
+                <CreateProductButton />
             </View>
         </ContextProvider>
     )

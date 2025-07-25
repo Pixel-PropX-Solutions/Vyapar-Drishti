@@ -15,7 +15,7 @@ export default function BillScreen(): React.JSX.Element {
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabParamsList, 'bill-screen'>>();
 
     const dispatch = useAppDispatch()
-    const {company} = useCompanyStore()
+    const { company } = useCompanyStore()
 
     useEffect(() => {
         const event = navigation.addListener('focus', () => {
@@ -27,19 +27,19 @@ export default function BillScreen(): React.JSX.Element {
 
     return (
         <BillContextProvider>
-            <View style={{width: '100%', height: '100%'}} >
-                <Header/>
-                <BillTypeFilter/>
+            <View style={{ width: '100%', height: '100%' }} >
+                <Header />
+                <BillTypeFilter />
 
-                <BackgroundThemeView isPrimary={false} style={{paddingInline: 20, paddingTop: 20, borderTopLeftRadius: 40, borderTopRightRadius: 40, flex: 1, marginTop: 20, gap: 20}} >
-                    <DateSelector/>
-                    
+                <BackgroundThemeView isPrimary={false} style={{ paddingInline: 20, paddingTop: 20, borderTopLeftRadius: 40, borderTopRightRadius: 40, flex: 1, marginTop: 20, gap: 20 }} >
+                    <DateSelector />
+
                     <PDFContextProvider>
-                        <BillListing/>
+                        <BillListing />
                     </PDFContextProvider>
                 </BackgroundThemeView>
 
-                <BillCreateButton/>
+                <BillCreateButton />
             </View>
         </BillContextProvider>
     )

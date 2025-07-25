@@ -13,9 +13,10 @@ type Props = {
     setExpanded: Dispatch<SetStateAction<boolean>>;
     header: string;
     children?: React.ReactNode;
+    icon?: React.ReactNode;
 }
 
-export default function CollapsabeMenu({ header, children, expanded, setExpanded }: Props): React.JSX.Element {
+export default function CollapsabeMenu({ header, children, expanded, setExpanded, icon }: Props): React.JSX.Element {
 
     const toggleExpand = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -34,7 +35,7 @@ export default function CollapsabeMenu({ header, children, expanded, setExpanded
                 marginBottom: 10,
             }}>
                 <TextTheme style={{ color: 'white', fontSize: 18 }}>{header}</TextTheme>
-                <FeatherIcon name={expanded ? 'chevron-up' : 'chevron-down'} size={28} />
+                {icon ? icon : <FeatherIcon name={expanded ? 'chevron-up' : 'chevron-down'} size={28} />}
             </TouchableOpacity>
 
             {expanded && (

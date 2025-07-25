@@ -20,7 +20,7 @@ import EntityListingHeader from '../../../Components/Layouts/Header/EntityListin
 
 export default function CustomerScreen(): React.JSX.Element {
 
-    const navigation = useNavigation<BottomTabNavigationProp<BottomTabParamsList, 'customer-screen'>>()
+    const navigation = useNavigation<BottomTabNavigationProp<BottomTabParamsList, 'customer-screen'>>();
 
     const dispatch = useAppDispatch();
     const { customers, isAllCustomerFetching, pageMeta } = useCustomerStore();
@@ -31,9 +31,9 @@ export default function CustomerScreen(): React.JSX.Element {
     const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
     const [isCustomerTypeSelectorModalOpen, setCustomerTypeSelectorModalOpen] = useState<boolean>(false);
 
-     function handleCustomerFetching() {
-        if (isAllCustomerFetching) return;
-        if (pageMeta.total <= pageMeta.page * pageMeta.limit) return;
+    function handleCustomerFetching() {
+        if (isAllCustomerFetching) { return; }
+        if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
 
         dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1 }));
     }
@@ -53,19 +53,20 @@ export default function CustomerScreen(): React.JSX.Element {
             dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
         });
 
-        return event
-    }, [])
+        return event;
+    }, []);
 
     return (
-        <View style={{ width: '100%', height: '100%' }} >
+        <View style={{ width: '100%', height: '100%', paddingHorizontal: 20 }} >
             <EntityListingHeader
-                title='Customers'
-                onPressNotification={() => navigator.navigate('notification-screen')}
+                title="Customers"
+                onPressFilter={() => { }}
+                onPressSearch={() => { }}
             />
 
             <FlatList
                 ListEmptyComponent={isAllCustomerFetching ? null : <EmptyListView type="customer" />}
-                contentContainerStyle={{ marginTop: 12, width: '100%', height: '100%', gap: 20, paddingHorizontal: 20 }}
+                contentContainerStyle={{ marginTop: 12, width: '100%', height: '100%', gap: 20 }}
                 data={filterCustomers}
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => {
@@ -79,11 +80,12 @@ export default function CustomerScreen(): React.JSX.Element {
                     );
                 }}
 
-                ListFooterComponentStyle={{gap: 20}}
+                ListFooterComponentStyle={{ gap: 20 }}
                 ListFooterComponent={<ShowWhen when={isAllCustomerFetching} >
                     {
                         Array.from({
-                            length: Math.min(2, pageMeta.total - (customers?.length ?? 0)) + 1}, 
+                            length: Math.min(2, pageMeta.total - (customers?.length ?? 0)) + 1,
+                        },
                             (_, i) => i
                         ).map(item => (
                             <CustomerLoadingView key={item} />

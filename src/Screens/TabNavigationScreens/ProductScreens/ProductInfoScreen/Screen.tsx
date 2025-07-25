@@ -10,31 +10,33 @@ import { ClassificationSection, DangerSection, HeroSection, InfoSection, SalePur
 
 export default function ProductInfoScreen(): React.JSX.Element {
 
-    const {productId} = navigator.getParams('product-info-screen') ?? {};
-    if(!productId) {return <></>;}
+    const { productId } = navigator.getParams('product-info-screen') ?? {};
 
-    const {company} = useCompanyStore();
+
+    const { company } = useCompanyStore();
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(getProduct({company_id: company?._id ?? '', product_id: productId}));
-        dispatch(viewProduct({company_id: company?._id ?? '', product_id: productId}));
-    }, [productId]);
+        if (!productId) { return; }
+        dispatch(getProduct({ company_id: company?._id ?? '', product_id: productId }));
+        dispatch(viewProduct({ company_id: company?._id ?? '', product_id: productId }));
+    }, [company?._id, dispatch, productId]);
 
+    if (!productId) { return <></>; }
 
     return (
-        <View style={{width: '100%', height: '100%'}} >
+        <View style={{ width: '100%', height: '100%' }} >
             <StackNavigationHeader title="Product Details" />
 
             <ScrollView
-                style={{paddingInline: 20, width: '100%', paddingTop: 16}}
-                contentContainerStyle={{gap: 32, paddingBottom: 80}}
+                style={{ paddingInline: 20, width: '100%', paddingTop: 16 }}
+                contentContainerStyle={{ gap: 32, paddingBottom: 80 }}
             >
-                <HeroSection/>
-                <SalePurchaseCards/>
-                <InfoSection/>
-                <ClassificationSection/>
-               <DangerSection/>
+                <HeroSection />
+                <SalePurchaseCards />
+                <InfoSection />
+                <ClassificationSection />
+                <DangerSection />
             </ScrollView>
         </View>
     );

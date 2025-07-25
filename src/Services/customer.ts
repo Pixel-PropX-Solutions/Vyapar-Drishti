@@ -43,7 +43,7 @@ export const viewAllCustomer = createAsyncThunk(
                 const customers = response.data.data.docs;
                 const pageMeta = response.data.data.meta;
                 return { customers, pageMeta };
-            } else {return rejectWithValue('Login Failed: No access token recieved.');}
+            } else { return rejectWithValue('Login Failed: No access token recieved.'); }
         } catch (error: any) {
             return rejectWithValue(
                 error.response?.data?.message ||
@@ -75,7 +75,7 @@ export const viewAllCustomerWithType = createAsyncThunk(
             if (response.data.success === true) {
                 const ledgersWithType = response.data.data;
                 return ledgersWithType;
-            } else {return rejectWithValue('Login Failed: No access token recieved.');}
+            } else { return rejectWithValue('Login Failed: No access token recieved.'); }
         } catch (error: any) {
             return rejectWithValue(
                 error.response?.data?.message ||
@@ -100,8 +100,8 @@ export const viewAllCustomers = createAsyncThunk(
 
             if (response.data.success === true) {
                 const customersList = response.data.data;
-                return {customersList};
-            } else {return rejectWithValue('Login Failed: No access token recieved.');}
+                return { customersList };
+            } else { return rejectWithValue('Login Failed: No access token recieved.'); }
         } catch (error: any) {
             return rejectWithValue(
                 error.response?.data?.message ||
@@ -111,17 +111,36 @@ export const viewAllCustomers = createAsyncThunk(
     }
 );
 
-export const getCustomer = createAsyncThunk(
-    'get/customer',
+export const viewCustomer = createAsyncThunk(
+    'view/customer',
     async (customer_id: string, { rejectWithValue }) => {
         try {
-            const response = await userApi.get(`/customer/view/${customer_id}`);
+            const response = await userApi.get(`/ledger/view/${customer_id}`);
 
             if (response.data.success === true) {
                 return response.data.data[0];
             }
-            else
-                {return rejectWithValue('Failed to fetch Customer profile');}
+            else { return rejectWithValue('Failed to fetch Customer profile'); }
+        } catch (error: any) {
+            return rejectWithValue(
+                error.response?.data?.message ||
+                'Failed: Unable to fetch chemist profile'
+            );
+        }
+    }
+);
+
+
+export const getCustomer = createAsyncThunk(
+    'get/customer',
+    async (customer_id: string, { rejectWithValue }) => {
+        try {
+            const response = await userApi.get(`/ledger/get/${customer_id}`);
+
+            if (response.data.success === true) {
+                return response.data.data[0];
+            }
+            else { return rejectWithValue('Failed to fetch Customer profile'); }
         } catch (error: any) {
             return rejectWithValue(
                 error.response?.data?.message ||
@@ -140,8 +159,7 @@ export const deleteCustomer = createAsyncThunk(
             if (response.data.success === true) {
                 return;
             }
-            else
-                {return rejectWithValue('Failed to delete Customer profile');}
+            else { return rejectWithValue('Failed to delete Customer profile'); }
         } catch (error: any) {
             return rejectWithValue(
                 error.response?.data?.message ||
@@ -160,8 +178,7 @@ export const restoreCustomer = createAsyncThunk(
             if (response.data.success === true) {
                 return;
             }
-            else
-                {return rejectWithValue('Failed to delete Customer profile');}
+            else { return rejectWithValue('Failed to delete Customer profile'); }
         } catch (error: any) {
             return rejectWithValue(
                 error.response?.data?.message ||
@@ -175,16 +192,37 @@ export const createCustomer = createAsyncThunk(
     'create/customer',
     async (data: FormData, { rejectWithValue }) => {
         try {
-            const response = await userApi.post('/ledger/create', data,{
+            const response = await userApi.post('/ledger/create', data, {
                 headers: {
-                  'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'multipart/form-data',
                 },
             });
             console.log('createCustomer response', response);
 
             if (response.data.success === true) {
                 return;
-            } else {return rejectWithValue('Login Failed: No access token recieved.');}
+            } else { return rejectWithValue('Login Failed: No access token recieved.'); }
+        } catch (error: any) {
+            return rejectWithValue(
+                error.response?.data?.message ||
+                'Login failed: Invalid credentials or server error.'
+            );
+        }
+    }
+);
+
+export const updateCustomerDetails = createAsyncThunk(
+    'update/customer/details',
+    async ({ ledger_details, id }: { ledger_details: { [key: string]: any }; id: string }, { rejectWithValue }) => {
+        try {
+
+            const response = await userApi.put(`/ledger/update/details/${id}`, ledger_details);
+
+            console.log('updateCustomer details response', response);
+
+            if (response.data.success === true) {
+                return;
+            } else { return rejectWithValue('Login Failed: No access token recieved.'); }
         } catch (error: any) {
             return rejectWithValue(
                 error.response?.data?.message ||
@@ -200,9 +238,9 @@ export const updateCustomer = createAsyncThunk(
         try {
 
             console.log('updateChemist data', data);
-            const response = await userApi.put(`/customer/update/${id}`, data,{
+            const response = await userApi.put(`/customer/update/${id}`, data, {
                 headers: {
-                  'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'multipart/form-data',
                 },
             });
 
@@ -210,7 +248,7 @@ export const updateCustomer = createAsyncThunk(
 
             if (response.data.success === true) {
                 return;
-            } else {return rejectWithValue('Login Failed: No access token recieved.');}
+            } else { return rejectWithValue('Login Failed: No access token recieved.'); }
         } catch (error: any) {
             return rejectWithValue(
                 error.response?.data?.message ||

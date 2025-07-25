@@ -117,7 +117,7 @@ export const getProduct = createAsyncThunk(
   async ({ product_id, company_id }: { product_id: string, company_id: string }, { rejectWithValue }) => {
     try {
       const response = await userApi.get(`/product/get/product/details/${product_id}?company_id=${company_id}`);
-      console.log('view Product response', response.data);
+      console.log('view details Product response', response);
 
       if (response.data.success === true) {
         const item = response.data.data[0];
@@ -163,6 +163,28 @@ export const updateProduct = createAsyncThunk(
       console.log('updateProduct data', data);
       const response = await userApi.put(`/product/update/product/${id}`, data);
       console.log('updateProduct response', response);
+
+      if (response.data.success === true) {
+        return;
+      } else { return rejectWithValue('Login Failed: No access token recieved.'); }
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+        'Login failed: Invalid credentials or server error.'
+      );
+    }
+  }
+);
+
+export const updateProductDetails = createAsyncThunk(
+  'update/product/details',
+  async (
+    { product_details, id }: { product_details: { [key: string]: any }; id: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await userApi.put(`/product/update/product/details/${id}`, product_details);
+      console.log('updateProduct details response', response);
 
       if (response.data.success === true) {
         return;

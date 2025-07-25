@@ -600,13 +600,13 @@ export interface ProductUpdate {
   stock_item_name: string;
   company_id: string;
   unit: string;
-  _unit: string;
+  unit_id: string;
   is_deleted: boolean;
   alias_name?: string;
   category?: string;
-  _category?: string;
+  category_id?: string;
   group?: string;
-  _group?: string;
+  group_id?: string;
   image?: File | string | null;
   description?: string;
 
@@ -617,7 +617,7 @@ export interface ProductUpdate {
   gst_hsn_code?: string;
   gst_taxability?: string;
 
-  low_stock_alert?: number;
+  low_stock_alert?: number | string;
 }
 
 export interface GetProduct {

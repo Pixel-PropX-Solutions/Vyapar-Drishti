@@ -1,21 +1,30 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
-import BottomModal from "../../../Components/Modal/BottomModal";
-import TextTheme from "../../../Components/Ui/Text/TextTheme";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { SectionRowWithIcon } from "../../../Components/Layouts/View/SectionView";
-import LogoImage from "../../../Components/Image/LogoImage";
-import { useAppDispatch, useCompanyStore, useUserStore } from "../../../Store/ReduxStore";
-import { setIsCompanyFetching } from "../../../Store/Reducers/companyReducer";
-import { getCurrentUser, updateUserSettings } from "../../../Services/user";
-import { createCompany, getAllCompanies, getCompany } from "../../../Services/company";
-import { useTheme } from "../../../Contexts/ThemeProvider";
-import { useAlert } from "../../../Components/Ui/Alert/AlertProvider";
-import { arrayToFormData, getDefaultAprilFirst } from "../../../Utils/functionTools";
-import { InputField } from "../../../Components/Ui/TextInput/InputField";
-import FeatherIcon from "../../../Components/Icon/FeatherIcon";
-import AnimateButton from "../../../Components/Ui/Button/AnimateButton";
-import BackgroundThemeView from "../../../Components/Layouts/View/BackgroundThemeView";
-import LoadingModal from "../../../Components/Modal/LoadingModal";
+/* eslint-disable react-native/no-inline-styles */
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
+import BottomModal from '../../../Components/Modal/BottomModal';
+import TextTheme from '../../../Components/Ui/Text/TextTheme';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SectionRowWithIcon } from '../../../Components/Layouts/View/SectionView';
+import LogoImage from '../../../Components/Image/LogoImage';
+import { useAppDispatch, useCompanyStore, useUserStore } from '../../../Store/ReduxStore';
+import { setIsCompanyFetching } from '../../../Store/Reducers/companyReducer';
+import { getCurrentUser, updateUserSettings } from '../../../Services/user';
+import { createCompany, getAllCompanies, getCompany } from '../../../Services/company';
+import { useTheme } from '../../../Contexts/ThemeProvider';
+import { useAlert } from '../../../Components/Ui/Alert/AlertProvider';
+import { arrayToFormData, getDefaultAprilFirst } from '../../../Utils/functionTools';
+import { InputField } from '../../../Components/Ui/TextInput/InputField';
+import FeatherIcon from '../../../Components/Icon/FeatherIcon';
+import AnimateButton from '../../../Components/Ui/Button/AnimateButton';
+import BackgroundThemeView from '../../../Components/Layouts/View/BackgroundThemeView';
+import LoadingModal from '../../../Components/Modal/LoadingModal';
+import PhoneNoTextInput from '../../../Components/Ui/Option/PhoneNoTextInput';
+import { PhoneNumber } from '../../../Utils/types';
+import PhoneNoInputField from '../../../Components/Ui/Option/PhoneNoInputField';
+import { SelectField } from '../../../Components/Ui/TextInput/SelectField';
+import { CountrySelectorModal } from '../../../Components/Modal/CountrySelectorModal';
+import { StateSelectorModal } from '../../../Components/Modal/StateSelectorModal';
+import CollapsabeMenu from '../../../Components/Other/CollapsabeMenu';
+import NormalButton from '../../../Components/Ui/Button/NormalButton';
 
 
 type Props = {
@@ -23,11 +32,11 @@ type Props = {
     setVisible: Dispatch<SetStateAction<boolean>>
 }
 
-export function CompanySwitchModal({visible, setVisible}: Props) {
+export function CompanySwitchModal({ visible, setVisible }: Props) {
 
     const dispatch = useAppDispatch();
-    const {company, companies} = useCompanyStore();
-    const {user} = useUserStore()
+    const { company, companies } = useCompanyStore();
+    const { user } = useUserStore();
 
     const [isCreateModalVisible, setCreateModalVisible] = useState(false);
 
@@ -83,22 +92,26 @@ export function CompanySwitchModal({visible, setVisible}: Props) {
             setVisible={setCreateModalVisible}
             setSecondaryVisible={setVisible}
         />
-    </>)
+    </>);
 }
 
 
 
-export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }: Props & {setSecondaryVisible?: (vis: boolean) => void}) {
-    
+export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }: Props & { setSecondaryVisible?: (vis: boolean) => void }) {
+
     const dispatch = useAppDispatch();
 
-    const { primaryColor } = useTheme();
+    const { primaryColor, primaryBackgroundColor } = useTheme();
     const { setAlert } = useAlert();
     const { companies, isCompaniesFetching, loading } = useCompanyStore();
 
     const [activeSection, setActiveSection] = useState<'basic' | 'address' | 'financial' | 'banking'>('basic');
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
     const [currentStep, setCurrentStep] = useState<number>(0);
+    const phone = useRef<PhoneNumber>({ code: '', number: '' });
+    const [isCountryModalVisible, setCountryModalVisible] = useState<boolean>(false);
+    const [isBankDetailsVisible, setBankDetailsVisible] = useState<boolean>(false);
+    const [isStateModalVisible, setStateModalVisible] = useState<boolean>(false);
 
     const [data, setData] = useState({
         user_id: '',
@@ -112,8 +125,8 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
         financial_year_start: getDefaultAprilFirst(),
         books_begin_from: getDefaultAprilFirst(),
         is_deleted: false,
-        number: '',
-        code: '',
+        number: phone.current.number,
+        code: phone.current.code,
         email: '',
         image: '',
         gstin: '',
@@ -157,6 +170,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
         setActiveSection('basic');
         setCurrentStep(0);
     }, []);
+
 
     useEffect(() => {
         if (visible) {
@@ -298,7 +312,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                 dispatch(getCurrentUser());
                 dispatch(getAllCompanies());
                 handleClose();
-                if(setSecondaryVisible) setSecondaryVisible(false);
+                if (setSecondaryVisible) { setSecondaryVisible(false); }
             }
             handleClose();
         }).finally(() => {
@@ -353,35 +367,24 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                 placeholder="Company Email *"
                 value={data.email}
                 field="email"
+                keyboardType="email-address"
                 handleChange={handleChange}
                 error={validationErrors.email}
             />
 
-            <View style={{ flexDirection: 'row', gap: 12 }}>
-                <View style={{ width: '30%' }}>
-                    <InputField
-                        icon={<FeatherIcon name="phone" size={20} />}
-                        placeholder="+91"
-                        value={data.code}
-                        field="code"
-                        handleChange={handleChange}
-                        error={validationErrors.code}
-                    />
-                </View>
-
-                <View style={{ flex: 1 }}>
-                    <InputField
-                        icon={<FeatherIcon name="phone" size={20} />}
-                        placeholder="Phone Number"
-                        value={data.number}
-                        field="number"
-                        handleChange={handleChange}
-                        error={validationErrors.number}
-                        keyboardType="number-pad"
-                    />
-                </View>
+            <View style={{ marginBottom: 16 }}>
+                <PhoneNoInputField
+                    phoneNumber={{ code: data.code, number: data.number }}
+                    placeholder="Phone Number"
+                    onChangePhoneNumber={(phoneNo) => {
+                        phone.current = phoneNo;
+                        setData((prev) => ({
+                            ...prev,
+                            code: phoneNo.code,
+                            number: phoneNo.number,
+                        }));
+                    }} />
             </View>
-
 
             <InputField
                 icon={<FeatherIcon name="globe" size={20} />}
@@ -400,7 +403,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
 
             <InputField
                 icon={<FeatherIcon name="type" size={20} />}
-                placeholder="Mailing Name"
+                placeholder="Contact Person Name"
                 value={data.mailing_name}
                 field="mailing_name"
                 capitalize="words"
@@ -409,7 +412,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
             />
             <InputField
                 icon={<FeatherIcon name="map-pin" size={20} />}
-                placeholder="Address Line 1"
+                placeholder="Company Address Line 1"
                 value={data.address_1}
                 field="address_1"
                 capitalize="words"
@@ -419,7 +422,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
 
             <InputField
                 icon={<FeatherIcon name="map-pin" size={20} />}
-                placeholder="Address Line 2"
+                placeholder="Company Address Line 2"
                 value={data.address_2}
                 field="address_2"
                 capitalize="words"
@@ -427,26 +430,24 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                 error={validationErrors.address_2}
             />
 
-            <InputField
-                icon={<FeatherIcon name="flag" size={20} />}
-                placeholder="State"
-                value={data.state}
-                field="state"
-                capitalize="words"
-                handleChange={handleChange}
-                error={validationErrors.state}
+            <SelectField
+                icon={<FeatherIcon name="globe" size={20} />}
+                placeholder="Select Country *"
+                value={data.country}
+                onPress={() => setCountryModalVisible(true)}
+                containerStyle={{ flex: 1, marginBottom: 16 }}
+                error={validationErrors.country}
             />
 
             <View style={{ flexDirection: 'row', gap: 12 }}>
-                <View style={{ width: '50%' }}>
-                    <InputField
-                        icon={<FeatherIcon name="globe" size={20} />}
-                        placeholder="Country"
-                        value={data.country}
-                        field="country"
-                        capitalize="words"
-                        handleChange={handleChange}
-                        error={validationErrors.country}
+                <View style={{ width: '60%' }}>
+                    <SelectField
+                        icon={<FeatherIcon name="flag" size={20} />}
+                        placeholder="Select State *"
+                        value={data.state}
+                        onPress={() => setStateModalVisible(true)}
+                        // containerStyle={{ flex: 1 }}
+                        error={validationErrors.state}
                     />
                 </View>
 
@@ -462,6 +463,8 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                     />
                 </View>
             </View>
+            <CountrySelectorModal visible={isCountryModalVisible} country={data.country} field="country" setCountry={handleChange} setVisible={setCountryModalVisible} />
+            <StateSelectorModal visible={isStateModalVisible} country={data.country} field="state" state={data.state} setState={handleChange} setVisible={setStateModalVisible} />
         </View>
     );
 
@@ -479,7 +482,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                 error={validationErrors.gstin}
             />
 
-            <InputField
+            {/* <InputField
                 icon={<FeatherIcon name="credit-card" size={20} />}
                 placeholder="PAN Number"
                 value={data.pan_number}
@@ -487,7 +490,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                 capitalize="characters"
                 handleChange={handleChange}
                 error={validationErrors.pan_number}
-            />
+            /> */}
 
             <AnimateButton style={{
                 padding: 8,
@@ -566,64 +569,73 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
 
     const renderBankingSection = () => (
         <View style={styles.section}>
-            <TextTheme style={styles.sectionTitle}>Banking Information</TextTheme>
+            <CollapsabeMenu
+                header="Banking Information"
+                expanded={isBankDetailsVisible}
+                setExpanded={setBankDetailsVisible}
+                icon={<NormalButton
+                    text={'Add Details'}
+                    onPress={() => setBankDetailsVisible((prev) => !prev)}
+                />}
 
-            <InputField
-                icon={<FeatherIcon name="credit-card" size={20} />}
-                placeholder="Account Number"
-                value={data.account_number}
-                field="account_number"
-                handleChange={handleChange}
-                error={validationErrors.account_number}
-                keyboardType="numeric"
-            />
 
-            <InputField
-                icon={<FeatherIcon name="user" size={20} />}
-                placeholder="Account Holder Name"
-                value={data.account_holder}
-                field="account_holder"
-                capitalize="characters"
-                handleChange={handleChange}
-                error={validationErrors.account_holder}
-            />
+            >
+                <InputField
+                    icon={<FeatherIcon name="credit-card" size={20} />}
+                    placeholder="Account Number"
+                    value={data.account_number}
+                    field="account_number"
+                    handleChange={handleChange}
+                    error={validationErrors.account_number}
+                    keyboardType="numeric"
+                />
 
-            <InputField
-                icon={<FeatherIcon name="home" size={20} />}
-                placeholder="Bank Name"
-                value={data.bank_name}
-                capitalize="characters"
-                field="bank_name"
-                handleChange={handleChange}
-                error={validationErrors.bank_name}
-            />
-            <View style={{ flexDirection: 'row', gap: 12 }}>
-                <View style={{ width: '50%' }}>
-                    <InputField
-                        icon={<FeatherIcon name="git-branch" size={20} />}
-                        placeholder="Bank Branch"
-                        value={data.bank_branch}
-                        capitalize="words"
-                        field="bank_branch"
-                        handleChange={handleChange}
-                        error={validationErrors.bank_branch}
-                    />
+                <InputField
+                    icon={<FeatherIcon name="user" size={20} />}
+                    placeholder="Account Holder Name"
+                    value={data.account_holder}
+                    field="account_holder"
+                    capitalize="characters"
+                    handleChange={handleChange}
+                    error={validationErrors.account_holder}
+                />
+
+                <InputField
+                    icon={<FeatherIcon name="home" size={20} />}
+                    placeholder="Bank Name"
+                    value={data.bank_name}
+                    capitalize="characters"
+                    field="bank_name"
+                    handleChange={handleChange}
+                    error={validationErrors.bank_name}
+                />
+                <View style={{ flexDirection: 'row', gap: 12 }}>
+                    <View style={{ width: '50%' }}>
+                        <InputField
+                            icon={<FeatherIcon name="git-branch" size={20} />}
+                            placeholder="Bank Branch"
+                            value={data.bank_branch}
+                            capitalize="words"
+                            field="bank_branch"
+                            handleChange={handleChange}
+                            error={validationErrors.bank_branch}
+                        />
+                    </View>
+
+                    <View style={{ flex: 1 }}>
+                        <InputField
+                            icon={<FeatherIcon name="hash" size={20} />}
+                            placeholder="IFSC Code"
+                            value={data.bank_ifsc}
+                            capitalize="characters"
+                            field="bank_ifsc"
+                            handleChange={handleChange}
+                            error={validationErrors.bank_ifsc}
+                        />
+                    </View>
                 </View>
 
-                <View style={{ flex: 1 }}>
-                    <InputField
-                        icon={<FeatherIcon name="hash" size={20} />}
-                        placeholder="IFSC Code"
-                        value={data.bank_ifsc}
-                        capitalize="characters"
-                        field="bank_ifsc"
-                        handleChange={handleChange}
-                        error={validationErrors.bank_ifsc}
-                    />
-                </View>
-            </View>
-
-            {/* <InputField
+                {/* <InputField
                 icon={<FeatherIcon name="image" size={20} />}
                 placeholder="QR Code URL"
                 value={data.qr_code_url}
@@ -631,6 +643,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                 handleChange={handleChange}
                 error={validationErrors.qr_code_url}
             /> */}
+            </CollapsabeMenu>
         </View>
     );
 

@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 
-import { View, Text } from 'react-native';
+import { View, Text, ViewStyle } from 'react-native';
 import AnimateButton from '../Button/AnimateButton';
 import FeatherIcon from '../../Icon/FeatherIcon';
 import TextTheme from '../Text/TextTheme';
@@ -15,17 +15,18 @@ export const SelectField = ({
     value,
     onPress,
     error,
-
+    containerStyle = { marginBottom: 16 },
 }: {
     icon: React.ReactNode,
     placeholder: string,
     value: string,
+    containerStyle?: ViewStyle,
     onPress: () => void,
     error?: string
 }) => {
     const { primaryColor, primaryBackgroundColor } = useTheme();
     return (
-        <View style={{ marginBottom: 16 }}>
+        <View style={containerStyle}>
             <AnimateButton
                 onPress={onPress}
                 style={{

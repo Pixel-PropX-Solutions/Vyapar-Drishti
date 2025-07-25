@@ -1,11 +1,12 @@
-import { View } from "react-native";
-import AnimateButton from "../../Ui/Button/AnimateButton";
-import FeatherIcon from "../../Icon/FeatherIcon";
-import { Text } from "react-native-gesture-handler";
-import MaterialIcon from "../../Icon/MaterialIcon";
-import { useTheme } from "../../../Contexts/ThemeProvider";
-import navigator from "../../../Navigation/NavigationService";
-import ShowWhen from "../../Other/ShowWhen";
+/* eslint-disable react-native/no-inline-styles */
+import { View } from 'react-native';
+import AnimateButton from '../../Ui/Button/AnimateButton';
+import FeatherIcon from '../../Icon/FeatherIcon';
+import { Text } from 'react-native-gesture-handler';
+import MaterialIcon from '../../Icon/MaterialIcon';
+import { useTheme } from '../../../Contexts/ThemeProvider';
+import navigator from '../../../Navigation/NavigationService';
+import ShowWhen from '../../Other/ShowWhen';
 
 
 type Props = {

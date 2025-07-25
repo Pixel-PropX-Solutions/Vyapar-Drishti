@@ -22,7 +22,7 @@ export default function SignUpScreen(): React.JSX.Element {
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
-    const phone = useRef<PhoneNumber>({code: '', number: ""})
+    const phone = useRef<PhoneNumber>({ code: '', number: "" })
 
     async function handleSignUp() {
         if (!(firstName && lastName && email && phone.current.code && phone.current.number)) {
@@ -38,7 +38,7 @@ export default function SignUpScreen(): React.JSX.Element {
                 dispatch(getCompany());
                 navigator.reset('tab-navigation');
 
-                phone.current = {code: '', number: ''}
+                phone.current = { code: '', number: '' }
             } else {
                 console.log('Registration failed:', response);
             }
@@ -117,8 +117,8 @@ export default function SignUpScreen(): React.JSX.Element {
 
                 </View> */}
 
-                <PhoneNoTextInput 
-                    onChangePhoneNumber={(phoneNo) => {phone.current = phoneNo}}
+                <PhoneNoTextInput
+                    onChangePhoneNumber={(phoneNo) => { phone.current = phoneNo }}
                 />
                 {/* <View>
                     <PasswordInput  
