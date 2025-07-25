@@ -39,10 +39,12 @@ export default function CustomerInfoScreen(): React.JSX.Element {
         navigator.goBack();
     }
 
-    useFocusEffect(() => {
-        if(customerId)
-            dispatch(getCustomer(customerId ?? ''));
-    });
+    useFocusEffect(
+        useCallback(() => {
+            if(customerId)
+                dispatch(getCustomer(customerId ?? ''));
+        }, [])
+    );
 
     if(!customerId) return <></>
 

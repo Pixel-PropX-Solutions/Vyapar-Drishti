@@ -36,17 +36,20 @@ export default function CustomerScreen(): React.JSX.Element {
 
 
     useEffect(() => {
-        dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
-    }, [company?._id, dispatch, isCustomerTypeSelectorModalOpen]);
+        if(!isCustomerTypeSelectorModalOpen)
+            dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
+    }, [isCustomerTypeSelectorModalOpen]);
 
     useEffect(() => {
         setFilterCustomers(() => customers.filter((ledger) => ledger.parent === 'Creditors' || ledger.parent === 'Debtors'
         ));
     }, [customers]);
 
-    useFocusEffect(() => {
-        dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
-    });
+    useFocusEffect(
+        useCallback(() => {
+            dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
+        }, [])
+    );
 
     return (
         <View style={{ width: '100%', height: '100%', paddingHorizontal: 20 }} >

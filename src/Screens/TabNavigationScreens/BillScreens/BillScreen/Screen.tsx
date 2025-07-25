@@ -6,15 +6,18 @@ import BackgroundThemeView from '../../../../Components/Layouts/View/BackgroundT
 import { useFocusEffect } from '@react-navigation/native';
 import { useAppDispatch, useCompanyStore } from '../../../../Store/ReduxStore';
 import { viewAllInvoices } from '../../../../Services/invoice';
+import { useCallback } from 'react';
 
 export default function BillScreen(): React.JSX.Element {
 
     const dispatch = useAppDispatch();
     const { company } = useCompanyStore();
 
-    useFocusEffect(() => {
-        dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1}));
-    });
+    useFocusEffect(
+        useCallback(() => {
+            dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1}));
+        }, [])
+    );
 
     return (
         <BillContextProvider>

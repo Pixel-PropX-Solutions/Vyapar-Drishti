@@ -7,6 +7,7 @@ import { getProduct, viewProduct } from '../../../../Services/product';
 import StackNavigationHeader from '../../../../Components/Layouts/Header/StackNavigationHeader';
 import { ClassificationSection, DangerSection, HeroSection, InfoSection, SalePurchaseCards } from './Components';
 import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 export default function ProductInfoScreen(): React.JSX.Element {
 
@@ -15,11 +16,13 @@ export default function ProductInfoScreen(): React.JSX.Element {
     const { company } = useCompanyStore();
     const dispatch = useAppDispatch();
 
-    useFocusEffect(() => {
-        if (!productId) { return; }
-        dispatch(getProduct({ company_id: company?._id ?? '', product_id: productId }));
-        dispatch(viewProduct({ company_id: company?._id ?? '', product_id: productId }));
-    });
+    useFocusEffect(
+        useCallback(() => {
+            if (!productId) { return; }
+            dispatch(getProduct({ company_id: company?._id ?? '', product_id: productId }));
+            dispatch(viewProduct({ company_id: company?._id ?? '', product_id: productId }));
+        }, [])
+    );
 
     if (!productId) { return <></>; }
 
