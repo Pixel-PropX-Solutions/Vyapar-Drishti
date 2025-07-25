@@ -29,6 +29,7 @@ export default function ProductInfoScreen(): React.JSX.Element {
             <ScrollView
                 style={{paddingInline: 20, width: '100%', paddingTop: 16}}
                 contentContainerStyle={{gap: 32, paddingBottom: 80}}
+                keyboardShouldPersistTaps='always'
             >
                 <HeroSection/>
                 <SalePurchaseCards/>

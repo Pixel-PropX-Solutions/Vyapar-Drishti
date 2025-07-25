@@ -6,8 +6,7 @@ import { viewAllProducts } from '../../../../Services/product';
 import { useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { BottomTabParamsList } from '../../../../Navigation/BottomTabNavigation';
-import ContextProvider from './Context';
-import { CreateProductButton, DateSelector, Header, ProductListing, SummaryCard } from './Components';
+import { CreateProductButton, Header, ProductListing, SummaryCard } from './Components';
 
 export default function ProductScreen() {
 
@@ -25,14 +24,11 @@ export default function ProductScreen() {
     }, [])
 
     return (
-        <ContextProvider>
-            <View style={{ width: '100%', height: '100%', paddingHorizontal: 20, gap: 20 }}>
-                <Header/>
-                <SummaryCard/>
-                <DateSelector/>
-                <ProductListing/>
-                <CreateProductButton/>         
-            </View>
-        </ContextProvider>
+        <View style={{ width: '100%', height: '100%', paddingHorizontal: 20, gap: 20 }}>
+            <Header/>
+            <SummaryCard/>
+            <ProductListing/>
+            <CreateProductButton/>         
+        </View>
     )
 }

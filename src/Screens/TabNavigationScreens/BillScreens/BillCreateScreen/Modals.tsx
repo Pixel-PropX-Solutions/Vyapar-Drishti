@@ -8,16 +8,15 @@ import { InputField } from "../../../../Components/Ui/TextInput/InputField";
 import FeatherIcon from "../../../../Components/Icon/FeatherIcon";
 import MaterialIcon from "../../../../Components/Icon/MaterialIcon";
 import AnimateButton from "../../../../Components/Ui/Button/AnimateButton";
-import { useAppDispatch, useCompanyStore, useCustomerStore, useProductStore, useUserStore } from "../../../../Store/ReduxStore";
+import { useAppDispatch, useCompanyStore, useCustomerStore, useUserStore } from "../../../../Store/ReduxStore";
 import { GetUserLedgers } from "../../../../Utils/types";
 import { viewAllCustomer } from "../../../../Services/customer";
 import { ItemSelectorModal } from "../../../../Components/Modal/Selectors/ItemSelectorModal";
 import BackgroundThemeView from "../../../../Components/Layouts/View/BackgroundThemeView";
-import LoadingView from "../../../../Components/Layouts/View/LoadingView";
 import CustomerTypeSelectorModal from "../../../../Components/Modal/Customer/CustomerTypeSelectorModal";
 import CreateCustomerModal from "../../../../Components/Modal/Customer/CreateCustomerModal";
 import { useAlert } from "../../../../Components/Ui/Alert/AlertProvider";
-import { viewAllProducts, viewProductsWithId } from "../../../../Services/product";
+import { viewProductsWithId } from "../../../../Services/product";
 import NoralTextInput from "../../../../Components/Ui/TextInput/NoralTextInput";
 import EmptyListView from "../../../../Components/Layouts/View/EmptyListView";
 import { sliceString } from "../../../../Utils/functionTools";
@@ -25,6 +24,8 @@ import ShowWhen from "../../../../Components/Other/ShowWhen";
 import { ProductLoadingCard } from "../../../../Components/Ui/Card/ProductCard";
 import CreateProductModal from "../../../../Components/Modal/Product/CreateProductModal";
 import { CustomerLoadingView } from "../../../../Components/Ui/Card/CustomerCard";
+import ScaleAnimationView from "../../../../Components/Layouts/View/ScaleAnimationView";
+import { SectionRowWithIcon } from "../../../../Components/Layouts/View/SectionView";
 
 
 type Props = {
@@ -227,15 +228,14 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
 
     const { setAlert } = useAlert();
 
+    const dispatch = useAppDispatch();
     const { primaryColor, secondaryBackgroundColor } = useTheme();
-    const { company } = useCompanyStore();
     const { products, setProducts } = useBillContext();
-    const { isProductsFetching, pageMeta } = useProductStore();
     const { user } = useUserStore();
     const currentCompanyDetails = user?.company?.find((c: any) => c._id === user?.user_settings?.current_company_id);
     const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
-    const dispatch = useAppDispatch();
 
+    const [isFetching, setIsFetching] = useState(false);
     const [isUnitModalVisible, setUnitModalVisible] = useState<boolean>(false);
     const [isCreateModalOpen, setCreateModalOpen] = useState<boolean>(false);
     const [itemsList, setItemsList] = useState<{ id: string; name: string; unit: string, gst: string, hsn_code: string }[]>([]);
@@ -256,12 +256,6 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
     const handleInputChange = (field: string, value: string | number | boolean) => {
         setData(prev => ({ ...prev, [field]: value }));
     };
-
-    function handleProductFetching() {
-        if (isProductsFetching) { return; }
-        if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
-        dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1 }));
-    }
 
     function handleProduct() {
         if (!data.price || !data.quantity) {
@@ -296,6 +290,9 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
     }
 
     useEffect(() => {
+        if(!visible && isCreateModalOpen) return;
+
+        setIsFetching(true);
         dispatch(viewProductsWithId(user?.user_settings?.current_company_id || '')).then((response) => {
             if (response.meta.requestStatus === 'fulfilled') {
                 const products = response.payload;
@@ -305,15 +302,18 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
                         id: product._id,
                         unit: product.unit,
                         gst: product.rate,
-                        hsn_code: product.hsn_code || ''
+                        hsn_code: product.hsn_code || '',
                     }))
                 );
             }
             return response;
         }).catch((error) => {
             Alert.alert(error || 'Failed to fetch products');
+        }).finally(() => {
+            setIsFetching(false);
         });
-    }, [dispatch, isCreateModalOpen, user?.user_settings?.current_company_id]);
+
+    }, [dispatch, isCreateModalOpen, user?.user_settings?.current_company_id, visible]);
 
     useEffect(() => {
         setFilterItemsList(itemsList.filter(item => !(products.some(pro => pro.id === item.id))))
@@ -346,51 +346,49 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
             </View>
 
             <FlatList
-                ListEmptyComponent={<EmptyListView type="product" />}
                 contentContainerStyle={{ gap: 20, paddingBottom: 80, paddingTop: 12 }}
                 data={filterItemsList}
                 keyExtractor={(item) => item.id}
                 keyboardShouldPersistTaps="always"
 
-                renderItem={({ item }) => (
-                    <AnimateButton
-                        style={{ padding: 16, borderRadius: 16, display: 'flex', alignItems: 'flex-start', gap: 16, backgroundColor: secondaryBackgroundColor }}
-                        onPress={() => {
-                            setUnitModalVisible(true);
-                            handleInputChange('productId', item.id);
-                            handleInputChange('unit', item.unit);
-                            handleInputChange('name', item.name);
-                            handleInputChange('hsnCode', item.hsn_code ?? '');
-                            handleInputChange('gstRate', item.gst)
-                        }}
-                    >
-                        <View style={{ width: '100%' }} >
-                            <TextTheme style={{ paddingLeft: 2, fontWeight: 600, fontSize: 16 }} >{sliceString(item.name, 30)}</TextTheme>
+                ListEmptyComponent={
+                    <ShowWhen when={!isFetching} otherwise={<ProductLoadingCard/>} >
+                        <EmptyListView type="product" />
+                    </ShowWhen>
+                }
 
-                            {item.hsn_code && <TextTheme isPrimary={false} style={{ paddingLeft: 2, fontWeight: 600, fontSize: 12 }} >{item.hsn_code}</TextTheme>}
-                        </View>
-                        {gst_enable && <View style={{ width: '100%' }} >
-                            <TextTheme isPrimary={false} style={{ paddingLeft: 2, fontWeight: 600, fontSize: 12 }} >GST {item.gst} %</TextTheme>
-                        </View>}
-                    </AnimateButton>
+                renderItem={({ item }) => (
+                    <ScaleAnimationView useRandomDelay={true} >
+                        <SectionRowWithIcon
+                            label={sliceString(item.name, 30) ?? ''}
+                            text={item.hsn_code ?? 'No hsn code'}
+                            onPress={() => {
+                                setUnitModalVisible(true);
+                                setData(pre => ({
+                                    ...pre, ...{
+                                        productId: item.id, unit: item.unit, name: item.name, 
+                                        hsnCode: item.hsn_code ?? '', gstRate: item.gst
+                                    }
+                                }))
+                            }}
+                            icon={<TextTheme style={{fontSize: 16, fontWeight: 900}} >{item.name[0].toUpperCase()}</TextTheme>}
+            
+                        >
+                            <ShowWhen when={!!item.gst} >
+                                <BackgroundThemeView style={{position: 'absolute', top: -2, right: 10, paddingInline: 8, borderRadius: 8, paddingBottom: 2}} >
+                                    <TextTheme isPrimary={false} style={{fontSize: 12}} >
+                                        GST {item.gst}%
+                                    </TextTheme>
+                                </BackgroundThemeView>
+                            </ShowWhen>
+                        </SectionRowWithIcon>
+                    </ScaleAnimationView>
                 )}
 
                 ListFooterComponentStyle={{ gap: 20 }}
-                ListFooterComponent={<ShowWhen when={isProductsFetching}>
-                    <ProductLoadingCard />
+                ListFooterComponent={<ShowWhen when={isFetching}>
                     <ProductLoadingCard />
                 </ShowWhen>}
-
-                onScroll={({ nativeEvent }) => {
-                    let { contentOffset, layoutMeasurement, contentSize } = nativeEvent;
-                    let contentOffsetY = contentOffset.y;
-                    let totalHeight = contentSize.height;
-                    let height = layoutMeasurement.height;
-
-                    if (totalHeight - height < contentOffsetY + 400) {
-                        handleProductFetching();
-                    }
-                }}
             />
 
             <BottomModal

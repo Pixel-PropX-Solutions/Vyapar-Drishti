@@ -17,7 +17,7 @@ type Props<item> = {
     onSelect: (item: item) => void,
     SelectedItemContent: ReactNode,
     renderItemContent: (item: item) => ReactNode
-    keyExtractor: (item: item) => string,
+    keyExtractor: (item: item, index: number) => string,
     filter: (item: item, val: string) => boolean,
     actionButtons?: BottomModalActionButton[]
     isItemSelected?: boolean,
@@ -99,9 +99,7 @@ export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItem
                     </ShowWhen>
                 }
                 
-                keyExtractor={item => (
-                    keyExtractor(item)
-                )}
+                keyExtractor={keyExtractor}
 
                 renderItem={({ item }) => (
                     <SectionRow

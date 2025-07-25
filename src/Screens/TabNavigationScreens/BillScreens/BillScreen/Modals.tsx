@@ -1,16 +1,15 @@
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import { useBillContext } from "./Context";
 import { ItemSelectorModal } from "../../../../Components/Modal/Selectors/ItemSelectorModal";
 import TextTheme from "../../../../Components/Ui/Text/TextTheme";
 import { getMonthByIndex } from "../../../../Utils/functionTools";
 import BottomModal from "../../../../Components/Modal/BottomModal";
 import { View } from "react-native";
-import PDFRenderer from "../../../../Components/Layouts/View/PDFRenderer";
 import AnimateButton from "../../../../Components/Ui/Button/AnimateButton";
 import FeatherIcon from "../../../../Components/Icon/FeatherIcon";
-import { usePDFContext } from "./PDFContext";
 import { useTheme } from "../../../../Contexts/ThemeProvider";
 import navigator from "../../../../Navigation/NavigationService";
+import SectionView from "../../../../Components/Layouts/View/SectionView";
 
 type Props = {
     visible: boolean,
@@ -67,85 +66,6 @@ export function DateSelectorModal({visible, setVisible}: Props): React.JSX.Eleme
         />
     )
 }
-
-
-export function PDFViewModal({visible, setVisible}: Props) {
-
-    const {primaryColor} = useTheme();
-    const {handleDownload, handlePrint, handleShare, invoiceId, htmlFromApi} = usePDFContext();
-
-    const [pageNumber, setPageNumber] = useState<number>(1);
-
-    return (
-        <BottomModal
-            visible={visible}
-            setVisible={setVisible}
-            style={{ paddingHorizontal: 4, paddingBottom: 30, height: '100%' }}
-            actionButtons={[
-                {
-                    key: 'download',
-                    title: '',
-                    onPress: handleDownload,
-                    color: 'white',
-                    backgroundColor: 'rgb(50,200,150)',
-                    icon: <FeatherIcon name="download" size={16} color="white" />,
-                },
-                {
-                    key: 'print',
-                    title: '',
-                    onPress: handlePrint,
-                    color: 'white',
-                    backgroundColor: 'rgb(50,150,250)',
-                    icon: <FeatherIcon name="printer" size={16} color="white" />,
-                },
-                {
-                    key: 'share',
-                    title: '',
-                    onPress: handleShare,
-                    color: 'white',
-                    backgroundColor: 'rgb(250,150,100)',
-                    icon: <FeatherIcon name="share-2" size={16} color="white" />,
-                },
-            ]}
-        >
-            <View style={{ alignItems: 'center', marginBottom: 14 }}>
-                <TextTheme style={{ fontSize: 20, fontWeight: 'bold' }}>
-                    View or share Bill
-                </TextTheme>
-                <TextTheme style={{ fontSize: 18, opacity: 0.7, marginTop: 4 }}>
-                    {invoiceId}
-                </TextTheme>
-            </View>
-
-            <View style={{ flex: 1 }}>
-                <PDFRenderer
-                    htmlString={htmlFromApi.find(page => page.page_number === pageNumber)?.html ?? ''}
-                />
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', columnGap: 12, marginTop: 12 }}>
-                    <AnimateButton
-                        onPress={() => { setPageNumber(prev => Math.max(prev - 1, 1)); }}
-                        disabled={pageNumber <= 1}
-                        style={{ width: 30, height: 30, display: 'flex', borderColor: primaryColor, alignItems: 'center', justifyContent: 'center', borderRadius: 50, borderWidth: 1 }}
-                    >
-                        <FeatherIcon name="arrow-left" size={20} />
-                    </AnimateButton>
-                    <TextTheme style={{ textAlign: 'center', fontSize: 12, marginTop: 4, opacity: 0.7 }}>
-                        Page {pageNumber} of {htmlFromApi?.length}
-                    </TextTheme>
-                    <AnimateButton
-                        onPress={() => { setPageNumber(prev => Math.min(prev + 1, htmlFromApi.length)); }}
-                        disabled={pageNumber >= htmlFromApi.length}
-                        style={{ width: 30, height: 30, display: 'flex', borderColor: primaryColor, alignItems: 'center', justifyContent: 'center', borderRadius: 50, borderWidth: 1 }}
-                    >
-                        <FeatherIcon name="arrow-right" size={20} />
-                    </AnimateButton>
-                </View>
-            </View>
-
-        </BottomModal>
-    )
-}
-
 
 
 const dummyBillsType: { name: string; icon: string; color: string; description: string, id: string }[] = [
@@ -222,6 +142,67 @@ export function BillTypeSelectorModal({visible, setVisible}: Props) {
                     </AnimateButton>
                 ))}
             </View>
+        </BottomModal>
+    )
+}
+
+
+
+export function FilterModal({visible, setVisible}: Props) {
+
+    const {primaryColor, primaryBackgroundColor} = useTheme();
+    const {filters, handleFilter} = useBillContext();
+
+    return (    
+        <BottomModal
+            visible={visible} setVisible={setVisible}
+            style={{paddingInline: 20, gap: 24}}
+        >
+            <TextTheme style={{fontSize: 20, fontWeight: 900}} >Invoice Filters</TextTheme>
+
+            <SectionView label="Sort by" style={{flexDirection: 'row', gap: 12, alignItems: 'center'}} >
+                {
+                    ['Default', 'Date', 'Amount', 'Type'].map(item => (
+                       <AnimateButton key={item} 
+                            onPress={() => handleFilter('sortBy', item)}
+                            bubbleColor={item === filters.sortBy ? primaryBackgroundColor : primaryColor}
+                            
+                            style={{
+                                alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 32, 
+                                backgroundColor: item === filters.sortBy ? primaryColor : primaryBackgroundColor
+                            }}
+                        >
+                            <TextTheme 
+                                isPrimary={item === filters.sortBy}  
+                                useInvertTheme={item === filters.sortBy}
+                                style={{fontSize: 12, fontWeight: 900}} 
+                            >{item}</TextTheme>
+                        </AnimateButton>
+                    ))
+                }
+            </SectionView>
+            
+            <SectionView label="Status" style={{flexDirection: 'row', gap: 12, alignItems: 'center'}} >
+                {
+                    ['All', 'Pending', 'Paid'].map(item => (
+                       <AnimateButton key={item} 
+                            onPress={() => handleFilter('status', item.toLowerCase() as 'all' | 'pending' | 'paid')}
+                            bubbleColor={item.toLowerCase() === filters.status ? primaryBackgroundColor : primaryColor}
+                            
+                            style={{
+                                alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 32, 
+                                backgroundColor: item.toLowerCase() === filters.status ? primaryColor : primaryBackgroundColor
+                            }}
+                        >
+                            <TextTheme 
+                                isPrimary={item.toLowerCase() === filters.status}  
+                                useInvertTheme={item.toLowerCase() === filters.status}
+                                style={{fontSize: 12, fontWeight: 900}} 
+                            >{item}</TextTheme>
+                        </AnimateButton>
+                    ))
+                }
+            </SectionView>
         </BottomModal>
     )
 }

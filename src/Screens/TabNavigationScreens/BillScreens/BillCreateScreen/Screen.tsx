@@ -13,7 +13,11 @@ export default function BillCreateScreen() {
             <View style={{ justifyContent: 'space-between', width: '100%', height: '100%' }} >
                 <Header />
 
-                <ScrollView style={{ paddingInline: 20, paddingBlock: 10 }} contentContainerStyle={{ gap: 24 }} >
+                <ScrollView 
+                    style={{ paddingInline: 20, paddingBlock: 10 }} 
+                    contentContainerStyle={{ gap: 24 }} 
+                    keyboardShouldPersistTaps='always' 
+                >
                     <View style={{ gap: 16 }} >
                         <ProgressBar/>
 

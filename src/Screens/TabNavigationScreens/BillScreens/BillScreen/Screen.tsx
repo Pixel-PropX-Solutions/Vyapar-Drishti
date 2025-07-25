@@ -8,7 +8,6 @@ import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { BottomTabParamsList } from "../../../../Navigation/BottomTabNavigation";
 import { useAppDispatch, useCompanyStore } from "../../../../Store/ReduxStore";
 import { viewAllInvoices } from "../../../../Services/invoice";
-import PDFContextProvider from "./PDFContext";
 
 export default function BillScreen(): React.JSX.Element {
 
@@ -33,10 +32,7 @@ export default function BillScreen(): React.JSX.Element {
 
                 <BackgroundThemeView isPrimary={false} style={{paddingInline: 20, paddingTop: 20, borderTopLeftRadius: 40, borderTopRightRadius: 40, flex: 1, marginTop: 20, gap: 20}} >
                     <DateSelector/>
-                    
-                    <PDFContextProvider>
-                        <BillListing/>
-                    </PDFContextProvider>
+                    <BillListing/>
                 </BackgroundThemeView>
 
                 <BillCreateButton/>
