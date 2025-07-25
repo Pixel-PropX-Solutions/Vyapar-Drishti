@@ -6,8 +6,7 @@ import { viewAllProducts } from '../../../../Services/product';
 import { useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { BottomTabParamsList } from '../../../../Navigation/BottomTabNavigation';
-import ContextProvider from './Context';
-import { CreateProductButton, DateSelector, Header, ProductListing, SummaryCard } from './Components';
+import { CreateProductButton, Header, ProductListing, SummaryCard } from './Components';
 
 export default function ProductScreen() {
 

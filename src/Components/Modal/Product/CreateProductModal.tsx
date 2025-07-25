@@ -14,6 +14,7 @@ import { units } from '../../../Utils/units';
 import CollapsabeMenu from '../../Other/CollapsabeMenu';
 import { InputField } from '../../Ui/TextInput/InputField';
 import { SelectField } from '../../Ui/TextInput/SelectField';
+import MeasurementUnitsOpation from '../../Ui/Option/MeasurmentUnits';
 // import Popover from '../../Other/Popover';
 
 type Props = {
@@ -182,210 +183,149 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                 },
             ]}
         >
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={{ flex: 1 }}
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 20 }}
             >
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{ paddingBottom: 20 }}
-                >
-                    <View style={{ alignItems: 'center', marginBottom: 24 }}>
-                        <View style={{
-                            width: 60,
-                            height: 60,
-                            borderRadius: 30,
-                            backgroundColor: secondaryBackgroundColor,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            marginBottom: 12,
-                        }}>
-                            <FeatherIcon name="package" size={30} color={primaryColor} />
-                        </View>
-                        <TextTheme style={{ fontWeight: '900', fontSize: 20, textAlign: 'center' }}>
-                            Create New Product
-                        </TextTheme>
-                        <TextTheme style={{ fontSize: 14, opacity: 0.7, textAlign: 'center', marginTop: 4 }}>
-                            Add product details to your inventory
-                        </TextTheme>
+                <View style={{ alignItems: 'center', marginBottom: 24 }}>
+                    <View style={{
+                        width: 60,
+                        height: 60,
+                        borderRadius: 30,
+                        backgroundColor: secondaryBackgroundColor,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginBottom: 12,
+                    }}>
+                        <FeatherIcon name="package" size={30} color={primaryColor} />
                     </View>
-
-                    {/* Basic Information */}
-                    <CollapsabeMenu
-                        expanded={basicInfoExpanded}
-                        setExpanded={setBasicInfoExpanded}
-                        header="Basic Information"
-                    >
-                        <InputField
-                            icon={<FeatherIcon name="package" size={20} color={primaryColor} />}
-                            placeholder="Product Name *"
-                            value={data.stock_item_name}
-                            field="stock_item_name"
-                            handleChange={handleChange}
-                            error={validationErrors.stock_item_name}
-                        />
-
-                        <SelectField
-                            icon={<FeatherIcon name="layers" size={20} color={primaryColor} />}
-                            placeholder="Select Unit *"
-                            value={data.unit}
-                            onPress={() => setUnitModalVisible(true)}
-                            error={validationErrors.unit}
-                        />
-                    </CollapsabeMenu>
-
-                    {/* Additional Information */}
-                    <CollapsabeMenu
-                        expanded={additionalInfoExpanded}
-                        setExpanded={setAdditionalInfoExpanded}
-                        header="Additional Information"
-                    >
-                        <InputField
-                            icon={<FeatherIcon name="file-text" size={20} color={primaryColor} />}
-                            placeholder="Description"
-                            value={data.description}
-                            field="description"
-                            multiline={true}
-                            handleChange={handleChange}
-                        />
-
-                        {/* <InputField
-                            icon={<FeatherIcon name="folder" size={20} color={primaryColor} />}
-                            placeholder="Category"
-                            value={data.category}
-                            field="category"
-                            handleChange={handleChange}
-                        />
-
-                        <InputField
-                            icon={<FeatherIcon name="grid" size={20} color={primaryColor} />}
-                            placeholder="Group"
-                            value={data.group}
-                            field="group"
-                            handleChange={handleChange}
-                        />
-                        */}
-                        <InputField
-                            icon={<FeatherIcon name="alert-triangle" size={20} color={primaryColor} />}
-                            placeholder="Low Stock Alert Level"
-                            value={data.low_stock_alert}
-                            field="low_stock_alert"
-                            keyboardType="number-pad"
-                            handleChange={handleChange}
-                            info="Set a threshold for low stock alert. Default is 10."
-
-                        />
-
-                        {/* GST Information */}
-                        {currentCompanyDetails?.company_settings?.features?.enable_gst && (<View style={{
-                            borderRadius: 30,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            marginBottom: 12,
-                            marginLeft: 8,
-                        }}>
-                            <CollapsabeMenu
-                                expanded={gstInfoExpanded}
-                                setExpanded={setGstInfoExpanded}
-                                header="GST Information"
-                            >
-                                <View style={{ marginTop: 10 }}>
-                                    <InputField
-                                        icon={<FeatherIcon name="hash" size={20} color={primaryColor} />}
-                                        placeholder="HSN/SAC Code"
-                                        value={data.gst_hsn_code}
-                                        field="gst_hsn_code"
-                                        handleChange={handleChange}
-                                    />
-
-                                    {data.gst_hsn_code && <>
-                                        <SelectField
-                                            icon={<FeatherIcon name="shield" size={20} color={primaryColor} />}
-                                            placeholder="Nature of Goods/Services"
-                                            value={goodsNatureOptions.find(option => option.value === data.gst_nature_of_goods)?.label || ''}
-                                            onPress={() => setGoodsNatureModalVisible(true)}
-                                        />
-
-                                        <SelectField
-                                            icon={<FeatherIcon name="percent" size={20} color={primaryColor} />}
-                                            placeholder="GST Taxability"
-                                            value={taxabilityOptions.find(option => option.value === data.gst_taxability)?.label || ''}
-                                            onPress={() => setTaxabilityModalVisible(true)}
-                                        />
-
-                                        {data.gst_taxability === 'taxable' && (<InputField
-                                            icon={<FeatherIcon name="percent" size={20} color={primaryColor} />}
-                                            placeholder="GST Percentage"
-                                            value={data.gst_percentage}
-                                            field="gst_percentage"
-                                            keyboardType="numeric"
-                                            handleChange={handleChange}
-                                        />)}
-                                    </>
-                                    }
-                                </View>
-                            </CollapsabeMenu>
-                        </View>)}
-
-
-                    </CollapsabeMenu>
-                </ScrollView>
-            </KeyboardAvoidingView>
-
-            {/* Unit Selection Modal */}
-            <BottomModal
-                visible={isUnitModalVisible}
-                setVisible={setUnitModalVisible}
-                style={{ paddingHorizontal: 20 }}
-            >
-                <View style={{ alignItems: 'center', marginBottom: 20 }}>
-                    <TextTheme style={{ fontWeight: '900', fontSize: 18 }}>Select Unit</TextTheme>
-                    <TextTheme style={{ fontSize: 14, opacity: 0.7, marginTop: 4 }}>
-                        Choose measurement unit for your product
+                    <TextTheme style={{ fontWeight: '900', fontSize: 20, textAlign: 'center' }}>
+                        Create New Product
+                    </TextTheme>
+                    <TextTheme style={{ fontSize: 14, opacity: 0.7, textAlign: 'center', marginTop: 4 }}>
+                        Add product details to your inventory
                     </TextTheme>
                 </View>
 
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{
-                        flexDirection: 'row',
-                        flexWrap: 'wrap',
-                        alignItems: 'center',
-                        gap: 8,
-                        paddingBottom: 20,
-                    }}
-                    style={{ maxHeight: 400 }}
+                {/* Basic Information */}
+                <CollapsabeMenu
+                    expanded={basicInfoExpanded}
+                    setExpanded={setBasicInfoExpanded}
+                    header="Basic Information"
                 >
-                    {units.map((unit) => (
-                        <AnimateButton
-                            key={unit.id}
-                            style={{
-                                borderWidth: 2,
-                                borderRadius: 25,
-                                paddingHorizontal: 20,
-                                paddingVertical: 8,
-                                borderColor: unit.value === data.unit ? primaryColor : secondaryBackgroundColor,
-                                backgroundColor: unit.value === data.unit ? secondaryBackgroundColor : 'transparent',
-                                marginBottom: 8,
-                                minWidth: 100,
-                                alignItems: 'center',
-                            }}
-                            onPress={() => {
-                                handleChange('unit', unit.value);
-                                handleChange('unit_id', unit.id);
-                                setUnitModalVisible(false);
-                            }}
+                    <InputField
+                        icon={<FeatherIcon name="package" size={20} color={primaryColor} />}
+                        placeholder="Product Name *"
+                        value={data.stock_item_name}
+                        field="stock_item_name"
+                        handleChange={handleChange}
+                        error={validationErrors.stock_item_name}
+                    />
+
+                    <MeasurementUnitsOpation label='Select Unit *' onSelect={unit => {
+                        if(!unit?.id) return;
+
+                        handleChange('unit', unit?.symbol)
+                        handleChange('unit_id', unit?.id)
+                    }} />
+
+                </CollapsabeMenu>
+
+                {/* Additional Information */}
+                <CollapsabeMenu
+                    expanded={additionalInfoExpanded}
+                    setExpanded={setAdditionalInfoExpanded}
+                    header="Additional Information"
+                >
+                    <InputField
+                        icon={<FeatherIcon name="file-text" size={20} color={primaryColor} />}
+                        placeholder="Description"
+                        value={data.description}
+                        field="description"
+                        multiline={true}
+                        handleChange={handleChange}
+                    />
+
+                    {/* <InputField
+                        icon={<FeatherIcon name="folder" size={20} color={primaryColor} />}
+                        placeholder="Category"
+                        value={data.category}
+                        field="category"
+                        handleChange={handleChange}
+                    />
+
+                    <InputField
+                        icon={<FeatherIcon name="grid" size={20} color={primaryColor} />}
+                        placeholder="Group"
+                        value={data.group}
+                        field="group"
+                        handleChange={handleChange}
+                    />
+                    */}
+                    <InputField
+                        icon={<FeatherIcon name="alert-triangle" size={20} color={primaryColor} />}
+                        placeholder="Low Stock Alert Level"
+                        value={data.low_stock_alert}
+                        field="low_stock_alert"
+                        keyboardType="number-pad"
+                        handleChange={handleChange}
+                        info="Set a threshold for low stock alert. Default is 10."
+                        
+                    /> 
+
+                    {/* GST Information */}
+                    {currentCompanyDetails?.company_settings?.features?.enable_gst && (<View style={{
+                        borderRadius: 30,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginBottom: 12,
+                        marginLeft: 8,
+                    }}>
+                        <CollapsabeMenu
+                            expanded={gstInfoExpanded}
+                            setExpanded={setGstInfoExpanded}
+                            header="GST Information"
                         >
-                            <TextTheme style={{
-                                fontSize: 14,
-                                color: unit.value === data.unit ? '#fff' : undefined,
-                            }}>
-                                {unit.label}
-                            </TextTheme>
-                        </AnimateButton>
-                    ))}
-                </ScrollView>
-            </BottomModal>
+                            <View style={{ marginTop: 10 }}>
+                                <InputField
+                                    icon={<FeatherIcon name="hash" size={20} color={primaryColor} />}
+                                    placeholder="HSN/SAC Code"
+                                    value={data.gst_hsn_code}
+                                    field="gst_hsn_code"
+                                    handleChange={handleChange}
+                                />
+
+                                {data.gst_hsn_code && <>
+                                    <SelectField
+                                        icon={<FeatherIcon name="shield" size={20} color={primaryColor} />}
+                                        placeholder="Nature of Goods/Services"
+                                        value={goodsNatureOptions.find(option => option.value === data.gst_nature_of_goods)?.label || ''}
+                                        onPress={() => setGoodsNatureModalVisible(true)}
+                                    />
+
+                                    <SelectField
+                                        icon={<FeatherIcon name="percent" size={20} color={primaryColor} />}
+                                        placeholder="GST Taxability"
+                                        value={taxabilityOptions.find(option => option.value === data.gst_taxability)?.label || ''}
+                                        onPress={() => setTaxabilityModalVisible(true)}
+                                    />
+
+                                    {data.gst_taxability === 'taxable' && (<InputField
+                                        icon={<FeatherIcon name="percent" size={20} color={primaryColor} />}
+                                        placeholder="GST Percentage"
+                                        value={data.gst_percentage}
+                                        field="gst_percentage"
+                                        keyboardType="numeric"
+                                        handleChange={handleChange}
+                                    />)}
+                                </>
+                                }
+                            </View>
+                        </CollapsabeMenu>
+                    </View>)}
+                </CollapsabeMenu>
+            </ScrollView>
+            
 
             {/* Taxability Selection Modal */}
             <BottomModal

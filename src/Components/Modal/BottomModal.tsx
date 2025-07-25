@@ -6,9 +6,10 @@ import { Text } from "react-native-gesture-handler";
 import { useTheme } from "../../Contexts/ThemeProvider";
 import AlertCard from "../Ui/Alert/AlertCard";
 import { Dimensions } from "react-native";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import AnimateButton from "../Ui/Button/AnimateButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ShowWhen from "../Other/ShowWhen";
 
 type ActionButton = {
     key?: string,
@@ -27,6 +28,7 @@ type BottomModalProps = ModalProps & {
     setVisible: (vis: boolean) => void,
     children: React.ReactNode,
     actionButtons?: ActionButton[],
+    actionContainerContent?: ReactNode
     transparent?: boolean,
     style?: ViewStyle,
     bottomOpationStyle?: ViewStyle,
@@ -39,7 +41,7 @@ type BottomModalProps = ModalProps & {
     topMargin?: number
 }
 
-export default function BottomModal({ visible, setVisible, children, style, backdropColor = 'rgba(0, 0, 0, 0.50)', actionButtons, closeOnBack = true, animationType = 'slide', bottomOpationStyle = {}, onClose = () => { }, alertId, topMarginPrecentage = 0.01, topMargin = 40, ...props }: BottomModalProps): React.JSX.Element {
+export default function BottomModal({ visible, setVisible, children, style, backdropColor = 'rgba(0, 0, 0, 0.50)', actionButtons, closeOnBack = true, animationType = 'slide', bottomOpationStyle = {}, onClose = () => { }, alertId, topMarginPrecentage = 0.01, topMargin = 40, actionContainerContent, ...props }: BottomModalProps): React.JSX.Element {
 
     const { primaryColor, primaryBackgroundColor } = useTheme();
 
@@ -81,17 +83,19 @@ export default function BottomModal({ visible, setVisible, children, style, back
                     </AnimateButton>
 
                     <View style={styles.actionsButtonsBox}>
-                        {
-                            actionButtons?.map(({ title, onPress, icon, backgroundColor, color, style, key }, index) => (
-                                <AnimateButton bubbleColor={color ?? primaryColor} key={`${key + title + index}`} onPress={onPress}
+                        <ShowWhen when={!actionContainerContent} otherwise={actionContainerContent} >
+                            {
+                                actionButtons?.map(({ title, onPress, icon, backgroundColor, color, style, key }, index) => (
+                                    <AnimateButton bubbleColor={color ?? primaryColor} key={`${key + title + index}`} onPress={onPress}
                                     style={{ height: 44, borderRadius: 100, paddingInline: 20, display: 'flex', alignItems: 'center', flexDirection: 'row', gap: 10, borderColor: color || primaryColor, backgroundColor: backgroundColor || primaryBackgroundColor, borderWidth: 2, overflow: 'hidden', ...style }}
-                                >
-                                    {icon ? icon : null}
+                                    >
+                                        {icon ? icon : null}
 
-                                    {title && <Text style={{ color: color || primaryColor, fontWeight: '900', fontSize: 14 }}>{title}</Text>}
-                                </AnimateButton>
-                            ))
-                        }
+                                        {title && <Text style={{ color: color || primaryColor, fontWeight: '900', fontSize: 14 }}>{title}</Text>}
+                                    </AnimateButton>
+                                ))
+                            }
+                        </ShowWhen>
                     </View>
                 </View>
             </View>

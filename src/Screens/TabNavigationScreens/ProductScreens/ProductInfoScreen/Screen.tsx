@@ -29,8 +29,9 @@ export default function ProductInfoScreen(): React.JSX.Element {
             <StackNavigationHeader title="Product Details" />
 
             <ScrollView
-                style={{ paddingInline: 20, width: '100%', paddingTop: 16 }}
-                contentContainerStyle={{ gap: 32, paddingBottom: 80 }}
+                style={{paddingInline: 20, width: '100%', paddingTop: 16}}
+                contentContainerStyle={{gap: 32, paddingBottom: 80}}
+                keyboardShouldPersistTaps='always'
             >
                 <HeroSection />
                 <SalePurchaseCards />
