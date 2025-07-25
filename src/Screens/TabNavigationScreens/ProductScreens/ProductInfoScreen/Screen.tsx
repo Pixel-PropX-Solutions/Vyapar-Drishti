@@ -12,7 +12,6 @@ export default function ProductInfoScreen(): React.JSX.Element {
 
     const { productId } = navigator.getParams('product-info-screen') ?? {};
 
-
     const { company } = useCompanyStore();
     const dispatch = useAppDispatch();
 
