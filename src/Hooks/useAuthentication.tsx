@@ -46,9 +46,9 @@ export default function useAuthentication(): ReturnType {
         setVerifying(false)
         
         if(isAuthenticate.current) {
-            navigator.navigate('tab-navigation');
+            navigator.reset('tab-navigation');
         } else {
-            navigator.navigate('landing-screen');
+            navigator.reset('landing-screen');
         }
     }
 
