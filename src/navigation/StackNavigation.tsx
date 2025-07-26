@@ -9,7 +9,7 @@ import SafePaddingView from '../Components/Other/SafeAreaView/SafePaddingView';
 import { useTheme } from '../Contexts/ThemeProvider';
 import SettingScreen from '../Screens/SettingScreen';
 import NotificationScreen from '../Screens/NotificationScreen';
-import CustomerInfoScreen from '../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen/CustomerInfoScreen';
+import CustomerInfoScreen from '../Screens/TabNavigationScreens/CustomerScreens/CustomerInfoScreen/Screen';
 import BillCreateScreen from '../Screens/TabNavigationScreens/BillScreens/BillCreateScreen/Screen';
 import CompanyScreen from '../Screens/CompanyScreen/Screen';
 import { NavigationRef } from './NavigationService';

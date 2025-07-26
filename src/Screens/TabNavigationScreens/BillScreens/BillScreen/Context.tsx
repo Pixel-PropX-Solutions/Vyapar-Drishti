@@ -21,7 +21,7 @@ const fn = () => { };
 const Context = createContext<ContextType>({
     date: { year: 0, month: 0 }, setDate: fn,
     isGstEnable: false,
-    filters: { sortBy: '', useAscOrder: true, status: 'all', billType: 'All' }, handleFilter: fn,
+    filters: { sortBy: '', useAscOrder: false, status: 'all', billType: 'All' }, handleFilter: fn,
 });
 
 
@@ -33,7 +33,7 @@ export default function BillContextProvider({ children }: { children: ReactNode 
 
 
     const [date, setDate] = useState<Date>({ year: new Date().getFullYear(), month: new Date().getMonth() });
-    const [filters, setFilters] = useState<Filters>({ sortBy: 'Default', useAscOrder: true, status: 'all', billType: 'All' });
+    const [filters, setFilters] = useState<Filters>({ sortBy: 'Default', useAscOrder: false, status: 'all', billType: 'All' });
 
     function handleFilter<Key extends keyof Filters>(key: Key, val: Filters[Key]) {
         setFilters(pre => ({

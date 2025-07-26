@@ -8,18 +8,18 @@ import ProductCard, { ProductLoadingCard } from '../../../../Components/Ui/Card/
 import navigator from '../../../../Navigation/NavigationService';
 import ShowWhen from '../../../../Components/Other/ShowWhen';
 import { viewAllProducts } from '../../../../Services/product';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import RoundedPlusButton from '../../../../Components/Ui/Button/RoundedPlusButton';
 import CreateProductModal from '../../../../Components/Modal/Product/CreateProductModal';
 import EntityListingHeader from '../../../../Components/Layouts/Header/EntityListingHeader';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 export function Header(): React.JSX.Element {
     return (
         <EntityListingHeader
             title="Products"
-            onPressFilter={() => { }}
-            onPressSearch={() => { }}
+            onPressNotification={() => { navigator.navigate('notification-screen') }}
         />
     );
 }
@@ -74,6 +74,12 @@ export function ProductListing(): React.JSX.Element {
         if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
         dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1 }));
     }
+
+    useFocusEffect(
+        useCallback(() => {
+            dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: 1 }));
+        }, [])
+    );
 
     return (
         <FlatList

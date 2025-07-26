@@ -55,8 +55,7 @@ export default function CustomerScreen(): React.JSX.Element {
         <View style={{ width: '100%', height: '100%', paddingHorizontal: 20 }} >
             <EntityListingHeader
                 title="Customers"
-                onPressFilter={() => { }}
-                onPressSearch={() => { }}
+                onPressNotification={() => {navigator.navigate('notification-screen')}}
             />
 
             <FlatList

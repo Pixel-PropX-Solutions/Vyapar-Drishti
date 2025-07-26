@@ -50,7 +50,7 @@ export default function DeleteModal({ visible, setVisible, message, passkey, han
                 <FeatherIcon name="key" size={20} />
 
                 <NoralTextInput
-                    placeholder={`Type ${passkey}`}
+                    placeholder={passkey}
                     style={{ fontSize: 18, fontWeight: 900, flex: 1 }}
                     onChangeText={setText}
                 />

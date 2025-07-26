@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch, useCompanyStore, useUserStore } from '../../../Store/ReduxStore';
 import { getAllCompanies, getCompany } from '../../../Services/company';
 import { getCurrentUser } from '../../../Services/user';
-import { Share, View } from 'react-native';
+import { Linking, Share, View } from 'react-native';
 import AnimateButton from '../../../Components/Ui/Button/AnimateButton';
 import ShowWhen from '../../../Components/Other/ShowWhen';
 import LoadingView from '../../../Components/Layouts/View/LoadingView';
@@ -161,12 +161,12 @@ export function QuickAccessSection(): React.JSX.Element {
                 </View>
 
                 <View style={{ flexDirection: 'row', gap: 12 }}>
-                    {/* <QuickAccessBox
-                        label="Customer"
-                        text="Add Customer"
+                    <QuickAccessBox
+                        label="Rate us"
+                        text="Rate us on play store"
                         icon={<FeatherIcon name="users" size={16} />}
-                        onPress={() => { }}
-                    /> */}
+                        onPress={() => { Linking.openURL(BASE_APP_URL) }}
+                    />
 
                     <QuickAccessBox
                         label="Share"

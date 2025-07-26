@@ -5,7 +5,7 @@ import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
 import TextTheme from '../../../../Components/Ui/Text/TextTheme';
 import { getMonthByIndex } from '../../../../Utils/functionTools';
 import { useTheme } from '../../../../Contexts/ThemeProvider';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useBillContext } from './Context';
 import { BillTypeSelectorModal, DateSelectorModal, FilterModal } from './Modals';
 import EntityListingHeader from '../../../../Components/Layouts/Header/EntityListingHeader';
@@ -21,6 +21,7 @@ import LoadingModal from '../../../../Components/Modal/LoadingModal';
 import RoundedPlusButton from '../../../../Components/Ui/Button/RoundedPlusButton';
 import { GetAllVouchars } from '../../../../Utils/types';
 import usePDFHandler from '../../../../Hooks/usePDFHandler';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 
@@ -32,8 +33,7 @@ export function Header(): React.JSX.Element {
         <View style={{ paddingInline: 20 }} >
             <EntityListingHeader
                 title="Bills"
-                onPressFilter={() => { setFilterModalVisible(true); }}
-                onPressSearch={() => { }}
+                onPressNotification={() => { navigator.navigate('notification-screen') }}
             />
 
             <FilterModal visible={isFilterModalVisible} setVisible={setFilterModalVisible} />
@@ -49,8 +49,6 @@ export function BillTypeFilter(): React.JSX.Element {
     const { primaryColor, primaryBackgroundColor } = useTheme();
     const { filters, handleFilter } = useBillContext();
 
-    const [selected, setSelected] = useState<string>('All');
-
     return (
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingInline: 20 }} >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -58,20 +56,18 @@ export function BillTypeFilter(): React.JSX.Element {
                 {
                     ['All', 'Sales', 'Purchase'].map(type => (
                         <AnimateButton key={type}
-                            onPress={() => {
-                                setSelected(type)
-                                dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1, type}));
-                            }}
-                            bubbleColor={type === selected ? primaryBackgroundColor : primaryColor}
+                            onPress={() => { handleFilter('billType', type as 'All' | 'Sales' | 'Purchase') }}
+
+                            bubbleColor={type === filters.billType ? primaryBackgroundColor : primaryColor}
 
                             style={{
                                 alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 28,
-                                backgroundColor: type === selected ? primaryColor : primaryBackgroundColor,
+                                backgroundColor: type === filters.billType ? primaryColor : primaryBackgroundColor,
                             }}
                         >
                             <TextTheme
-                                isPrimary={type === selected}
-                                useInvertTheme={type === selected}
+                                isPrimary={type === filters.billType}
+                                useInvertTheme={type === filters.billType}
                                 style={{ fontSize: 12, fontWeight: 900 }}
                             >{type}</TextTheme>
                         </AnimateButton>
@@ -135,6 +131,7 @@ export function BillListing() {
     const { company } = useCompanyStore();
     const { user } = useUserStore();
     const { invoices, isInvoiceFeaching, pageMeta } = useInvoiceStore();
+    const {filters} = useBillContext()
     const currentCompnayDetails = user?.company.find((c: any) => c._id === user?.user_settings?.current_company_id);
     const gst_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_gst;
 
@@ -182,6 +179,15 @@ export function BillListing() {
             setIsGenerating(false);
         }
     }
+    
+    useFocusEffect(
+        useCallback(() => {
+            dispatch(viewAllInvoices({ 
+                company_id: company?._id ?? '', pageNumber: 1, type: filters.billType, sortOrder: filters.useAscOrder ? '1' : '-1',  
+                // start_date: ''
+            }));
+        }, [filters])
+    );
 
     return (<>
         <FlatList

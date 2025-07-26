@@ -82,7 +82,7 @@ type viewAllInvoicesType = {
     searchQuery?: string;
     sortField?: string;
     limit?: number;
-    sortOrder?: string;
+    sortOrder?: '1' | '-1';
     start_date?: string;
     end_date?: string;
 }
@@ -97,7 +97,7 @@ export const viewAllInvoices = createAsyncThunk(
             type = 'All',
             limit = 10,
             sortField = 'created_at',
-            sortOrder = 'desc',
+            sortOrder = '1',
             start_date = '',
             end_date = '',
         }: viewAllInvoicesType,
@@ -105,8 +105,7 @@ export const viewAllInvoices = createAsyncThunk(
     ): Promise<{ invoices: GetAllVouchars[], pageMeta: PageMeta } | any> => {
         try {
             const response = await userApi.get(
-                `invoices/view/all/vouchar?company_id=${company_id}${searchQuery !== '' ? '&search=' + searchQuery : ''}${type !== 'All' ? '&type=' + type : ''}&start_date=${start_date}&end_date=${end_date}&page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder === 'asc' ? '1' : '-1'
-                }`
+                `invoices/view/all/vouchar?company_id=${company_id}${searchQuery !== '' ? '&search=' + searchQuery : ''}${type !== 'All' ? '&type=' + type : ''}&start_date=${start_date}&end_date=${end_date}&page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder}`
             );
             console.log('viewAllInvoices response', response.data);
 

@@ -58,6 +58,7 @@ const invoiceSlice = createSlice({
 
             .addCase(viewInvoice.pending, (state) => {
                 state.error = null;
+                state.invoiceData = null
                 state.isInvoiceFeaching = true;
             })
             .addCase(viewInvoice.fulfilled, (state, { payload }: { payload: { invoiceData: GetInvoiceData } | any }) => {

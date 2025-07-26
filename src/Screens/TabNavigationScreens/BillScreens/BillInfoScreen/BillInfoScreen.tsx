@@ -7,10 +7,10 @@ import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
 import BackgroundThemeView from '../../../../Components/Layouts/View/BackgroundThemeView';
 import NormalButton from '../../../../Components/Ui/Button/NormalButton';
 import { StackParamsList } from '../../../../Navigation/StackNavigation';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import { useAppDispatch, useCompanyStore, useInvoiceStore, useUserStore } from '../../../../Store/ReduxStore';
 import { printGSTInvoices, printInvoices, viewInvoice } from '../../../../Services/invoice';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { formatDate, roundToDecimal } from '../../../../Utils/functionTools';
 import usePDFHandler from '../../../../Hooks/usePDFHandler';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
@@ -56,18 +56,18 @@ export default function BillInfoScreen(): React.JSX.Element {
         }
     }
 
-    useEffect(() => {
-        dispatch(viewInvoice({ vouchar_id: invoiceId, company_id: company?._id || '' }));
-    }, [dispatch, invoiceId, company?._id]);
+    useFocusEffect(
+        useCallback(() => {
+            dispatch(viewInvoice({ vouchar_id: invoiceId, company_id: company?._id || '' }));
+        }, [])
+    );
 
+    
     if (!invoiceData) {
         return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} >
-                <TextTheme style={{ fontSize: 18, fontWeight: 'bold' }} >Loading...</TextTheme>
-            </View>
+            <LoadingModal visible={true} />
         );
     }
-
 
 
     return (
