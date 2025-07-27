@@ -380,7 +380,7 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
                         useTrim={true}
                         capitalize="characters"
                         isRequired={true}
-                        infoMassage="Country of mailing address *( Required )"
+                        infoMessage="Country of mailing address *( Required )"
                     />
 
                     <LabelTextInput
@@ -438,7 +438,7 @@ export function TaxInfoUpdateModal({ visible, setVisible }: Props): React.JSX.El
                         onChangeText={(val) => { gstinNo.current = val; }}
                         useTrim={true}
                         isRequired={true}
-                        infoMassage="15 digit GSTIN number"
+                        infoMessage="15 digit GSTIN number"
                     />
 
                     {/* <LabelTextInput
@@ -448,7 +448,7 @@ export function TaxInfoUpdateModal({ visible, setVisible }: Props): React.JSX.El
                         onChangeText={(val) => { panNo.current = val; }}
                         useTrim={true}
                         isRequired={true}
-                        infoMassage="10 digit PAN number"
+                        infoMessage="10 digit PAN number"
                     /> */}
                 </View>
 

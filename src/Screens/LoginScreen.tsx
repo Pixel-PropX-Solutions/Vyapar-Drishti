@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { Pressable, View } from 'react-native';
+import { Pressable, TouchableWithoutFeedback, View } from 'react-native';
 import TextTheme from '../Components/Ui/Text/TextTheme';
 import LabelTextInput from '../Components/Ui/TextInput/LabelTextInput';
 import LogoImage from '../Components/Image/LogoImage';
@@ -73,9 +73,11 @@ export default function LoginScreen(): React.JSX.Element {
                         onSubmitEditing={handleLogin}
                     />
 
-                    <TextTheme style={{ paddingLeft: 4, paddingTop: 8 }}>
-                        Forgot Password
-                    </TextTheme>
+                    <Pressable onPress={() => { navigator.navigate('forgot-password-screen') }} >
+                        <Text style={{ color: 'rgb(50,150,250)', paddingLeft: 8, paddingTop: 8 }}>
+                            Forgot Password
+                        </Text>
+                    </Pressable>
                 </View>
 
                 <View style={{ display: 'flex' }} >

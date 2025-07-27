@@ -9,15 +9,16 @@ import BackgroundThemeView from "../View/BackgroundThemeView"
 
 type Props = {
     title: string,
+    paddingBlock?: number
     hasBackButton?: boolean,
     onPressNotification?: () => void
     onPressFilter?: () => void,
     onPressSearch?: () => void,
 }
 
-export default function EntityListingHeader({title, onPressFilter, onPressSearch, onPressNotification, hasBackButton=false}: Props): React.JSX.Element {
+export default function EntityListingHeader({title, onPressFilter, onPressSearch, onPressNotification, hasBackButton=false, paddingBlock=10}: Props): React.JSX.Element {
     return (
-        <View style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'row', paddingBlock: 10, justifyContent: 'space-between' }} >
+        <View style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'row', paddingBlock, justifyContent: 'space-between' }} >
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}} >
                 <ShowWhen when={hasBackButton} >
                     <AnimateButton onPress={() => {navigator.goBack()}} style={{aspectRatio: 1, width: 40, borderRadius: 40, alignItems: 'center', justifyContent: 'center'}} >
