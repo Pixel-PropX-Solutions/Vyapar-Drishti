@@ -14,6 +14,7 @@ import { GetUserLedgers } from '../../../Utils/types';
 import navigator from '../../../Navigation/NavigationService';
 import { useFocusEffect } from '@react-navigation/native';
 import EntityListingHeader from '../../../Components/Layouts/Header/EntityListingHeader';
+import { setCustomers } from '../../../Store/Reducers/customerReducer';
 
 
 export default function CustomerScreen(): React.JSX.Element {
@@ -47,6 +48,7 @@ export default function CustomerScreen(): React.JSX.Element {
 
     useFocusEffect(
         useCallback(() => {
+            dispatch(setCustomers([]))
             dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
         }, [])
     );
@@ -59,7 +61,7 @@ export default function CustomerScreen(): React.JSX.Element {
             />
 
             <FlatList
-                ListEmptyComponent={isAllCustomerFetching ? null : <EmptyListView type="customer" />}
+                ListEmptyComponent={isAllCustomerFetching ? <CustomerLoadingView/> : <EmptyListView type="customer" />}
                 contentContainerStyle={{ marginTop: 12, width: '100%', height: '100%', gap: 20 }}
                 data={filterCustomers}
                 keyExtractor={(item) => item._id}

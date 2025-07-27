@@ -76,6 +76,9 @@ const productSlice = createSlice({
       state.productId = action.payload.productId;
       state.deletionModal = !state.deletionModal;
     },
+    setProductsData(state, action: PayloadAction<Array<GetProduct>>){
+      state.productsData = action.payload
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -123,8 +126,6 @@ const productSlice = createSlice({
       .addCase(viewAllProducts.pending, (state) => {
         state.error = null;
         state.isProductsFetching = true;
-        if (state.productsData?.length ?? 0 < 10)
-          state.productsData = []
       })
       .addCase(viewAllProducts.fulfilled, (state, action: PayloadAction<{
         productsData: GetProduct[], productsPageMeta: {
@@ -181,4 +182,4 @@ const productReducer = productSlice.reducer;
 export default productReducer;
 
 
-export const { setProductId } = productSlice.actions;
+export const { setProductId, setProductsData } = productSlice.actions;

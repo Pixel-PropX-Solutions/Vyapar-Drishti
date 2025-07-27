@@ -22,6 +22,7 @@ import RoundedPlusButton from '../../../../Components/Ui/Button/RoundedPlusButto
 import { GetAllVouchars } from '../../../../Utils/types';
 import usePDFHandler from '../../../../Hooks/usePDFHandler';
 import { useFocusEffect } from '@react-navigation/native';
+import { setInvoice } from '../../../../Store/Reducers/invoiceReducer';
 
 
 
@@ -182,6 +183,7 @@ export function BillListing() {
     
     useFocusEffect(
         useCallback(() => {
+            dispatch(setInvoice([]))
             dispatch(viewAllInvoices({ 
                 company_id: company?._id ?? '', pageNumber: 1, type: filters.billType, sortOrder: filters.useAscOrder ? '1' : '-1',  
                 // start_date: ''

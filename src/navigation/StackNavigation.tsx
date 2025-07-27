@@ -59,7 +59,7 @@ export default function StackNavigation(): React.JSX.Element {
     return (
         <NavigationContainer ref={NavigationRef} >
             <Stack.Navigator
-                initialRouteName="inventory-screen"
+                initialRouteName="splash-screen"
                 screenOptions={{ headerShown: false, cardStyle: { backgroundColor } }}
             >
                 <Stack.Screen name="splash-screen" component={SplashScreen}
