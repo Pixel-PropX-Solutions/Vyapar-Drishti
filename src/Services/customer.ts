@@ -1,6 +1,8 @@
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import userApi from '../Api/userApi';
+import { setCustomers } from '../Store/Reducers/customerReducer';
+import { useAppDispatch } from '../Store/ReduxStore';
 
 
 type ViewAllCustomerType = {

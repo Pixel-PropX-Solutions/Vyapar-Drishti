@@ -1,7 +1,7 @@
 import { APP_VERSION, BASE_APP_URL, MIN_APP_VERSION } from "../../env";
 import { Linking, View } from "react-native";
 import ParticleBackground from "../Components/Layouts/Background/ParticleBackground";
-import ScaleAnimationView from "../Components/Layouts/View/ScaleAnimationView";
+import ScaleAnimationView from "../Components/Ui/Animation/ScaleAnimationView";
 import BackgroundThemeView from "../Components/Layouts/View/BackgroundThemeView";
 import TextTheme from "../Components/Ui/Text/TextTheme";
 import FeatherIcon from "../Components/Icon/FeatherIcon";

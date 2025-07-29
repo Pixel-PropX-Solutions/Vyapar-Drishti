@@ -103,7 +103,7 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
                         autoCapitalize="none"
                         useTrim={true}
                         onChangeText={(val) => { setInfo('hsnCode', val); }}
-                        infoMassage="HSN Code is used for tax calculation. It is mandatory for GST registered businesses."
+                        infoMessage="HSN Code is used for tax calculation. It is mandatory for GST registered businesses."
                     /> */}
 
                     <LabelTextInput
@@ -115,7 +115,7 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
                         autoCapitalize="none"
                         useTrim={true}
                         onChangeText={(val) => { setInfo('low_stock_alert', val); }}
-                        infoMassage="Set a low stock alert to get notified when the stock falls below this level."
+                        infoMessage="Set a low stock alert to get notified when the stock falls below this level."
                     />
 
                     <SelectField

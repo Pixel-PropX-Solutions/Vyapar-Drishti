@@ -13,6 +13,7 @@ import RoundedPlusButton from '../../../../Components/Ui/Button/RoundedPlusButto
 import CreateProductModal from '../../../../Components/Modal/Product/CreateProductModal';
 import EntityListingHeader from '../../../../Components/Layouts/Header/EntityListingHeader';
 import { useFocusEffect } from '@react-navigation/native';
+import { setProductsData } from '../../../../Store/Reducers/productReducer';
 
 
 export function Header(): React.JSX.Element {
@@ -78,13 +79,14 @@ export function ProductListing(): React.JSX.Element {
 
     useFocusEffect(
         useCallback(() => {
+            dispatch(setProductsData([]))
             dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: 1 }));
         }, [])
     );
 
     return (
         <FlatList
-            ListEmptyComponent={isProductsFetching ? null : <EmptyListView type="product" />}
+            ListEmptyComponent={isProductsFetching ? <ProductLoadingCard/> : <EmptyListView type="product" />}
             contentContainerStyle={{ gap: 20, paddingBottom: 80, paddingTop: 12 }}
             data={productsData}
             keyExtractor={(item) => item._id}

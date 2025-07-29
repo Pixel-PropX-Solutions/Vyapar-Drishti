@@ -32,6 +32,9 @@ const invoiceSlice = createSlice({
     name: 'invoice',
     initialState,
     reducers: {
+        setInvoice(state, {payload}) {
+            state.invoices = payload
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -39,8 +42,6 @@ const invoiceSlice = createSlice({
             .addCase(viewAllInvoices.pending, (state) => {
                 state.error = null;
                 state.isInvoiceFeaching = true;
-                if(state.invoices?.length ?? 0 < 10) 
-                    state.invoices = [];
             })
             .addCase(viewAllInvoices.fulfilled, (state, { payload }: { payload: { invoices: GetAllVouchars[], pageMeta: PageMeta } | any }) => {
                 state.pageMeta = payload.pageMeta;
@@ -86,3 +87,5 @@ const invoiceSlice = createSlice({
 
 const invoiceReducer = invoiceSlice.reducer;
 export default invoiceReducer;
+
+export const {setInvoice} = invoiceSlice.actions

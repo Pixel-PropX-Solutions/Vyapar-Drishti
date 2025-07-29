@@ -24,8 +24,9 @@ import ShowWhen from "../../../../Components/Other/ShowWhen";
 import { ProductLoadingCard } from "../../../../Components/Ui/Card/ProductCard";
 import CreateProductModal from "../../../../Components/Modal/Product/CreateProductModal";
 import { CustomerLoadingView } from "../../../../Components/Ui/Card/CustomerCard";
-import ScaleAnimationView from "../../../../Components/Layouts/View/ScaleAnimationView";
+import ScaleAnimationView from "../../../../Components/Ui/Animation/ScaleAnimationView";
 import { SectionRowWithIcon } from "../../../../Components/Layouts/View/SectionView";
+import { setCustomers } from "../../../../Store/Reducers/customerReducer";
 
 
 type Props = {
@@ -116,7 +117,7 @@ export function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }
 
 
 
-export default function CustomerSelectorModal({ visible, setVisible }: Props) {
+export function CustomerSelectorModal({ visible, setVisible }: Props) {
 
     const { company } = useCompanyStore();
     const { setCustomer, customer } = useBillContext();
@@ -137,8 +138,10 @@ export default function CustomerSelectorModal({ visible, setVisible }: Props) {
     }
 
     useEffect(() => {
-        if(visible && !isCreateCustomerModalOpen)
+        if(visible && !isCreateCustomerModalOpen){
+            dispatch(setCustomers([]))
             dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
+        }
     }, [isCreateCustomerModalOpen, visible]);
 
     useEffect(() => {

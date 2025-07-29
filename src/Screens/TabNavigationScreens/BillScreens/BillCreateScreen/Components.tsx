@@ -22,7 +22,7 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { StackParamsList } from '../../../../Navigation/StackNavigation';
 import { createInvoice, createInvoiceWithGST, getInvoiceCounter } from '../../../../Services/invoice';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
-import CustomerSelectorModal, { ProductSelectorModal } from './Modals';
+import { ProductInfoUpdateModal, ProductSelectorModal, CustomerSelectorModal } from './Modals';
 
 export function Header() {
 
@@ -252,7 +252,11 @@ export function ProductListing() {
     const { currency } = useAppStorage();
     const { products, setProducts } = useBillContext();
 
-    return (
+    const [isModalVisible, setModalVisible] = useState<boolean>(false);
+    const [isUpdateModalVisible, setUpdateModalVisible] = useState<boolean>(false);
+    const [productIndex, setProductIndex] = useState<number>(-1)
+
+    return (<>
         <FlatList
             scrollEnabled={false}
             contentContainerStyle={{ gap: 12 }}
@@ -265,16 +269,22 @@ export function ProductListing() {
             ListFooterComponent={<ShowWhen when={products.length !== 0} >
                 <NormalButton
                     backgroundColor="rgb(50,120,200)" color="white"
-                    text="+ Add Product"
+                    text="+ Add More"
                     icon={<FeatherIcon color="white" name="package" size={16} />}
-                    onPress={() => { }}
+                    onPress={() => { setModalVisible(true) }}
                 />
             </ShowWhen>}
 
             data={products}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
-                <SectionRow onPress={() => { }} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12, position: 'relative' }} >
+                <SectionRow 
+                    style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12, position: 'relative' }} 
+                    onPress={() => { 
+                        setUpdateModalVisible(true); 
+                        setProductIndex(products.findIndex(p => p.id === item.id)) 
+                    }} 
+                >
                     <View>
                         <TextTheme style={{ fontWeight: '700', fontSize: 16 }}>
                             {sliceString(item.name, 34)}
@@ -324,7 +334,10 @@ export function ProductListing() {
                 </SectionRow>
             )}
         />
-    );
+
+        <ProductSelectorModal visible={isModalVisible} setVisible={setModalVisible} />
+        <ProductInfoUpdateModal visible={isUpdateModalVisible} setVisible={setUpdateModalVisible} editProductIndex={productIndex} />
+    </>);
 }
 
 

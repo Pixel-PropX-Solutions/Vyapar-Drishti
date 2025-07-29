@@ -51,6 +51,9 @@ const customerSlice: Slice<CustomerState> = createSlice({
                 unique: [],
             };
         },
+        setCustomers(state, action: PayloadAction<Array<GetUserLedgers>>) {
+            state.customers = action.payload
+        }
     },
 
     extraReducers: (builder) => {
@@ -72,7 +75,6 @@ const customerSlice: Slice<CustomerState> = createSlice({
             .addCase(viewAllCustomer.pending, (state) => {
                 state.error = null;
                 state.isAllCustomerFetching = true;
-                if (state.customers.length ?? 0 < 10) { state.customers = []; }
             })
             .addCase(viewAllCustomer.fulfilled, (state, action: PayloadAction<any>) => {
                 if (action.payload.pageMeta.page == 1) {
@@ -158,7 +160,7 @@ const customerSlice: Slice<CustomerState> = createSlice({
     },
 });
 
-export const { setCustomerType, resetCustomerState } = customerSlice.actions;
+export const { setCustomerType, resetCustomerState, setCustomers } = customerSlice.actions;
 const customerReducer = customerSlice.reducer;
 export default customerReducer;
 

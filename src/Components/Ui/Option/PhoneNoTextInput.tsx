@@ -25,14 +25,14 @@ type Props = TextInputProps & {
     placeholder?: string
     focusColor?: string,
     message?: string,
-    massageTextColor?: string,
+    messageTextColor?: string,
     isRequired?: boolean,
     checkNumberIsValid?: (text: string) => boolean,
     onChangePhoneNumber: (val: PhoneNumber) => void,
 
 }
 
-export default function PhoneNoTextInput({ label, onChangeText, focusColor = 'rgb(50, 150, 250)', massageTextColor = 'rgb(200,50,50)', checkNumberIsValid, message, phoneNumber, isRequired = false, placeholder = 'XXXXX-97548', onChangePhoneNumber, ...props }: Props): React.JSX.Element {
+export default function PhoneNoTextInput({ label, onChangeText, focusColor = 'rgb(50, 150, 250)', messageTextColor = 'rgb(200,50,50)', checkNumberIsValid, message, phoneNumber, isRequired = false, placeholder = 'XXXXX-97548', onChangePhoneNumber, ...props }: Props): React.JSX.Element {
 
     const { primaryColor: color, primaryBackgroundColor: backgroundColor } = useTheme();
 
@@ -71,13 +71,14 @@ export default function PhoneNoTextInput({ label, onChangeText, focusColor = 'rg
             <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%', gap: 12 }} >
                 <Pressable
                     style={{
-                        borderWidth: 2, paddingInline: 12, borderRadius: 12, position: 'relative', borderColor: color,
-                        flexDirection: 'row', alignItems: 'center', height: 44, minWidth: 80,
+                        borderWidth: 2, paddingInline: 12, borderRadius: 12, position: 'relative', flexDirection: 'row', alignItems: 'center', height: 44, minWidth: 80,
+                        borderColor: number && !code ? messageTextColor : color,
                     }}
 
                     onPress={() => { setCodeModalVisible(true); }}
                 >
                     <TextTheme
+                        color={number && !code ? messageTextColor : color}
                         style={{ position: 'absolute', left: 12, top: 0, transform: [{ translateY: '-50%' }], backgroundColor, paddingInline: 4, borderRadius: 4 }}
                     >
                         {'Code'}
@@ -94,13 +95,13 @@ export default function PhoneNoTextInput({ label, onChangeText, focusColor = 'rg
                 <View
                     style={{
                         borderWidth: 2, paddingInline: 12, borderRadius: 12, position: 'relative',
-                        borderColor: isInputTextValid ? isFocus ? focusColor : color : massageTextColor,
+                        borderColor: isInputTextValid ? isFocus ? focusColor : color : messageTextColor,
                         flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1,
                     }}
                 >
                     <TextTheme
                         style={{ position: 'absolute', left: 14, top: 0, transform: [{ translateY: '-50%' }], backgroundColor, paddingInline: 4, borderRadius: 4 }}
-                        color={isInputTextValid ? isFocus ? focusColor : color : massageTextColor}
+                        color={isInputTextValid ? isFocus ? focusColor : color : messageTextColor}
                     >
                         {'Phone No'}
                         <ShowWhen when={isRequired} >
@@ -126,7 +127,7 @@ export default function PhoneNoTextInput({ label, onChangeText, focusColor = 'rg
             </View>
             {
                 !(isInputTextValid || isFocus) ? (
-                    <Text style={{ paddingLeft: 6, fontSize: 12, color: massageTextColor }} >
+                    <Text style={{ paddingLeft: 6, fontSize: 12, color: messageTextColor }} >
                         {message}
                     </Text>
                 ) : null

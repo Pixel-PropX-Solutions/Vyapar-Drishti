@@ -17,11 +17,14 @@ import ProductInfoScreen from '../Screens/TabNavigationScreens/ProductScreens/Pr
 import { ComponentProps, ElementType } from 'react';
 import BillInfoScreen from '../Screens/TabNavigationScreens/BillScreens/BillInfoScreen/BillInfoScreen';
 import AppUpdateScreen from '../Screens/AppUpdateScreen';
+import ForgotPasswordScreen from '../Screens/ForgotPasswordScreen';
+import InventoryScreen from '../Screens/InventoryScreen/Screen';
 
 export type StackParamsList = {
     'splash-screen': undefined,
     'landing-screen': undefined,
     'login-screen': undefined,
+    'forgot-password-screen': undefined,
     'signup-screen': undefined,
     'tab-navigation': undefined,
     'setting-screen': undefined,
@@ -33,6 +36,8 @@ export type StackParamsList = {
 
     'create-bill-screen': { type: string, id: string }
     'bill-info-screen': { id: string },
+
+    'inventory-screen': undefined
 
     'app-update-screen': undefined
 }
@@ -69,6 +74,10 @@ export default function StackNavigation(): React.JSX.Element {
                     component={withSafeView(LoginScreen)}
                 />
 
+                <Stack.Screen name="forgot-password-screen"  
+                    component={withSafeView(ForgotPasswordScreen)}
+                />
+
                 <Stack.Screen name="signup-screen"
                     component={withSafeView(SignUpScreen)}
                 />
@@ -103,8 +112,12 @@ export default function StackNavigation(): React.JSX.Element {
                 />
 
                 <Stack.Screen name="landing-screen"
-                    options={{ animation: 'scale_from_center' }}
+                    options={{ animation: 'fade' }}
                     component={withSafeView(LandingScreen)}
+                />
+
+                <Stack.Screen  name='inventory-screen'
+                    component={withSafeView(InventoryScreen)}
                 />
 
                 <Stack.Screen name="tab-navigation"

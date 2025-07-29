@@ -95,7 +95,7 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
                         value={ledger_details.current.gstin}
                         useTrim={true}
                         isRequired={true}
-                        infoMassage="15 digit GSTIN number"
+                        infoMessage="15 digit GSTIN number"
                         capitalize="characters"
                     />}
                     <LabelTextInput
@@ -106,7 +106,7 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
                         value={ledger_details.current.ledger_name}
                         useTrim={true}
                         isRequired={true}
-                        infoMassage="Legal name of customer *( used for billing and invoicing )"
+                        infoMessage="Legal name of customer *( used for billing and invoicing )"
                         capitalize="words"
                     />
 
@@ -119,7 +119,7 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
                         keyboardType='email-address'
                         value={ledger_details.current.email}
                         onChangeText={(val) => { setLedgerDetails('email', val); }}
-                        infoMassage="Email address for correspondence"
+                        infoMessage="Email address for correspondence"
                     />
 
                     <PhoneNoTextInput
@@ -222,7 +222,7 @@ export function AddressInfoUpdateModal({ visible, setVisible }: Props): React.JS
                         onChangeText={(val) => { setLedgerDetails('mailing_address', val); }}
                         value={ledger_details.current.mailing_address}
                         useTrim={true}
-                        infoMassage="Street address for correspondence"
+                        infoMessage="Street address for correspondence"
                         capitalize="words"
                     />
 
@@ -369,7 +369,7 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
                         value={ledger_details.current.bank_ifsc}
                         useTrim={true}
                         capitalize="characters"
-                        infoMassage="11 character IFSC code of bank branch"
+                        infoMessage="11 character IFSC code of bank branch"
                     />
 
                     <LabelTextInput
@@ -424,7 +424,7 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
 //                         onChangeText={(val) => { gstinNo.current = val; }}
 //                         useTrim={true}
 //                         isRequired={true}
-//                         infoMassage="15 digit GSTIN number"
+//                         infoMessage="15 digit GSTIN number"
 //                     />
 
 //                     <LabelTextInput
@@ -434,7 +434,7 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
 //                         onChangeText={(val) => { panNo.current = val; }}
 //                         useTrim={true}
 //                         isRequired={true}
-//                         infoMassage="10 digit PAN number"
+//                         infoMessage="10 digit PAN number"
 //                     />
 //                 </View>
 

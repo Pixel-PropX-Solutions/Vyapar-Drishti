@@ -8,7 +8,7 @@ import { useAppStorage } from '../../../Contexts/AppStorageProvider';
 import { GetProduct } from '../../../Utils/types';
 import { SectionRowWithIcon } from '../../Layouts/View/SectionView';
 import { formatNumberForUI } from '../../../Utils/functionTools';
-import ScaleAnimationView from '../../Layouts/View/ScaleAnimationView';
+import ScaleAnimationView from '../Animation/ScaleAnimationView';
 
 export type ProductCardProps = {
     item: GetProduct;
