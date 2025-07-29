@@ -10,7 +10,7 @@ import LoadingView from "../../Layouts/View/LoadingView";
 import { sliceString } from "../../../Utils/functionTools";
 import { useEffect } from "react";
 import BackgroundThemeView from "../../Layouts/View/BackgroundThemeView";
-import ScaleAnimationView from "../../Layouts/View/ScaleAnimationView";
+import ScaleAnimationView from "../Animation/ScaleAnimationView";
 // import BackgroundThemeView from "../View/BackgroundThemeView";
 
 

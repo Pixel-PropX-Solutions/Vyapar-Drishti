@@ -10,7 +10,7 @@ import FeatherIcon from '../../Icon/FeatherIcon';
 import { useAppStorage } from '../../../Contexts/AppStorageProvider';
 import LoadingView from '../../Layouts/View/LoadingView';
 import { formatNumberForUI, sliceString } from '../../../Utils/functionTools';
-import ScaleAnimationView from '../../Layouts/View/ScaleAnimationView';
+import ScaleAnimationView from '../Animation/ScaleAnimationView';
 
 export type BillCardProps = {
     createOn: string,

@@ -6,7 +6,7 @@ import TextTheme from "../../Components/Ui/Text/TextTheme";
 import { useCallback, useState } from "react";
 import FeatherIcon from "../../Components/Icon/FeatherIcon";
 import BackgroundThemeView from "../../Components/Layouts/View/BackgroundThemeView";
-import ScaleAnimationView from "../../Components/Layouts/View/ScaleAnimationView";
+import ScaleAnimationView from "../../Components/Ui/Animation/ScaleAnimationView";
 import { useFocusEffect } from "@react-navigation/native";
 
 export function Header() {

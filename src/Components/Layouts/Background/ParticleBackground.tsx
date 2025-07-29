@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Dimensions, View } from 'react-native';
+import { Dimensions, View, ViewStyle } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -31,7 +31,7 @@ const softColors = [
 ];
 
 
-export default function ParticleBackground() {
+export default function ParticleBackground({style}: {style?: ViewStyle}) {
 
   const circleSize = useRef(Array.from({length: 10}, _ => Math.floor(Math.random() * 50 + 100))).current;
 
@@ -75,7 +75,7 @@ export default function ParticleBackground() {
 
   return (
     <View
-      style={{ position: 'absolute', minWidth: width, minHeight: height}}
+      style={{...style, position: 'absolute', minWidth: width, minHeight: height}}
     >
       {circles.map((circle, index) => (
         <View

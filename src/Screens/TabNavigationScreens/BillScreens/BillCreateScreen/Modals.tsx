@@ -24,7 +24,7 @@ import ShowWhen from "../../../../Components/Other/ShowWhen";
 import { ProductLoadingCard } from "../../../../Components/Ui/Card/ProductCard";
 import CreateProductModal from "../../../../Components/Modal/Product/CreateProductModal";
 import { CustomerLoadingView } from "../../../../Components/Ui/Card/CustomerCard";
-import ScaleAnimationView from "../../../../Components/Layouts/View/ScaleAnimationView";
+import ScaleAnimationView from "../../../../Components/Ui/Animation/ScaleAnimationView";
 import { SectionRowWithIcon } from "../../../../Components/Layouts/View/SectionView";
 import { setCustomers } from "../../../../Store/Reducers/customerReducer";
 
