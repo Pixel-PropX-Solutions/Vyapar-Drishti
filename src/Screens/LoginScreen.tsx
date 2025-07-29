@@ -63,6 +63,7 @@ export default function LoginScreen(): React.JSX.Element {
                     onChangeText={setUsername}
                     autoCapitalize="none"
                     useTrim={true}
+                    keyboardType='email-address'
                 />
 
                 <View>

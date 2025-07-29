@@ -33,7 +33,7 @@ export function Header(): React.JSX.Element {
         <View style={{ paddingInline: 20 }} >
             <EntityListingHeader
                 title="Bills"
-                onPressNotification={() => { navigator.navigate('notification-screen') }}
+                onPressNotification={() => { navigator.navigate('notification-screen'); }}
             />
 
             <FilterModal visible={isFilterModalVisible} setVisible={setFilterModalVisible} />
@@ -43,8 +43,6 @@ export function Header(): React.JSX.Element {
 
 export function BillTypeFilter(): React.JSX.Element {
 
-    const dispatch = useAppDispatch();
-    const {company} = useCompanyStore()
 
     const { primaryColor, primaryBackgroundColor } = useTheme();
     const { filters, handleFilter } = useBillContext();
@@ -54,9 +52,9 @@ export function BillTypeFilter(): React.JSX.Element {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
 
                 {
-                    ['All', 'Sales', 'Purchase'].map(type => (
+                    ['Invoices', 'Sales', 'Purchase'].map(type => (
                         <AnimateButton key={type}
-                            onPress={() => { handleFilter('billType', type as 'All' | 'Sales' | 'Purchase') }}
+                            onPress={() => { handleFilter('billType', type as 'Invoices' | 'Sales' | 'Purchase' | 'Transactions'); }}
 
                             bubbleColor={type === filters.billType ? primaryBackgroundColor : primaryColor}
 
@@ -69,7 +67,7 @@ export function BillTypeFilter(): React.JSX.Element {
                                 isPrimary={type === filters.billType}
                                 useInvertTheme={type === filters.billType}
                                 style={{ fontSize: 12, fontWeight: 900 }}
-                            >{type}</TextTheme>
+                            >{type === 'Invoices' ? 'All' : type}</TextTheme>
                         </AnimateButton>
                     ))
                 }
@@ -131,7 +129,7 @@ export function BillListing() {
     const { company } = useCompanyStore();
     const { user } = useUserStore();
     const { invoices, isInvoiceFeaching, pageMeta } = useInvoiceStore();
-    const {filters} = useBillContext()
+    const { filters } = useBillContext();
     const currentCompnayDetails = user?.company.find((c: any) => c._id === user?.user_settings?.current_company_id);
     const gst_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_gst;
 
@@ -143,13 +141,13 @@ export function BillListing() {
     function handleInvoiceFetching() {
         if (isInvoiceFeaching) { return; }
         if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
-        dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1 }));
+        dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1, type: filters.billType }));
     }
 
     function handleRefresh() {
         if (refreshing) { return; }
         setRefreshing(true);
-        dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1 }))
+        dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1, type: filters.billType }))
             .finally(() => setRefreshing(false));
     }
 
@@ -179,11 +177,11 @@ export function BillListing() {
             setIsGenerating(false);
         }
     }
-    
+
     useFocusEffect(
         useCallback(() => {
-            dispatch(viewAllInvoices({ 
-                company_id: company?._id ?? '', pageNumber: 1, type: filters.billType, sortOrder: filters.useAscOrder ? '1' : '-1',  
+            dispatch(viewAllInvoices({
+                company_id: company?._id ?? '', pageNumber: 1, type: filters.billType, sortOrder: filters.useAscOrder ? '1' : '-1',
                 // start_date: ''
             }));
         }, [filters])

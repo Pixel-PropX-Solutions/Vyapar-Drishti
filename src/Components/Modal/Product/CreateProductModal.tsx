@@ -33,9 +33,10 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
     const { user } = useUserStore();
     const { loading, pageMeta } = useProductStore();
     const currentCompanyDetails = user?.company?.find((c: any) => c._id === user?.user_settings?.current_company_id);
+    const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
     const [basicInfoExpanded, setBasicInfoExpanded] = useState<boolean>(true);
     const [additionalInfoExpanded, setAdditionalInfoExpanded] = useState<boolean>(false);
-    const [gstInfoExpanded, setGstInfoExpanded] = useState<boolean>(false);
+    const [gstInfoExpanded, setGstInfoExpanded] = useState<boolean>(gst_enable ? true : false);
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
     const [isUnitModalVisible, setUnitModalVisible] = useState<boolean>(false);
     const [isTaxabilityModalVisible, setTaxabilityModalVisible] = useState<boolean>(false);
@@ -98,6 +99,10 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
             errors.unit = 'Unit is required';
         }
 
+        if (gst_enable && !data.gst_hsn_code.trim()) {
+            errors.gst_hsn_code = 'HSN/SAC code is required';
+        }
+
         if (data.opening_balance < 0) {
             errors.opening_balance = 'Opening balance cannot be negative';
         }
@@ -116,14 +121,15 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
 
         setValidationErrors(errors);
         return Object.keys(errors).length === 0;
-    }, [data]);
+    }, [data, gst_enable]);
 
     async function handleCreate() {
         if (!validateForm()) {
+            const firstError = Object.keys(validationErrors)[0];
             return setAlert({
                 type: 'error',
                 id: 'create-product-modal',
-                message: 'Please fix the validation errors before creating the product.',
+                message: validationErrors[firstError] || 'Please fix the validation errors before creating the product.',
             });
         }
 
@@ -172,7 +178,32 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
         <BottomModal
             alertId="create-product-modal"
             visible={visible}
-            setVisible={setVisible}
+            setVisible={() => {
+                setVisible(false);
+                setData({
+                    stock_item_name: '',
+                    company_id: '',
+                    unit: '',
+                    unit_id: '',
+                    is_deleted: false,
+                    alias_name: '',
+                    category: '',
+                    category_id: '',
+                    group: '',
+                    group_id: '',
+                    image: '',
+                    description: '',
+                    opening_balance: 0,
+                    opening_rate: 0,
+                    opening_value: 0,
+                    gst_nature_of_goods: '',
+                    gst_hsn_code: '',
+                    gst_taxability: '',
+                    gst_percentage: '',
+                    low_stock_alert: 0,
+                });
+                setValidationErrors({});
+            }}
             style={{ paddingHorizontal: 20, maxHeight: '100%', minHeight: additionalInfoExpanded ? '80%' : '60%' }}
             actionButtons={[
                 {
@@ -222,11 +253,11 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                         error={validationErrors.stock_item_name}
                     />
 
-                    <MeasurementUnitsOpation label='Select Unit *' onSelect={unit => {
-                        if(!unit?.id) return;
+                    <MeasurementUnitsOpation label="Select Unit *" error={validationErrors.unit} onSelect={unit => {
+                        if (!unit?.id) { return; }
 
-                        handleChange('unit', unit?.symbol)
-                        handleChange('unit_id', unit?.id)
+                        handleChange('unit', unit?.symbol);
+                        handleChange('unit_id', unit?.id);
                     }} />
 
                 </CollapsabeMenu>
@@ -270,62 +301,63 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                         keyboardType="number-pad"
                         handleChange={handleChange}
                         info="Set a threshold for low stock alert. Default is 10."
-                        
-                    /> 
 
-                    {/* GST Information */}
-                    {currentCompanyDetails?.company_settings?.features?.enable_gst && (<View style={{
-                        borderRadius: 30,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginBottom: 12,
-                        marginLeft: 8,
-                    }}>
-                        <CollapsabeMenu
-                            expanded={gstInfoExpanded}
-                            setExpanded={setGstInfoExpanded}
-                            header="GST Information"
-                        >
-                            <View style={{ marginTop: 10 }}>
-                                <InputField
-                                    icon={<FeatherIcon name="hash" size={20} color={primaryColor} />}
-                                    placeholder="HSN/SAC Code"
-                                    value={data.gst_hsn_code}
-                                    field="gst_hsn_code"
-                                    handleChange={handleChange}
+                    />
+
+
+                </CollapsabeMenu>
+                {/* GST Information */}
+                {gst_enable && (<View style={{
+                    borderRadius: 30,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginBottom: 12,
+                    marginLeft: 8,
+                }}>
+                    <CollapsabeMenu
+                        expanded={gstInfoExpanded}
+                        setExpanded={setGstInfoExpanded}
+                        header="GST Information"
+                    >
+                        <View style={{ marginTop: 10 }}>
+                            <InputField
+                                icon={<FeatherIcon name="hash" size={20} color={primaryColor} />}
+                                placeholder="HSN/SAC Code"
+                                value={data.gst_hsn_code}
+                                field="gst_hsn_code"
+                                handleChange={handleChange}
+                            />
+
+                            {data.gst_hsn_code && <>
+                                <SelectField
+                                    icon={<FeatherIcon name="shield" size={20} color={primaryColor} />}
+                                    placeholder="Nature of Goods/Services"
+                                    value={goodsNatureOptions.find(option => option.value === data.gst_nature_of_goods)?.label || ''}
+                                    onPress={() => setGoodsNatureModalVisible(true)}
                                 />
 
-                                {data.gst_hsn_code && <>
-                                    <SelectField
-                                        icon={<FeatherIcon name="shield" size={20} color={primaryColor} />}
-                                        placeholder="Nature of Goods/Services"
-                                        value={goodsNatureOptions.find(option => option.value === data.gst_nature_of_goods)?.label || ''}
-                                        onPress={() => setGoodsNatureModalVisible(true)}
-                                    />
+                                <SelectField
+                                    icon={<FeatherIcon name="percent" size={20} color={primaryColor} />}
+                                    placeholder="GST Taxability"
+                                    value={taxabilityOptions.find(option => option.value === data.gst_taxability)?.label || ''}
+                                    onPress={() => setTaxabilityModalVisible(true)}
+                                />
 
-                                    <SelectField
-                                        icon={<FeatherIcon name="percent" size={20} color={primaryColor} />}
-                                        placeholder="GST Taxability"
-                                        value={taxabilityOptions.find(option => option.value === data.gst_taxability)?.label || ''}
-                                        onPress={() => setTaxabilityModalVisible(true)}
-                                    />
-
-                                    {data.gst_taxability === 'taxable' && (<InputField
-                                        icon={<FeatherIcon name="percent" size={20} color={primaryColor} />}
-                                        placeholder="GST Percentage"
-                                        value={data.gst_percentage}
-                                        field="gst_percentage"
-                                        keyboardType="numeric"
-                                        handleChange={handleChange}
-                                    />)}
-                                </>
-                                }
-                            </View>
-                        </CollapsabeMenu>
-                    </View>)}
-                </CollapsabeMenu>
+                                {data.gst_taxability === 'taxable' && (<InputField
+                                    icon={<FeatherIcon name="percent" size={20} color={primaryColor} />}
+                                    placeholder="GST Percentage"
+                                    value={data.gst_percentage}
+                                    field="gst_percentage"
+                                    keyboardType="numeric"
+                                    handleChange={handleChange}
+                                />)}
+                            </>
+                            }
+                        </View>
+                    </CollapsabeMenu>
+                </View>)}
             </ScrollView>
-            
+
 
             {/* Taxability Selection Modal */}
             <BottomModal

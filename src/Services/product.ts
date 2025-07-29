@@ -68,10 +68,10 @@ export const viewAllProducts = createAsyncThunk(
     {
       company_id,
       pageNumber,
-      limit = 10,
+      limit = 1000,
       searchQuery = '',
       category = 'All',
-      sortField = 'reated_at',
+      sortField = 'created_at',
       sortOrder = 'asc',
       // is_deleted,
     }: ViewAllProductsType,
@@ -89,6 +89,15 @@ export const viewAllProducts = createAsyncThunk(
     }
   } | any> => {
     try {
+      console.log('viewAllProducts params', {
+        company_id,
+        pageNumber,
+        limit,
+        searchQuery,
+        category,
+        sortField,
+        sortOrder,
+      });
       const response = await userApi.get(
         `/product/view/all/product?company_id=${company_id}&search=${searchQuery}${category === 'All' ? '' : '&category=' + category}&page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder === 'asc' ? '1' : '-1'
         }`

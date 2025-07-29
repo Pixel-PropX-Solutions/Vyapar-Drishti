@@ -67,12 +67,13 @@ export function ProductListing(): React.JSX.Element {
 
     const dispatch = useAppDispatch();
     const { company } = useCompanyStore();
-    const { isProductsFetching, productsData, pageMeta } = useProductStore();
+    const { isProductsFetching, productsData, productsPageMeta } = useProductStore();
+    console.log('productsData', productsPageMeta);
 
     function handleProductFetching() {
-        if (isProductsFetching) { return; }
-        if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
-        dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1 }));
+        // if (isProductsFetching) { return; }
+        if (productsPageMeta.total <= productsPageMeta.page * productsPageMeta.limit) { return; }
+        dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: productsPageMeta.page + 1 }));
     }
 
     useFocusEffect(
@@ -101,7 +102,7 @@ export function ProductListing(): React.JSX.Element {
                 <ShowWhen when={isProductsFetching}>
                     {
                         Array.from({
-                            length: Math.min(2, pageMeta.total - (productsData?.length ?? 0)) + 1,
+                            length: Math.min(2, productsPageMeta.total - (productsData?.length ?? 0)) + 1,
                         }, (_, i) => i
                         ).map(item => (
                             <ProductLoadingCard key={item} />
@@ -116,7 +117,7 @@ export function ProductListing(): React.JSX.Element {
                 let totalHeight = contentSize.height;
                 let height = layoutMeasurement.height;
 
-                if (pageMeta.total === productsData?.length) { return; }
+                if (productsPageMeta.total === productsData?.length) { return; }
 
                 if (totalHeight - height < contentOffsetY + 400) {
                     handleProductFetching();

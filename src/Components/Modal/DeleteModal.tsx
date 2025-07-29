@@ -6,6 +6,8 @@ import NoralTextInput from '../Ui/TextInput/NoralTextInput';
 import MaterialIcon from '../Icon/MaterialIcon';
 import { useAlert } from '../Ui/Alert/AlertProvider';
 import FeatherIcon from '../Icon/FeatherIcon';
+import TextTheme from '../Ui/Text/TextTheme';
+import { useTheme } from '../../Contexts/ThemeProvider';
 
 
 type Props = {
@@ -19,6 +21,7 @@ type Props = {
 export default function DeleteModal({ visible, setVisible, message, passkey, handleDelete }: Props): React.JSX.Element {
 
     const [text, setText] = useState<string>('');
+    const { primaryColor } = useTheme();
     const { setAlert } = useAlert();
 
     function handleOnDelete() {
@@ -43,10 +46,10 @@ export default function DeleteModal({ visible, setVisible, message, passkey, han
             }]}
         >
             <Text style={{ color: 'rgb(250,10,50)', fontSize: 20, fontWeight: 900 }} >Delete Warning</Text>
-            <Text style={{ fontWeight: 700, fontSize: 14 }} >{message}</Text>
+            <TextTheme style={{ fontWeight: 700, fontSize: 14 }} >{message}</TextTheme>
 
 
-            <View style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, gap: 12 }} >
+            <View style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, gap: 12, borderColor: primaryColor }} >
                 <FeatherIcon name="key" size={20} />
 
                 <NoralTextInput
@@ -55,9 +58,9 @@ export default function DeleteModal({ visible, setVisible, message, passkey, han
                     onChangeText={setText}
                 />
             </View>
-            <Text style={{ fontWeight: 700, fontSize: 14 }} >
+            <TextTheme style={{ fontWeight: 700, fontSize: 14 }} >
                 {`Type "${passkey}" for delete`}
-            </Text>
+            </TextTheme>
 
             <View style={{ minHeight: 40 }} />
         </BottomModal>
