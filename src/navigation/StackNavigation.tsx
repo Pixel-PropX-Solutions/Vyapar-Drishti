@@ -112,7 +112,7 @@ export default function StackNavigation(): React.JSX.Element {
                 />
 
                 <Stack.Screen name="landing-screen"
-                    options={{ animation: 'scale_from_center' }}
+                    options={{ animation: 'fade' }}
                     component={withSafeView(LandingScreen)}
                 />
 
