@@ -65,7 +65,7 @@ export function SectionRow({isPrimary=false, backgroundColor, onPress, children,
             bubbleScale={30}
         >
             <ShowWhen when={label !== ''}>
-                <TextTheme isPrimary={isLabelPrimary} fontWeight={900}>{label}</TextTheme>
+                <TextTheme isPrimary={isLabelPrimary} fontSize={16} fontWeight={900}>{label}</TextTheme>
             </ShowWhen>
             <View style={[{flexDirection: 'row', alignItems: 'center'}, style]} >
                 {children}
@@ -144,8 +144,8 @@ export function SectionRowWithIcon({isPrimary=false, onPress, label, text, icon,
                 </View>
 
                 <View style={{flex: 1}} >
-                    <TextTheme color={color} numberOfLines={1} fontSize={14}>{label}</TextTheme>
-                    <TextTheme color={color} isPrimary={false} fontSize={12} numberOfLines={2}>{text}</TextTheme>
+                    <TextTheme color={color} numberOfLines={1} fontSize={14} fontWeight={800} >{label}</TextTheme>
+                    <TextTheme color={color} isPrimary={false} fontSize={12} numberOfLines={2} fontWeight={700}>{text}</TextTheme>
                 </View>
             </View>
         

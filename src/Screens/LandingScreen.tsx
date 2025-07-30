@@ -74,14 +74,12 @@ export default function LandingScreen(): React.JSX.Element {
                     <NormalButton
                         isPrimary={true}
                         text="Get Free Account"
-                        textStyle={{ fontWeight: 900, fontSize: 14 }}
                         onPress={() => navigator.navigate('signup-screen')}
                         />
 
                     <NormalButton
                         isPrimary={false}
                         text="Already Have Account"
-                        textStyle={{ fontWeight: 900, fontSize: 14 }}
                         onPress={() => navigator.navigate('login-screen')}
                     />
                 </View>  

@@ -254,7 +254,6 @@ export function AmountBox() {
                         isPrimary={true}
                         color="white"
                         backgroundColor="rgb(50,200,150)"
-                        textStyle={{ fontWeight: 900 }}
                         // isLoading={isCreating}
                         // onLoadingText="Creating..."
                         onPress={() => {}}

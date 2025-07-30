@@ -126,7 +126,6 @@ export default function ForgotPasswordScreen(): React.JSX.Element {
                             // isLoading={loading}
                             onLoadingText="Wait..."
                             text="Send Link"
-                            textStyle={{ fontWeight: 900, fontSize: 16 }}
                             onPress={() => {
                                 Keyboard.dismiss()
                                 

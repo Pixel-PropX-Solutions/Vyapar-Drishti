@@ -86,7 +86,6 @@ export default function LoginScreen(): React.JSX.Element {
                         isLoading={loading}
                         onLoadingText="Wait..."
                         text="Login"
-                        textStyle={{ fontWeight: 900, fontSize: 16 }}
                         onPress={handleLogin}
                     />
 

@@ -178,7 +178,7 @@ export function InfoSection() {
             </SectionRow>
 
             <SectionRow label="Discription" isLabelPrimary={true} gap={4} style={{ justifyContent: 'space-between' }} >
-                <TextTheme isPrimary={false} fontSize={12} fontWeight={900} >
+                <TextTheme isPrimary={false} fontWeight={900} >
                     {loading ? 'fetching..' : product?.description ?? 'Not Set'}
                 </TextTheme>
             </SectionRow>

@@ -122,7 +122,6 @@ export default function SignUpScreen(): React.JSX.Element {
                 <View style={{ display: 'flex' }} >
                     <NormalButton
                         text="Sign Up"
-                        textStyle={{ fontWeight: 900, fontSize: 16 }}
                         onPress={handleSignUp}
                         isLoading={loading}
                         onLoadingText="Wait..."

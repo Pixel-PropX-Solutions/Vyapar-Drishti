@@ -187,7 +187,6 @@ export default function BillInfoScreen(): React.JSX.Element {
                             color="white"
                             backgroundColor="rgb(50,150,200)"
                             icon={<FeatherIcon color="white" name="share-2" size={16} />}
-                            textStyle={{ fontSize: 16, fontWeight: 900 }}
                             onPress={() => handleInvoice(invoiceData, handleShare)}
                         />
                     </View>
@@ -198,7 +197,6 @@ export default function BillInfoScreen(): React.JSX.Element {
                             color="white"
                             backgroundColor="rgb(50,200,150)"
                             icon={<FeatherIcon color="white" name="printer" size={16} />}
-                            textStyle={{ fontSize: 16, fontWeight: 900 }}
                             onPress={() => { handleInvoice(invoiceData, () => { setPDFModalVisible(true); }); }}
                         />
                     </View>

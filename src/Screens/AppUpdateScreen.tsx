@@ -59,7 +59,6 @@ export default function AppUpdateScreen(): React.JSX.Element {
                                     isLoading={isVerifying}
                                     isPrimary={false}                  
                                     text="Not Now" 
-                                    textStyle={{fontWeight: 900, fontSize: 14}}
                                     onPress={() => { navigate() }}
                                 />
                             </View> 
@@ -68,7 +67,6 @@ export default function AppUpdateScreen(): React.JSX.Element {
                         <View style={{flex: 1}} >
                             <NormalButton            
                                 text="Update" 
-                                textStyle={{fontWeight: 900, fontSize: 14}}
                                 onPress={() => {
                                     Linking.openURL(BASE_APP_URL);
                                 }}

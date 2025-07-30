@@ -3,22 +3,24 @@ import AnimateButton from "./AnimateButton"
 import { useTheme } from "../../../Contexts/ThemeProvider"
 import React, { useEffect, useRef } from "react"
 import ShowWhen from "../../Other/ShowWhen"
+import TextTheme from "../Text/TextTheme"
 
 type Props = {
     text: string,
     isPrimary?: boolean,
     onPress?: () => void,
-    textStyle?: TextStyle,
     color?: string,
     backgroundColor?: string,
     height?: number,
     icon?: React.ReactNode,
     spinnerWeight?: number,
     isLoading?: boolean,
-    onLoadingText?: string
+    onLoadingText?: string,
+    textSize?: number,
+    textWeight?: 900 | 800 | 700| 600 | 500 | 400 | 300 | 200 
 }
 
-export default function NormalButton({text, isPrimary=true, onPress, color, backgroundColor, textStyle, height=44, icon, spinnerWeight=6, isLoading=false, onLoadingText='Wait'}: Props){
+export default function NormalButton({text, isPrimary=true, onPress, color, backgroundColor, height=44, icon, spinnerWeight=6, isLoading=false, onLoadingText='Wait', textSize=14, textWeight=700}: Props){
 
     const {primaryBackgroundColor, primaryColor} = useTheme();
 
@@ -65,9 +67,13 @@ export default function NormalButton({text, isPrimary=true, onPress, color, back
                 }} />
             </ShowWhen>
 
-            <Text style={[textStyle, { color: isPrimary ? color : backgroundColor }]}>
+            <TextTheme 
+                color={isPrimary ? color : backgroundColor} 
+                fontSize={textSize}
+                fontWeight={textWeight}
+            >
                 {isLoading ? onLoadingText : text}
-            </Text>
+            </TextTheme>
         </AnimateButton>
     )   
 }

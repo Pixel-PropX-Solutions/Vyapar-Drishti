@@ -241,7 +241,6 @@ export default function CompanyScreen(): React.JSX.Element {
                         backgroundColor="rgb(250,50,80)"
                         color="white"
                         text="Remove Company"
-                        textStyle={{ fontWeight: 900 }}
                         onPress={() => setDeleteModalVisible(true)}
                     />
                 </SectionView>

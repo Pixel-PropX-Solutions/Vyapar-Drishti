@@ -25,7 +25,7 @@ type Props = TextProps & {
     fontSize?: number
 }
 
-export default function TextTheme({style, children, numberOfLines, color = '', isPrimary = true, useInvertTheme=false, fontWeight='regular', fontSize=12}: Props): React.JSX.Element {
+export default function TextTheme({style, children, numberOfLines, color = '', isPrimary = true, useInvertTheme=false, fontWeight='medium', fontSize=12}: Props): React.JSX.Element {
 
     let {primaryColor, secondaryColor, primaryBackgroundColor, secondaryBackgroundColor} = useTheme();
 
