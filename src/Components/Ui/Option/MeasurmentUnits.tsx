@@ -39,7 +39,7 @@ export default function MeasurementUnitsOpation({ onSelect, label, style, reande
         >
             <ShowWhen when={!reanderCustomButton} otherwise={reanderCustomButton ? reanderCustomButton(selected) : null} >
                 <FeatherIcon name="layers" size={20} />
-                <TextTheme style={{ flex: 1 }} >{selected?.value ?? label ?? 'Select Unit'}</TextTheme>
+                <TextTheme style={{ flex: 1 }}>{selected?.value ?? label ?? 'Select Unit'}</TextTheme>
                 <FeatherIcon name="chevron-right" size={20} />
             </ShowWhen>
 
@@ -65,14 +65,14 @@ function UnitModal({ visible, setVisible, selected, setSelected }: UnitModalProp
 
             isItemSelected={!!selected?.id}
             SelectedItemContent={<View>
-                <TextTheme style={{ fontWeight: 900, fontSize: 14 }} >{selected?.unit_name}</TextTheme>
-                <TextTheme isPrimary={false} style={{ fontWeight: 900, fontSize: 14 }} >{selected?.symbol}</TextTheme>
+                <TextTheme fontWeight={900} fontSize={14}>{selected?.unit_name}</TextTheme>
+                <TextTheme isPrimary={false} fontWeight={900} fontSize={14}>{selected?.symbol}</TextTheme>
             </View>}
 
             renderItemStyle={{ justifyContent: 'space-between' }}
             renderItemContent={item => (<>
-                <TextTheme style={{ fontWeight: 900, fontSize: 14 }} >{item?.unit_name}</TextTheme>
-                <TextTheme isPrimary={false} style={{ fontWeight: 900, fontSize: 14 }} >{item?.symbol}</TextTheme>
+                <TextTheme fontWeight={900} fontSize={14}>{item?.unit_name}</TextTheme>
+                <TextTheme isPrimary={false} fontWeight={900} fontSize={14}>{item?.symbol}</TextTheme>
             </>)}
 
             filter={(item, val) => !!(

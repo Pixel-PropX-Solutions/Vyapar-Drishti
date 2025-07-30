@@ -56,7 +56,7 @@ export function Header(): React.JSX.Element {
                             <LoadingView height={12} width={80} />
                         </>}
                     >
-                        <TextTheme numberOfLines={1} fontSize={16} fontWeight='semibold' >
+                        <TextTheme numberOfLines={1} fontSize={16} fontWeight={600} >
                             {company?.name}
                         </TextTheme>
                         <TextTheme numberOfLines={1} isPrimary={false}>
@@ -142,7 +142,7 @@ export function QuickAccessSection(): React.JSX.Element {
 
     return (
         <View style={{ gap: 12 }} >
-            <TextTheme fontSize={16} fontWeight='semibold' >Quick Access</TextTheme>
+            <TextTheme fontSize={16} fontWeight={600} >Quick Access</TextTheme>
             <View style={{ gap: 12 }} >
                 <View style={{ flexDirection: 'row', gap: 12 }}>
                     <QuickAccessBox

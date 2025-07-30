@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { View, ScrollView, StyleSheet, Text } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import TextTheme from '../Ui/Text/TextTheme';
 import BottomModal from '../Modal/BottomModal';
 import { useCallback, useEffect, useState } from 'react';
@@ -250,11 +250,11 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                 borderColor: isActive ? primaryColor : '#e0e0e0',
 
             }]}>
-                <Text style={[styles.sectionButtonText, {
+                <TextTheme style={[styles.sectionButtonText, {
                     color: isActive ? 'white' : 'rgb(196, 196, 196)',
                 }]}>
                     {title}
-                </Text>
+                </TextTheme>
                 <View style={styles.progressBar}>
                     <View style={[styles.progressFill, {
                         width: `${progress}%`,

@@ -471,24 +471,24 @@ export function AmountBox(): React.JSX.Element {
 
                 <SectionRow style={{ justifyContent: 'space-between' }} >
                     <View>
-                        <TextTheme style={{ fontSize: 12, fontWeight: 900 }} >
+                        <TextTheme fontSize={12} fontWeight={900}>
                             Total Bill
                         </TextTheme>
 
-                        <TextTheme style={{ fontWeight: 900, fontSize: 20 }} >
+                        <TextTheme fontWeight={900} fontSize={20}>
                             {formatNumberForUI(totalValue, 10)} {currency}
                         </TextTheme>
                     </View>
 
                     <View style={{ alignItems: 'flex-end' }} >
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme style={{ fontWeight: 900, fontSize: 20 }} >
+                            <TextTheme fontWeight={900} fontSize={20}>
                                 {products.length}
                             </TextTheme>
                             <FeatherIcon name="package" size={20} />
                         </View>
 
-                        <TextTheme style={{ fontSize: 12, fontWeight: 900 }} >
+                        <TextTheme fontSize={12} fontWeight={900}>
                             Total Items
                         </TextTheme>
                     </View>

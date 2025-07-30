@@ -41,22 +41,19 @@ export const SelectField = ({
                 }}
             >
                 {icon}
-                <TextTheme style={{
-                    fontSize: 16,
-                    fontWeight: '500',
+                <TextTheme fontSize={16} fontWeight={500} color={value ? undefined : '#999'} style={{
                     padding: 5,
                     flex: 1,
-                    marginLeft: 12,
-                    color: value ? undefined : '#999',
+                    marginLeft: 12
                 }}>
                     {value || placeholder}
                 </TextTheme>
                 <FeatherIcon name="chevron-down" size={20} color={'black'} />
             </AnimateButton>
             {error && (
-                <Text style={{ color: '#ff4444', fontSize: 12, marginTop: 4, marginLeft: 4 }}>
+                <TextTheme color='#ff4444' style={{ marginTop: 4, marginLeft: 4 }}>
                     {error}
-                </Text>
+                </TextTheme>
             )}
         </View>
     )

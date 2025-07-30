@@ -172,16 +172,16 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
             ]}
 
             SelectedItemContent={<View>
-                <TextTheme color='white' >{customer?.name}</TextTheme>
-                <TextTheme color='white' isPrimary={false} >{customer?.group}</TextTheme>
+                <TextTheme color='white'>{customer?.name}</TextTheme>
+                <TextTheme color='white' isPrimary={false}>{customer?.group}</TextTheme>
             </View>}
 
             renderItemContent={item => (
                 <View style={{ flex: 1 }} >
                     <TextTheme>{item.ledger_name}</TextTheme>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
-                        <TextTheme isPrimary={false} >{item.phone?.code} {item.phone?.number}</TextTheme>
-                        <TextTheme isPrimary={false} >{item.parent}</TextTheme>
+                        <TextTheme isPrimary={false}>{item.phone?.code} {item.phone?.number}</TextTheme>
+                        <TextTheme isPrimary={false}>{item.parent}</TextTheme>
                     </View>
                 </View>
             )}

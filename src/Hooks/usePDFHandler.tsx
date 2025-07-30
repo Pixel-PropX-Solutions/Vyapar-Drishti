@@ -184,7 +184,7 @@ export default function usePDFHandler(): RetrunType {
                     }
                 >
                     <View style={{ alignItems: 'center', marginBottom: 14 }}>
-                        <TextTheme style={{ fontSize: 20, fontWeight: 'bold' }}>
+                        <TextTheme fontSize={20} fontWeight={'bold'}>
                             View or share Bill
                         </TextTheme>
 
@@ -208,7 +208,7 @@ export default function usePDFHandler(): RetrunType {
                                 <FeatherIcon name="arrow-left" size={20} />
                             </AnimateButton>
 
-                            <TextTheme style={{ textAlign: 'center', fontSize: 12, marginTop: 4 }}>
+                            <TextTheme style={{ textAlign: 'center', marginTop: 4 }}>
                                 Page {pageNo + 1} of {data.html.length}
                             </TextTheme>
 

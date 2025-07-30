@@ -68,10 +68,10 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                                     <LoadingView width={80} height={8} />
                                 </>}
                             >
-                                <TextTheme style={{ fontWeight: 900, fontSize: 16 }}>
+                                <TextTheme fontWeight={900} fontSize={16}>
                                     {customer?.ledger_name}
                                 </TextTheme>
-                                <TextTheme isPrimary={false} style={{ fontWeight: 500, fontSize: 12 }}>
+                                <TextTheme isPrimary={false} fontWeight={500} fontSize={12}>
                                     {customer?.parent}
                                 </TextTheme>
                             </ShowWhen>
@@ -168,8 +168,8 @@ const InfoRow: React.FC<{label: string, value: string | number}> = ({label, valu
 
     return (
         <SectionRow style={alignInRow ? {justifyContent: 'space-between'} : {flexDirection: 'column', alignItems: 'flex-start'}} >
-            <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >{label}</TextTheme>
-            <TextTheme isPrimary={false} style={{ fontSize: alignInRow ? 16 : 12, fontWeight: 900 }} >
+            <TextTheme fontSize={16} fontWeight={900} >{label}</TextTheme>
+            <TextTheme isPrimary={false} fontSize={alignInRow ? 16 : 12} fontWeight={900} >
                 {value}
             </TextTheme>
         </SectionRow>

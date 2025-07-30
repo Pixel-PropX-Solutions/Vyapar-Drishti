@@ -61,7 +61,7 @@ export default function SettingScreen(): React.JSX.Element {
                         onPress={() => { }}
                     >
                         <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
-                            <TextTheme style={{ fontWeight: 900, fontSize: 16 }} >{currency}</TextTheme>
+                            <TextTheme fontWeight={900} fontSize={16} >{currency}</TextTheme>
                             <FeatherIcon name="chevron-right" size={20} />
                         </View>
                     </SectionRowWithIcon>
@@ -85,7 +85,7 @@ export default function SettingScreen(): React.JSX.Element {
                         onPress={() => { }}
                     >
                         <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
-                            <TextTheme style={{ fontWeight: 900, fontSize: 16 }} >{billPrefix}</TextTheme>
+                            <TextTheme fontWeight={900} fontSize={16} >{billPrefix}</TextTheme>
                             <FeatherIcon name="chevron-right" size={20} />
                         </View>
                     </SectionRowWithIcon>
@@ -228,18 +228,18 @@ function SetCurrencyModal({ visible, setVisible }: { visible: boolean, setVisibl
             setVisible={setVisible}
             SelectedItemContent={
                 <View>
-                    <TextTheme color="white" style={{ fontWeight: 400, fontSize: 14 }} >
+                    <TextTheme color="white" fontWeight={400} fontSize={14} >
                         {selected?.currency_name}
                     </TextTheme>
-                    <TextTheme color="white" style={{ fontWeight: 400, fontSize: 16 }} >
+                    <TextTheme color="white" fontWeight={400} fontSize={16} >
                         {selected?.currency}
                     </TextTheme>
                 </View>
             }
 
             renderItemContent={(item) => (<>
-                <TextTheme style={{ fontWeight: 900, fontSize: 16 }}>{item.country}</TextTheme>
-                <TextTheme style={{ fontWeight: 600, fontSize: 16 }}>{item.currency}</TextTheme>
+                <TextTheme fontWeight={900} fontSize={16}>{item.country}</TextTheme>
+                <TextTheme fontWeight={600} fontSize={16}>{item.currency}</TextTheme>
             </>)}
         />
     );
@@ -265,10 +265,10 @@ function SetBillPrefixModal({ visible, setVisible }: { visible: boolean, setVisi
                 },
             }]}
         >
-            <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >Set New Bill Prefix</TextTheme>
+            <TextTheme fontSize={16} fontWeight={800} >Set New Bill Prefix</TextTheme>
 
             <View style={{ marginBlock: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, width: '100%', maxWidth: 400 }} >
-                <TextTheme style={{ fontSize: 24, fontWeight: 900 }} >PREFIX:</TextTheme>
+                <TextTheme fontSize={24} fontWeight={900} >PREFIX:</TextTheme>
                 <NoralTextInput
                     value={text}
                     maxLength={4}

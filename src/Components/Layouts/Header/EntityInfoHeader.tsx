@@ -7,6 +7,7 @@ import MaterialIcon from '../../Icon/MaterialIcon';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 import navigator from '../../../Navigation/NavigationService';
 import ShowWhen from '../../Other/ShowWhen';
+import TextTheme from '../../Ui/Text/TextTheme';
 
 
 type Props = {
@@ -34,7 +35,7 @@ export default function EntityInfoHeader({ onPressEdit, onPressDelete }: Props):
                         style={{ borderRadius: 100, height: 44, paddingInline: 20, borderWidth: 2, borderColor: color, gap: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', backgroundColor: 'rgb(50,150,250)' }}
                     >
                         <FeatherIcon name="edit-3" size={20} color={'white'} />
-                        <Text style={{ fontSize: 14, fontWeight: '900', color: 'white' }}>Edit</Text>
+                        <TextTheme fontSize={14} fontWeight={900} color="white">Edit</TextTheme>
                     </AnimateButton>
                 </ShowWhen>
 

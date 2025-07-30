@@ -51,10 +51,10 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                     <View style={{padding: 10, gap: 8, paddingLeft: 14}} >
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                             <View>
-                                <TextTheme style={{fontSize: 14, fontWeight: 800}}>
+                                <TextTheme fontSize={14} fontWeight={800}>
                                     {sliceString(customerName, (status === 'pending' || type.toLowerCase() === 'sales') ? 20 : 30)}
                                 </TextTheme>
-                                <TextTheme isPrimary={isPrimary} style={{fontSize: 12, fontWeight: 800}}>{type}</TextTheme>
+                                <TextTheme isPrimary={isPrimary} fontSize={12} fontWeight={800}>{type}</TextTheme>
                             </View>
 
                             <View style={{flexDirection: 'row', gap: 8}} >
@@ -66,7 +66,7 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                                         
                                     >
                                         <FeatherIcon name={status === 'paid'? 'check-circle' : 'clock'} size={16} />
-                                        <TextTheme style={{fontSize: 14, fontWeight: 900}} >
+                                        <TextTheme fontSize={14} fontWeight={900}>
                                             {status === 'paid' ? 'Paid' : 'Pending'}
                                         </TextTheme>
                                     </BackgroundThemeView>
@@ -89,13 +89,13 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
 
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} >
                             <View>
-                                <TextTheme isPrimary={false} style={{fontSize: 10}} >{billNo}</TextTheme>
-                                <TextTheme isPrimary={false} style={{fontSize: 12}} >{formatDate(createOn)}</TextTheme>
+                                <TextTheme isPrimary={false} fontSize={10}>{billNo}</TextTheme>
+                                <TextTheme isPrimary={false} fontSize={12}>{formatDate(createOn)}</TextTheme>
                             </View>
                             
                             <View style={{alignItems: 'flex-end'}} >
-                                <TextTheme isPrimary={false} style={{fontSize: 10, fontWeight: 500}}>Total Amount</TextTheme>
-                                <TextTheme style={{fontSize: 18, fontWeight: 900}} >
+                                <TextTheme isPrimary={false} fontSize={10} fontWeight={500}>Total Amount</TextTheme>
+                                <TextTheme fontSize={18} fontWeight={900}>
                                     {formatNumberForUI(Math.abs(totalAmount))} {currency}
                                 </TextTheme>
                             </View>
@@ -104,17 +104,17 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                         <ShowWhen when={status === 'pending'} >
                             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} >
                                 <View>
-                                    <TextTheme style={{fontSize: 18, fontWeight: 900}} >
+                                    <TextTheme fontSize={18} fontWeight={900}>
                                         {formatNumberForUI(Math.abs(pendingAmount))} {currency}
                                     </TextTheme>
-                                    <TextTheme isPrimary={false} style={{fontSize: 10, fontWeight: 500}}>Due Amount</TextTheme>
+                                    <TextTheme isPrimary={false} fontSize={10} fontWeight={500}>Due Amount</TextTheme>
                                 </View>
                                 
                                 <AnimateButton 
                                     style={{flexDirection: 'row', alignItems: 'center', gap: 6, paddingInline: 12, borderRadius: 8, paddingBlock: 6, backgroundColor: 'rgb(50,120,200)'}}
                                     onPress={onPayment}      
                                 >
-                                    <TextTheme style={{fontSize: 14, fontWeight: 900}} >
+                                    <TextTheme fontSize={14} fontWeight={900}>
                                         Pay pending amount
                                     </TextTheme>
                                 </AnimateButton>

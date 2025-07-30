@@ -45,8 +45,8 @@ export default function DeleteModal({ visible, setVisible, message, passkey, han
                 icon: <MaterialIcon name="delete" size={20} color="white" />,
             }]}
         >
-            <Text style={{ color: 'rgb(250,10,50)', fontSize: 20, fontWeight: 900 }} >Delete Warning</Text>
-            <TextTheme style={{ fontWeight: 700, fontSize: 14 }} >{message}</TextTheme>
+            <TextTheme color='rgb(250,10,50)' fontSize={20} fontWeight={900} >Delete Warning</TextTheme>
+            <TextTheme fontSize={14} fontWeight={700} >{message}</TextTheme>
 
 
             <View style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, gap: 12, borderColor: primaryColor }} >
@@ -58,7 +58,7 @@ export default function DeleteModal({ visible, setVisible, message, passkey, han
                     onChangeText={setText}
                 />
             </View>
-            <TextTheme style={{ fontWeight: 700, fontSize: 14 }} >
+            <TextTheme fontSize={14} fontWeight={700} >
                 {`Type "${passkey}" for delete`}
             </TextTheme>
 

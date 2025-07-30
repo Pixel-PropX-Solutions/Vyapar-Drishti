@@ -82,7 +82,7 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
             }]}
         >
             <ScrollView showsVerticalScrollIndicator={false} >
-                <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
+                <TextTheme fontSize={16} fontWeight={800} style={{ marginBottom: 32 }}>
                     Update Customer Information
                 </TextTheme>
 
@@ -199,7 +199,7 @@ export function AddressInfoUpdateModal({ visible, setVisible }: Props): React.JS
             }]}
         >
             <ScrollView showsVerticalScrollIndicator={false} >
-                <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
+                <TextTheme fontSize={16} fontWeight={800} style={{ marginBottom: 32 }}>
                     Update Address Information
                 </TextTheme>
 
@@ -326,7 +326,7 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
             }]}
         >
             <ScrollView showsVerticalScrollIndicator={false} >
-                <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
+                <TextTheme fontSize={16} fontWeight={800} style={{ marginBottom: 32 }}>
                     Update Bank Details
                 </TextTheme>
 

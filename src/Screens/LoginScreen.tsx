@@ -49,9 +49,9 @@ export default function LoginScreen(): React.JSX.Element {
         >
             <View style={{ display: 'flex', gap: 4, alignItems: 'center', marginBottom: 16, marginTop: 40 }} >
                 <LogoImage size={100} borderRadius={50} />
-                <TextTheme style={{ fontWeight: 900, fontSize: 24 }} >Vyapar Drishti</TextTheme>
+                <TextTheme fontWeight={900} fontSize={24} >Vyapar Drishti</TextTheme>
 
-                <TextTheme style={{ fontSize: 16, fontWeight: 900, marginTop: 24 }} >
+                <TextTheme fontWeight={900} fontSize={16} style={{ marginTop: 24 }} >
                     Log in to your User Account
                 </TextTheme>
             </View>

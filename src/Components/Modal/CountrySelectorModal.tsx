@@ -36,7 +36,7 @@ export function CountrySelectorModal({ visible, setVisible, country, field = 'ma
             setVisible={setVisible}
             SelectedItemContent={
                 <View>
-                    <TextTheme color="white" style={{ fontWeight: 400, fontSize: 14 }} >
+                    <TextTheme color="white" fontSize={14} >
                         {selected?.name}
                     </TextTheme>
                 </View>

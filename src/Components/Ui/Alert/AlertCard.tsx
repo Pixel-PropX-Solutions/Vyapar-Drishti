@@ -4,6 +4,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Text } from 'react-native-gesture-handler';
 import { useEffect, useState } from 'react';
 import { useAlert } from './AlertProvider';
+import TextTheme from '../Text/TextTheme';
 
 
 type AlertIconsInfoType = {
@@ -98,14 +99,9 @@ export default function AlertCard({ duration = 5000, id }: Props): React.JSX.Ele
                     borderWidth: 0, borderColor: 'white', borderLeftWidth: 2, paddingLeft: 10, display: 'flex', justifyContent: 'center',
                     alignItems: 'center', height: '100%', flex: 1,
                 }} >
-                    <Text style={{ color: 'white', alignSelf: 'center', fontSize: 12, fontWeight: 500 }} numberOfLines={2} >
-                        {/* <Text style={{ fontWeight: 900, fontSize: 14 }}>
-                            {type[0].toUpperCase()}
-                            {type.slice(1)}
-                            {': '}
-                        </Text> */}
+                    <TextTheme color='white' style={{ alignSelf: 'center' }} numberOfLines={2} >
                         {message}
-                    </Text>
+                    </TextTheme>
                 </View>
 
                 <Animated.View style={{

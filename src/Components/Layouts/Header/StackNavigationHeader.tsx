@@ -20,7 +20,7 @@ export default function StackNavigationHeader({title}: {title: string}): React.J
                 <FeatherIcon name="chevron-left" size={22} />
             </AnimateButton>
 
-            <TextTheme style={{fontSize: 20, fontWeight: 700}}>{title}</TextTheme>
+            <TextTheme fontSize={20} fontWeight={700}>{title}</TextTheme>
         </View>
     );
 }

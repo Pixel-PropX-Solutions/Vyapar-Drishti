@@ -154,7 +154,7 @@ export function DescriptionModal({visible, setVisible}: Props) {
                 onPress: () => {setNote(text); setVisible(false)}, 
             }]}
         >
-            <TextTheme style={{fontSize: 20, fontWeight: 900}} >Add Note</TextTheme>
+            <TextTheme fontSize={20} fontWeight={900}>Add Note</TextTheme>
 
             <View style={{borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, width: '100%'}} >
                 <NoralTextInput
@@ -196,7 +196,7 @@ export function AmountModal({visible, setVisible}: Props) {
                 onPress: () => {setAmount(text); setVisible(false)}, 
             }]}
         >
-            <TextTheme style={{fontSize: 20, fontWeight: 900}} >Add Amount</TextTheme>
+            <TextTheme fontSize={20} fontWeight={900}>Add Amount</TextTheme>
 
             <View style={{borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, width: '100%', flexDirection: 'row', alignItems: 'center'}} >
                 <NoralTextInput
@@ -214,7 +214,7 @@ export function AmountModal({visible, setVisible}: Props) {
                     }}
                 />
 
-                <TextTheme style={{fontSize: 16}} >INR</TextTheme>
+                <TextTheme fontSize={16}>INR</TextTheme>
             </View>
 
             <View style={{minHeight: 60}} />

@@ -50,10 +50,10 @@ export default function EmptyListView({title = '', text = '', type}: Props) {
             }}
         >
             <FeatherIcon name="inbox" size={38} />
-            <TextTheme style={{fontWeight: '900', fontSize: 18, marginTop: 10, marginBottom: 4}}>
+            <TextTheme fontWeight={900} fontSize={18} style={{marginTop: 10, marginBottom: 4}}>
                 {type ? info[type].title : title}
             </TextTheme>
-            <TextTheme isPrimary={false} style={{fontWeight: '800', fontSize: 12, textAlign: 'center', opacity: 0.75}}>
+            <TextTheme isPrimary={false} fontWeight={800} style={{textAlign: 'center', opacity: 0.75}}>
                 {type ? info[type].text : text}
             </TextTheme>
         </Animated.View>

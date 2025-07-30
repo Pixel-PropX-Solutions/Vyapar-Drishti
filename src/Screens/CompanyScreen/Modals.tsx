@@ -64,7 +64,7 @@ export function CompanyInfoUpdateModal({ visible, setVisible }: Props): React.JS
             style={{ paddingHorizontal: 20 }}
             actionButtons={[{ title: 'Update', onPress: handleUpdate }]}
         >
-            <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
+            <TextTheme fontSize={16} fontWeight={800} style={{ marginBottom: 32 }}>
                 Update Company Info
             </TextTheme>
 
@@ -130,7 +130,7 @@ export function CompanyContactUpdateModal({ visible, setVisible }: Props): React
             style={{ paddingHorizontal: 20 }}
             actionButtons={[{ title: 'Update', onPress: handleUpdate }]}
         >
-            <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
+            <TextTheme fontSize={16} fontWeight={800} style={{ marginBottom: 32 }}>
                 Update Contact
             </TextTheme>
 
@@ -227,7 +227,7 @@ export function CompanyAddressUpdateModal({ visible, setVisible }: Props): React
             style={{ paddingHorizontal: 20 }}
             actionButtons={[{ title: 'Udpate', onPress: handleUpdate }]}
         >
-            <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
+            <TextTheme fontSize={16} fontWeight={800} style={{ marginBottom: 32 }}>
                 Update Address
             </TextTheme>
 
@@ -333,7 +333,7 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
             }]}
         >
             <ScrollView showsVerticalScrollIndicator={false} >
-                <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
+                <TextTheme fontSize={16} fontWeight={800} style={{ marginBottom: 32 }}>
                     Update Bank Details
                 </TextTheme>
 
@@ -426,7 +426,7 @@ export function TaxInfoUpdateModal({ visible, setVisible }: Props): React.JSX.El
             }]}
         >
             <ScrollView showsVerticalScrollIndicator={false} >
-                <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
+                <TextTheme fontSize={16} fontWeight={800} style={{ marginBottom: 32 }}>
                     Update Tax Information
                 </TextTheme>
 

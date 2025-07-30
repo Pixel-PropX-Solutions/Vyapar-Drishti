@@ -63,7 +63,7 @@ export default function DateSelectorModal({visible, setVisible, onClose, closeOn
 
                     <TextTheme>Select Date</TextTheme>
 
-                    <TextTheme style={{fontSize: 28, fontWeight: 900}} >
+                    <TextTheme fontSize={28} fontWeight={900} >
                         {monthNames[month]} {date}, {year}
                     </TextTheme>
 
@@ -73,7 +73,7 @@ export default function DateSelectorModal({visible, setVisible, onClose, closeOn
                         </AnimateButton>
             
                         <Pressable onPress={() => {setYearModalVisible(true)}} >
-                            <TextTheme style={{fontSize: 16, fontWeight: 900}} >{monthNames[month]}, {year}</TextTheme>
+                            <TextTheme fontSize={16} fontWeight={900} >{monthNames[month]}, {year}</TextTheme>
                         </Pressable>
                         
                         <AnimateButton style={{borderRadius: 20, padding: 4}} onPress={() => {incrementMonth(1)}}>
@@ -160,7 +160,7 @@ function DisplayCalender({date, month, year, onSelect}: DisplayCalenderProps): R
                 {
                     ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
                         <View key={day} style={{aspectRatio: 1, width: 40, borderRadius: 8, alignItems: 'center', justifyContent: 'center'}}  >
-                            <TextTheme isPrimary={false} style={{fontWeight: 900, fontSize: 14}} >{day}</TextTheme>
+                            <TextTheme isPrimary={false} fontSize={14} fontWeight={900} >{day}</TextTheme>
                         </View>
                     ))
                 }
@@ -184,7 +184,7 @@ function DisplayCalender({date, month, year, onSelect}: DisplayCalenderProps): R
                                     >
                                         <TextTheme 
                                             color={date === selected ? 'white' : ''}
-                                            style={{fontWeight: 900, fontSize: 14}} 
+                                            fontSize={14} fontWeight={900}
                                         >
                                             {date === 0 ? null : date}
                                         </TextTheme>
@@ -237,10 +237,10 @@ function YearSelectorModal({visible, setVisible, year, setYear, month, setMonth,
             }
 
             renderItemContent={item => (<>
-                <TextTheme isPrimary={item.year === year && item.month == month} style={{fontSize: 20, fontWeight: 900}} >
+                <TextTheme isPrimary={item.year === year && item.month == month} fontSize={20} fontWeight={900} >
                     {monthNames[item.month]} {date}
                 </TextTheme>
-                <TextTheme isPrimary={item.year === year && item.month == month} style={{fontSize: 20, fontWeight: 900}} >
+                <TextTheme isPrimary={item.year === year && item.month == month} fontSize={20} fontWeight={900} >
                     {item.year}
                 </TextTheme>
             </>)}

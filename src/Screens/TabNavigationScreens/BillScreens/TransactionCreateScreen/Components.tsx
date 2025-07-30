@@ -48,7 +48,7 @@ export function Header() {
                 gap: 8,
             }} >
                 <FeatherIcon name="file-text" size={14} />
-                <TextTheme style={{ fontSize: 14, fontWeight: 700 }} >{type}</TextTheme>
+                <TextTheme fontSize={14} fontWeight={700}>{type}</TextTheme>
             </View>
         </View>
     );
@@ -62,10 +62,10 @@ export function ProgressBarSection(): React.JSX.Element {
     return (
         <View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
-                <TextTheme style={{ fontSize: 12, fontWeight: '600' }} isPrimary={false}>
+                <TextTheme fontSize={12} fontWeight={600} isPrimary={false}>
                     Progress
                 </TextTheme>
-                <TextTheme style={{ fontSize: 12, fontWeight: '600' }} isPrimary={false}>
+                <TextTheme fontSize={12} fontWeight={600} isPrimary={false}>
                     {Math.round(progress * 100)}%
                 </TextTheme>
             </View>
@@ -92,10 +92,10 @@ export function TransactionNoSelector() {
             </BackgroundThemeView>
 
             <View style={{ flex: 1 }}>
-                <TextTheme style={{ fontSize: 14, fontWeight: '700', marginBottom: 2 }}>
+                <TextTheme fontSize={14} fontWeight={700} style={{ marginBottom: 2 }}>
                     Bill No
                 </TextTheme>
-                <TextTheme isPrimary={false} style={{ fontSize: 13, fontWeight: '500' }}>
+                <TextTheme isPrimary={false} fontSize={13} fontWeight={500}>
                     {transactionNo || 'Auto-generated'}
                 </TextTheme>
             </View>
@@ -135,10 +135,10 @@ export function DateSelector() {
             </BackgroundThemeView>
 
             <View style={{ flex: 1 }}>
-                <TextTheme style={{ fontSize: 14, fontWeight: '900', marginBottom: 2 }}>
+                <TextTheme fontSize={14} fontWeight={900} style={{ marginBottom: 2 }}>
                     Date
                 </TextTheme>
-                <TextTheme isPrimary={false} style={{ fontSize: 13, fontWeight: '500' }}>
+                <TextTheme isPrimary={false} fontSize={13} fontWeight={500}>
                     {createOn}
                 </TextTheme>
             </View>
@@ -214,7 +214,7 @@ export function DescriptionSection() {
                     <FeatherIcon size={16} name="align-left" />
                     <TextTheme>Add Note</TextTheme>
                 </View>
-                <TextTheme isPrimary={false} style={{fontSize: 12}} >
+                <TextTheme isPrimary={false} fontSize={12}>
                     {note || 'note ....'}
                 </TextTheme>
             </BackgroundThemeView>
@@ -239,11 +239,11 @@ export function AmountBox() {
             >
 
                 <SectionRow style={{ flexDirection: 'column' }} onPress={() => {setModalVisible(true)}} >    
-                    <TextTheme isPrimary={false} style={{ fontSize: 12, fontWeight: 900 }} >
+                    <TextTheme isPrimary={false} fontSize={12} fontWeight={900}>
                         Enter Amount
                     </TextTheme>
 
-                    <TextTheme style={{ fontWeight: 900, fontSize: 20 }} >
+                    <TextTheme fontWeight={900} fontSize={20}>
                         {formatNumberForUI(Number(amount || '0'), 10)} {'INR'}
                     </TextTheme>    
                 </SectionRow>

@@ -81,7 +81,7 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
             }]}
         >
             <ScrollView showsVerticalScrollIndicator={false} >
-                <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
+                <TextTheme fontSize={16} fontWeight={800} style={{ marginBottom: 32 }}>
                     Update Customer Information
                 </TextTheme>
 
@@ -151,8 +151,8 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
                 style={{ paddingHorizontal: 20 }}
             >
                 <View style={{ alignItems: 'center', marginBottom: 20 }}>
-                    <TextTheme style={{ fontWeight: '900', fontSize: 18 }}>Select Unit</TextTheme>
-                    <TextTheme style={{ fontSize: 14, opacity: 0.7, marginTop: 4 }}>
+                    <TextTheme fontWeight={900} fontSize={18}>Select Unit</TextTheme>
+                    <TextTheme fontSize={14} style={{ opacity: 0.7, marginTop: 4 }}>
                         Choose measurement unit for your product
                     </TextTheme>
                 </View>
@@ -188,10 +188,7 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
                                 setUnitModalVisible(false);
                             }}
                         >
-                            <TextTheme style={{
-                                fontSize: 14,
-                                color: unit.value === info.current.unit ? '#fff' : undefined,
-                            }}>
+                            <TextTheme fontSize={14} style={{ color: unit.value === info.current.unit ? '#fff' : undefined }}>
                                 {unit.label}
                             </TextTheme>
                         </AnimateButton>
@@ -227,7 +224,7 @@ export function ClassInfoUpdateModal({ visible, setVisible }: Props): React.JSX.
             }]}
         >
             <ScrollView showsVerticalScrollIndicator={false} >
-                <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
+                <TextTheme fontSize={16} fontWeight={800} style={{ marginBottom: 32 }}>
                     Update Customer Information
                 </TextTheme>
 

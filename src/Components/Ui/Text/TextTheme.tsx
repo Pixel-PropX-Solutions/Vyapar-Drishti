@@ -4,17 +4,17 @@ import { useTheme } from '../../../Contexts/ThemeProvider';
 
 
 const Fonts = {
-    'bold': "Bold",
-    'extrabold': "ExtraBold",
-    'extralight': "ExtraLight",
-    'light': 'Light',
-    'medium': "Medium",
-    'regular': 'Regilar',
-    'semibold': "SemiBold",
-    'thin': "Thin"
+    'extrabold': "ExtraBold", '900': "ExtraBold",
+    'bold': "Bold", '800': 'Bold',
+    'semibold': "SemiBold", '700': "SemiBold",
+    'medium': "Medium", '600': 'Medium',
+    'regular': 'Regular', '500': "Regular",
+    'light': 'Light', '400': 'Light',
+    'extralight': "ExtraLight", '300': "ExtraLight",
+    'thin': "Thin", '200': 'Thin'
 }
 
-type FontWeight = 'bold' | 'extrabold' | 'extralight' | 'light' | 'medium' | 'regular' | 'semibold' | 'thin'
+type FontWeight = 'bold' | 'extrabold' | 'extralight' | 'light' | 'medium' | 'regular' | 'semibold' | 'thin' | 900 | 800 | 700 | 600 | 500 | 400 | 300 | 200
 
 
 type Props = TextProps & {
@@ -40,7 +40,7 @@ export default function TextTheme({style, children, numberOfLines, color = '', i
     return (
         <Text
             numberOfLines={numberOfLines}
-            style={[style, { color, opacity: isPrimary ? 1 : 0.7, fontFamily: `Roboto-${Fonts[fontWeight]}`, fontSize}]}
+            style={[style, { color, opacity: isPrimary ? 1 : 0.7, fontFamily: `Roboto-${Fonts[fontWeight] ?? 'Regular'}`, fontSize}]}
         >
             {children}
         </Text>

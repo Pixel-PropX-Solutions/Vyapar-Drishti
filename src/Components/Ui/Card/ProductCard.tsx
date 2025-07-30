@@ -27,17 +27,17 @@ export default function ProductCard({ item, isPrimary = true, onPress }: Product
                 label={sliceString(item.stock_item_name, 30) ?? ''}
                 text={item.gst_hsn_code ?? 'hsn code not set'}
                 onPress={onPress}
-                icon={<TextTheme style={{fontSize: 16, fontWeight: 900}} >{item.stock_item_name[0].toUpperCase()}</TextTheme>}
+                icon={<TextTheme fontSize={16} fontWeight={900}>{item.stock_item_name[0].toUpperCase()}</TextTheme>}
 
             >
                 <BackgroundThemeView style={{position: 'absolute', top: -2, right: 10, paddingInline: 8, borderRadius: 8, paddingBottom: 2}} >
-                    <TextTheme isPrimary={false} style={{fontSize: 12}} >
+                    <TextTheme isPrimary={false}>
                         {item.purchase_qty - item.sales_qty} {item.unit}
                     </TextTheme>
                 </BackgroundThemeView>
 
                 <View style={{alignItems: 'flex-end'}} >
-                    <TextTheme style={{fontSize: 14}} >
+                    <TextTheme fontSize={14}>
                         {formatNumberForUI(item.sales_value, 10)} {currency}
                     </TextTheme>
                 </View>

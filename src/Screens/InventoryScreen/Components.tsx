@@ -47,7 +47,8 @@ export function ItemStatusFilter(): React.JSX.Element {
                             <TextTheme
                                 isPrimary={type === selected}
                                 useInvertTheme={type === selected}
-                                style={{ fontSize: 12, fontWeight: 900 }}
+                                fontSize={12}
+                                fontWeight={900}
                             >{type}</TextTheme>
                         </AnimateButton>
                     ))
@@ -68,7 +69,7 @@ export function ItemSortFilter(): React.JSX.Element {
     return (
         <View style={{gap: 4, width: '100%'}} >
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} >
-                <TextTheme isPrimary={false} style={{fontSize: 12, fontWeight: 900, paddingLeft: 4}} >Sort by</TextTheme>
+                <TextTheme isPrimary={false} fontSize={12} fontWeight={900} style={{paddingLeft: 4}}>Sort by</TextTheme>
 
                 <AnimateButton
                     style={{ height: 28, flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 40, paddingInline: 14 }}
@@ -78,7 +79,7 @@ export function ItemSortFilter(): React.JSX.Element {
                         name={useAscOrder ? 'arrow-up' : 'arrow-down'}
                         size={16}
                     />
-                    <TextTheme style={{ fontSize: 12 }} >{useAscOrder ? 'Asc' : 'Des'}</TextTheme>
+                    <TextTheme fontSize={12}>{useAscOrder ? 'Asc' : 'Des'}</TextTheme>
                 </AnimateButton>
             </View>
 
@@ -100,7 +101,8 @@ export function ItemSortFilter(): React.JSX.Element {
                             <TextTheme
                                 isPrimary={type === selected}
                                 useInvertTheme={type === selected}
-                                style={{ fontSize: 12, fontWeight: 900 }}
+                                fontSize={12}
+                                fontWeight={900}
                             >{type}</TextTheme>
                         </AnimateButton>
                     ))
@@ -119,8 +121,8 @@ export function SummarySection() {
         <View style={{backgroundColor: `rgba(${rgb},0.1)`, flex: 1, borderRadius: 12, position: 'relative', overflow: 'hidden'}} >
             <View style={{width: '100%', position: 'absolute', bottom: 0, left: 0, height: 4, backgroundColor: `rgb(${rgb})`}} />
             <View style={{padding: 12, width: '100%'}} >
-                <TextTheme style={{fontSize: 14, fontWeight: 900}} >{value}</TextTheme>
-                <TextTheme isPrimary={false} style={{fontSize: 12}} >{label}</TextTheme>
+                <TextTheme fontSize={14} fontWeight={900}>{value}</TextTheme>
+                <TextTheme isPrimary={false} fontSize={12}>{label}</TextTheme>
             </View>
         </View>
     )
@@ -183,23 +185,23 @@ export function ItemsListingSection():React.JSX.Element {
                                 <View style={{flexDirection: 'row', gap: 14}} >
                                     <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}}>
                                         <FeatherIcon color="rgb(50,200,150)" name="trending-up" size={10} />
-                                        <TextTheme color="rgb(50,200,150)" style={{fontSize: 10, fontWeight: 900}} >100</TextTheme>
+                                <TextTheme color="rgb(50,200,150)" fontSize={10} fontWeight={900}>100</TextTheme>
                                     </View>
                                     <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}}>
                                         <FeatherIcon color="rgb(200,50,50)" name="trending-down" size={10} />
-                                        <TextTheme color="rgb(200,50,50)" style={{fontSize: 10, fontWeight: 900}} >100</TextTheme>
+                                <TextTheme color="rgb(200,50,50)" fontSize={10} fontWeight={900}>100</TextTheme>
                                     </View>
                                 </View>
                             </View>
                         </View>
 
                         <BackgroundThemeView isPrimary={false} style={{position: 'absolute', top: -2, right: 10, paddingInline: 8, borderRadius: 8, paddingBottom: 2}} >
-                            <TextTheme style={{fontSize: 12}} >10 Qta</TextTheme>
+                            <TextTheme fontSize={12}>10 Qta</TextTheme>
                         </BackgroundThemeView>
 
                         <View style={{alignItems: 'flex-end', alignSelf: 'flex-end'}} >
-                            <TextTheme style={{fontSize: 8}} isPrimary={false} >Avg Profit</TextTheme>
-                            <TextTheme style={{fontSize: 12}} >100 INR</TextTheme>
+                            <TextTheme fontSize={8} isPrimary={false}>Avg Profit</TextTheme>
+                            <TextTheme fontSize={12}>100 INR</TextTheme>
                         </View>
                     </BackgroundThemeView>
                 </ScaleAnimationView>
