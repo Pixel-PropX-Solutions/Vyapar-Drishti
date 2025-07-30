@@ -56,10 +56,10 @@ export function Header(): React.JSX.Element {
                             <LoadingView height={12} width={80} />
                         </>}
                     >
-                        <TextTheme numberOfLines={1} style={{ fontSize: 16, fontWeight: 700 }}>
+                        <TextTheme numberOfLines={1} fontSize={16} fontWeight='semibold' >
                             {company?.name}
                         </TextTheme>
-                        <TextTheme numberOfLines={1} isPrimary={false} style={{ fontSize: 12, fontWeight: 700 }}>
+                        <TextTheme numberOfLines={1} isPrimary={false}>
                             {company?.email}
                         </TextTheme>
                     </ShowWhen>
@@ -102,15 +102,15 @@ export function MonthlyInfoSection(): React.JSX.Element {
 
     return (
         <View style={{ gap: 12 }} >
-            <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >This Month</TextTheme>
+            <TextTheme fontSize={16} >This Month</TextTheme>
             <View style={{ flexDirection: 'row', gap: 12 }}>
                 <View style={{ padding: 12, borderRadius: 12, flex: 1, backgroundColor: 'rgb(50,200,150)' }}>
-                    <TextTheme color="white" isPrimary={false} style={{ fontWeight: 900 }} >Pay Amount</TextTheme>
+                    <TextTheme color="white" isPrimary={false}  >Pay Amount</TextTheme>
                     <TextTheme color="white">0.00 {currency}</TextTheme>
                 </View>
 
                 <View style={{ padding: 12, borderRadius: 12, flex: 1, backgroundColor: 'rgb(50,150,250)' }}>
-                    <TextTheme color="white" isPrimary={false} style={{ fontWeight: 900 }} >Pending Amount</TextTheme>
+                    <TextTheme color="white" isPrimary={false} >Pending Amount</TextTheme>
                     <TextTheme color="white">0.00 {currency}</TextTheme>
                 </View>
             </View>
@@ -134,15 +134,15 @@ export function QuickAccessSection(): React.JSX.Element {
                 {icon}
             </View>
             <View style={{ flex: 1 }} >
-                <TextTheme style={{ fontSize: 14 }} >{label}</TextTheme>
-                <TextTheme isPrimary={false} style={{ fontSize: 11 }} numberOfLines={2} >{text}</TextTheme>
+                <TextTheme fontSize={14} >{label}</TextTheme>
+                <TextTheme isPrimary={false} fontSize={11} numberOfLines={2} >{text}</TextTheme>
             </View>
         </AnimateButton>
     );
 
     return (
         <View style={{ gap: 12 }} >
-            <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >Quick Access</TextTheme>
+            <TextTheme fontSize={16} fontWeight='semibold' >Quick Access</TextTheme>
             <View style={{ gap: 12 }} >
                 <View style={{ flexDirection: 'row', gap: 12 }}>
                     <QuickAccessBox
