@@ -567,6 +567,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
             <ScrollView horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{ paddingHorizontal: 10, gap: 12 }}
+                keyboardShouldPersistTaps='always'
             >
                 <View style={{
                     display: 'flex',

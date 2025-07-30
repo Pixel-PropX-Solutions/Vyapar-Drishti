@@ -68,7 +68,7 @@ export const viewAllProducts = createAsyncThunk(
     {
       company_id,
       pageNumber,
-      limit = 1000,
+      limit = 10,
       searchQuery = '',
       category = 'All',
       sortField = 'created_at',

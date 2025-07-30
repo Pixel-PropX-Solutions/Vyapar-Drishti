@@ -72,7 +72,7 @@ export function ProductListing(): React.JSX.Element {
     console.log('productsData', productsPageMeta);
 
     function handleProductFetching() {
-        // if (isProductsFetching) { return; }
+        if (isProductsFetching) { return; }
         if (productsPageMeta.total <= productsPageMeta.page * productsPageMeta.limit) { return; }
         dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: productsPageMeta.page + 1 }));
     }

@@ -51,10 +51,10 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                     <View style={{padding: 10, gap: 8, paddingLeft: 14}} >
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                             <View>
-                                <TextTheme fontSize={14} fontWeight={800}>
+                                <TextTheme isPrimary={isPrimary} fontSize={14} fontWeight={800}>
                                     {sliceString(customerName, (status === 'pending' || type.toLowerCase() === 'sales') ? 20 : 30)}
                                 </TextTheme>
-                                <TextTheme isPrimary={isPrimary} fontSize={12} fontWeight={800}>{type}</TextTheme>
+                                <TextTheme isPrimary={false} fontSize={12} fontWeight={800}>{type}</TextTheme>
                             </View>
 
                             <View style={{flexDirection: 'row', gap: 8}} >
@@ -65,8 +65,8 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                                         style={{flexDirection: 'row', alignItems: 'center', gap: 6, paddingLeft: 8, borderRadius: 40, paddingBlock: 6, paddingRight: 12}} 
                                         
                                     >
-                                        <FeatherIcon name={status === 'paid'? 'check-circle' : 'clock'} size={16} />
-                                        <TextTheme fontSize={14} fontWeight={900}>
+                                        <FeatherIcon color='white' name={status === 'paid'? 'check-circle' : 'clock'} size={16} />
+                                        <TextTheme color='white' fontSize={14} fontWeight={900}>
                                             {status === 'paid' ? 'Paid' : 'Pending'}
                                         </TextTheme>
                                     </BackgroundThemeView>
@@ -114,7 +114,7 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                                     style={{flexDirection: 'row', alignItems: 'center', gap: 6, paddingInline: 12, borderRadius: 8, paddingBlock: 6, backgroundColor: 'rgb(50,120,200)'}}
                                     onPress={onPayment}      
                                 >
-                                    <TextTheme fontSize={14} fontWeight={900}>
+                                    <TextTheme color='white' fontSize={14}>
                                         Pay pending amount
                                     </TextTheme>
                                 </AnimateButton>
@@ -129,9 +129,9 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
 
 
 
-export function BillLoadingCard({isPrimary=true}: {isPrimary?: boolean}) {
+export function BillLoadingCard({isPrimary=true, delay}: {isPrimary?: boolean, delay?: number}) {
     return (
-        <ScaleAnimationView useRandomDelay={true} >
+        <ScaleAnimationView useRandomDelay={!delay} delay={delay} >
             <BackgroundThemeView isPrimary={isPrimary} style={{padding: 12, borderRadius: 10, gap: 12}} >
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} >
                     <View style={{gap: 4}}>

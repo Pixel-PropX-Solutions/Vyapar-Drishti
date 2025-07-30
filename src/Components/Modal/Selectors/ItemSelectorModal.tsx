@@ -70,7 +70,7 @@ export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItem
 
                     <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }} >
                         <FeatherIcon name="check" size={20} color="white" />
-                        <TextTheme color="white" fontWeight={900}>Selected</TextTheme>
+                        <TextTheme color="white" fontWeight={900} fontSize={14} >Selected</TextTheme>
                     </View>
                 </View>
             </ShowWhen>

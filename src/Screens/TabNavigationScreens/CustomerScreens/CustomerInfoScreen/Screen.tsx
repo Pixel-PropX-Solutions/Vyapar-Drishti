@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { View, ViewStyle } from 'react-native';
+import { View } from 'react-native';
 import navigator from '../../../../Navigation/NavigationService';
 import { ScrollView } from 'react-native-gesture-handler';
 import SectionView, { SectionRow, SectionRowWithIcon } from '../../../../Components/Layouts/View/SectionView';
@@ -19,7 +19,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 export default function CustomerInfoScreen(): React.JSX.Element {
 
-    const { customerId } = navigator.getParams('customer-info-screen') ?? {};
+    const { id } = navigator.getParams('customer-info-screen') ?? {};
 
     const dispatch = useAppDispatch();
     const { customer, loading } = useCustomerStore();
@@ -42,12 +42,12 @@ export default function CustomerInfoScreen(): React.JSX.Element {
 
     useFocusEffect(
         useCallback(() => {
-            if(customerId)
-                dispatch(getCustomer(customerId ?? ''));
-        }, [])
+            if(id)
+                dispatch(getCustomer(id ?? ''));
+        }, [id])
     );
 
-    if(!customerId) return <></>
+    if(!id) return <></>
 
     return (
         <View style={{ width: '100%', height: '100%' }} >
