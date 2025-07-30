@@ -19,6 +19,7 @@ import BillInfoScreen from '../Screens/TabNavigationScreens/BillScreens/BillInfo
 import AppUpdateScreen from '../Screens/AppUpdateScreen';
 import ForgotPasswordScreen from '../Screens/ForgotPasswordScreen';
 import InventoryScreen from '../Screens/InventoryScreen/Screen';
+import TransitionCreateScreen from '../Screens/TabNavigationScreens/BillScreens/TransactionCreateScreen/Screen';
 
 export type StackParamsList = {
     'splash-screen': undefined,
@@ -35,6 +36,7 @@ export type StackParamsList = {
     'customer-info-screen': { customerId: string }
 
     'create-bill-screen': { type: string, id: string }
+    'create-transaction-screen': { type: string, id: string }
     'bill-info-screen': { id: string },
 
     'inventory-screen': undefined
@@ -118,6 +120,11 @@ export default function StackNavigation(): React.JSX.Element {
 
                 <Stack.Screen  name='inventory-screen'
                     component={withSafeView(InventoryScreen)}
+                />
+
+                <Stack.Screen name="create-transaction-screen"
+                    component={withSafeView(TransitionCreateScreen)}
+                    options={{ animation: 'scale_from_center' }}
                 />
 
                 <Stack.Screen name="tab-navigation"

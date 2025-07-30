@@ -159,6 +159,22 @@ export function QuickAccessSection(): React.JSX.Element {
                         onPress={() => { navigator.navigate('create-bill-screen', { type: 'Purchase', id: 'fe9221db-5990-41a0-976a-3cb4f78aef0f' }); }}
                     />
                 </View>
+                
+                <View style={{ flexDirection: 'row', gap: 12 }}>
+                    <QuickAccessBox
+                        label="Exprnses"
+                        text="Add new expens bill"
+                        icon={<FeatherIcon name="trending-up" size={16} />}
+                        onPress={() => { navigator.navigate('create-transaction-screen', { type: 'Expenes', id: '34e81b1d-5735-437a-a475-e27265eba005' }); }}
+                    />
+
+                    <QuickAccessBox
+                        label="Recipt"
+                        text="Add income recipt"
+                        icon={<FontAwesome6Icon name="coins" size={16} />}
+                        onPress={() => { navigator.navigate('create-transaction-screen', { type: 'Income', id: 'fe9221db-5990-41a0-976a-3cb4f78aef0f' }); }}
+                    />
+                </View>
 
                 <View style={{ flexDirection: 'row', gap: 12 }}>
                     <QuickAccessBox
