@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useCompanyStore, useCustomerStore } from "../../../../Store/ReduxStore";
 import { useTransactionContext } from "./Context";
 import { GetUserLedgers } from "../../../../Utils/types";
@@ -6,7 +6,7 @@ import { viewAllCustomer } from "../../../../Services/customer";
 import { setCustomers } from "../../../../Store/Reducers/customerReducer";
 import { ItemSelectorModal } from "../../../../Components/Modal/Selectors/ItemSelectorModal";
 import FeatherIcon from "../../../../Components/Icon/FeatherIcon";
-import { View } from "react-native";
+import { Keyboard, TextInput, View } from "react-native";
 import TextTheme from "../../../../Components/Ui/Text/TextTheme";
 import { CustomerLoadingView } from "../../../../Components/Ui/Card/CustomerCard";
 import CustomerTypeSelectorModal from "../../../../Components/Modal/Customer/CustomerTypeSelectorModal";
@@ -14,6 +14,7 @@ import CreateCustomerModal from "../../../../Components/Modal/Customer/CreateCus
 import BottomModal from "../../../../Components/Modal/BottomModal";
 import NoralTextInput from "../../../../Components/Ui/TextInput/NoralTextInput";
 import { useTheme } from "../../../../Contexts/ThemeProvider";
+import { useFocusEffect } from "@react-navigation/native";
 
 
 type Props = {
@@ -134,14 +135,23 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
 export function DescriptionModal({visible, setVisible}: Props) {
     
     const {note, setNote} = useTransactionContext()
-    const {primaryColor} = useTheme()
+    const {primaryColor, secondaryColor} = useTheme()
 
     const [text, setText] = useState<string>(note);
+    const input = useRef<TextInput>(null)
 
     useEffect(() => {
         if(visible)
             setText(note);
     }, [note, visible])
+
+    useEffect(() => {
+        if(!visible) return;
+
+        setTimeout(() => {
+            input.current?.focus()
+        },250)
+    }, [visible])
 
     return(
         <BottomModal
@@ -157,12 +167,14 @@ export function DescriptionModal({visible, setVisible}: Props) {
             <TextTheme fontSize={20} fontWeight={900}>Add Note</TextTheme>
 
             <View style={{borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, width: '100%'}} >
-                <NoralTextInput
+                <TextInput
+                    ref={input}
                     value={text}
                     onChangeText={val => {setText(val)}}
                     placeholder="Enter your note"
-                    style={{fontSize: 16, }}
+                    style={{fontSize: 16, opacity: text ? 1 : 0.8}}
                     multiline={true}
+                    placeholderTextColor={secondaryColor}
                 />
             </View>
 
@@ -176,14 +188,23 @@ export function DescriptionModal({visible, setVisible}: Props) {
 export function AmountModal({visible, setVisible}: Props) {
     
     const {amount, setAmount} = useTransactionContext()
-    const {primaryColor} = useTheme()
+    const {primaryColor, secondaryColor} = useTheme()
 
     const [text, setText] = useState<string>(amount);
+    const input = useRef<TextInput>(null)
 
     useEffect(() => {
         if(visible)
             setText(amount);
     }, [amount, visible])
+
+     useEffect(() => {
+        if(!visible) return;
+
+        setTimeout(() => {
+            input.current?.focus()
+        },250)
+    }, [visible])
 
     return(
         <BottomModal
@@ -199,10 +220,12 @@ export function AmountModal({visible, setVisible}: Props) {
             <TextTheme fontSize={20} fontWeight={900}>Add Amount</TextTheme>
 
             <View style={{borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, width: '100%', flexDirection: 'row', alignItems: 'center'}} >
-                <NoralTextInput
+                <TextInput
+                    ref={input}
                     value={text}
                     placeholder="0.00"
-                    style={{fontSize: 16, flex: 1}}
+                    style={{fontSize: 16, flex: 1, opacity: text ? 1 : 0.8}}
+                    placeholderTextColor={secondaryColor}
                     multiline={true}
                     keyboardType="number-pad"
                     onChangeText={val => { 

@@ -15,7 +15,6 @@ import FeatherIcon from '../../../Components/Icon/FeatherIcon';
 import AnimatePingBall from '../../../Components/Layouts/View/AnimatePingBall';
 import { CompanySwitchModal } from './Modals';
 import { useTheme } from '../../../Contexts/ThemeProvider';
-import FontAwesome6Icon from '../../../Components/Icon/FontAwesome6Icon';
 import { BASE_APP_URL, BASE_WEB_URL } from '../../../../env';
 import { useAppStorage } from '../../../Contexts/AppStorageProvider';
 
@@ -155,24 +154,24 @@ export function QuickAccessSection(): React.JSX.Element {
                     <QuickAccessBox
                         label="Purchase"
                         text="Add purchase"
-                        icon={<FontAwesome6Icon name="coins" size={16} />}
+                        icon={<FeatherIcon name="shopping-cart" size={16} />}
                         onPress={() => { navigator.navigate('create-bill-screen', { type: 'Purchase', id: 'fe9221db-5990-41a0-976a-3cb4f78aef0f' }); }}
                     />
                 </View>
                 
                 <View style={{ flexDirection: 'row', gap: 12 }}>
                     <QuickAccessBox
-                        label="Exprnses"
-                        text="Add new expens bill"
-                        icon={<FeatherIcon name="trending-up" size={16} />}
-                        onPress={() => { navigator.navigate('create-transaction-screen', { type: 'Expenes', id: '34e81b1d-5735-437a-a475-e27265eba005' }); }}
+                        label="Recipt"
+                        text="Add income "
+                        icon={<FeatherIcon name="download" size={16} />}
+                        onPress={() => { navigator.navigate('create-transaction-screen', { type: 'Income', id: 'fe9221db-5990-41a0-976a-3cb4f78aef0f' }); }}
                     />
 
                     <QuickAccessBox
-                        label="Recipt"
-                        text="Add income recipt"
-                        icon={<FontAwesome6Icon name="coins" size={16} />}
-                        onPress={() => { navigator.navigate('create-transaction-screen', { type: 'Income', id: 'fe9221db-5990-41a0-976a-3cb4f78aef0f' }); }}
+                        label="Expenses"
+                        text="Add expense"
+                        icon={<FeatherIcon name="upload" size={16} />}
+                        onPress={() => { navigator.navigate('create-transaction-screen', { type: 'Expenes', id: '34e81b1d-5735-437a-a475-e27265eba005' }); }}
                     />
                 </View>
 
@@ -180,14 +179,14 @@ export function QuickAccessSection(): React.JSX.Element {
                     <QuickAccessBox
                         label="Rate us"
                         text="Rate us on play store"
-                        icon={<FeatherIcon name="users" size={16} />}
+                        icon={<FeatherIcon name="star" size={16} />}
                         onPress={() => { Linking.openURL(BASE_APP_URL) }}
                     />
 
                     <QuickAccessBox
                         label="Share"
                         text="Share app with friends"
-                        icon={<FeatherIcon name="share" size={16} />}
+                        icon={<FeatherIcon name="share-2" size={16} />}
                         onPress={() => {
                             Share.share({
                                 message: `Check out Vyapar Drishti - A free GST billing app for small businesses. Download now from ${BASE_WEB_URL} or ${BASE_APP_URL}`,
