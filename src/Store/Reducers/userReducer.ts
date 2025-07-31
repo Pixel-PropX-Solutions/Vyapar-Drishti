@@ -1,11 +1,13 @@
 import { createSlice, Slice } from '@reduxjs/toolkit';
-import { loginUser, register, getCurrentUser, updateUserSettings } from '../../Services/user';
+import { loginUser, register, getCurrentUser, updateUserSettings, switchCompany } from '../../Services/user';
+import AuthStore from '../AuthStore';
 
 interface UserState {
     loading: boolean;
     error: string | null;
     isAuthenticated: boolean;
     user: any | null;
+    current_company_id: string | null; // Optional, if you want to track the current company ID
 }
 
 const initialState: UserState = {
@@ -13,6 +15,7 @@ const initialState: UserState = {
     error: null,
     isAuthenticated: false,
     user: null, // Assuming you want to store user data after login or registration
+    current_company_id: AuthStore.getString('current_company_id') ?? null,
 };
 
 const userSlice: Slice<UserState> = createSlice({
@@ -25,11 +28,27 @@ const userSlice: Slice<UserState> = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(loginUser.fulfilled, (state) => {
+            .addCase(loginUser.fulfilled, (state, action) => {
                 state.loading = false;
+                state.current_company_id = action.payload.current_company_id; // Update current company ID
                 state.isAuthenticated = true; // Assuming successful login sets this to true
             })
             .addCase(loginUser.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || 'Login failed';
+                state.isAuthenticated = false; // Reset authentication on failure
+            })
+
+            .addCase(switchCompany.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(switchCompany.fulfilled, (state, action) => {
+                state.loading = false;
+                state.current_company_id = action.payload.current_company_id; // Update current company ID
+                state.isAuthenticated = true;
+            })
+            .addCase(switchCompany.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message || 'Login failed';
                 state.isAuthenticated = false; // Reset authentication on failure
@@ -41,6 +60,7 @@ const userSlice: Slice<UserState> = createSlice({
             })
             .addCase(register.fulfilled, (state, action) => {
                 state.loading = false;
+                state.current_company_id = action.payload.current_company_id; // Update current company ID
                 state.isAuthenticated = action.payload.accessToken ? true : false;
             })
             .addCase(register.rejected, (state, action) => {
@@ -49,7 +69,7 @@ const userSlice: Slice<UserState> = createSlice({
                 state.isAuthenticated = false;
             })
 
-            .addCase(getCurrentUser.pending, (state, action) => {
+            .addCase(getCurrentUser.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })

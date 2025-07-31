@@ -14,7 +14,7 @@ import { RefreshControl } from 'react-native';
 import EmptyListView from '../../../../Components/Layouts/View/EmptyListView';
 import BillCard, { BillLoadingCard } from '../../../../Components/Ui/Card/BillCard';
 import ShowWhen from '../../../../Components/Other/ShowWhen';
-import { useAppDispatch, useCompanyStore, useInvoiceStore, useUserStore } from '../../../../Store/ReduxStore';
+import { useAppDispatch, useInvoiceStore, useUserStore } from '../../../../Store/ReduxStore';
 import { printGSTInvoices, printInvoices, viewAllInvoices } from '../../../../Services/invoice';
 import navigator from '../../../../Navigation/NavigationService';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
@@ -127,11 +127,10 @@ export function DateSelector() {
 export function BillListing() {
 
     const dispatch = useAppDispatch();
-    const { company } = useCompanyStore();
-    const { user } = useUserStore();
+    const { user, current_company_id } = useUserStore();
     const { invoices, isInvoiceFeaching, pageMeta } = useInvoiceStore();
     const { filters } = useBillContext();
-    const currentCompnayDetails = user?.company.find((c: any) => c._id === user?.user_settings?.current_company_id);
+    const currentCompnayDetails = user?.company.find((c: any) => c._id === current_company_id);
     const gst_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_gst;
 
     const { init, isGenerating, setIsGenerating, PDFViewModal, handleShare } = usePDFHandler();
@@ -142,13 +141,13 @@ export function BillListing() {
     function handleInvoiceFetching() {
         if (isInvoiceFeaching) { return; }
         if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
-        dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1, type: filters.billType }));
+        dispatch(viewAllInvoices({ company_id: current_company_id ?? '', pageNumber: pageMeta.page + 1, type: filters.billType }));
     }
 
     function handleRefresh() {
         if (refreshing) { return; }
         setRefreshing(true);
-        dispatch(viewAllInvoices({ company_id: company?._id ?? '', pageNumber: 1, type: filters.billType }))
+        dispatch(viewAllInvoices({ company_id: current_company_id ?? '', pageNumber: 1, type: filters.billType }))
             .finally(() => setRefreshing(false));
     }
 
@@ -161,7 +160,7 @@ export function BillListing() {
 
             const res = await dispatch((gst_enable ? printGSTInvoices : printInvoices)({
                 vouchar_id: invoice._id,
-                company_id: company?._id || '',
+                company_id: current_company_id || '',
             }));
 
             if (res.meta.requestStatus !== 'fulfilled') {
@@ -183,7 +182,7 @@ export function BillListing() {
         useCallback(() => {
             dispatch(setInvoice([]))
             dispatch(viewAllInvoices({
-                company_id: company?._id ?? '', pageNumber: 1, type: filters.billType, sortOrder: filters.useAscOrder ? '1' : '-1',
+                company_id: current_company_id ?? '', pageNumber: 1, type: filters.billType, sortOrder: filters.useAscOrder ? '1' : '-1',
                 // start_date: ''
             }));
         }, [filters])

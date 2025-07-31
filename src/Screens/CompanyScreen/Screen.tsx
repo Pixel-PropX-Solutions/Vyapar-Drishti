@@ -17,8 +17,8 @@ import EditButton from '../../Components/Ui/Button/EditButton';
 export default function CompanyScreen(): React.JSX.Element {
 
     const { company } = useCompanyStore();
-    const { user } = useUserStore();
-    const currentCompanyDetails = user?.company?.find((c: any) => c._id === user?.user_settings?.current_company_id);
+    const { user, current_company_id } = useUserStore();
+    const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
     const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
 
     const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);

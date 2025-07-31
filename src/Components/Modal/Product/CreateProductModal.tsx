@@ -2,15 +2,14 @@
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 import BottomModal from '../BottomModal';
 import TextTheme from '../../Ui/Text/TextTheme';
-import { View, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import FeatherIcon from '../../Icon/FeatherIcon';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 import { useAlert } from '../../Ui/Alert/AlertProvider';
 import AnimateButton from '../../Ui/Button/AnimateButton';
-import { useAppDispatch, useCompanyStore, useProductStore, useUserStore } from '../../../Store/ReduxStore';
+import { useAppDispatch, useProductStore, useUserStore } from '../../../Store/ReduxStore';
 import { createProduct, viewAllProducts } from '../../../Services/product';
 import LoadingModal from '../LoadingModal';
-import { units } from '../../../Utils/units';
 import CollapsabeMenu from '../../Other/CollapsabeMenu';
 import { InputField } from '../../Ui/TextInput/InputField';
 import { SelectField } from '../../Ui/TextInput/SelectField';
@@ -25,20 +24,18 @@ type Props = {
 
 export default function CreateProductModal({ visible, setVisible }: Props): React.JSX.Element {
 
-    const { primaryColor, secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
+    const { primaryColor, secondaryBackgroundColor } = useTheme();
     const { setAlert } = useAlert();
 
     const dispatch = useAppDispatch();
-    const { company } = useCompanyStore();
-    const { user } = useUserStore();
+    const { user, current_company_id } = useUserStore();
     const { loading, pageMeta } = useProductStore();
-    const currentCompanyDetails = user?.company?.find((c: any) => c._id === user?.user_settings?.current_company_id);
+    const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
     const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
     const [basicInfoExpanded, setBasicInfoExpanded] = useState<boolean>(true);
     const [additionalInfoExpanded, setAdditionalInfoExpanded] = useState<boolean>(false);
     const [gstInfoExpanded, setGstInfoExpanded] = useState<boolean>(gst_enable ? true : false);
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-    const [isUnitModalVisible, setUnitModalVisible] = useState<boolean>(false);
     const [isTaxabilityModalVisible, setTaxabilityModalVisible] = useState<boolean>(false);
     const [isGoodsNatureModalVisible, setGoodsNatureModalVisible] = useState<boolean>(false);
 
@@ -140,7 +137,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
         console.log('after feaching: ', res);
 
         if (res && res?.success) {
-            await dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: pageMeta.page }));
+            await dispatch(viewAllProducts({ company_id: current_company_id ?? '', pageNumber: pageMeta.page }));
             setVisible(false);
             // Reset form
             setData({

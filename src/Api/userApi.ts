@@ -2,6 +2,7 @@ import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { BASE_URL } from '../../env';
 import AuthStore from '../Store/AuthStore';
 import navigator from '../Navigation/NavigationService';
+import { jwtDecode } from 'jwt-decode';
 
 
 interface Token {
@@ -37,8 +38,11 @@ userApi.interceptors.response.use(
     const { accessToken, refreshToken } = response.data || {};
 
     if (accessToken && refreshToken) {
+      const decoded: any = jwtDecode(accessToken);
+      const current_company_id = decoded.current_company_id;
       AuthStore.set('accessToken', accessToken);
       AuthStore.set('refreshToken', refreshToken);
+      AuthStore.set('current_company_id', current_company_id);
     }
 
     return response;
@@ -49,7 +53,17 @@ userApi.interceptors.response.use(
       _retry?: boolean;
     };
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (originalRequest.url === '/auth/logout') {
+      AuthStore.delete('accessToken');
+      AuthStore.delete('refreshToken');
+      AuthStore.delete('current_company_id');
+      AuthStore.clearAll();
+      console.log('User logged out successfully');
+      navigator.reset('landing-screen');
+      return;
+    }
+
+    if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/auth/logout') {
       originalRequest._retry = true;
 
       try {
@@ -74,6 +88,9 @@ userApi.interceptors.response.use(
 
         AuthStore.set('accessToken', data.accessToken);
         AuthStore.set('refreshToken', data.refreshToken);
+        const decoded: any = jwtDecode(data.accessToken);
+        const current_company_id = decoded.current_company_id;
+        AuthStore.set('current_company_id', current_company_id);
 
         originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
         originalRequest.headers.Cookie = `access_token=${data.accessToken}; refresh_token=${data.refreshToken}`;
@@ -83,13 +100,13 @@ userApi.interceptors.response.use(
         console.error('Token refresh failed:', refreshError);
         AuthStore.delete('accessToken');
         AuthStore.delete('refreshToken');
+        AuthStore.delete('current_company_id');
 
         navigator.reset('landing-screen');
       }
     }
 
-    console.error('API call error:');
-
+    // Log detailed error information
     if (axios.isAxiosError(error)) {
       console.error('Message:', error.message);
 
@@ -108,6 +125,8 @@ userApi.interceptors.response.use(
     } else {
       console.error('Non-Axios error:', error);
     }
+
+
 
     return Promise.reject(error);
   }

@@ -2,7 +2,7 @@
 import { View } from 'react-native';
 import navigator from '../../../../Navigation/NavigationService';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useAppDispatch, useCompanyStore } from '../../../../Store/ReduxStore';
+import { useAppDispatch, useUserStore } from '../../../../Store/ReduxStore';
 import { getProduct, viewProduct } from '../../../../Services/product';
 import StackNavigationHeader from '../../../../Components/Layouts/Header/StackNavigationHeader';
 import { ClassificationSection, DangerSection, HeroSection, InfoSection, SalePurchaseCards } from './Components';
@@ -13,14 +13,14 @@ export default function ProductInfoScreen(): React.JSX.Element {
 
     const { productId } = navigator.getParams('product-info-screen') ?? {};
 
-    const { company } = useCompanyStore();
+    const { current_company_id } = useUserStore();
     const dispatch = useAppDispatch();
 
     useFocusEffect(
         useCallback(() => {
             if (!productId) { return; }
-            dispatch(getProduct({ company_id: company?._id ?? '', product_id: productId }));
-            dispatch(viewProduct({ company_id: company?._id ?? '', product_id: productId }));
+            dispatch(getProduct({ company_id: current_company_id ?? '', product_id: productId }));
+            dispatch(viewProduct({ company_id: current_company_id ?? '', product_id: productId }));
         }, [])
     );
 
@@ -31,9 +31,9 @@ export default function ProductInfoScreen(): React.JSX.Element {
             <StackNavigationHeader title="Product Details" />
 
             <ScrollView
-                style={{paddingInline: 20, width: '100%', paddingTop: 16}}
-                contentContainerStyle={{gap: 32, paddingBottom: 80}}
-                keyboardShouldPersistTaps='always'
+                style={{ paddingInline: 20, width: '100%', paddingTop: 16 }}
+                contentContainerStyle={{ gap: 32, paddingBottom: 80 }}
+                keyboardShouldPersistTaps="always"
             >
                 <HeroSection />
                 <SalePurchaseCards />

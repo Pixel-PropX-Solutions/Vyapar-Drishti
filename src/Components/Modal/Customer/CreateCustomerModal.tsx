@@ -7,7 +7,7 @@ import { useTheme } from '../../../Contexts/ThemeProvider';
 import ShowWhen from '../../Other/ShowWhen';
 import { useAlert } from '../../Ui/Alert/AlertProvider';
 import LoadingModal from '../LoadingModal';
-import { useAppDispatch, useCompanyStore, useCustomerStore, useUserStore } from '../../../Store/ReduxStore';
+import { useAppDispatch, useCustomerStore, useUserStore } from '../../../Store/ReduxStore';
 import { createCustomer, viewAllCustomers } from '../../../Services/customer';
 import { accountGroups } from '../../../Utils/accountGroups';
 import { InputField } from '../../Ui/TextInput/InputField';
@@ -16,13 +16,10 @@ import FeatherIcon from '../../Icon/FeatherIcon';
 import CollapsabeMenu from '../../Other/CollapsabeMenu';
 import { PhoneNumber } from '../../../Utils/types';
 import PhoneNoInputField from '../../Ui/Option/PhoneNoInputField';
-import { ItemSelectorModal } from '../Selectors/ItemSelectorModal';
 import { SelectField } from '../../Ui/TextInput/SelectField';
 import { CountrySelectorModal } from '../CountrySelectorModal';
 import { StateSelectorModal } from '../StateSelectorModal';
-type CountryInfo = { name: string, states: string[] };
 
-const countryData: CountryInfo[] = require('../../../Assets/Jsons/country-states.json');
 
 type Props = {
     visible: boolean,
@@ -38,11 +35,11 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
     const { primaryColor } = useTheme();
     const { setAlert } = useAlert();
 
-    const { company } = useCompanyStore();
     const { loading, customerType } = useCustomerStore();
-    const { user } = useUserStore();
+    const { user, current_company_id } = useUserStore();
     const dispatch = useAppDispatch();
-    const currentCompanyDetails = user?.company?.find((c: any) => c._id === user?.user_settings?.current_company_id);
+    const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
+    const gst_enable:boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
     const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
     const [currentStep, setCurrentStep] = useState<number>(0);
     const [bankExpanded, setBankExpanded] = useState<boolean>(false);
@@ -104,7 +101,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                 showMailingDetails: true,
                 showBankDetails: true,
                 isBankOptional: true,
-                isGSTINOptional: currentCompanyDetails?.company_settings?.features?.enable_gst ? false : true,
+                isGSTINOptional: gst_enable ? false : true,
                 isMailingAddressOptional: false,
                 showGSTIN: true,
                 requiredFields: [
@@ -112,11 +109,11 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                     'mailing_state',
                     'parent',
                     'mailing_country',
-                    ...(currentCompanyDetails?.company_settings?.features?.enable_gst ? ['gstin'] : []),
+                    ...(gst_enable ? ['gstin'] : []),
                 ],
             };
         }
-    }, [currentCompanyDetails?.company_settings?.features?.enable_gst, customerType?._id, customerType?.accounting_group_name]);
+    }, [gst_enable, customerType?._id, customerType?.accounting_group_name]);
 
     const { showBankDetails, showGSTIN, showMailingDetails, isBankOptional, isGSTINOptional, isMailingAddressOptional } = getVisibleFields();
 
@@ -257,7 +254,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
 
         await dispatch(createCustomer(formData)).then((response: any) => {
             if (response) {
-                dispatch(viewAllCustomers(company?._id ?? ''));
+                dispatch(viewAllCustomers(current_company_id ?? ''));
                 setVisible(false);
                 setPrimaryVisible(false);
                 resetForm();
@@ -279,7 +276,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
             mailing_country: 'India',
             mailing_state: '',
             mailing_pincode: '',
-            company_id: company?._id || '',
+            company_id: current_company_id || '',
             parent: '',
             parent_id: '',
             bank_name: '',

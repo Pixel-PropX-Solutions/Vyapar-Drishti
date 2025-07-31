@@ -2,6 +2,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import userApi from '../Api/userApi'; // Your Axios instance
 import { UserSignUp } from '../Utils/types';
 import AuthStore from '../Store/AuthStore';
+import { jwtDecode } from 'jwt-decode';
+
 
 /**
  * This file contains the user-related async actions using createAsyncThunk.
@@ -41,16 +43,21 @@ export const loginUser = createAsyncThunk(
           'Content-Type': 'multipart/form-data',
         },
       });
-      const { accessToken } = response.data;
+      console.log('Login response', response);
 
-      if (accessToken) {
-        return { accessToken };
+
+      if (response.data.ok === true) {
+        const { accessToken } = response.data;
+        const decoded: any = jwtDecode(accessToken);
+        const current_company_id = decoded.current_company_id;
+        AuthStore.set('accessToken', accessToken);
+        AuthStore.set('current_company_id', current_company_id);
+        return { accessToken, current_company_id };
       } else {
         return rejectWithValue('Login failed: No access token received.');
       }
     } catch (error: any) {
-      const message =
-        error.response?.data?.message || 'Login failed: Invalid credentials or server error.';
+      const message = error.response?.data?.message;
       return rejectWithValue(message);
     }
   }
@@ -68,11 +75,14 @@ export const register = createAsyncThunk(
       console.log('register response', response.data);
 
 
-      if (response.data.ok) {
-        const accessToken = response.data.accessToken;
-        return { accessToken };
-      }
-      else {
+      if (response.data.ok === true) {
+        const { accessToken } = response.data;
+        const decoded: any = jwtDecode(accessToken);
+        const current_company_id = decoded.current_company_id;
+        AuthStore.set('accessToken', accessToken);
+        AuthStore.set('current_company_id', current_company_id);
+        return { accessToken, current_company_id };
+      } else {
         return rejectWithValue(
           'Registration failed: No access token received.'
         );
@@ -84,6 +94,35 @@ export const register = createAsyncThunk(
     }
   }
 );
+
+export const switchCompany = createAsyncThunk(
+  'switch/company',
+  async (
+    id: string,
+    { rejectWithValue }
+  ) => {
+    try {
+
+      const response = await userApi.post(`/user/settings/switch-company/${id}`);
+      console.log('Switch company response:', response);
+
+      if (response.data.success === true) {
+        const accessToken = response.data.accessToken;
+        // 👇 Decode the token to get updated company ID
+        const decoded: any = jwtDecode(accessToken);
+        const current_company_id = decoded.current_company_id;
+        AuthStore.set('accessToken', accessToken);
+        AuthStore.set('current_company_id', current_company_id);
+        return { accessToken, current_company_id };
+      } else {
+        return rejectWithValue('Login failed: Unknown error.');
+      }
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message);
+    }
+  }
+);
+
 
 export const updateUserSettings = createAsyncThunk(
   'update/user/settings',

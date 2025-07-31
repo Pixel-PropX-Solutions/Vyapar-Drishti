@@ -2,7 +2,7 @@
 import { FlatList, Text, View } from 'react-native';
 import AnimateButton from '../../../../Components/Ui/Button/AnimateButton';
 import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
-import { useAppDispatch, useCompanyStore, useProductStore } from '../../../../Store/ReduxStore';
+import { useAppDispatch, useProductStore, useUserStore } from '../../../../Store/ReduxStore';
 import EmptyListView from '../../../../Components/Layouts/View/EmptyListView';
 import ProductCard, { ProductLoadingCard } from '../../../../Components/Ui/Card/ProductCard';
 import navigator from '../../../../Navigation/NavigationService';
@@ -20,7 +20,7 @@ export function Header(): React.JSX.Element {
     return (
         <EntityListingHeader
             title="Products"
-            onPressNotification={() => { navigator.navigate('notification-screen') }}
+            onPressNotification={() => { navigator.navigate('notification-screen'); }}
         />
     );
 }
@@ -67,26 +67,26 @@ export function SummaryCard(): React.JSX.Element {
 export function ProductListing(): React.JSX.Element {
 
     const dispatch = useAppDispatch();
-    const { company } = useCompanyStore();
+    const { current_company_id } = useUserStore();
     const { isProductsFetching, productsData, productsPageMeta } = useProductStore();
     console.log('productsData', productsPageMeta);
 
     function handleProductFetching() {
         // if (isProductsFetching) { return; }
         if (productsPageMeta.total <= productsPageMeta.page * productsPageMeta.limit) { return; }
-        dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: productsPageMeta.page + 1 }));
+        dispatch(viewAllProducts({ company_id: current_company_id ?? '', pageNumber: productsPageMeta.page + 1 }));
     }
 
     useFocusEffect(
         useCallback(() => {
-            dispatch(setProductsData([]))
-            dispatch(viewAllProducts({ company_id: company?._id ?? '', pageNumber: 1 }));
+            dispatch(setProductsData([]));
+            dispatch(viewAllProducts({ company_id: current_company_id ?? '', pageNumber: 1 }));
         }, [])
     );
 
     return (
         <FlatList
-            ListEmptyComponent={isProductsFetching ? <ProductLoadingCard/> : <EmptyListView type="product" />}
+            ListEmptyComponent={isProductsFetching ? <ProductLoadingCard /> : <EmptyListView type="product" />}
             contentContainerStyle={{ gap: 20, paddingBottom: 80, paddingTop: 12 }}
             data={productsData}
             keyExtractor={(item) => item._id}

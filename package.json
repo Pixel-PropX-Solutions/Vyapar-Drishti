@@ -15,6 +15,7 @@
     "@react-navigation/stack": "^7.3.3",
     "@reduxjs/toolkit": "^2.8.2",
     "axios": "^1.10.0",
+    "jwt-decode": "^4.0.0",
     "react": "19.0.0",
     "react-native": "0.79.3",
     "react-native-device-info": "^14.0.4",

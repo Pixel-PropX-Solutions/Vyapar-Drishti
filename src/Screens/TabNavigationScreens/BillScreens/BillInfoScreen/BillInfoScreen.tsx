@@ -8,7 +8,7 @@ import BackgroundThemeView from '../../../../Components/Layouts/View/BackgroundT
 import NormalButton from '../../../../Components/Ui/Button/NormalButton';
 import { StackParamsList } from '../../../../Navigation/StackNavigation';
 import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
-import { useAppDispatch, useCompanyStore, useInvoiceStore, useUserStore } from '../../../../Store/ReduxStore';
+import { useAppDispatch, useInvoiceStore, useUserStore } from '../../../../Store/ReduxStore';
 import { printGSTInvoices, printInvoices, viewInvoice } from '../../../../Services/invoice';
 import { useCallback, useState } from 'react';
 import { formatDate, roundToDecimal } from '../../../../Utils/functionTools';
@@ -19,9 +19,8 @@ export default function BillInfoScreen(): React.JSX.Element {
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
     const { id: invoiceId } = router.params;
     const dispatch = useAppDispatch();
-    const { company } = useCompanyStore();
-    const { user } = useUserStore();
-    const currentCompanyDetails = user?.company?.find((c: any) => c._id === user?.user_settings?.current_company_id);
+    const { user, current_company_id } = useUserStore();
+    const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
     const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst || false;
     const { invoiceData } = useInvoiceStore();
     const [isPDFModalVisible, setPDFModalVisible] = useState<boolean>(false);
@@ -38,7 +37,7 @@ export default function BillInfoScreen(): React.JSX.Element {
 
             const res = await dispatch((gst_enable ? printGSTInvoices : printInvoices)({
                 vouchar_id: invoice._id,
-                company_id: company?._id || '',
+                company_id: current_company_id || '',
             }));
 
             if (res.meta.requestStatus !== 'fulfilled') {
@@ -58,11 +57,11 @@ export default function BillInfoScreen(): React.JSX.Element {
 
     useFocusEffect(
         useCallback(() => {
-            dispatch(viewInvoice({ vouchar_id: invoiceId, company_id: company?._id || '' }));
+            dispatch(viewInvoice({ vouchar_id: invoiceId, company_id: current_company_id || '' }));
         }, [])
     );
 
-    
+
     if (!invoiceData) {
         return (
             <LoadingModal visible={true} />

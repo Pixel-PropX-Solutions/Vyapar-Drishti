@@ -1,32 +1,33 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useBillContext } from "./Context";
-import { useTheme } from "../../../../Contexts/ThemeProvider";
-import BottomModal from "../../../../Components/Modal/BottomModal";
-import TextTheme from "../../../../Components/Ui/Text/TextTheme";
-import { Alert, FlatList, View } from "react-native";
-import { InputField } from "../../../../Components/Ui/TextInput/InputField";
-import FeatherIcon from "../../../../Components/Icon/FeatherIcon";
-import MaterialIcon from "../../../../Components/Icon/MaterialIcon";
-import AnimateButton from "../../../../Components/Ui/Button/AnimateButton";
-import { useAppDispatch, useCompanyStore, useCustomerStore, useUserStore } from "../../../../Store/ReduxStore";
-import { GetUserLedgers } from "../../../../Utils/types";
-import { viewAllCustomer } from "../../../../Services/customer";
-import { ItemSelectorModal } from "../../../../Components/Modal/Selectors/ItemSelectorModal";
-import BackgroundThemeView from "../../../../Components/Layouts/View/BackgroundThemeView";
-import CustomerTypeSelectorModal from "../../../../Components/Modal/Customer/CustomerTypeSelectorModal";
-import CreateCustomerModal from "../../../../Components/Modal/Customer/CreateCustomerModal";
-import { useAlert } from "../../../../Components/Ui/Alert/AlertProvider";
-import { viewProductsWithId } from "../../../../Services/product";
-import NoralTextInput from "../../../../Components/Ui/TextInput/NoralTextInput";
-import EmptyListView from "../../../../Components/Layouts/View/EmptyListView";
-import { sliceString } from "../../../../Utils/functionTools";
-import ShowWhen from "../../../../Components/Other/ShowWhen";
-import { ProductLoadingCard } from "../../../../Components/Ui/Card/ProductCard";
-import CreateProductModal from "../../../../Components/Modal/Product/CreateProductModal";
-import { CustomerLoadingView } from "../../../../Components/Ui/Card/CustomerCard";
-import ScaleAnimationView from "../../../../Components/Ui/Animation/ScaleAnimationView";
-import { SectionRowWithIcon } from "../../../../Components/Layouts/View/SectionView";
-import { setCustomers } from "../../../../Store/Reducers/customerReducer";
+/* eslint-disable react-native/no-inline-styles */
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useBillContext } from './Context';
+import { useTheme } from '../../../../Contexts/ThemeProvider';
+import BottomModal from '../../../../Components/Modal/BottomModal';
+import TextTheme from '../../../../Components/Ui/Text/TextTheme';
+import { Alert, FlatList, View } from 'react-native';
+import { InputField } from '../../../../Components/Ui/TextInput/InputField';
+import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
+import MaterialIcon from '../../../../Components/Icon/MaterialIcon';
+import AnimateButton from '../../../../Components/Ui/Button/AnimateButton';
+import { useAppDispatch, useCustomerStore, useUserStore } from '../../../../Store/ReduxStore';
+import { GetUserLedgers } from '../../../../Utils/types';
+import { viewAllCustomer } from '../../../../Services/customer';
+import { ItemSelectorModal } from '../../../../Components/Modal/Selectors/ItemSelectorModal';
+import BackgroundThemeView from '../../../../Components/Layouts/View/BackgroundThemeView';
+import CustomerTypeSelectorModal from '../../../../Components/Modal/Customer/CustomerTypeSelectorModal';
+import CreateCustomerModal from '../../../../Components/Modal/Customer/CreateCustomerModal';
+import { useAlert } from '../../../../Components/Ui/Alert/AlertProvider';
+import { viewProductsWithId } from '../../../../Services/product';
+import NoralTextInput from '../../../../Components/Ui/TextInput/NoralTextInput';
+import EmptyListView from '../../../../Components/Layouts/View/EmptyListView';
+import { sliceString } from '../../../../Utils/functionTools';
+import ShowWhen from '../../../../Components/Other/ShowWhen';
+import { ProductLoadingCard } from '../../../../Components/Ui/Card/ProductCard';
+import CreateProductModal from '../../../../Components/Modal/Product/CreateProductModal';
+import { CustomerLoadingView } from '../../../../Components/Ui/Card/CustomerCard';
+import ScaleAnimationView from '../../../../Components/Ui/Animation/ScaleAnimationView';
+import { SectionRowWithIcon } from '../../../../Components/Layouts/View/SectionView';
+import { setCustomers } from '../../../../Store/Reducers/customerReducer';
 
 
 type Props = {
@@ -119,7 +120,7 @@ export function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }
 
 export function CustomerSelectorModal({ visible, setVisible }: Props) {
 
-    const { company } = useCompanyStore();
+    const { current_company_id } = useUserStore();
     const { setCustomer, customer } = useBillContext();
     const { customers, isAllCustomerFetching, pageMeta } = useCustomerStore();
 
@@ -132,15 +133,15 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
 
 
     function handleProductFetching() {
-        if (isAllCustomerFetching) return;
-        if (pageMeta.total <= pageMeta.page * pageMeta.limit) return;
-        dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1 }))
+        if (isAllCustomerFetching) { return; }
+        if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
+        dispatch(viewAllCustomer({ company_id: current_company_id ?? '', pageNumber: pageMeta.page + 1 }));
     }
 
     useEffect(() => {
-        if(visible && !isCreateCustomerModalOpen){
-            dispatch(setCustomers([]))
-            dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
+        if (visible && !isCreateCustomerModalOpen) {
+            dispatch(setCustomers([]));
+            dispatch(viewAllCustomer({ company_id: current_company_id ?? '', pageNumber: 1 }));
         }
     }, [isCreateCustomerModalOpen, visible]);
 
@@ -155,7 +156,7 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
         <ItemSelectorModal<GetUserLedgers>
             visible={visible}
             setVisible={setVisible}
-            title='Select Customer'
+            title="Select Customer"
             keyExtractor={item => item._id}
             isItemSelected={!!customer?.id}
             allItems={filterCustomers}
@@ -172,8 +173,8 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
             ]}
 
             SelectedItemContent={<View>
-                <TextTheme color='white' >{customer?.name}</TextTheme>
-                <TextTheme color='white' isPrimary={false} >{customer?.group}</TextTheme>
+                <TextTheme color="white" >{customer?.name}</TextTheme>
+                <TextTheme color="white" isPrimary={false} >{customer?.group}</TextTheme>
             </View>}
 
             renderItemContent={item => (
@@ -207,9 +208,9 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
             loadItemsBeforeListEnd={handleProductFetching}
 
             isFetching={isAllCustomerFetching}
-            
-            whenFetchingComponent={<CustomerLoadingView/>}
-            
+
+            whenFetchingComponent={<CustomerLoadingView />}
+
         />
 
         <CustomerTypeSelectorModal
@@ -232,11 +233,9 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
     const { setAlert } = useAlert();
 
     const dispatch = useAppDispatch();
-    const { primaryColor, secondaryBackgroundColor } = useTheme();
+    const { primaryColor } = useTheme();
     const { products, setProducts } = useBillContext();
-    const { user } = useUserStore();
-    const currentCompanyDetails = user?.company?.find((c: any) => c._id === user?.user_settings?.current_company_id);
-    const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
+    const { current_company_id } = useUserStore();
 
     const [isFetching, setIsFetching] = useState(false);
     const [isUnitModalVisible, setUnitModalVisible] = useState<boolean>(false);
@@ -251,7 +250,7 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
         productId: '',
         name: '',
         hsnCode: '',
-        gstRate: ''
+        gstRate: '',
     });
 
 
@@ -275,7 +274,7 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
             name: data.name,
             hsnCode: data.hsnCode,
             unit: data.unit,
-            gstRate: data.gstRate
+            gstRate: data.gstRate,
         }]);
 
         setData({
@@ -285,7 +284,7 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
             productId: '',
             name: '',
             hsnCode: '',
-            gstRate: ''
+            gstRate: '',
         });
 
         setUnitModalVisible(false);
@@ -293,10 +292,10 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
     }
 
     useEffect(() => {
-        if(!visible && isCreateModalOpen) return;
+        if (!visible && isCreateModalOpen) { return; }
 
         setIsFetching(true);
-        dispatch(viewProductsWithId(user?.user_settings?.current_company_id || '')).then((response) => {
+        dispatch(viewProductsWithId(current_company_id || '')).then((response) => {
             if (response.meta.requestStatus === 'fulfilled') {
                 const products = response.payload;
                 setItemsList(
@@ -316,11 +315,11 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
             setIsFetching(false);
         });
 
-    }, [dispatch, isCreateModalOpen, user?.user_settings?.current_company_id, visible]);
+    }, [dispatch, isCreateModalOpen, current_company_id, visible]);
 
     useEffect(() => {
-        setFilterItemsList(itemsList.filter(item => !(products.some(pro => pro.id === item.id))))
-    }, [products, itemsList])
+        setFilterItemsList(itemsList.filter(item => !(products.some(pro => pro.id === item.id))));
+    }, [products, itemsList]);
 
     return (
         <BottomModal
@@ -355,7 +354,7 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
                 keyboardShouldPersistTaps="always"
 
                 ListEmptyComponent={
-                    <ShowWhen when={!isFetching} otherwise={<ProductLoadingCard/>} >
+                    <ShowWhen when={!isFetching} otherwise={<ProductLoadingCard />} >
                         <EmptyListView type="product" />
                     </ShowWhen>
                 }
@@ -369,17 +368,17 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
                                 setUnitModalVisible(true);
                                 setData(pre => ({
                                     ...pre, ...{
-                                        productId: item.id, unit: item.unit, name: item.name, 
-                                        hsnCode: item.hsn_code ?? '', gstRate: item.gst
-                                    }
-                                }))
+                                        productId: item.id, unit: item.unit, name: item.name,
+                                        hsnCode: item.hsn_code ?? '', gstRate: item.gst,
+                                    },
+                                }));
                             }}
-                            icon={<TextTheme style={{fontSize: 16, fontWeight: 900}} >{item.name[0].toUpperCase()}</TextTheme>}
-            
+                            icon={<TextTheme style={{ fontSize: 16, fontWeight: 900 }} >{item.name[0].toUpperCase()}</TextTheme>}
+
                         >
                             <ShowWhen when={!!item.gst} >
-                                <BackgroundThemeView style={{position: 'absolute', top: -2, right: 10, paddingInline: 8, borderRadius: 8, paddingBottom: 2}} >
-                                    <TextTheme isPrimary={false} style={{fontSize: 12}} >
+                                <BackgroundThemeView style={{ position: 'absolute', top: -2, right: 10, paddingInline: 8, borderRadius: 8, paddingBottom: 2 }} >
+                                    <TextTheme isPrimary={false} style={{ fontSize: 12 }} >
                                         GST {item.gst}%
                                     </TextTheme>
                                 </BackgroundThemeView>

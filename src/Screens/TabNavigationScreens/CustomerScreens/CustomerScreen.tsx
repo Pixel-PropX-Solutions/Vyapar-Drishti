@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { useCallback, useEffect, useState } from 'react';
 import RoundedPlusButton from '../../../Components/Ui/Button/RoundedPlusButton';
 import CreateCustomerModal from '../../../Components/Modal/Customer/CreateCustomerModal';
-import { useAppDispatch, useCompanyStore, useCustomerStore } from '../../../Store/ReduxStore';
+import { useAppDispatch, useCustomerStore, useUserStore } from '../../../Store/ReduxStore';
 import { viewAllCustomer } from '../../../Services/customer';
 import CustomerCard, { CustomerLoadingView } from '../../../Components/Ui/Card/CustomerCard';
 import ShowWhen from '../../../Components/Other/ShowWhen';
@@ -21,7 +21,7 @@ export default function CustomerScreen(): React.JSX.Element {
 
     const dispatch = useAppDispatch();
     const { customers, isAllCustomerFetching, pageMeta } = useCustomerStore();
-    const { company } = useCompanyStore();
+    const { current_company_id } = useUserStore();
 
     const [filterCustomers, setFilterCustomers] = useState<GetUserLedgers[]>([]);
 
@@ -32,13 +32,13 @@ export default function CustomerScreen(): React.JSX.Element {
         if (isAllCustomerFetching) { return; }
         if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
 
-        dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1 }));
+        dispatch(viewAllCustomer({ company_id: current_company_id ?? '', pageNumber: pageMeta.page + 1 }));
     }
 
 
     useEffect(() => {
-        if(!isCustomerTypeSelectorModalOpen)
-            dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
+        if (!isCustomerTypeSelectorModalOpen)
+            {dispatch(viewAllCustomer({ company_id: current_company_id ?? '', pageNumber: 1 }));}
     }, [isCustomerTypeSelectorModalOpen]);
 
     useEffect(() => {
@@ -48,8 +48,8 @@ export default function CustomerScreen(): React.JSX.Element {
 
     useFocusEffect(
         useCallback(() => {
-            dispatch(setCustomers([]))
-            dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 }));
+            dispatch(setCustomers([]));
+            dispatch(viewAllCustomer({ company_id: current_company_id ?? '', pageNumber: 1 }));
         }, [])
     );
 
@@ -57,11 +57,11 @@ export default function CustomerScreen(): React.JSX.Element {
         <View style={{ width: '100%', height: '100%', paddingHorizontal: 20 }} >
             <EntityListingHeader
                 title="Customers"
-                onPressNotification={() => {navigator.navigate('notification-screen')}}
+                onPressNotification={() => { navigator.navigate('notification-screen'); }}
             />
 
             <FlatList
-                ListEmptyComponent={isAllCustomerFetching ? <CustomerLoadingView/> : <EmptyListView type="customer" />}
+                ListEmptyComponent={isAllCustomerFetching ? <CustomerLoadingView /> : <EmptyListView type="customer" />}
                 contentContainerStyle={{ marginTop: 12, width: '100%', height: '100%', gap: 20 }}
                 data={filterCustomers}
                 keyExtractor={(item) => item._id}

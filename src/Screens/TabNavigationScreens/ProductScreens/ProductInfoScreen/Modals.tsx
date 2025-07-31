@@ -7,7 +7,7 @@ import TextTheme from '../../../../Components/Ui/Text/TextTheme';
 import LabelTextInput from '../../../../Components/Ui/TextInput/LabelTextInput';
 import ShowWhen from '../../../../Components/Other/ShowWhen';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
-import { useAppDispatch, useCompanyStore, useProductStore } from '../../../../Store/ReduxStore';
+import { useAppDispatch, useProductStore, useUserStore } from '../../../../Store/ReduxStore';
 import { units } from '../../../../Utils/units';
 import AnimateButton from '../../../../Components/Ui/Button/AnimateButton';
 import { useTheme } from '../../../../Contexts/ThemeProvider';
@@ -24,7 +24,7 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
     const { primaryColor, secondaryBackgroundColor } = useTheme();
     const [isUnitModalVisible, setUnitModalVisible] = useState(false);
     const dispatch = useAppDispatch();
-    const { company } = useCompanyStore();
+    const { current_company_id } = useUserStore();
 
 
     const info = useRef({
@@ -52,8 +52,8 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
         console.log('Update Product Info', dataToSend);
 
         dispatch(updateProductDetails({ product_details: dataToSend, id: product?._id ?? '' })).unwrap().then(() => {
-            dispatch(getProduct({ company_id: company?._id ?? '', product_id: product?._id ?? '' }));
-            dispatch(viewProduct({ company_id: company?._id ?? '', product_id: product?._id ?? '' }));
+            dispatch(getProduct({ company_id: current_company_id ?? '', product_id: product?._id ?? '' }));
+            dispatch(viewProduct({ company_id: current_company_id ?? '', product_id: product?._id ?? '' }));
             setVisible(false);
         }).catch((error) => {
             console.error('Error updating product details:', error);

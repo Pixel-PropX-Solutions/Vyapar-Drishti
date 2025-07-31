@@ -7,7 +7,7 @@ import { SectionRowWithIcon } from '../../../Components/Layouts/View/SectionView
 import LogoImage from '../../../Components/Image/LogoImage';
 import { useAppDispatch, useCompanyStore, useUserStore } from '../../../Store/ReduxStore';
 import { setIsCompanyFetching } from '../../../Store/Reducers/companyReducer';
-import { getCurrentUser, updateUserSettings } from '../../../Services/user';
+import { getCurrentUser, switchCompany, updateUserSettings } from '../../../Services/user';
 import { createCompany, getAllCompanies, getCompany } from '../../../Services/company';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 import { useAlert } from '../../../Components/Ui/Alert/AlertProvider';
@@ -34,8 +34,9 @@ type Props = {
 export function CompanySwitchModal({ visible, setVisible }: Props) {
 
     const dispatch = useAppDispatch();
-    const { company, companies } = useCompanyStore();
-    const { user } = useUserStore();
+    const { companies } = useCompanyStore();
+    const { user, current_company_id } = useUserStore();
+    console.log('Current Company ID:', current_company_id);
 
     const [isCreateModalVisible, setCreateModalVisible] = useState(false);
 
@@ -63,14 +64,14 @@ export function CompanySwitchModal({ visible, setVisible }: Props) {
                             label={name}
                             text={email}
                             icon={<LogoImage size={44} imageSrc={image ?? ''} />}
-                            backgroundColor={_id === company?._id ? 'rgb(50,150,250)' : ''}
-                            color={_id === company?._id ? 'white' : ''}
+                            backgroundColor={_id === current_company_id ? 'rgb(50,150,250)' : ''}
+                            color={_id === current_company_id ? 'white' : ''}
                             onPress={() => {
-                                if (_id === company?._id) { return setVisible(false); }
+                                if (_id === current_company_id) { return setVisible(false); }
 
                                 dispatch(setIsCompanyFetching(true));
 
-                                dispatch(updateUserSettings({ id: user?.user_settings?._id || '', data: { current_company_id: _id, current_company_name: name } }))
+                                dispatch(switchCompany(_id))
                                     .unwrap().then((response) => {
                                         if (response) {
                                             dispatch(getCurrentUser());

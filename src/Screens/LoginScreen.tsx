@@ -24,19 +24,19 @@ export default function LoginScreen(): React.JSX.Element {
 
     async function handleLogin() {
 
-        if (!(username && password)) {return setAlert({ type: 'error', message: 'all filds are required.' });}
+        if (!(username && password)) { return setAlert({ type: 'error', message: 'all filds are required.' }); }
 
         const formData = new FormData();
         formData.append('username', username);
         formData.append('password', password);
 
-        let { payload: res } = await dispatch(loginUser(formData));
-
-        if (res && res?.accessToken) {
-            return navigator.reset('tab-navigation');
-        } else {
-            return setAlert({ type: 'error', message: 'invalid information' });
-        }
+        dispatch(loginUser(formData)).unwrap().then((res) => {
+            if (res && res?.accessToken) {
+                return navigator.reset('tab-navigation');
+            }
+        }).catch((err) => {
+            return setAlert({ type: 'error', message: err || 'invalid information' });
+        });
     }
 
 

@@ -103,23 +103,22 @@ export function BillNoSelector() {
     const dispatch = useAppDispatch();
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
     const { type: billType } = router.params;
-    const { user } = useUserStore();
+    const { current_company_id } = useUserStore();
     const { secondaryBackgroundColor } = useTheme();
 
     useEffect(() => {
         dispatch(getInvoiceCounter({
-            company_id: user.user_settings.current_company_id || '',
+            company_id: current_company_id || '',
             voucher_type: billType,
         })).then((response) => {
             if (response.meta.requestStatus === 'fulfilled') {
                 setBillNo(response.payload.current_number);
             }
-        }
-        ).catch((error) => {
+        }).catch((error) => {
             console.error('Error fetching customers:', error);
             // toast.error(error || "An unexpected error occurred. Please try again later.");
         });
-    }, [dispatch, user.user_settings.current_company_id, billType]);
+    }, [dispatch, current_company_id, billType]);
 
     return (
         <AnimateButton style={{
@@ -254,7 +253,7 @@ export function ProductListing() {
 
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
     const [isUpdateModalVisible, setUpdateModalVisible] = useState<boolean>(false);
-    const [productIndex, setProductIndex] = useState<number>(-1)
+    const [productIndex, setProductIndex] = useState<number>(-1);
 
     return (<>
         <FlatList
@@ -271,19 +270,19 @@ export function ProductListing() {
                     backgroundColor="rgb(50,120,200)" color="white"
                     text="+ Add More"
                     icon={<FeatherIcon color="white" name="package" size={16} />}
-                    onPress={() => { setModalVisible(true) }}
+                    onPress={() => { setModalVisible(true); }}
                 />
             </ShowWhen>}
 
             data={products}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
-                <SectionRow 
-                    style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12, position: 'relative' }} 
-                    onPress={() => { 
-                        setUpdateModalVisible(true); 
-                        setProductIndex(products.findIndex(p => p.id === item.id)) 
-                    }} 
+                <SectionRow
+                    style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12, position: 'relative' }}
+                    onPress={() => {
+                        setUpdateModalVisible(true);
+                        setProductIndex(products.findIndex(p => p.id === item.id));
+                    }}
                 >
                     <View>
                         <TextTheme style={{ fontWeight: '700', fontSize: 16 }}>
@@ -350,10 +349,9 @@ export function AmountBox(): React.JSX.Element {
 
     const dispatch = useAppDispatch();
     const { currency } = useAppStorage();
-    const { user } = useUserStore();
-    const currentCompanyDetails = user.company.find((c: any) => c._id === user.user_settings.current_company_id);
+    const { user, current_company_id } = useUserStore();
+    const currentCompanyDetails = user.company.find((c: any) => c._id === current_company_id);
     const gst_enabble: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
-    const { company } = useCompanyStore();
     const { totalValue, products, progress, createOn, billNo, customer, resetAllStates } = useBillContext();
 
     const [isCreating, setCreating] = useState<boolean>(false);
@@ -365,7 +363,7 @@ export function AmountBox(): React.JSX.Element {
         try {
             if (gst_enabble) {
                 let dataToSend: CreateInvoiceWithGSTData = {
-                    company_id: company?._id ?? '',
+                    company_id: current_company_id ?? '',
                     date: createOn.split('/').reverse().join('-'),
                     voucher_number: billNo,
                     voucher_type: billType,
@@ -417,7 +415,7 @@ export function AmountBox(): React.JSX.Element {
             }
             else {
                 let dataToSend: CreateInvoiceData = {
-                    company_id: company?._id ?? '',
+                    company_id: current_company_id ?? '',
                     date: createOn.split('/').reverse().join('-'),
                     voucher_number: billNo,
                     voucher_type: billType,

@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { View, ViewStyle } from 'react-native';
+import { View } from 'react-native';
 import navigator from '../../../../Navigation/NavigationService';
 import { ScrollView } from 'react-native-gesture-handler';
 import SectionView, { SectionRow, SectionRowWithIcon } from '../../../../Components/Layouts/View/SectionView';
@@ -23,10 +23,7 @@ export default function CustomerInfoScreen(): React.JSX.Element {
 
     const dispatch = useAppDispatch();
     const { customer, loading } = useCustomerStore();
-    // const { user } = useUserStore();
-    // const currentCompanyDetails = user?.company?.find((company: any) => company._id === user?.user_settings?.current_company_id);
-    // const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
-    
+
 
     const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
     const [isInfoUpdateModalVisible, setInfoUpdateModalVisible] = useState<boolean>(false);
@@ -42,12 +39,12 @@ export default function CustomerInfoScreen(): React.JSX.Element {
 
     useFocusEffect(
         useCallback(() => {
-            if(customerId)
-                dispatch(getCustomer(customerId ?? ''));
+            if (customerId)
+                {dispatch(getCustomer(customerId ?? ''));}
         }, [])
     );
 
-    if(!customerId) return <></>
+    if (!customerId) {return <></>;}
 
     return (
         <View style={{ width: '100%', height: '100%' }} >
@@ -85,10 +82,10 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                         <EditButton onPress={() => { setInfoUpdateModalVisible(true); }} />
                     }
                 >
-                    <InfoRow label='GSTIN Number' value={customer?.gstin || 'Not Set'} />
-                    <InfoRow label='Billing Name' value={customer?.ledger_name || 'Not Set'} />
-                    <InfoRow label='Email' value={customer?.email || 'Not Set'} />
-                    <InfoRow label='Contact' value={(customer?.phone?.code && customer?.phone?.number) ? `${customer?.phone?.code} ${customer?.phone?.number}` : 'Not Set'} />
+                    <InfoRow label="GSTIN Number" value={customer?.gstin || 'Not Set'} />
+                    <InfoRow label="Billing Name" value={customer?.ledger_name || 'Not Set'} />
+                    <InfoRow label="Email" value={customer?.email || 'Not Set'} />
+                    <InfoRow label="Contact" value={(customer?.phone?.code && customer?.phone?.number) ? `${customer?.phone?.code} ${customer?.phone?.number}` : 'Not Set'} />
                 </SectionView>
 
                 <SectionView
@@ -98,11 +95,11 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                         <EditButton onPress={() => { setAddressInfoUpdateModalVisible(true); }} />
                     }
                 >
-                    <InfoRow label='Contact Person Name' value={customer?.mailing_name || 'Not Set'} />
-                    <InfoRow label='Contact Address' value={customer?.mailing_address || 'Not Set'} />
-                    <InfoRow label='State' value={customer?.mailing_state || 'Not Set'} />
-                    <InfoRow label='Country' value={customer?.mailing_country || 'Not Set'} />
-                    <InfoRow label='Postal Code' value={customer?.mailing_pincode || 'Not Set'} />
+                    <InfoRow label="Contact Person Name" value={customer?.mailing_name || 'Not Set'} />
+                    <InfoRow label="Contact Address" value={customer?.mailing_address || 'Not Set'} />
+                    <InfoRow label="State" value={customer?.mailing_state || 'Not Set'} />
+                    <InfoRow label="Country" value={customer?.mailing_country || 'Not Set'} />
+                    <InfoRow label="Postal Code" value={customer?.mailing_pincode || 'Not Set'} />
                 </SectionView>
 
                 <SectionView
@@ -112,11 +109,11 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                         <EditButton onPress={() => { setBankInfoUpdateModalVisible(true); }} />
                     }
                 >
-                    <InfoRow label='Account Holder Name' value={customer?.account_holder || 'Not Set'} />
-                    <InfoRow label='Account Number' value={customer?.account_number || 'Not Set'} />
-                    <InfoRow label='Bank Name' value={customer?.bank_name || 'Not Set'} />
-                    <InfoRow label='IFSC Code' value={customer?.bank_ifsc || 'Not Set'} />
-                    <InfoRow label='Branch Name' value={customer?.bank_branch || 'Not Set'} />                    
+                    <InfoRow label="Account Holder Name" value={customer?.account_holder || 'Not Set'} />
+                    <InfoRow label="Account Number" value={customer?.account_number || 'Not Set'} />
+                    <InfoRow label="Bank Name" value={customer?.bank_name || 'Not Set'} />
+                    <InfoRow label="IFSC Code" value={customer?.bank_ifsc || 'Not Set'} />
+                    <InfoRow label="Branch Name" value={customer?.bank_branch || 'Not Set'} />
                 </SectionView>
 
 
@@ -162,16 +159,16 @@ export default function CustomerInfoScreen(): React.JSX.Element {
 }
 
 
-const InfoRow: React.FC<{label: string, value: string | number}> = ({label, value}) => {
+const InfoRow: React.FC<{ label: string, value: string | number }> = ({ label, value }) => {
 
-    const alignInRow = (typeof value === 'number' ? value.toString() : value).length < 25
+    const alignInRow = (typeof value === 'number' ? value.toString() : value).length < 25;
 
     return (
-        <SectionRow style={alignInRow ? {justifyContent: 'space-between'} : {flexDirection: 'column', alignItems: 'flex-start'}} >
+        <SectionRow style={alignInRow ? { justifyContent: 'space-between' } : { flexDirection: 'column', alignItems: 'flex-start' }} >
             <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >{label}</TextTheme>
             <TextTheme isPrimary={false} style={{ fontSize: alignInRow ? 16 : 12, fontWeight: 900 }} >
                 {value}
             </TextTheme>
         </SectionRow>
-    )
-}
+    );
+};

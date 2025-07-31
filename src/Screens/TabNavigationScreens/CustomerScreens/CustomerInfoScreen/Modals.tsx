@@ -24,10 +24,10 @@ type Props = {
 export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.JSX.Element {
     const { customerId } = navigator.getParams('customer-info-screen') ?? {};
 
-    const { user } = useUserStore();
+    const { user, current_company_id } = useUserStore();
     const dispatch = useAppDispatch();
     const { customer } = useCustomerStore();
-    const currentCompanyDetails = user?.company?.find((company: any) => company._id === user?.user_settings?.current_company_id);
+    const currentCompanyDetails = user?.company?.find((company: any) => company._id === current_company_id);
     const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -116,7 +116,7 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
                         icon={<FeatherIcon name="mail" size={16} />}
                         autoCapitalize="none"
                         useTrim={true}
-                        keyboardType='email-address'
+                        keyboardType="email-address"
                         value={ledger_details.current.email}
                         onChangeText={(val) => { setLedgerDetails('email', val); }}
                         infoMessage="Email address for correspondence"

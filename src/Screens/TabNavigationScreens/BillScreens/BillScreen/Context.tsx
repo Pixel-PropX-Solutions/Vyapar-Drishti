@@ -27,8 +27,8 @@ const Context = createContext<ContextType>({
 
 export default function BillContextProvider({ children }: { children: ReactNode }): React.JSX.Element {
 
-    const { user } = useUserStore();
-    const currentCompnayDetails = user?.company.find((c: any) => c._id === user?.user_settings?.current_company_id);
+    const { user, current_company_id } = useUserStore();
+    const currentCompnayDetails = user?.company.find((c: any) => c._id === current_company_id);
     const gst_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_gst;
 
 

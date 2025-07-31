@@ -24,14 +24,14 @@ export function Header(): React.JSX.Element {
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
-    const { user } = useUserStore();
+    const { current_company_id } = useUserStore();
     const { company, isCompanyFetching } = useCompanyStore();
 
     useEffect(() => {
         dispatch(getCompany());
         dispatch(getCurrentUser());
         dispatch(getAllCompanies());
-    }, [dispatch, user?.user_settings?.current_company_id]);
+    }, [dispatch, current_company_id]);
 
     return (
         <View style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'row', padding: 10, justifyContent: 'space-between' }} >
@@ -165,7 +165,7 @@ export function QuickAccessSection(): React.JSX.Element {
                         label="Rate us"
                         text="Rate us on play store"
                         icon={<FeatherIcon name="users" size={16} />}
-                        onPress={() => { Linking.openURL(BASE_APP_URL) }}
+                        onPress={() => { Linking.openURL(BASE_APP_URL); }}
                     />
 
                     <QuickAccessBox

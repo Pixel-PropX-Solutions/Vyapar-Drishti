@@ -22,10 +22,10 @@ import { deleteCompany } from '../../../Services/company';
 export default function MenuScreen(): React.JSX.Element {
 
     const { setTheme, theme } = useTheme();
-    const { user } = useUserStore();
-    const currentCompanyDetails = user?.company.find((c: any) => c._id === user?.user_settings?.current_company_id);
+    const { user, current_company_id } = useUserStore();
+    const currentCompanyDetails = user?.company.find((c: any) => c._id === current_company_id);
     const { currency, billPrefix } = useAppStorage();
-    
+
     const dispatch = useAppDispatch();
     const [isCurrencyModalVisible, setCurrencyModalVisible] = useState<boolean>(false);
     const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
@@ -192,7 +192,7 @@ export default function MenuScreen(): React.JSX.Element {
                         AuthStore.clearAll();
                         navigator.reset('landing-screen');
                     } else {
-                        dispatch(deleteCompany(currentCompanyDetails?._id));
+                        dispatch(deleteCompany(current_company_id ?? ''));
                         AuthStore.clearAll();
                         navigator.reset('landing-screen');
                     }

@@ -10,7 +10,7 @@ import navigator from '../Navigation/NavigationService';
 import AuthStore from '../Store/AuthStore';
 import BottomModal from '../Components/Modal/BottomModal';
 import NoralTextInput from '../Components/Ui/TextInput/NoralTextInput';
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { useAppStorage } from '../Contexts/AppStorageProvider';
 import MaterialIcon from '../Components/Icon/MaterialIcon';
 import { useAppDispatch, useUserStore } from '../Store/ReduxStore';
@@ -22,8 +22,8 @@ import { deleteCompany } from '../Services/company';
 export default function SettingScreen(): React.JSX.Element {
 
     const { setTheme, theme } = useTheme();
-    const { user } = useUserStore();
-    const currentCompanyDetails = user?.company.find((c: any) => c._id === user?.user_settings?.current_company_id);
+    const { user, current_company_id } = useUserStore();
+    const currentCompanyDetails = user?.company.find((c: any) => c._id === current_company_id);
     const { currency, billPrefix } = useAppStorage();
     const dispatch = useAppDispatch();
     const [isCurrencyModalVisible, setCurrencyModalVisible] = useState<boolean>(false);
@@ -191,7 +191,7 @@ export default function SettingScreen(): React.JSX.Element {
                         AuthStore.clearAll();
                         navigator.reset('landing-screen');
                     } else {
-                        dispatch(deleteCompany(currentCompanyDetails?._id));
+                        dispatch(deleteCompany(current_company_id ?? ''));
                         AuthStore.clearAll();
                         navigator.reset('landing-screen');
                     }
