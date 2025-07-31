@@ -103,7 +103,7 @@ export const InputField = ({
                     }}
                     onPress={secondaryButtonAction}
                 >
-                    <TextTheme style={{ fontSize: 14, fontWeight: '500' }}>
+                    <TextTheme fontSize={14} fontWeight={500}>
                         Fetch Details
                     </TextTheme>
                 </AnimateButton>}

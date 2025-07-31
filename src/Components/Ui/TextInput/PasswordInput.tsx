@@ -73,9 +73,9 @@ export default function PasswordInput({placeholder='***********', label='Passwor
             </View>
             {
                 !(isInputTextValid || isFocus) ? (
-                        <Text style={{paddingLeft: 6, fontSize: 12, color: massageTextColor}} >
+                        <TextTheme color={massageTextColor} style={{paddingLeft: 6}} >
                             {message}
-                        </Text>
+                        </TextTheme>
                     ) : null
             }
         </View>

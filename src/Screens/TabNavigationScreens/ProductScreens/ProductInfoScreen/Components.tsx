@@ -33,10 +33,10 @@ export function HeroSection(): React.JSX.Element {
                                 <LoadingView width={80} height={8} />
                             </>}
                         >
-                            <TextTheme style={{ fontWeight: 900, fontSize: 16 }}>
+                            <TextTheme fontWeight={900} fontSize={16}>
                                 {product?.stock_item_name}
                             </TextTheme>
-                            <TextTheme isPrimary={false} style={{ fontWeight: 500, fontSize: 12 }}>
+                            <TextTheme isPrimary={false} fontWeight={500} fontSize={12}>
                                 {product?.gst_hsn_code}
                             </TextTheme>
                         </ShowWhen>
@@ -50,29 +50,29 @@ export function HeroSection(): React.JSX.Element {
                             <LoadingView width={80} height={12} />
                         </>}
                     >
-                        <TextTheme style={{ fontWeight: 900, fontSize: 20 }}>
+                        <TextTheme fontWeight={900} fontSize={20}>
                             {currency} {formatNumberForUI(((item?.purchase_value ?? 0) - (item?.sales_value ?? 0)), 10)}
                         </TextTheme>
-                        <TextTheme isPrimary={false} style={{ fontWeight: 900, fontSize: 12 }}>In Stock Value</TextTheme>
+                        <TextTheme isPrimary={false} fontWeight={900} fontSize={12}>In Stock Value</TextTheme>
                     </ShowWhen>
                 </View>
             </View>
 
             <View style={{ gap: 12 }} >
                 <View style={{ alignItems: 'flex-end' }} >
-                    <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >
+                    <TextTheme fontSize={16} fontWeight={900} >
                         {loading ? '0.00' : formatNumberForUI((item?.sales_value ?? 0) / (item?.sales_qty || 1))}
                         {' ' + currency}
                     </TextTheme>
-                    <TextTheme isPrimary={false} style={{ fontSize: 10, fontWeight: 900 }} >Avg. Sale Price</TextTheme>
+                    <TextTheme isPrimary={false} fontSize={10} fontWeight={900} >Avg. Sale Price</TextTheme>
                 </View>
 
                 <View style={{ alignItems: 'flex-end' }} >
-                    <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >
+                    <TextTheme fontSize={16} fontWeight={900} >
                         {loading ? '0.00' : formatNumberForUI((item?.purchase_value ?? 0) / (item?.purchase_qty || 1))}
                         {' ' + currency}
                     </TextTheme>
-                    <TextTheme isPrimary={false} style={{ fontSize: 10, fontWeight: 900 }} >Avg. Purchase Price</TextTheme>
+                    <TextTheme isPrimary={false} fontSize={10} fontWeight={900} >Avg. Purchase Price</TextTheme>
                 </View>
             </View>
         </View>
@@ -90,20 +90,20 @@ export function SalePurchaseCards() {
         <View style={{ flexDirection: 'row', gap: 24 }} >
             <BackgroundThemeView isPrimary={false} style={{ flex: 1, padding: 12, borderRadius: 12, gap: 4, paddingTop: 20 }} >
                 <View style={{ paddingHorizontal: 6 }} >
-                    <TextTheme style={{ fontSize: 14, fontWeight: 800, marginBottom: 4 }} >PURCHASES</TextTheme>
+                    <TextTheme fontSize={14} fontWeight={800} style={{ marginBottom: 4 }} >PURCHASES</TextTheme>
 
-                    <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 800, marginBottom: 12 }} >
+                    <TextTheme isPrimary={false} fontSize={16} fontWeight={800} style={{ marginBottom: 12 }} >
                         {currency} {loading ? '0.00' : formatNumberForUI(item?.purchase_value ?? 0, 8)}
                     </TextTheme>
 
                     <View style={{ marginTop: 12 }} >
                         <View style={{ flexDirection: 'row', gap: 4 }} >
                             <FeatherIcon name="trending-up" size={16} />
-                            <TextTheme style={{ fontSize: 16, fontWeight: 800 }}>
+                            <TextTheme fontSize={16} fontWeight={800}>
                                 {formatNumberForUI(item?.purchase_qty ?? 0, 8, 0)}
                             </TextTheme>
                         </View>
-                        <TextTheme isPrimary={false} style={{ fontSize: 12 }} >Purchase Invoice</TextTheme>
+                        <TextTheme isPrimary={false} fontSize={12} >Purchase Invoice</TextTheme>
                     </View>
                 </View>
 
@@ -112,20 +112,20 @@ export function SalePurchaseCards() {
 
             <BackgroundThemeView isPrimary={false} style={{ flex: 1, padding: 12, borderRadius: 12, gap: 4, paddingTop: 20 }} >
                 <View style={{ paddingHorizontal: 6 }} >
-                    <TextTheme style={{ fontSize: 14, fontWeight: 800, marginBottom: 4 }} >SELLS</TextTheme>
+                    <TextTheme fontSize={14} fontWeight={800} style={{ marginBottom: 4 }} >SELLS</TextTheme>
 
-                    <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 800, marginBottom: 12 }} >
+                    <TextTheme isPrimary={false} fontSize={16} fontWeight={800} style={{ marginBottom: 12 }} >
                         {currency} {loading ? '0.00' : formatNumberForUI(item?.sales_value ?? 0, 8)}
                     </TextTheme>
 
                     <View style={{ marginTop: 12 }} >
                         <View style={{ flexDirection: 'row', gap: 4 }} >
                             <FeatherIcon name="trending-up" size={16} />
-                            <TextTheme style={{ fontSize: 16, fontWeight: 800 }}>
+                            <TextTheme fontSize={16} fontWeight={800}>
                                 {formatNumberForUI(item?.sales_qty ?? 0, 8, 0)}
                             </TextTheme>
                         </View>
-                        <TextTheme isPrimary={false} style={{ fontSize: 12 }} >Sell Invoice</TextTheme>
+                        <TextTheme isPrimary={false} fontSize={12} >Sell Invoice</TextTheme>
                     </View>
                 </View>
 
@@ -150,8 +150,8 @@ export function InfoSection() {
             }
         >
             <SectionRow style={{ justifyContent: 'space-between' }} >
-                <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Name</TextTheme>
-                <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                <TextTheme fontSize={16} fontWeight={900} >Name</TextTheme>
+                <TextTheme isPrimary={false} fontSize={16} fontWeight={900} >
                     {loading ? 'fetching...' : product?.stock_item_name}
                 </TextTheme>
             </SectionRow>
@@ -164,21 +164,21 @@ export function InfoSection() {
             </SectionRow> */}
 
             <SectionRow style={{ justifyContent: 'space-between' }} >
-                <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Low Stock Alert</TextTheme>
-                <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                <TextTheme fontSize={16} fontWeight={900} >Low Stock Alert</TextTheme>
+                <TextTheme isPrimary={false} fontSize={16} fontWeight={900} >
                     {loading ? 'fetching...' : product?.low_stock_alert ?? 0} {product?.unit ?? 'Unit'}
                 </TextTheme>
             </SectionRow>
 
             <SectionRow style={{ justifyContent: 'space-between' }} >
-                <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Unit of Mesurement</TextTheme>
-                <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                <TextTheme fontSize={16} fontWeight={900} >Unit of Mesurement</TextTheme>
+                <TextTheme isPrimary={false} fontSize={16} fontWeight={900} >
                     {loading ? 'fetching..' : product?.unit ?? 'Not Set'}
                 </TextTheme>
             </SectionRow>
 
             <SectionRow label="Discription" isLabelPrimary={true} gap={4} style={{ justifyContent: 'space-between' }} >
-                <TextTheme isPrimary={false} style={{ fontSize: 12, fontWeight: 900 }} >
+                <TextTheme isPrimary={false} fontWeight={900} >
                     {loading ? 'fetching..' : product?.description ?? 'Not Set'}
                 </TextTheme>
             </SectionRow>
@@ -204,7 +204,7 @@ export function ClassificationSection() {
         //     <EditButton onPress={() => { setModalVisible(true); }} />
         // }
         >
-            <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Organization & Classification feature to included in future updates</TextTheme>
+            <TextTheme fontSize={16} fontWeight={900} >Organization & Classification feature to included in future updates</TextTheme>
             {/* <SectionRow style={{ justifyContent: 'space-between' }} >
                 <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Product Category</TextTheme>
                 <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >

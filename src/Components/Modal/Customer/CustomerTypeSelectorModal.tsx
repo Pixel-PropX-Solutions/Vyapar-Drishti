@@ -17,7 +17,7 @@ type Props = {
 }
 
 export default function CustomerTypeSelectorModal({ visible, setVisible, setSecondaryVisible }: Props): React.JSX.Element {
-    const { primaryColor, primaryBackgroundColor, secondaryBackgroundColor } = useTheme();
+    const { primaryColor, secondaryBackgroundColor } = useTheme();
     const dispatch = useAppDispatch();
     const { customerType } = useCustomerStore();
 
@@ -37,10 +37,10 @@ export default function CustomerTypeSelectorModal({ visible, setVisible, setSeco
                     borderRadius: 2,
                     marginBottom: 16,
                 }} />
-                <TextTheme style={{ fontSize: 24, fontWeight: 'bold' }}>
+                <TextTheme fontSize={24} fontWeight={"bold"}>
                     Create new Customer
                 </TextTheme>
-                <TextTheme style={{ fontSize: 14, opacity: 0.7, marginTop: 4 }}>
+                <TextTheme fontSize={14} style={{ opacity: 0.7, marginTop: 4 }}>
                     Select the type of customer you want to create
                 </TextTheme>
             </View>
@@ -77,19 +77,10 @@ export default function CustomerTypeSelectorModal({ visible, setVisible, setSeco
                             <MaterialDesignIcon name={group.accounting_group_name === 'Debtors' ? 'account-multiple-plus-outline' : 'store-plus-outline'} size={24} color="#FFFFFF" />
                         </View>
                         <View style={{ flex: 1 }}>
-                            <TextTheme style={{
-                                fontSize: 16,
-                                fontWeight: 'bold',
-                                color: group.accounting_group_name === customerType?.accounting_group_name ? primaryColor : 'black',
-                            }}>
+                            <TextTheme fontSize={16} fontWeight={"bold"} color={group.accounting_group_name === customerType?.accounting_group_name ? primaryColor : 'black'}>
                                 {group.accounting_group_name}
                             </TextTheme>
-                            <TextTheme style={{
-                                fontSize: 12,
-                                opacity: 0.7,
-                                marginTop: 2,
-                                color: group.accounting_group_name === customerType?.accounting_group_name ? primaryColor : 'black',
-                            }}>
+                            <TextTheme fontSize={12} color={group.accounting_group_name === customerType?.accounting_group_name ? primaryColor : 'black'} style={{ opacity: 0.7, marginTop: 2 }}>
                                 {group.description}
                             </TextTheme>
                         </View>

@@ -181,8 +181,8 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
                 <View style={{ flex: 1 }} >
                     <TextTheme>{item.ledger_name}</TextTheme>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
-                        <TextTheme isPrimary={false} >{item.phone?.code} {item.phone?.number}</TextTheme>
-                        <TextTheme isPrimary={false} >{item.parent}</TextTheme>
+                        <TextTheme isPrimary={false}>{item.phone?.code} {item.phone?.number}</TextTheme>
+                        <TextTheme isPrimary={false}>{item.parent}</TextTheme>
                     </View>
                 </View>
             )}

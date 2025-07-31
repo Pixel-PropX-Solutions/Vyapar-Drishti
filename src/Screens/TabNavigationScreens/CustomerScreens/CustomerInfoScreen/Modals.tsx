@@ -22,7 +22,7 @@ type Props = {
 }
 
 export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.JSX.Element {
-    const { customerId } = navigator.getParams('customer-info-screen') ?? {};
+    const { id } = navigator.getParams('customer-info-screen') ?? {};
 
     const { user, current_company_id } = useUserStore();
     const dispatch = useAppDispatch();
@@ -48,16 +48,16 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
     function handleUpdate() {
         setLoading(true);
         console.log({ ledger_details });
-        dispatch(updateCustomerDetails({ ledger_details: ledger_details.current, id: customerId ?? '' })).then(() => {
-            dispatch(getCustomer(customerId ?? ''));
+        dispatch(updateCustomerDetails({ ledger_details: ledger_details.current, id: id ?? '' })).then(() => {
+            dispatch(getCustomer(id ?? ''));
             setLoading(false);
             setVisible(false);
         }).catch((error) => {
-            dispatch(getCustomer(customerId ?? ''));
+            dispatch(getCustomer(id ?? ''));
             console.log('Error while updating the customer details', error);
             setLoading(false);
         }).finally(() => {
-            dispatch(getCustomer(customerId ?? ''));
+            dispatch(getCustomer(id ?? ''));
             setVisible(false);
             setLoading(false);
         });
@@ -82,7 +82,7 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
             }]}
         >
             <ScrollView showsVerticalScrollIndicator={false} >
-                <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
+                <TextTheme fontSize={16} fontWeight={800} style={{ marginBottom: 32 }}>
                     Update Customer Information
                 </TextTheme>
 
@@ -139,7 +139,7 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
 
 
 export function AddressInfoUpdateModal({ visible, setVisible }: Props): React.JSX.Element {
-    const { customerId } = navigator.getParams('customer-info-screen') ?? {};
+    const { id } = navigator.getParams('customer-info-screen') ?? {};
     const { customer } = useCustomerStore();
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState<boolean>(false);
@@ -164,16 +164,16 @@ export function AddressInfoUpdateModal({ visible, setVisible }: Props): React.JS
     function handleUpdate() {
         setLoading(true);
         console.log({ ledger_details });
-        dispatch(updateCustomerDetails({ ledger_details: ledger_details.current, id: customerId ?? '' })).then(() => {
-            dispatch(getCustomer(customerId ?? ''));
+        dispatch(updateCustomerDetails({ ledger_details: ledger_details.current, id: id ?? '' })).then(() => {
+            dispatch(getCustomer(id ?? ''));
             setLoading(false);
             setVisible(false);
         }).catch((error) => {
-            dispatch(getCustomer(customerId ?? ''));
+            dispatch(getCustomer(id ?? ''));
             console.log('Error while updating the customer details', error);
             setLoading(false);
         }).finally(() => {
-            dispatch(getCustomer(customerId ?? ''));
+            dispatch(getCustomer(id ?? ''));
             setVisible(false);
             setLoading(false);
         });
@@ -199,7 +199,7 @@ export function AddressInfoUpdateModal({ visible, setVisible }: Props): React.JS
             }]}
         >
             <ScrollView showsVerticalScrollIndicator={false} >
-                <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
+                <TextTheme fontSize={16} fontWeight={800} style={{ marginBottom: 32 }}>
                     Update Address Information
                 </TextTheme>
 
@@ -268,7 +268,7 @@ export function AddressInfoUpdateModal({ visible, setVisible }: Props): React.JS
 
 
 export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.Element {
-    const { customerId } = navigator.getParams('customer-info-screen') ?? {};
+    const { id } = navigator.getParams('customer-info-screen') ?? {};
     const { customer } = useCustomerStore();
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState<boolean>(false);
@@ -291,16 +291,16 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
     function handleUpdate() {
         setLoading(true);
         console.log({ ledger_details });
-        dispatch(updateCustomerDetails({ ledger_details: ledger_details.current, id: customerId ?? '' })).then(() => {
-            dispatch(getCustomer(customerId ?? ''));
+        dispatch(updateCustomerDetails({ ledger_details: ledger_details.current, id: id ?? '' })).then(() => {
+            dispatch(getCustomer(id ?? ''));
             setLoading(false);
             setVisible(false);
         }).catch((error) => {
-            dispatch(getCustomer(customerId ?? ''));
+            dispatch(getCustomer(id ?? ''));
             console.log('Error while updating the customer details', error);
             setLoading(false);
         }).finally(() => {
-            dispatch(getCustomer(customerId ?? ''));
+            dispatch(getCustomer(id ?? ''));
             setVisible(false);
             setLoading(false);
         });
@@ -326,7 +326,7 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
             }]}
         >
             <ScrollView showsVerticalScrollIndicator={false} >
-                <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
+                <TextTheme fontSize={16} fontWeight={800} style={{ marginBottom: 32 }}>
                     Update Bank Details
                 </TextTheme>
 

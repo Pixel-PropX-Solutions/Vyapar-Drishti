@@ -26,7 +26,7 @@ export default function EntityListingHeader({title, onPressFilter, onPressSearch
                     </AnimateButton>
                 </ShowWhen>
 
-                <TextTheme style={{fontSize: 18, fontWeight: 900}} >{title}</TextTheme>
+                <TextTheme fontSize={18} fontWeight={900} >{title}</TextTheme>
             </View>
 
             <View style={{flexDirection: 'row', gap: 12, alignItems: 'center'}} >

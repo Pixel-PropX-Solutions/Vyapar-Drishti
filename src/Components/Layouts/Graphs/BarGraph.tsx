@@ -56,7 +56,7 @@ export default function BarGraph({height, data, color, gap=20, backgroundColor, 
                             </View>
                             
                             <ShowWhen when={!!labels?.at(i1)} >
-                                <TextTheme isPrimary={false} style={{fontSize: 12}} >{labels?.at(i1)}</TextTheme>
+                                <TextTheme isPrimary={false}>{labels?.at(i1)}</TextTheme>
                             </ShowWhen>
                         </View>
                     ))

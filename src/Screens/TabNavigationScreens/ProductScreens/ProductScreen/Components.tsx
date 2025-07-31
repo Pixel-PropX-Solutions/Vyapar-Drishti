@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { FlatList, Text, View } from 'react-native';
+import { FlatList, ScrollView, Text, View } from 'react-native';
 import AnimateButton from '../../../../Components/Ui/Button/AnimateButton';
 import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
 import { useAppDispatch, useProductStore, useUserStore } from '../../../../Store/ReduxStore';
@@ -14,11 +14,15 @@ import CreateProductModal from '../../../../Components/Modal/Product/CreateProdu
 import EntityListingHeader from '../../../../Components/Layouts/Header/EntityListingHeader';
 import { useFocusEffect } from '@react-navigation/native';
 import { setProductsData } from '../../../../Store/Reducers/productReducer';
+import TextTheme from '../../../../Components/Ui/Text/TextTheme';
+import { useTheme } from '../../../../Contexts/ThemeProvider';
+import { useProductContext } from './Context';
 
 
 export function Header(): React.JSX.Element {
     return (
         <EntityListingHeader
+            paddingBlock={10}
             title="Products"
             onPressNotification={() => { navigator.navigate('notification-screen'); }}
         />
@@ -26,53 +30,113 @@ export function Header(): React.JSX.Element {
 }
 
 
-export function SummaryCard(): React.JSX.Element {
+export function SummarySection() {
 
     const { productsPageMeta } = useProductStore();
-    console.log('productsPageMeta', productsPageMeta);
     const negativeStock = productsPageMeta.negative_stock ?? 0;
     const positiveStock = productsPageMeta.positive_stock ?? 0;
     const lowStock = productsPageMeta.low_stock ?? 0;
 
+    const [GREEN, ORANGE, RED, YELLOW, BLUE] = ['50,200,150', '200,150,50', '250,50,50', '200,150,50', '50,150,200']
+
+    const Card = ({rgb, label, value}: {rgb: string, label: string, value: string}): React.JSX.Element => (
+        <View style={{backgroundColor: `rgba(${rgb},0.1)`, flex: 1, borderRadius: 12, position: 'relative', overflow: 'hidden'}} >
+            <View style={{width: '100%', position: 'absolute', bottom: 0, left: 0, height: 4, backgroundColor: `rgb(${rgb})`}} />
+            <View style={{padding: 12, width: '100%'}} >
+                <TextTheme fontSize={14} fontWeight={900}>{value}</TextTheme>
+                <TextTheme isPrimary={false} fontSize={12}>{label}</TextTheme>
+            </View>
+        </View>
+    )
 
     return (
-        <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, marginTop: 12 }}>
-            <AnimateButton style={{ paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(250,100,100)' }}>
-                <Text style={{ fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white' }}>
-                    <FeatherIcon name="package" size={20} color="white" />
-                    {`  ${negativeStock}`}
-                </Text>
-                <Text style={{ fontSize: 12, color: 'white' }}>-Ve Stock</Text>
-            </AnimateButton>
+        <View style={{width: '100%', gap: 8}} >
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 8, width: '100%'}} >
+                <Card rgb={RED} label="Neg. Stoke" value={`${negativeStock} Items`} />
+                <Card rgb={YELLOW} label="Low Stoke" value={`${lowStock} Items`} />
+                <Card rgb={BLUE} label="Well Stoke" value={`${positiveStock} Items`} />
+            </View>
 
-            <AnimateButton style={{ paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(228, 205, 0)' }}>
-                <Text style={{ fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white' }}>
-                    <FeatherIcon name="box" size={20} color="white" />
-                    {`  ${lowStock}`}
-                </Text>
-                <Text style={{ fontSize: 12, color: 'white' }}>Low Stock</Text>
-            </AnimateButton>
+            {/* <View style={{flexDirection: 'row', alignItems: 'center', gap: 8, width: '100%'}} >
+                <Card rgb={GREEN} label="Sales Value" value="10,000.00 INR" />
+                <Card rgb={ORANGE} label="Purchase Value" value="1,000.00 INR" />
+            </View> */}
+        </View>
+    )
+}
 
-            <AnimateButton style={{ paddingInline: 16, borderRadius: 12, paddingBlock: 8, flex: 1, backgroundColor: 'rgb(50,200,150)' }}>
-                <Text style={{ fontSize: 18, fontWeight: 900, marginTop: 4, color: 'white' }}>
-                    <FeatherIcon name="package" size={20} color="white" />
-                    {`  ${positiveStock}`}
-                </Text>
-                <Text style={{ fontSize: 12, color: 'white' }}>+Ve Stock</Text>
-            </AnimateButton>
+
+export function ItemStatusFilter(): React.JSX.Element {
+
+    const { primaryColor, primaryBackgroundColor } = useTheme();
+
+    const [selected, setSelected] = useState('All')
+
+    return (
+        <View style={{gap: 4, width: '100%'}} >
+            <ScrollView
+                horizontal={true}
+                contentContainerStyle={{ width: '100%', flexDirection: 'row', alignItems: 'center', gap: 8 }}
+            >
+                {
+                    ['All', 'Neg Stoke', 'Low Stoke', 'Well Stoke'].map(type => (
+                        <AnimateButton key={type}
+                            onPress={() => { setSelected(type) }}
+                            bubbleColor={type === selected ? primaryBackgroundColor : primaryColor}
+
+                            style={{
+                                alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 28,
+                                backgroundColor: type === selected ? primaryColor : primaryBackgroundColor,
+                            }}
+                        >
+                            <TextTheme
+                                isPrimary={type === selected}
+                                useInvertTheme={type === selected}
+                                fontSize={12}
+                                fontWeight={900}
+                            >{type}</TextTheme>
+                        </AnimateButton>
+                    ))
+                }
+            </ScrollView>
         </View>
     );
 }
+
+
+export function SortFilterSection() {
+
+    const {filters, handleFilter} = useProductContext();
+
+    return (
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBlock: 10}} >
+            <TextTheme isPrimary={false} fontSize={12} fontWeight={900} style={{paddingLeft: 4}}>Sort by default</TextTheme>
+
+            <AnimateButton
+                style={{ height: 28, flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 40, paddingInline: 14 }}
+                onPress={() => { handleFilter('useAscOrder', !filters.useAscOrder) }}
+            >
+                <FeatherIcon
+                    name={filters.useAscOrder ? 'arrow-up' : 'arrow-down'}
+                    size={16}
+                />
+                <TextTheme fontSize={12}>{filters.useAscOrder ? 'Asc' : 'Des'}</TextTheme>
+            </AnimateButton>
+        </View>
+    )
+}
+
 
 export function ProductListing(): React.JSX.Element {
 
     const dispatch = useAppDispatch();
     const { current_company_id } = useUserStore();
     const { isProductsFetching, productsData, productsPageMeta } = useProductStore();
-    console.log('productsData', productsPageMeta);
+    
+    const {filters} = useProductContext()
 
     function handleProductFetching() {
-        // if (isProductsFetching) { return; }
+        if (isProductsFetching) { return; }
         if (productsPageMeta.total <= productsPageMeta.page * productsPageMeta.limit) { return; }
         dispatch(viewAllProducts({ company_id: current_company_id ?? '', pageNumber: productsPageMeta.page + 1 }));
     }
@@ -86,15 +150,14 @@ export function ProductListing(): React.JSX.Element {
 
     return (
         <FlatList
-            ListEmptyComponent={isProductsFetching ? <ProductLoadingCard /> : <EmptyListView type="product" />}
+            ListEmptyComponent={isProductsFetching ? <ProductLoadingCard isPrimary={true} /> : <EmptyListView type="product" />}
             contentContainerStyle={{ gap: 20, paddingBottom: 80, paddingTop: 12 }}
             data={productsData}
-            keyExtractor={(item) => item._id}
+            keyExtractor={(item, index) => `${item._id}${index}`}
 
             renderItem={({ item }) => (
                 <ProductCard
                     item={item}
-                    isPrimary={false}
                     onPress={() => navigator.navigate('product-info-screen', { productId: item._id })}
                 />
             )}
@@ -107,7 +170,7 @@ export function ProductListing(): React.JSX.Element {
                             length: Math.min(2, productsPageMeta.total - (productsData?.length ?? 0)) + 1,
                         }, (_, i) => i
                         ).map(item => (
-                            <ProductLoadingCard key={item} />
+                            <ProductLoadingCard key={item} isPrimary={true} />
                         ))
                     }
                 </ShowWhen>
@@ -121,7 +184,7 @@ export function ProductListing(): React.JSX.Element {
 
                 if (productsPageMeta.total === productsData?.length) { return; }
 
-                if (totalHeight - height < contentOffsetY + 400) {
+                if (totalHeight - height < contentOffsetY + 600) {
                     handleProductFetching();
                 }
             }}

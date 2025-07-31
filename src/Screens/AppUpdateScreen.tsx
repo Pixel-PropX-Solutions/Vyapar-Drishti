@@ -32,8 +32,8 @@ export default function AppUpdateScreen(): React.JSX.Element {
                     style={{borderRadius: 20, width: '100%', gap: 20, alignItems: 'center', overflow: 'hidden', padding: 8}} 
                 >
                     <BackgroundThemeView style={{alignSelf: 'flex-start', borderRadius: 12, paddingInline: 14, paddingBlock: 4}} >
-                        <TextTheme isPrimary={false} style={{fontSize: 12}} >{APP_VERSION}</TextTheme>
-                        <TextTheme style={{fontSize: 10}} >Latest Version</TextTheme>
+                        <TextTheme isPrimary={false} fontSize={12} >{APP_VERSION}</TextTheme>
+                        <TextTheme fontSize={10} >Latest Version</TextTheme>
                     </BackgroundThemeView>
 
                     <BackgroundThemeView useInvertTheme={true} style={{padding: 10, borderRadius: 100}} >
@@ -41,13 +41,13 @@ export default function AppUpdateScreen(): React.JSX.Element {
                     </BackgroundThemeView>
 
                     <View style={{alignItems: 'center'}} >
-                        <TextTheme style={{fontWeight: 900, fontSize: 20}}>
+                        <TextTheme fontWeight={900} fontSize={20}>
                             <ShowWhen when={isMandotry} otherwise={'New update is availble'} >
                                 Update is Reaquired!
                             </ShowWhen>
                         </TextTheme>
                         
-                        <TextTheme isPrimary={false} style={{textAlign: 'center', fontSize: 14}} >
+                        <TextTheme isPrimary={false} fontSize={14} style={{textAlign: 'center'}} >
                             We've added exciting new features and fixed some bugs to improve your experience.
                         </TextTheme>
                     </View>
@@ -59,7 +59,6 @@ export default function AppUpdateScreen(): React.JSX.Element {
                                     isLoading={isVerifying}
                                     isPrimary={false}                  
                                     text="Not Now" 
-                                    textStyle={{fontWeight: 900, fontSize: 14}}
                                     onPress={() => { navigate() }}
                                 />
                             </View> 
@@ -68,7 +67,6 @@ export default function AppUpdateScreen(): React.JSX.Element {
                         <View style={{flex: 1}} >
                             <NormalButton            
                                 text="Update" 
-                                textStyle={{fontWeight: 900, fontSize: 14}}
                                 onPress={() => {
                                     Linking.openURL(BASE_APP_URL);
                                 }}

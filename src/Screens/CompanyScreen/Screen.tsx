@@ -36,9 +36,9 @@ export default function CompanyScreen(): React.JSX.Element {
 
                 <View style={{ alignItems: 'center', padding: 16, width: '100%' }}>
                     <LogoImage size={100} borderRadius={100} imageSrc={company?.image} />
-                    <TextTheme style={{ fontSize: 22, fontWeight: 'bold' }} >{company?.name}</TextTheme>
-                    <TextTheme isPrimary={false} style={{ fontSize: 16 }} >{company?.email}</TextTheme>
-                    {gst_enable && <TextTheme isPrimary={false} style={{ fontSize: 12 }} >GST {company?.gstin}</TextTheme>}
+                    <TextTheme fontSize={22} fontWeight={"bold"}>{company?.name}</TextTheme>
+                    <TextTheme isPrimary={false} fontSize={16}>{company?.email}</TextTheme>
+                    {gst_enable && <TextTheme isPrimary={false} fontSize={12}>GST {company?.gstin}</TextTheme>}
                 </View>
 
                 {gst_enable && <SectionView
@@ -48,8 +48,8 @@ export default function CompanyScreen(): React.JSX.Element {
                     }
                 >
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >GSTIN Number</TextTheme>
-                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                        <TextTheme fontSize={16} fontWeight={900}>GSTIN Number</TextTheme>
+                        <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
                             {company?.gstin}
                         </TextTheme>
                     </SectionRow>
@@ -62,20 +62,20 @@ export default function CompanyScreen(): React.JSX.Element {
                     }
                 >
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Name</TextTheme>
+                        <TextTheme fontSize={16} fontWeight={900}>Name</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
                                 {company?.name}
                             </TextTheme>
                         </View>
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Website</TextTheme>
+                        <TextTheme fontSize={16} fontWeight={900}>Website</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
                                 {sliceString(company?.website, 35) ?? 'Not Set'}
                             </TextTheme>
                         </View>
@@ -89,10 +89,10 @@ export default function CompanyScreen(): React.JSX.Element {
                     }
                 >
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Email</TextTheme>
+                        <TextTheme fontSize={16} fontWeight={900}>Email</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
                                 {sliceString(company?.email, 25) ?? 'Not Set'}
                             </TextTheme>
                             <FeatherIcon isPrimary={false} name="mail" size={16} />
@@ -100,10 +100,10 @@ export default function CompanyScreen(): React.JSX.Element {
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Phone</TextTheme>
+                        <TextTheme fontSize={16} fontWeight={900}>Phone</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
                                 {company?.phone?.code} {company?.phone?.number ?? 'Not Set'}
                             </TextTheme>
                             <FeatherIcon isPrimary={false} name="phone" size={16} />
@@ -111,10 +111,10 @@ export default function CompanyScreen(): React.JSX.Element {
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Contact Person</TextTheme>
+                        <TextTheme fontSize={16} fontWeight={900}>Contact Person</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
                                 {sliceString(company?.mailing_name, 25) ?? 'Not Set'}
                             </TextTheme>
                         </View>
@@ -128,27 +128,27 @@ export default function CompanyScreen(): React.JSX.Element {
                     }
                 >
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Country</TextTheme>
+                        <TextTheme fontSize={16} fontWeight={900}>Country</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.country ?? 'Not Set'}</TextTheme>
+                            <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>{company?.country ?? 'Not Set'}</TextTheme>
                             <FeatherIcon isPrimary={false} name="map" size={16} />
                         </View>
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >State</TextTheme>
+                        <TextTheme fontSize={16} fontWeight={900}>State</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >{company?.state ?? 'Not Set'}</TextTheme>
+                            <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>{company?.state ?? 'Not Set'}</TextTheme>
                         </View>
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Address 1</TextTheme>
+                        <TextTheme fontSize={16} fontWeight={900}>Address 1</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
                                 {sliceString(company?.address_1, 24) ?? 'Not Set'}
                             </TextTheme>
                             <FeatherIcon isPrimary={false} name="home" size={16} />
@@ -156,10 +156,10 @@ export default function CompanyScreen(): React.JSX.Element {
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Address 2</TextTheme>
+                        <TextTheme fontSize={16} fontWeight={900}>Address 2</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
                                 {sliceString(company?.address_2, 24) ?? 'Not Set'}
                             </TextTheme>
                             <FeatherIcon isPrimary={false} name="home" size={16} />
@@ -167,10 +167,10 @@ export default function CompanyScreen(): React.JSX.Element {
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Pin Code</TextTheme>
+                        <TextTheme fontSize={16} fontWeight={900}>Pin Code</TextTheme>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                            <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
                                 {company?.pinCode ?? 'Not Set'}
                             </TextTheme>
                             <FeatherIcon isPrimary={false} name="map-pin" size={16} />
@@ -185,8 +185,8 @@ export default function CompanyScreen(): React.JSX.Element {
                     }
                 >
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >GSTIN Number</TextTheme>
-                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                        <TextTheme fontSize={16} fontWeight={900}>GSTIN Number</TextTheme>
+                        <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
                             {company?.gstin}
                         </TextTheme>
                     </SectionRow>
@@ -200,36 +200,36 @@ export default function CompanyScreen(): React.JSX.Element {
                     }
                 >
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Account Name</TextTheme>
-                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                        <TextTheme fontSize={16} fontWeight={900}>Account Name</TextTheme>
+                        <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
                             {company?.account_holder ?? 'Not Set'}
                         </TextTheme>
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Account Number</TextTheme>
-                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                        <TextTheme fontSize={16} fontWeight={900}>Account Number</TextTheme>
+                        <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
                             {company?.account_number ?? 'Not Set'}
                         </TextTheme>
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Bank Name</TextTheme>
-                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                        <TextTheme fontSize={16} fontWeight={900}>Bank Name</TextTheme>
+                        <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
                             {company?.bank_name ?? 'Not Set'}
                         </TextTheme>
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >IFSC Code</TextTheme>
-                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                        <TextTheme fontSize={16} fontWeight={900}>IFSC Code</TextTheme>
+                        <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
                             {company?.bank_ifsc ?? 'Not Set'}
                         </TextTheme>
                     </SectionRow>
 
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Branch Name</TextTheme>
-                        <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
+                        <TextTheme fontSize={16} fontWeight={900}>Branch Name</TextTheme>
+                        <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
                             {company?.bank_branch ?? 'Not Set'}
                         </TextTheme>
                     </SectionRow>
@@ -241,7 +241,6 @@ export default function CompanyScreen(): React.JSX.Element {
                         backgroundColor="rgb(250,50,80)"
                         color="white"
                         text="Remove Company"
-                        textStyle={{ fontWeight: 900 }}
                         onPress={() => setDeleteModalVisible(true)}
                     />
                 </SectionView>

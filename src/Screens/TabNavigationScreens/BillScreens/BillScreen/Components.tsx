@@ -67,7 +67,8 @@ export function BillTypeFilter(): React.JSX.Element {
                             <TextTheme
                                 isPrimary={type === filters.billType}
                                 useInvertTheme={type === filters.billType}
-                                style={{ fontSize: 12, fontWeight: 900 }}
+                                fontSize={12}
+                                fontWeight={900}
                             >{type === 'Invoices' ? 'All' : type}</TextTheme>
                         </AnimateButton>
                     ))
@@ -82,7 +83,7 @@ export function BillTypeFilter(): React.JSX.Element {
                     name={filters.useAscOrder ? 'arrow-up' : 'arrow-down'}
                     size={16}
                 />
-                <TextTheme style={{ fontSize: 12 }} >{filters.useAscOrder ? 'Asc' : 'Des'}</TextTheme>
+                <TextTheme fontSize={12}>{filters.useAscOrder ? 'Asc' : 'Des'}</TextTheme>
             </AnimateButton>
         </View>
     );
@@ -109,7 +110,7 @@ export function DateSelector() {
             </AnimateButton>
 
             <Pressable onPress={() => { setModalVisible(true); }}>
-                <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >{getMonthByIndex(date.month)}, {date.year}</TextTheme>
+                <TextTheme fontSize={16} fontWeight={900}>{getMonthByIndex(date.month)}, {date.year}</TextTheme>
             </Pressable>
 
             <AnimateButton style={{ borderRadius: 20, padding: 4 }} onPress={() => incrementMonth(1)}>

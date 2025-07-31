@@ -134,9 +134,9 @@ export default function PhoneNoInputField({ label, onChangeText, focusColor = 'r
             </View>
             {
                 !(isInputTextValid || isFocus) ? (
-                    <Text style={{ paddingLeft: 6, fontSize: 12, color: massageTextColor }} >
+                    <TextTheme fontSize={12} style={{ paddingLeft: 6 }} color={massageTextColor}>
                         {message}
-                    </Text>
+                    </TextTheme>
                 ) : null
             }
 
@@ -192,25 +192,25 @@ export function DialCodeSelectorModal({ visible, setVisible, onSelect, selected 
             style={{ paddingInline: 20, gap: 20 }}
             topMargin={0}
         >
-            <TextTheme style={{ fontSize: 20, fontWeight: 900 }} >
+            <TextTheme fontSize={20} fontWeight={900}>
                 Select Your Country Code
             </TextTheme>
 
             <ShowWhen when={!!selected?.dial_code} >
                 <View style={{ width: '100%', padding: 16, borderRadius: 16, backgroundColor: 'rgba(150, 50, 250, 1)', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
                     <View>
-                        <TextTheme color="white" style={{ fontWeight: 400, fontSize: 14 }} >
+                        <TextTheme color="white" fontWeight={400} fontSize={14}>
                             {capitalize(selected_?.name ?? '')} Country
                         </TextTheme>
 
-                        <TextTheme color="white" style={{ fontWeight: 900, fontSize: 16 }} >
+                        <TextTheme color="white" fontWeight={900} fontSize={16}>
                             {selected_?.dial_code}
                         </TextTheme>
                     </View>
 
                     <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }} >
                         <FeatherIcon name="check" size={20} color="white" />
-                        <TextTheme color="white" style={{ fontWeight: 900 }} >Selected</TextTheme>
+                        <TextTheme color="white" fontWeight={900}>Selected</TextTheme>
                     </View>
                 </View>
             </ShowWhen>
@@ -244,8 +244,8 @@ export function DialCodeSelectorModal({ visible, setVisible, onSelect, selected 
                             if (onSelect) { onSelect(item); }
                         }}
                     >
-                        <TextTheme style={{ fontWeight: 900, fontSize: 16 }}>{item.name}</TextTheme>
-                        <TextTheme style={{ fontWeight: 600, fontSize: 16 }}>{item.dial_code}</TextTheme>
+                        <TextTheme fontWeight={900} fontSize={16}>{item.name}</TextTheme>
+                        <TextTheme fontWeight={600} fontSize={16}>{item.dial_code}</TextTheme>
                     </SectionRow>
                 )}
             />

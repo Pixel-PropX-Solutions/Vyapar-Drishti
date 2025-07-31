@@ -15,7 +15,6 @@ import FeatherIcon from '../../../Components/Icon/FeatherIcon';
 import AnimatePingBall from '../../../Components/Layouts/View/AnimatePingBall';
 import { CompanySwitchModal } from './Modals';
 import { useTheme } from '../../../Contexts/ThemeProvider';
-import FontAwesome6Icon from '../../../Components/Icon/FontAwesome6Icon';
 import { BASE_APP_URL, BASE_WEB_URL } from '../../../../env';
 import { useAppStorage } from '../../../Contexts/AppStorageProvider';
 
@@ -56,10 +55,10 @@ export function Header(): React.JSX.Element {
                             <LoadingView height={12} width={80} />
                         </>}
                     >
-                        <TextTheme numberOfLines={1} style={{ fontSize: 16, fontWeight: 700 }}>
+                        <TextTheme numberOfLines={1} fontSize={16} fontWeight={600} >
                             {company?.name}
                         </TextTheme>
-                        <TextTheme numberOfLines={1} isPrimary={false} style={{ fontSize: 12, fontWeight: 700 }}>
+                        <TextTheme numberOfLines={1} isPrimary={false}>
                             {company?.email}
                         </TextTheme>
                     </ShowWhen>
@@ -102,15 +101,15 @@ export function MonthlyInfoSection(): React.JSX.Element {
 
     return (
         <View style={{ gap: 12 }} >
-            <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >This Month</TextTheme>
+            <TextTheme fontSize={16} >This Month</TextTheme>
             <View style={{ flexDirection: 'row', gap: 12 }}>
                 <View style={{ padding: 12, borderRadius: 12, flex: 1, backgroundColor: 'rgb(50,200,150)' }}>
-                    <TextTheme color="white" isPrimary={false} style={{ fontWeight: 900 }} >Pay Amount</TextTheme>
+                    <TextTheme color="white" isPrimary={false}  >Pay Amount</TextTheme>
                     <TextTheme color="white">0.00 {currency}</TextTheme>
                 </View>
 
                 <View style={{ padding: 12, borderRadius: 12, flex: 1, backgroundColor: 'rgb(50,150,250)' }}>
-                    <TextTheme color="white" isPrimary={false} style={{ fontWeight: 900 }} >Pending Amount</TextTheme>
+                    <TextTheme color="white" isPrimary={false} >Pending Amount</TextTheme>
                     <TextTheme color="white">0.00 {currency}</TextTheme>
                 </View>
             </View>
@@ -134,15 +133,15 @@ export function QuickAccessSection(): React.JSX.Element {
                 {icon}
             </View>
             <View style={{ flex: 1 }} >
-                <TextTheme style={{ fontSize: 14 }} >{label}</TextTheme>
-                <TextTheme isPrimary={false} style={{ fontSize: 11 }} numberOfLines={2} >{text}</TextTheme>
+                <TextTheme fontSize={14} >{label}</TextTheme>
+                <TextTheme isPrimary={false} fontSize={11} numberOfLines={2} >{text}</TextTheme>
             </View>
         </AnimateButton>
     );
 
     return (
         <View style={{ gap: 12 }} >
-            <TextTheme style={{ fontSize: 16, fontWeight: 800 }} >Quick Access</TextTheme>
+            <TextTheme fontSize={16} fontWeight={600} >Quick Access</TextTheme>
             <View style={{ gap: 12 }} >
                 <View style={{ flexDirection: 'row', gap: 12 }}>
                     <QuickAccessBox
@@ -155,8 +154,24 @@ export function QuickAccessSection(): React.JSX.Element {
                     <QuickAccessBox
                         label="Purchase"
                         text="Add purchase"
-                        icon={<FontAwesome6Icon name="coins" size={16} />}
+                        icon={<FeatherIcon name="shopping-cart" size={16} />}
                         onPress={() => { navigator.navigate('create-bill-screen', { type: 'Purchase', id: 'fe9221db-5990-41a0-976a-3cb4f78aef0f' }); }}
+                    />
+                </View>
+                
+                <View style={{ flexDirection: 'row', gap: 12 }}>
+                    <QuickAccessBox
+                        label="Recipt"
+                        text="Add income "
+                        icon={<FeatherIcon name="download" size={16} />}
+                        onPress={() => { navigator.navigate('create-transaction-screen', { type: 'Income', id: 'fe9221db-5990-41a0-976a-3cb4f78aef0f' }); }}
+                    />
+
+                    <QuickAccessBox
+                        label="Expenses"
+                        text="Add expense"
+                        icon={<FeatherIcon name="upload" size={16} />}
+                        onPress={() => { navigator.navigate('create-transaction-screen', { type: 'Expenes', id: '34e81b1d-5735-437a-a475-e27265eba005' }); }}
                     />
                 </View>
 
@@ -164,14 +179,14 @@ export function QuickAccessSection(): React.JSX.Element {
                     <QuickAccessBox
                         label="Rate us"
                         text="Rate us on play store"
-                        icon={<FeatherIcon name="users" size={16} />}
-                        onPress={() => { Linking.openURL(BASE_APP_URL); }}
+                        icon={<FeatherIcon name="star" size={16} />}
+                        onPress={() => { Linking.openURL(BASE_APP_URL) }}
                     />
 
                     <QuickAccessBox
                         label="Share"
                         text="Share app with friends"
-                        icon={<FeatherIcon name="share" size={16} />}
+                        icon={<FeatherIcon name="share-2" size={16} />}
                         onPress={() => {
                             Share.share({
                                 message: `Check out Vyapar Drishti - A free GST billing app for small businesses. Download now from ${BASE_WEB_URL} or ${BASE_APP_URL}`,

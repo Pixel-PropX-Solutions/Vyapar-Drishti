@@ -46,14 +46,14 @@ export function DateSelectorModal({ visible, setVisible }: Props): React.JSX.Ele
             onSelect={item => { setDate(item); }}
             keyExtractor={item => (item.year * 100 + item.month).toString()}
             SelectedItemContent={
-                <TextTheme style={{ fontWeight: 900 }} >{getMonthByIndex(date.month)} {date.year}</TextTheme>
+                <TextTheme fontWeight={900}>{getMonthByIndex(date.month)} {date.year}</TextTheme>
             }
 
             renderItemContent={item => (<>
-                <TextTheme isPrimary={item.year === date.year && item.month == date.month} style={{ fontSize: 20, fontWeight: 900 }} >
+                <TextTheme isPrimary={item.year === date.year && item.month == date.month} fontSize={20} fontWeight={900}>
                     {getMonthByIndex(item.month)}
                 </TextTheme>
-                <TextTheme isPrimary={item.year === date.year && item.month == date.month} style={{ fontSize: 20, fontWeight: 900 }} >
+                <TextTheme isPrimary={item.year === date.year && item.month == date.month} fontSize={20} fontWeight={900}>
                     {item.year}
                 </TextTheme>
             </>)}
@@ -92,10 +92,10 @@ export function BillTypeSelectorModal({ visible, setVisible }: Props) {
                     borderRadius: 2,
                     marginBottom: 16,
                 }} />
-                <TextTheme style={{ fontSize: 24, fontWeight: 'bold' }}>
+                <TextTheme fontSize={24} fontWeight={"bold"}>
                     Create New Bill
                 </TextTheme>
-                <TextTheme style={{ fontSize: 14, opacity: 0.7, marginTop: 4 }}>
+                <TextTheme fontSize={14} style={{ opacity: 0.7, marginTop: 4 }}>
                     Select the type of bill you want to create
                 </TextTheme>
             </View>
@@ -130,10 +130,10 @@ export function BillTypeSelectorModal({ visible, setVisible }: Props) {
                         </View>
 
                         <View style={{ flex: 1 }}>
-                            <TextTheme style={{ fontSize: 16, fontWeight: 'bold' }}>
+                            <TextTheme fontSize={16} fontWeight={"bold"}>
                                 {billType.name}
                             </TextTheme>
-                            <TextTheme style={{ fontSize: 12, opacity: 0.7, marginTop: 2 }}>
+                            <TextTheme fontSize={12} style={{ opacity: 0.7, marginTop: 2 }}>
                                 {billType.description}
                             </TextTheme>
                         </View>
@@ -158,7 +158,7 @@ export function FilterModal({ visible, setVisible }: Props) {
             visible={visible} setVisible={setVisible}
             style={{ paddingInline: 20, gap: 24 }}
         >
-            <TextTheme style={{ fontSize: 20, fontWeight: 900 }} >Invoice Filters</TextTheme>
+            <TextTheme fontSize={20} fontWeight={900}>Invoice Filters</TextTheme>
 
             <SectionView label="Sort by" style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }} >
                 {
@@ -175,7 +175,8 @@ export function FilterModal({ visible, setVisible }: Props) {
                             <TextTheme
                                 isPrimary={item === filters.sortBy}
                                 useInvertTheme={item === filters.sortBy}
-                                style={{ fontSize: 12, fontWeight: 900 }}
+                                fontSize={12}
+                                fontWeight={900}
                             >{item}</TextTheme>
                         </AnimateButton>
                     ))
@@ -197,7 +198,8 @@ export function FilterModal({ visible, setVisible }: Props) {
                             <TextTheme
                                 isPrimary={item.toLowerCase() === filters.status}
                                 useInvertTheme={item.toLowerCase() === filters.status}
-                                style={{ fontSize: 12, fontWeight: 900 }}
+                                fontSize={12}
+                                fontWeight={900}
                             >{item}</TextTheme>
                         </AnimateButton>
                     ))

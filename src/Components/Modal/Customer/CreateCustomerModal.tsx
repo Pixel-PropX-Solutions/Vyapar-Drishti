@@ -333,7 +333,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                     ) : (
                                         <View style={{ alignItems: 'center' }}>
                                             <FeatherIcon name="camera" size={24} color={primaryColor} />
-                                            <TextTheme style={{ fontSize: 12, color: primaryColor, marginTop: 4 }}>Add Photo</TextTheme>
+                                            <TextTheme fontSize={12} color={primaryColor} style={{ marginTop: 4 }}>Add Photo</TextTheme>
                                         </View>
                                     )}
                                 </TouchableOpacity>
@@ -564,6 +564,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
             <ScrollView horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{ paddingHorizontal: 10, gap: 12 }}
+                keyboardShouldPersistTaps='always'
             >
                 <View style={{
                     display: 'flex',

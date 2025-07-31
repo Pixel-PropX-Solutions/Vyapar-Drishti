@@ -64,7 +64,7 @@ export default function Popover({ icon, label, iconSize=20, position='top', labe
                     }}
                     >
                     <BackgroundThemeView isPrimary={isPrimary} style={{ padding: 4, borderRadius: 8, paddingHorizontal: 12,}}  >
-                        <TextTheme style={{ fontSize: 14 }}>{label}</TextTheme>
+                        <TextTheme fontSize={14}>{label}</TextTheme>
                     </BackgroundThemeView>
                 </Animated.View>
             </ShowWhen>

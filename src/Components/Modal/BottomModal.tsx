@@ -10,6 +10,7 @@ import { ReactNode, useEffect, useState } from "react";
 import AnimateButton from "../Ui/Button/AnimateButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ShowWhen from "../Other/ShowWhen";
+import TextTheme from "../Ui/Text/TextTheme";
 
 type ActionButton = {
     key?: string,
@@ -91,7 +92,7 @@ export default function BottomModal({ visible, setVisible, children, style, back
                                     >
                                         {icon ? icon : null}
 
-                                        {title && <Text style={{ color: color || primaryColor, fontWeight: '900', fontSize: 14 }}>{title}</Text>}
+                                        {title && <TextTheme color={color || primaryColor} fontSize={14} fontWeight={900}>{title}</TextTheme>}
                                     </AnimateButton>
                                 ))
                             }

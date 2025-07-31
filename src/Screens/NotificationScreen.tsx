@@ -79,11 +79,11 @@ function EmptyNotificationScreen(): React.JSX.Element {
       <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Ionicons name="notifications-off-outline" size={100} color="#bbb" />
 
-        <TextTheme style={{ fontSize: 22, fontWeight: 'bold', marginTop: 20 }}>
+        <TextTheme fontSize={22} fontWeight={"bold"} style={{ marginTop: 20 }}>
           No Notifications
         </TextTheme>
 
-        <TextTheme isPrimary={false} style={{ fontSize: 16, textAlign: 'center', marginTop: 10, lineHeight: 22 }}>
+        <TextTheme isPrimary={false} fontSize={16} style={{ textAlign: 'center', marginTop: 10, lineHeight: 22 }}>
           You're all caught up!{'\n'}Check back later for updates.
         </TextTheme>
       </View>

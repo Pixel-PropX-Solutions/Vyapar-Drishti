@@ -4,7 +4,6 @@ import TextTheme from "../../Ui/Text/TextTheme";
 import AnimateButton from "../../Ui/Button/AnimateButton";
 import ShowWhen from "../../Other/ShowWhen";
 import FeatherIcon from "../../Icon/FeatherIcon";
-import BackgroundThemeView from "./BackgroundThemeView";
 import { ReactNode } from "react";
 
 
@@ -23,7 +22,13 @@ export default function SectionView({label, children, style, containerStyle, lab
     return (
         <View style={containerStyle}>
             <View style={{flexDirection: 'row', alignItems: 'center', width: '100%', marginBottom: labelMargin}} >
-                <TextTheme isPrimary={false} style={{paddingLeft: 4, fontWeight: '900', fontSize: 20}} color={labelColor} >
+                <TextTheme 
+                    isPrimary={false}
+                    style={{paddingLeft: 4}}
+                    fontWeight={900}
+                    fontSize={20}
+                    color={labelColor}
+                >
                     {label}
                 </TextTheme>
                 {labelContainerChildren}
@@ -60,7 +65,7 @@ export function SectionRow({isPrimary=false, backgroundColor, onPress, children,
             bubbleScale={30}
         >
             <ShowWhen when={label !== ''}>
-                <TextTheme isPrimary={isLabelPrimary} style={{fontWeight: '900'}}>{label}</TextTheme>
+                <TextTheme isPrimary={isLabelPrimary} fontSize={16} fontWeight={900}>{label}</TextTheme>
             </ShowWhen>
             <View style={[{flexDirection: 'row', alignItems: 'center'}, style]} >
                 {children}
@@ -92,7 +97,13 @@ export function SectionArrowRow({isPrimary=false, backgroundColor, onPress, text
     >
         <View style={{alignItems: 'center', flexDirection: 'row', gap: 16}} >
             {icon}
-            <TextTheme color={textColor} style={{fontWeight: '900', fontSize: 16}} >{text}</TextTheme>
+            <TextTheme 
+                color={textColor}
+                fontWeight={900}
+                fontSize={16}
+            >
+                {text}
+            </TextTheme>
         </View>
 
         <FeatherIcon name="arrow-right" size={arrowSize} color={textColor} />
@@ -133,8 +144,8 @@ export function SectionRowWithIcon({isPrimary=false, onPress, label, text, icon,
                 </View>
 
                 <View style={{flex: 1}} >
-                    <TextTheme color={color} style={{fontWeight: 900}} numberOfLines={1} >{label}</TextTheme>
-                    <TextTheme color={color} isPrimary={false} style={{fontSize: 12, fontWeight: 900}} numberOfLines={2} >{text}</TextTheme>
+                    <TextTheme color={color} numberOfLines={1} fontSize={14} fontWeight={800} >{label}</TextTheme>
+                    <TextTheme color={color} isPrimary={false} fontSize={12} numberOfLines={2} fontWeight={700}>{text}</TextTheme>
                 </View>
             </View>
         

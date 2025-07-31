@@ -214,6 +214,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 20 }}
+                keyboardShouldPersistTaps='always'
             >
                 <View style={{ alignItems: 'center', marginBottom: 24 }}>
                     <View style={{
@@ -227,10 +228,10 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                     }}>
                         <FeatherIcon name="package" size={30} color={primaryColor} />
                     </View>
-                    <TextTheme style={{ fontWeight: '900', fontSize: 20, textAlign: 'center' }}>
+                    <TextTheme fontWeight={900} fontSize={20} style={{ textAlign: 'center' }}>
                         Create New Product
                     </TextTheme>
-                    <TextTheme style={{ fontSize: 14, opacity: 0.7, textAlign: 'center', marginTop: 4 }}>
+                    <TextTheme fontSize={14} style={{ opacity: 0.7, textAlign: 'center', marginTop: 4 }}>
                         Add product details to your inventory
                     </TextTheme>
                 </View>
@@ -363,8 +364,8 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                 style={{ paddingHorizontal: 20 }}
             >
                 <View style={{ alignItems: 'center', marginBottom: 20 }}>
-                    <TextTheme style={{ fontWeight: '900', fontSize: 18 }}>GST Taxability</TextTheme>
-                    <TextTheme style={{ fontSize: 14, opacity: 0.7, marginTop: 4 }}>
+                    <TextTheme fontWeight={900} fontSize={18}>GST Taxability</TextTheme>
+                    <TextTheme fontSize={14} style={{ opacity: 0.7, marginTop: 4 }}>
                         Select GST taxability type
                     </TextTheme>
                 </View>
@@ -387,11 +388,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                                 setTaxabilityModalVisible(false);
                             }}
                         >
-                            <TextTheme style={{
-                                fontWeight: '600',
-                                fontSize: 16,
-                                color: option.value === data.gst_taxability ? '#fff' : undefined,
-                            }}>
+                            <TextTheme fontWeight={600} fontSize={16} color={option.value === data.gst_taxability ? '#fff' : undefined}>
                                 {option.label}
                             </TextTheme>
                         </AnimateButton>
@@ -406,8 +403,8 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                 style={{ paddingHorizontal: 20 }}
             >
                 <View style={{ alignItems: 'center', marginBottom: 20 }}>
-                    <TextTheme style={{ fontWeight: '900', fontSize: 18 }}>Nature of Goods</TextTheme>
-                    <TextTheme style={{ fontSize: 14, opacity: 0.7, marginTop: 4 }}>
+                    <TextTheme fontWeight={900} fontSize={18}>Nature of Goods</TextTheme>
+                    <TextTheme fontSize={14} style={{ opacity: 0.7, marginTop: 4 }}>
                         Select whether this is goods or services
                     </TextTheme>
                 </View>
@@ -430,11 +427,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                                 setGoodsNatureModalVisible(false);
                             }}
                         >
-                            <TextTheme style={{
-                                fontWeight: '600',
-                                fontSize: 16,
-                                color: option.value === data.gst_nature_of_goods ? '#fff' : undefined,
-                            }}>
+                            <TextTheme fontWeight={600} fontSize={16} color={option.value === data.gst_nature_of_goods ? '#fff' : undefined}>
                                 {option.label}
                             </TextTheme>
                         </AnimateButton>

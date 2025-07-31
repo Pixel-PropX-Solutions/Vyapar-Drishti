@@ -86,9 +86,9 @@ export default function LabelTextInput({ label, icon, containerStyle, onChangeTe
             </View>
             {
                 !(isInputTextValid || isFocus) ? (
-                    <Text style={{ paddingLeft: 6, fontSize: 12, color: messageTextColor }} >
+                    <TextTheme color={messageTextColor} style={{paddingLeft: 6}} >
                         {message}
-                    </Text>
+                    </TextTheme>
                 ) : null
             }
         </View>

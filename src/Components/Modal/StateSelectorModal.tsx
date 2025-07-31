@@ -46,14 +46,14 @@ export function StateSelectorModal({ visible, setVisible, country, state, field 
             setVisible={setVisible}
             SelectedItemContent={
                 <View>
-                    <TextTheme color="white" style={{ fontWeight: 400, fontSize: 14 }} >
+                    <TextTheme color="white" fontWeight={700} fontSize={14} >
                         {selected}
                     </TextTheme>
                 </View>
             }
 
             renderItemContent={(item) => (<>
-                <TextTheme style={{ fontWeight: 900, fontSize: 16 }}>{item}</TextTheme>
+                <TextTheme fontSize={16} fontWeight={900} >{item}</TextTheme>
                 {/* <TextTheme style={{ fontWeight: 600, fontSize: 16 }}>{item.currency}</TextTheme> */}
             </>)}
         />

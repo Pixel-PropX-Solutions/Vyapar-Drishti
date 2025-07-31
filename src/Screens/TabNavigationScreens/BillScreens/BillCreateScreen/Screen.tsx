@@ -21,7 +21,7 @@ export default function BillCreateScreen() {
                     <View style={{ gap: 16 }} >
                         <ProgressBar />
 
-                        <TextTheme style={{ fontSize: 18, fontWeight: '700' }}>
+                        <TextTheme fontSize={18} fontWeight={700}>
                             Bill Information
                         </TextTheme>
 

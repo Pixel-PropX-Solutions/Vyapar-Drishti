@@ -38,25 +38,25 @@ export default function CustomerCard({ name, groupName, createOn, phoneNo = '', 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }} >
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                         <View style={{ borderRadius: 50, aspectRatio: 1, width: 40, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: primaryBackgroundColor, backgroundColor }} >
-                            <TextTheme style={{ fontSize: 18, fontWeight: 900 }} >{name[0]}</TextTheme>
+                            <TextTheme fontSize={18} fontWeight={900}>{name[0]}</TextTheme>
                         </View>
 
                         <View>
-                            <TextTheme style={{ fontSize: 18, fontWeight: 900 }} >{sliceString(name, 20)}</TextTheme>
-                            <TextTheme style={{ fontSize: 12 }} >{groupName}</TextTheme>
+                            <TextTheme fontSize={18} fontWeight={900}>{sliceString(name, 20)}</TextTheme>
+                            <TextTheme fontSize={12}>{groupName}</TextTheme>
                         </View>
                     </View>
 
                     <View style={{ alignItems: 'flex-end' }} >
                         <ShowWhen when={phoneNo !== ''} >
                             <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }} >
-                                <TextTheme isPrimary={false} style={{ fontSize: 12 }} >{phoneNo}</TextTheme>
+                                <TextTheme isPrimary={false} fontSize={12}>{phoneNo}</TextTheme>
                                 <FeatherIcon isPrimary={false} name="phone" size={12} />
                             </View>
                         </ShowWhen>
 
                         <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }} >
-                            <TextTheme isPrimary={false} style={{ fontSize: 12 }} >{createOn.split('T')[0]}</TextTheme>
+                            <TextTheme isPrimary={false} fontSize={12}>{createOn.split('T')[0]}</TextTheme>
                             <FeatherIcon isPrimary={false} name="calendar" size={12} />
                         </View>
                     </View>

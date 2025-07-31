@@ -18,7 +18,8 @@ import { ComponentProps, ElementType } from 'react';
 import BillInfoScreen from '../Screens/TabNavigationScreens/BillScreens/BillInfoScreen/BillInfoScreen';
 import AppUpdateScreen from '../Screens/AppUpdateScreen';
 import ForgotPasswordScreen from '../Screens/ForgotPasswordScreen';
-import InventoryScreen from '../Screens/InventoryScreen/Screen';
+import TransitionCreateScreen from '../Screens/TabNavigationScreens/BillScreens/TransactionCreateScreen/Screen';
+import CustomerViewScreen from '../Screens/TabNavigationScreens/CustomerScreens/CustomerViewScreen/Screen';
 
 export type StackParamsList = {
     'splash-screen': undefined,
@@ -32,10 +33,13 @@ export type StackParamsList = {
 
     'company-profile-screen': undefined,
     'product-info-screen': { productId: string }
-    'customer-info-screen': { customerId: string }
-
+    
     'create-bill-screen': { type: string, id: string }
+    'create-transaction-screen': { type: string, id: string }
     'bill-info-screen': { id: string },
+    
+    'customer-info-screen': {id: string},
+    'customer-view-screen': {id: string},
 
     'inventory-screen': undefined
 
@@ -116,8 +120,13 @@ export default function StackNavigation(): React.JSX.Element {
                     component={withSafeView(LandingScreen)}
                 />
 
-                <Stack.Screen  name='inventory-screen'
-                    component={withSafeView(InventoryScreen)}
+                <Stack.Screen name="create-transaction-screen"
+                    component={withSafeView(TransitionCreateScreen)}
+                    options={{ animation: 'scale_from_center' }}
+                />
+
+                <Stack.Screen name='customer-view-screen' 
+                    component={CustomerViewScreen}
                 />
 
                 <Stack.Screen name="tab-navigation"

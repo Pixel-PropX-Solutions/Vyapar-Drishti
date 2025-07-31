@@ -78,18 +78,18 @@ export default function BillInfoScreen(): React.JSX.Element {
                 />
 
                 <ScrollView contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }} >
-                    <TextTheme style={{ fontSize: 22, fontWeight: 900, marginTop: 10 }} >Invoice Details</TextTheme>
+                    <TextTheme fontSize={22} fontWeight={900} style={{ marginTop: 10 }}>Invoice Details</TextTheme>
 
                     <SectionView label="Info" labelMargin={4}>
                         <SectionRow style={{ justifyContent: 'space-between' }}>
                             <View>
-                                <TextTheme isPrimary={false} style={{ fontSize: 10, fontWeight: 900 }} >Bill number</TextTheme>
-                                <TextTheme style={{ fontSize: 14, fontWeight: 900 }} >{invoiceData?.voucher_number}</TextTheme>
+                                <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>Bill number</TextTheme>
+                                <TextTheme fontSize={14} fontWeight={900}>{invoiceData?.voucher_number}</TextTheme>
                             </View>
 
                             <View style={{ alignItems: 'flex-end' }}>
-                                <TextTheme style={{ fontSize: 14, fontWeight: 900 }} >{formatDate(invoiceData?.date)}</TextTheme>
-                                <TextTheme isPrimary={false} style={{ fontSize: 10, fontWeight: 900 }} >Create On</TextTheme>
+                                <TextTheme fontSize={14} fontWeight={900}>{formatDate(invoiceData?.date)}</TextTheme>
+                                <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>Create On</TextTheme>
                             </View>
                         </SectionRow>
                     </SectionView>
@@ -98,24 +98,24 @@ export default function BillInfoScreen(): React.JSX.Element {
                         <SectionRow >
                             <View style={{ flex: 1, gap: 12 }} >
                                 <View >
-                                    <TextTheme style={{ fontSize: 14, fontWeight: 900 }} >{invoiceData.party_name}</TextTheme>
-                                    <TextTheme isPrimary={false} style={{ fontSize: 10, fontWeight: 900 }} >{invoiceData.party_details.parent}</TextTheme>
+                                <TextTheme fontSize={14} fontWeight={900}>{invoiceData.party_name}</TextTheme>
+                                <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>{invoiceData.party_details.parent}</TextTheme>
                                 </View>
 
                                 <View style={{ gap: 4 }}>
                                     <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }} >
                                         <FeatherIcon isPrimary={false} name="phone" size={12} />
-                                        <TextTheme isPrimary={false} style={{ fontSize: 12 }} >{invoiceData.party_details.phone.code} {invoiceData.party_details.phone.number}</TextTheme>
+                                        <TextTheme isPrimary={false} fontSize={12}>{invoiceData.party_details.phone.code} {invoiceData.party_details.phone.number}</TextTheme>
                                     </View>
 
                                     {invoiceData.party_details.email && <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }} >
                                         <FeatherIcon isPrimary={false} name="mail" size={12} />
-                                        <TextTheme isPrimary={false} style={{ fontSize: 12, fontWeight: 900 }} >{invoiceData.party_details.email}</TextTheme>
+                                        <TextTheme isPrimary={false} fontSize={12} fontWeight={900}>{invoiceData.party_details.email}</TextTheme>
                                     </View>}
 
                                     <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }} >
                                         <FeatherIcon isPrimary={false} name="map-pin" size={12} />
-                                        <TextTheme isPrimary={false} style={{ fontSize: 12, fontWeight: 900 }} >{invoiceData.party_details.mailing_address ?? invoiceData.party_details.mailing_state}</TextTheme>
+                                        <TextTheme isPrimary={false} fontSize={12} fontWeight={900}>{invoiceData.party_details.mailing_address ?? invoiceData.party_details.mailing_state}</TextTheme>
                                     </View>
                                 </View>
                             </View>
@@ -128,31 +128,31 @@ export default function BillInfoScreen(): React.JSX.Element {
                                 <BackgroundThemeView key={item._id} isPrimary={false} style={{ padding: 12, borderRadius: 8, gap: 8 }} >
                                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }} >
                                         <View>
-                                            <TextTheme style={{ fontSize: 14, fontWeight: 900 }} >{item.item}</TextTheme>
-                                            <TextTheme isPrimary={false} style={{ fontSize: 10, fontWeight: 900 }} >{item.hsn_code}</TextTheme>
+                                            <TextTheme fontSize={14} fontWeight={900}>{item.item}</TextTheme>
+                                            <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>{item.hsn_code}</TextTheme>
                                         </View>
 
                                         <View style={{ alignItems: 'flex-end' }} >
-                                            <TextTheme isPrimary={false} style={{ fontSize: 10, fontWeight: 900 }} >Sell quantity</TextTheme>
-                                            <TextTheme style={{ fontSize: 14, fontWeight: 900 }} >{item.quantity} Unit</TextTheme>
+                                            <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>Sell quantity</TextTheme>
+                                            <TextTheme fontSize={14} fontWeight={900}>{item.quantity} Unit</TextTheme>
                                         </View>
                                     </View>
 
                                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
 
                                         <View style={{ alignItems: 'flex-end' }} >
-                                            <TextTheme isPrimary={false} style={{ fontSize: 10, fontWeight: 900 }} >Item Rate</TextTheme>
-                                            <TextTheme style={{ fontSize: 14, fontWeight: 900 }} >{roundToDecimal(Number(item.rate), 2)} INR</TextTheme>
+                                            <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>Item Rate</TextTheme>
+                                            <TextTheme fontSize={14} fontWeight={900}>{roundToDecimal(Number(item.rate), 2)} INR</TextTheme>
                                         </View>
 
                                         {gst_enable && <View style={{ alignItems: 'flex-end' }} >
-                                            <TextTheme isPrimary={false} style={{ fontSize: 10, fontWeight: 900 }} >GST Amount</TextTheme>
-                                            <TextTheme style={{ fontSize: 14, fontWeight: 900 }} >{roundToDecimal(Number(item.gst_amount), 2)} INR</TextTheme>
+                                            <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>GST Amount</TextTheme>
+                                            <TextTheme fontSize={14} fontWeight={900}>{roundToDecimal(Number(item.gst_amount), 2)} INR</TextTheme>
                                         </View>}
 
                                         <View style={{ alignItems: 'flex-end' }} >
-                                            <TextTheme isPrimary={false} style={{ fontSize: 10, fontWeight: 900 }} >Item Total</TextTheme>
-                                            <TextTheme style={{ fontSize: 14, fontWeight: 900 }} >{roundToDecimal(Number(item.amount), 2)} INR</TextTheme>
+                                            <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>Item Total</TextTheme>
+                                            <TextTheme fontSize={14} fontWeight={900}>{roundToDecimal(Number(item.amount), 2)} INR</TextTheme>
                                         </View>
                                     </View>
                                 </BackgroundThemeView>
@@ -165,18 +165,18 @@ export default function BillInfoScreen(): React.JSX.Element {
             <BackgroundThemeView isPrimary={false} style={{ padding: 12, borderRadius: 20, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, borderWidth: 2, gap: 4 }} >
 
                 <SectionRow isPrimary={true} style={{ justifyContent: 'space-between' }} >
-                    <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Sub Total</TextTheme>
-                    <TextTheme style={{ fontWeight: 900, fontSize: 16 }} >{invoiceData.inventory.reduce((acc, item) => acc + item.amount, 0).toFixed(2)} {'INR'}</TextTheme>
+                    <TextTheme fontSize={16} fontWeight={900}>Sub Total</TextTheme>
+                    <TextTheme fontWeight={900} fontSize={16}>{invoiceData.inventory.reduce((acc, item) => acc + item.amount, 0).toFixed(2)} {'INR'}</TextTheme>
                 </SectionRow>
 
                 {gst_enable && <SectionRow isPrimary={true} style={{ justifyContent: 'space-between' }} >
-                    <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Tax</TextTheme>
-                    <TextTheme style={{ fontWeight: 900, fontSize: 16 }} >{invoiceData.inventory.reduce((acc, item) => acc + (Number(item?.gst_amount) ?? 0), 0).toFixed(2)} {'INR'}</TextTheme>
+                    <TextTheme fontSize={16} fontWeight={900}>Tax</TextTheme>
+                    <TextTheme fontWeight={900} fontSize={16}>{invoiceData.inventory.reduce((acc, item) => acc + (Number(item?.gst_amount) ?? 0), 0).toFixed(2)} {'INR'}</TextTheme>
                 </SectionRow>}
 
                 <SectionRow isPrimary={true} style={{ justifyContent: 'space-between' }} >
-                    <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >Grand Total</TextTheme>
-                    <TextTheme style={{ fontWeight: 900, fontSize: 16 }} >{Math.abs(invoiceData.accounting_entries.find((acc) => acc.ledger_id === invoiceData.party_name_id)?.amount ?? 0)} {'INR'}</TextTheme>
+                    <TextTheme fontSize={16} fontWeight={900}>Grand Total</TextTheme>
+                    <TextTheme fontWeight={900} fontSize={16}>{Math.abs(invoiceData.accounting_entries.find((acc) => acc.ledger_id === invoiceData.party_name_id)?.amount ?? 0)} {'INR'}</TextTheme>
                 </SectionRow>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 16 }} >
@@ -186,7 +186,6 @@ export default function BillInfoScreen(): React.JSX.Element {
                             color="white"
                             backgroundColor="rgb(50,150,200)"
                             icon={<FeatherIcon color="white" name="share-2" size={16} />}
-                            textStyle={{ fontSize: 16, fontWeight: 900 }}
                             onPress={() => handleInvoice(invoiceData, handleShare)}
                         />
                     </View>
@@ -197,7 +196,6 @@ export default function BillInfoScreen(): React.JSX.Element {
                             color="white"
                             backgroundColor="rgb(50,200,150)"
                             icon={<FeatherIcon color="white" name="printer" size={16} />}
-                            textStyle={{ fontSize: 16, fontWeight: 900 }}
                             onPress={() => { handleInvoice(invoiceData, () => { setPDFModalVisible(true); }); }}
                         />
                     </View>
