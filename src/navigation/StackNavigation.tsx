@@ -18,7 +18,6 @@ import { ComponentProps, ElementType } from 'react';
 import BillInfoScreen from '../Screens/TabNavigationScreens/BillScreens/BillInfoScreen/BillInfoScreen';
 import AppUpdateScreen from '../Screens/AppUpdateScreen';
 import ForgotPasswordScreen from '../Screens/ForgotPasswordScreen';
-import InventoryScreen from '../Screens/InventoryScreen/Screen';
 import TransitionCreateScreen from '../Screens/TabNavigationScreens/BillScreens/TransactionCreateScreen/Screen';
 import CustomerViewScreen from '../Screens/TabNavigationScreens/CustomerScreens/CustomerViewScreen/Screen';
 
@@ -119,10 +118,6 @@ export default function StackNavigation(): React.JSX.Element {
                 <Stack.Screen name="landing-screen"
                     options={{ animation: 'fade' }}
                     component={withSafeView(LandingScreen)}
-                />
-
-                <Stack.Screen  name='inventory-screen'
-                    component={withSafeView(InventoryScreen)}
                 />
 
                 <Stack.Screen name="create-transaction-screen"

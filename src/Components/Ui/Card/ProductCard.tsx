@@ -9,6 +9,9 @@ import { GetProduct } from '../../../Utils/types';
 import { SectionRowWithIcon } from '../../Layouts/View/SectionView';
 import { formatNumberForUI } from '../../../Utils/functionTools';
 import ScaleAnimationView from '../Animation/ScaleAnimationView';
+import FeatherIcon from '../../Icon/FeatherIcon';
+import ShowWhen from '../../Other/ShowWhen';
+import AnimateButton from '../Button/AnimateButton';
 
 export type ProductCardProps = {
     item: GetProduct;
@@ -20,28 +23,42 @@ export default function ProductCard({ item, isPrimary = true, onPress }: Product
 
     const { currency } = useAppStorage();
 
+    const mp = 100 * ((item.sales_value - item.purchase_value) || 0) / (item.sales_value || 1);
+    const rgb = mp < 0 ? 'rgb(200,50,50)' : mp == 0 ? '' : 'rgb(50,200,150)'
+
     return (
         <ScaleAnimationView useRandomDelay={true} >
-            <SectionRowWithIcon
-                isPrimary={isPrimary}
-                label={sliceString(item.stock_item_name, 30) ?? ''}
-                text={item.gst_hsn_code ?? 'hsn code not set'}
-                onPress={onPress}
-                icon={<TextTheme fontSize={16} fontWeight={900}>{item.stock_item_name[0].toUpperCase()}</TextTheme>}
+            <AnimateButton onPress={onPress} >
+                <BackgroundThemeView isPrimary={isPrimary} style={{borderRadius: 12, padding: 12, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} >
+                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 12}} >
+                        <BackgroundThemeView isPrimary={false} style={{alignItems: 'center', justifyContent: 'center', width: 40, aspectRatio: 1, borderRadius: 8}} >
+                            <TextTheme fontSize={14} >{item?.stock_item_name.split(' ').map(e => e[0]).join('').slice(0,2) ?? 'PN'}</TextTheme>
+                        </BackgroundThemeView>
 
-            >
-                <BackgroundThemeView style={{position: 'absolute', top: -2, right: 10, paddingInline: 8, borderRadius: 8, paddingBottom: 2}} >
-                    <TextTheme isPrimary={false}>
-                        {item.purchase_qty - item.sales_qty} {item.unit}
-                    </TextTheme>
+                        <View>
+                            <TextTheme fontSize={14} >{sliceString(item.stock_item_name, 25)}</TextTheme>
+                            <View style={{flexDirection: 'row', gap: 14}} >
+                                <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}}>
+                                    <TextTheme color={rgb} fontSize={10} >Profit</TextTheme>
+                                    <TextTheme color={rgb} fontSize={10} >{mp.toFixed(2)}%</TextTheme>
+                                    
+                                    <ShowWhen when={mp !== 0} >
+                                        <FeatherIcon color={rgb} name={`trending-${mp < 0 ? 'down' : 'up'}`} size={10} />
+                                    </ShowWhen>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+
+                    <BackgroundThemeView isPrimary={false} style={{position: 'absolute', top: -2, right: 10, paddingInline: 8, borderRadius: 8, paddingBottom: 2}} >
+                        <TextTheme fontSize={12}>{item.purchase_qty - item.sales_qty} {item.unit}</TextTheme>
+                    </BackgroundThemeView>
+
+                    <View style={{alignItems: 'flex-end'}} >
+                        <TextTheme fontSize={14}>{item.sales_value} {currency}</TextTheme>
+                    </View>
                 </BackgroundThemeView>
-
-                <View style={{alignItems: 'flex-end'}} >
-                    <TextTheme fontSize={14}>
-                        {formatNumberForUI(item.sales_value, 10)} {currency}
-                    </TextTheme>
-                </View>
-            </SectionRowWithIcon>
+            </AnimateButton>
         </ScaleAnimationView>
     );
 }
