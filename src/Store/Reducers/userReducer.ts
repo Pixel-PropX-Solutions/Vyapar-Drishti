@@ -1,4 +1,4 @@
-import { createSlice, Slice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import { loginUser, register, getCurrentUser, updateUserSettings, switchCompany } from '../../Services/user';
 import AuthStore from '../AuthStore';
 
@@ -21,7 +21,11 @@ const initialState: UserState = {
 const userSlice: Slice<UserState> = createSlice({
     name: 'auth',
     initialState,
-    reducers: {},
+    reducers: {
+        setCurrentCompanyId: (state, action: PayloadAction<string>) => {
+            state.current_company_id = action.payload;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(loginUser.pending, (state) => {
@@ -60,7 +64,6 @@ const userSlice: Slice<UserState> = createSlice({
             })
             .addCase(register.fulfilled, (state, action) => {
                 state.loading = false;
-                state.current_company_id = action.payload.current_company_id; // Update current company ID
                 state.isAuthenticated = action.payload.accessToken ? true : false;
             })
             .addCase(register.rejected, (state, action) => {
@@ -76,6 +79,8 @@ const userSlice: Slice<UserState> = createSlice({
             .addCase(getCurrentUser.fulfilled, (state, action) => {
                 state.loading = false;
                 state.isAuthenticated = action.payload.user ? true : false;
+                state.current_company_id = action.payload.user?.user_settings?.current_company_id;
+                AuthStore.set("current_company_id", action.payload.user?.user_settings?.current_company_id)
                 state.user = action.payload.user;
             })
             .addCase(getCurrentUser.rejected, (state, action) => {
@@ -102,3 +107,4 @@ const userSlice: Slice<UserState> = createSlice({
 
 const userReducer = userSlice.reducer;
 export default userReducer;
+export const { setCurrentCompanyId } = userSlice.actions;

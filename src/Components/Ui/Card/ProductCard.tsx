@@ -6,7 +6,6 @@ import sliceString from '../../../Utils/sliceString';
 import LoadingView from '../../Layouts/View/LoadingView';
 import { useAppStorage } from '../../../Contexts/AppStorageProvider';
 import { GetProduct } from '../../../Utils/types';
-import { SectionRowWithIcon } from '../../Layouts/View/SectionView';
 import { formatNumberForUI } from '../../../Utils/functionTools';
 import ScaleAnimationView from '../Animation/ScaleAnimationView';
 import FeatherIcon from '../../Icon/FeatherIcon';
@@ -23,7 +22,7 @@ export default function ProductCard({ item, isPrimary = true, onPress }: Product
 
     const { currency } = useAppStorage();
 
-    const mp = 100 * ((item.sales_value - item.purchase_value) || 0) / (item.sales_value || 1);
+    const mp = item.sales_value ? 100 * ((item.sales_value - item.purchase_value) || 0) / (item.sales_value || 1) : 0;
     const rgb = mp < 0 ? 'rgb(200,50,50)' : mp == 0 ? '' : 'rgb(50,200,150)'
 
     return (
@@ -40,7 +39,7 @@ export default function ProductCard({ item, isPrimary = true, onPress }: Product
                             <View style={{flexDirection: 'row', gap: 14}} >
                                 <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}}>
                                     <TextTheme color={rgb} fontSize={10} >Profit</TextTheme>
-                                    <TextTheme color={rgb} fontSize={10} >{mp.toFixed(2)}%</TextTheme>
+                                    <TextTheme color={rgb} fontSize={10} >{formatNumberForUI(mp, 10, 2)}%</TextTheme>
                                     
                                     <ShowWhen when={mp !== 0} >
                                         <FeatherIcon color={rgb} name={`trending-${mp < 0 ? 'down' : 'up'}`} size={10} />

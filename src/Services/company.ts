@@ -36,7 +36,7 @@ export const getCompany = createAsyncThunk(
   'get/company',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await userApi.get('/user/company',);
+      const response = await userApi.get('/user/company');
       console.log('getCompany response', response.data);
 
       if (response.data.success) {

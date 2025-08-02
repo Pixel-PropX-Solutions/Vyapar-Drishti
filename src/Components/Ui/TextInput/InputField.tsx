@@ -26,6 +26,7 @@ export const InputField = ({
     handleChange,
     secondaryButtonAction,
     error,
+    type='string',
     // required = false,
 }: {
     icon: React.ReactNode,
@@ -44,6 +45,7 @@ export const InputField = ({
     handleChange: (field: string, value: string | boolean | number) => void;
     secondaryButtonAction?: () => void;
     error?: string,
+    type?: 'string' | 'intiger' | 'decimal' | `decimal${number}`
     // required?: boolean,
 }) => {
     const { primaryColor, secondaryBackgroundColor } = useTheme();
@@ -79,8 +81,8 @@ export const InputField = ({
                     multiline={multiline}
                     editable={editable}
                     autoFocus={autoFocus}
-                    onChange={(e) => handleChange(field, keyboardType === 'number-pad' || keyboardType === 'numeric' ?
-                        parseFloat(e.nativeEvent.text) || 0 : e.nativeEvent.text)}
+                    type={type}
+                    onChangeText={(text) => handleChange(field, text)}
                 />
 
                 {info && <Popover

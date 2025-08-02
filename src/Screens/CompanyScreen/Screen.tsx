@@ -7,15 +7,18 @@ import SectionView, { SectionRow } from '../../Components/Layouts/View/SectionVi
 import FeatherIcon from '../../Components/Icon/FeatherIcon';
 import LogoImage from '../../Components/Image/LogoImage';
 import NormalButton from '../../Components/Ui/Button/NormalButton';
-import { useCompanyStore, useUserStore } from '../../Store/ReduxStore';
+import { useAppDispatch, useCompanyStore, useUserStore } from '../../Store/ReduxStore';
 import DeleteModal from '../../Components/Modal/DeleteModal';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { BankInfoUpdateModal, CompanyAddressUpdateModal, CompanyContactUpdateModal, CompanyInfoUpdateModal, TaxInfoUpdateModal } from './Modals';
 import sliceString from '../../Utils/sliceString';
 import EditButton from '../../Components/Ui/Button/EditButton';
+import { useFocusEffect } from '@react-navigation/native';
+import { getCompany } from '../../Services/company';
 
 export default function CompanyScreen(): React.JSX.Element {
 
+    const dispatch = useAppDispatch()
     const { company } = useCompanyStore();
     const { user, current_company_id } = useUserStore();
     const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
@@ -27,6 +30,12 @@ export default function CompanyScreen(): React.JSX.Element {
     const [isAddressUpdateModalVisible, setAddressUdpateModalVisible] = useState<boolean>(false);
     const [isBackInfoModalVisible, setBankInfoModalVisible] = useState<boolean>(false);
     const [isTaxInfoModalVisible, setTaxInfoModalVisible] = useState<boolean>(false);
+
+    useFocusEffect(
+        useCallback(() => {
+            dispatch(getCompany())
+        }, [])
+    )
 
     return (
         <View style={{ width: '100%', height: '100%' }}>

@@ -62,13 +62,13 @@ export default function LandingScreen(): React.JSX.Element {
                     </View>
 
                     <View style={{ marginBottom: 14, paddingLeft: 6 }}>
-            <TextTheme fontWeight={900} fontSize={20} style={{ marginBottom: 4, textAlign: 'center' }} >
-                Welcome to Vyapar Drishti
-            </TextTheme>
+                        <TextTheme fontWeight={900} fontSize={20} style={{ marginBottom: 4, textAlign: 'center' }} >
+                            Welcome to Vyapar Drishti
+                        </TextTheme>
 
-            <TextTheme fontWeight={900} style={{ textAlign: 'center' }} isPrimary={false} >
-                Simplify Your GST Billing and Complete GST invoice management with automatic tax calculations.
-            </TextTheme>
+                        <TextTheme fontWeight={900} style={{ textAlign: 'center' }} isPrimary={false} >
+                            Simplify Your GST Billing and Complete GST invoice management with automatic tax calculations.
+                        </TextTheme>
                     </View>
 
                     <NormalButton

@@ -74,11 +74,14 @@ export default function LoginScreen(): React.JSX.Element {
                         onSubmitEditing={handleLogin}
                     />
 
-                    <Pressable onPress={() => { navigator.navigate('forgot-password-screen') }} >
-                        <Text style={{ color: 'rgb(50,150,250)', paddingLeft: 8, paddingTop: 8 }}>
-                            Forgot Password
-                        </Text>
-                    </Pressable>
+                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 2, paddingRight: 8, marginTop: 6, justifyContent: 'flex-end'}} >
+                        <TextTheme>Can't remember password?</TextTheme>
+                        <Pressable onPress={() => { navigator.navigate('forgot-password-screen') }} >
+                            <TextTheme color='rgb(50,150,250)' isPrimary={false}>
+                                Reset password
+                            </TextTheme>
+                        </Pressable>
+                    </View>
                 </View>
 
                 <View style={{ display: 'flex' }} >
@@ -98,6 +101,20 @@ export default function LoginScreen(): React.JSX.Element {
                         </TextTheme>
                     </Pressable>
                 </View>
+            </View>
+            
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 2, justifyContent: 'center', flexWrap: 'wrap'}} >
+                <TextTheme>By signing in, you agree to our</TextTheme>
+                
+                <TextTheme color='rgb(50,150,200)' isPrimary={false} >
+                    Terms of Service
+                </TextTheme>
+                
+                <TextTheme>and</TextTheme>
+                
+                <TextTheme color='rgb(50,150,200)' isPrimary={false} >
+                    Privacy Policy
+                </TextTheme>
             </View>
         </ScrollView>
     );

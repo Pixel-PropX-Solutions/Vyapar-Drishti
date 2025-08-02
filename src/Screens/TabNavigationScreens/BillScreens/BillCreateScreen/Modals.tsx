@@ -408,6 +408,7 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }} >
                     <View style={{ flex: 1, paddingRight: 8 }} >
                         <InputField
+                            type='decimal2'
                             icon={<FeatherIcon name="package" size={20} />}
                             field="quantity"
                             handleChange={handleInputChange}

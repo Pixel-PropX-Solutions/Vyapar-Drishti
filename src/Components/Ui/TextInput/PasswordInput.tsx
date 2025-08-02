@@ -5,6 +5,7 @@ import { TextInput } from "react-native-gesture-handler";
 import { useTheme } from "../../../Contexts/ThemeProvider";
 import AnimateButton from "../Button/AnimateButton";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import ShowWhen from "../../Other/ShowWhen";
 
 
 type Props = TextInputProps & {
@@ -14,10 +15,11 @@ type Props = TextInputProps & {
     focusColor?: string,
     message?: string,
     massageTextColor?: string,
-    checkInputText?: (text: string) => boolean
+    checkInputText?: (text: string) => boolean,
+    isRequired?: boolean
 }
 
-export default function PasswordInput({placeholder='***********', label='Password', onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkInputText, message, ...props}: Props): React.JSX.Element {
+export default function PasswordInput({placeholder='***********', label='Password', onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkInputText, message, isRequired=false, ...props}: Props): React.JSX.Element {
 
     const {primaryColor: color, primaryBackgroundColor: backgroundColor} = useTheme();
 
@@ -47,6 +49,9 @@ export default function PasswordInput({placeholder='***********', label='Passwor
                     color={isInputTextValid ? isFocus ? focusColor : color : massageTextColor}
                 >
                     {label}
+                    <ShowWhen when={isRequired} >
+                        <TextTheme color="rgb(250,50,50)" > *</TextTheme>
+                    </ShowWhen>
                 </TextTheme>
 
                 <TextInput  

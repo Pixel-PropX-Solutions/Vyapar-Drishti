@@ -127,8 +127,8 @@ export default function PhoneNoTextInput({ label, onChangeText, focusColor = 'rg
             </View>
             {
                 !(isInputTextValid || isFocus) ? (
-                    <TextTheme style={{ paddingLeft: 6, fontSize: 12, color: messageTextColor }} >
-                        {message}
+                    <TextTheme color={messageTextColor} style={{ paddingLeft: 6}} >
+                        {message ?? 'Invalid phone number'}
                     </TextTheme>
                 ) : null
             }

@@ -8,6 +8,7 @@ import BottomModal, { BottomModalActionButton } from "../BottomModal";
 import { useTheme } from "../../../Contexts/ThemeProvider";
 import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from "react";
 import EmptyListView from "../../Layouts/View/EmptyListView";
+import ScaleAnimationView from "../../Ui/Animation/ScaleAnimationView";
 
 type Props<item> = {
     title: string
@@ -95,7 +96,9 @@ export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItem
                 
                 ListEmptyComponent={
                     <ShowWhen when={!isFetching} otherwise={whenFetchingComponent} >
-                        <EmptyListView title="Empty List" text="Don't found any item in list" />
+                        <ScaleAnimationView>
+                            <EmptyListView title="Empty List" text="Don't found any item in list" />
+                        </ScaleAnimationView>
                     </ShowWhen>
                 }
                 

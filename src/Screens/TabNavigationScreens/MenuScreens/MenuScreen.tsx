@@ -17,6 +17,7 @@ import BottomModal from '../../../Components/Modal/BottomModal';
 import NoralTextInput from '../../../Components/Ui/TextInput/NoralTextInput';
 import DeleteModal from '../../../Components/Modal/DeleteModal';
 import { deleteCompany } from '../../../Services/company';
+import { setCurrentCompanyId } from '../../../Store/Reducers/userReducer';
 
 
 export default function MenuScreen(): React.JSX.Element {
@@ -191,12 +192,18 @@ export default function MenuScreen(): React.JSX.Element {
                         dispatch(deleteAccount());
                         AuthStore.clearAll();
                         navigator.reset('landing-screen');
+                        setDeleteModalVisible(false);
                     } else {
-                        dispatch(deleteCompany(current_company_id ?? ''));
-                        AuthStore.clearAll();
-                        navigator.reset('landing-screen');
+                       dispatch(deleteCompany(current_company_id ?? '')).then((res) => {
+                            if (res.meta.requestStatus === 'fulfilled') {
+                                dispatch(setCurrentCompanyId(null));
+                                AuthStore.delete("current_company_id")
+                                navigator.reset('tab-navigation')
+                                setDeleteModalVisible(false);
+                            }
+                            setDeleteModalVisible(false);
+                        });
                     }
-                    setDeleteModalVisible(false);
                 }}
             />
         </View>

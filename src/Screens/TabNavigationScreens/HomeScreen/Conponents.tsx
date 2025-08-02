@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useCompanyStore, useUserStore } from '../../../Store/ReduxStore';
-import { getAllCompanies, getCompany } from '../../../Services/company';
+import { getAllCompanies } from '../../../Services/company';
 import { getCurrentUser } from '../../../Services/user';
 import { Linking, Share, View } from 'react-native';
 import AnimateButton from '../../../Components/Ui/Button/AnimateButton';
@@ -23,11 +23,12 @@ export function Header(): React.JSX.Element {
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
-    const { current_company_id } = useUserStore();
-    const { company, isCompanyFetching } = useCompanyStore();
+    const { current_company_id, user } = useUserStore();
+    const { isCompanyFetching } = useCompanyStore();
+    const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
+
 
     useEffect(() => {
-        dispatch(getCompany());
         dispatch(getCurrentUser());
         dispatch(getAllCompanies());
     }, [dispatch, current_company_id]);
@@ -43,7 +44,7 @@ export function Header(): React.JSX.Element {
                     otherwise={<LoadingView width={44} height={44} />}
                 >
                     <BackgroundThemeView isPrimary={false} style={{ width: 40, borderRadius: 12, aspectRatio: 1, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }} >
-                        <LogoImage size={44} imageSrc={company?.image} />
+                        <LogoImage size={44} imageSrc={currentCompanyDetails?.image} />
                     </BackgroundThemeView>
                 </ShowWhen>
 
@@ -56,10 +57,10 @@ export function Header(): React.JSX.Element {
                         </>}
                     >
                         <TextTheme numberOfLines={1} fontSize={16} fontWeight={600} >
-                            {company?.name}
+                            {currentCompanyDetails?.company_name}
                         </TextTheme>
                         <TextTheme numberOfLines={1} isPrimary={false}>
-                            {company?.email}
+                            {currentCompanyDetails?.email}
                         </TextTheme>
                     </ShowWhen>
                 </View>
@@ -158,7 +159,7 @@ export function QuickAccessSection(): React.JSX.Element {
                         onPress={() => { navigator.navigate('create-bill-screen', { type: 'Purchase', id: 'fe9221db-5990-41a0-976a-3cb4f78aef0f' }); }}
                     />
                 </View>
-                
+
                 <View style={{ flexDirection: 'row', gap: 12 }}>
                     <QuickAccessBox
                         label="Recipt"

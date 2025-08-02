@@ -69,19 +69,13 @@ export const register = createAsyncThunk(
   async (
     userData: UserSignUp,
     { rejectWithValue }
-  ): Promise<{ accessToken: string } | any> => {
+  ): Promise<{ ok: boolean } | any> => {
     try {
       const response = await userApi.post('/auth/register', userData);
       console.log('register response', response.data);
 
-
-      if (response.data.ok === true) {
-        const { accessToken } = response.data;
-        const decoded: any = jwtDecode(accessToken);
-        const current_company_id = decoded.current_company_id;
-        AuthStore.set('accessToken', accessToken);
-        AuthStore.set('current_company_id', current_company_id);
-        return { accessToken, current_company_id };
+      if (response.data.ok === true) {  
+        return;
       } else {
         return rejectWithValue(
           'Registration failed: No access token received.'

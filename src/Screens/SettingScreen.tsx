@@ -18,6 +18,7 @@ import { deleteAccount, logout } from '../Services/user';
 import { ItemSelectorModal } from '../Components/Modal/Selectors/ItemSelectorModal';
 import DeleteModal from '../Components/Modal/DeleteModal';
 import { deleteCompany } from '../Services/company';
+import { setCurrentCompanyId } from '../Store/Reducers/userReducer';
 
 export default function SettingScreen(): React.JSX.Element {
 
@@ -191,9 +192,14 @@ export default function SettingScreen(): React.JSX.Element {
                         AuthStore.clearAll();
                         navigator.reset('landing-screen');
                     } else {
-                        dispatch(deleteCompany(current_company_id ?? ''));
-                        AuthStore.clearAll();
-                        navigator.reset('landing-screen');
+                        dispatch(deleteCompany(current_company_id ?? '')).then((res) => {
+                            if (res.meta.requestStatus === 'fulfilled') {
+                                dispatch(setCurrentCompanyId(null));
+                                AuthStore.delete("current_company_id")
+                                navigator.reset('tab-navigation')
+                            }
+                        });
+
                     }
                     setDeleteModalVisible(false);
                 }}
