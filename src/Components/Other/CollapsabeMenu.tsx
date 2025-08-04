@@ -34,7 +34,7 @@ export default function CollapsabeMenu({ header, children, expanded, setExpanded
                 width: '100%',
                 marginBottom: 10,
             }}>
-                <TextTheme fontSize={18} color='white' >{header}</TextTheme>
+                <TextTheme fontSize={18} >{header}</TextTheme>
                 {icon ? icon : <FeatherIcon name={expanded ? 'chevron-up' : 'chevron-down'} size={28} />}
             </TouchableOpacity>
 

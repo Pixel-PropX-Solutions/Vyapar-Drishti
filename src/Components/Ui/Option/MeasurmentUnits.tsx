@@ -33,13 +33,13 @@ export default function MeasurementUnitsOpation({ onSelect, label, style, reande
             onPress={() => { setModalVisible(true); }}
             style={
                 reanderCustomButton ? style : {
-                    borderWidth: 2, borderRadius: 12, paddingInline: 12, flexDirection: 'row', alignItems: 'center', gap: 16, borderColor: error ? 'red' : primaryColor, height: 56, ...style,
+                    borderWidth: 1, borderRadius: 12, paddingInline: 12, flexDirection: 'row', alignItems: 'center', gap: 16, borderColor: error ? 'red' : primaryColor, paddingBlock: 20, ...style,
                 }
             }
         >
             <ShowWhen when={!reanderCustomButton} otherwise={reanderCustomButton ? reanderCustomButton(selected) : null} >
                 <FeatherIcon name="layers" size={20} />
-                <TextTheme style={{ flex: 1 }}>{selected?.value ?? label ?? 'Select Unit'}</TextTheme>
+                <TextTheme fontSize={14} style={{ flex: 1 }}>{selected?.value ?? label ?? 'Select Unit'}</TextTheme>
                 <FeatherIcon name="chevron-right" size={20} />
             </ShowWhen>
 

@@ -39,7 +39,7 @@ export default function SignUpScreen(): React.JSX.Element {
             if (response.meta.requestStatus === 'fulfilled') {
 
                 setAlert({
-                    message: 'You have successfully registered and logged in. Please check your email for password.',
+                    message: 'You have successfully registered. Please check your email for verification.',
                     type: 'success',
                 });
                 dispatch((getCurrentUser()));

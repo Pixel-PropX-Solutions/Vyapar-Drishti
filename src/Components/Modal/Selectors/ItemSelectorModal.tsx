@@ -60,7 +60,7 @@ export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItem
             actionButtons={actionButtons}
             topMargin={0}
         >
-            <TextTheme style={{ fontSize: 20, fontWeight: 900 }} >
+            <TextTheme fontSize={20} fontWeight={900} >
                 {title}
             </TextTheme>
 

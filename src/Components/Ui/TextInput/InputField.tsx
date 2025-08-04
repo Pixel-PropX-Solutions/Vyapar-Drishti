@@ -79,8 +79,7 @@ export const InputField = ({
                     multiline={multiline}
                     editable={editable}
                     autoFocus={autoFocus}
-                    onChange={(e) => handleChange(field, keyboardType === 'number-pad' || keyboardType === 'numeric' ?
-                        parseFloat(e.nativeEvent.text) || 0 : e.nativeEvent.text)}
+                    onChangeText={(val) => handleChange(field, val)}
                 />
 
                 {info && <Popover

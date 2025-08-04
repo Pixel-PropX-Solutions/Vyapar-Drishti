@@ -1,5 +1,5 @@
 
-export type MeasurmentUnitType = {id: string, unit_name: string, value: string, symbol: string, si_representation: 'integer' | 'decimal'} | undefined
+export type MeasurmentUnitType = {id: string, unit_name: string, value: string, symbol: string, si_representation: 'integer' | 'decimal'};
 
 export const MeasurmentUnitsData: MeasurmentUnitType[] = [
     { "id": "1", "unit_name": "BAGS", "value": "BAG", "symbol": "BAG", "si_representation": "integer" },

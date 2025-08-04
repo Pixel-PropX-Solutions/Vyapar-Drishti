@@ -10,13 +10,13 @@ import FeatherIcon from '../../../Components/Icon/FeatherIcon';
 import MaterialIcon from '../../../Components/Icon/MaterialIcon';
 import TextTheme from '../../../Components/Ui/Text/TextTheme';
 import navigator from '../../../Navigation/NavigationService';
-import { deleteAccount, logout } from '../../../Services/user';
+import { deleteAccount, deleteCompany, logout, switchCompany } from '../../../Services/user';
 import AuthStore from '../../../Store/AuthStore';
 import { ItemSelectorModal } from '../../../Components/Modal/Selectors/ItemSelectorModal';
 import BottomModal from '../../../Components/Modal/BottomModal';
 import NoralTextInput from '../../../Components/Ui/TextInput/NoralTextInput';
 import DeleteModal from '../../../Components/Modal/DeleteModal';
-import { deleteCompany } from '../../../Services/company';
+import { useAlert } from '../../../Components/Ui/Alert/AlertProvider';
 
 
 export default function MenuScreen(): React.JSX.Element {
@@ -25,7 +25,7 @@ export default function MenuScreen(): React.JSX.Element {
     const { user, current_company_id } = useUserStore();
     const currentCompanyDetails = user?.company.find((c: any) => c._id === current_company_id);
     const { currency, billPrefix } = useAppStorage();
-
+    const { setAlert } = useAlert();
     const dispatch = useAppDispatch();
     const [isCurrencyModalVisible, setCurrencyModalVisible] = useState<boolean>(false);
     const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
@@ -188,15 +188,39 @@ export default function MenuScreen(): React.JSX.Element {
                 passkey={deletePasskey}
                 handleDelete={() => {
                     if (deletePasskey === user?.name?.first?.toUpperCase()) {
-                        dispatch(deleteAccount());
-                        AuthStore.clearAll();
-                        navigator.reset('landing-screen');
+                        dispatch(deleteAccount()).then(() => {
+                            setAlert({
+                                message: 'Account deleted successfully.',
+                                type: 'success',
+                            });
+                            setDeleteModalVisible(false);
+                            AuthStore.clearAll();
+                            navigator.reset('signup-screen');
+                        });
                     } else {
-                        dispatch(deleteCompany(current_company_id ?? ''));
-                        AuthStore.clearAll();
-                        navigator.reset('landing-screen');
+                        dispatch(deleteCompany(current_company_id ?? '')).then((result) => {
+                            if (result.meta.requestStatus === 'fulfilled') {
+                                if (result.payload?.company_id) {
+                                    dispatch(switchCompany(result.payload.company_id));
+                                }
+                                setAlert({
+                                    message: 'Company deleted successfully.',
+                                    type: 'success',
+                                });
+                                AuthStore.set('current_company_id', result.payload?.current_company_id ?? null);
+                                AuthStore.set('accessToken', result.payload?.accessToken ?? null);
+                                navigator.reset('landing-screen');
+                                setDeleteModalVisible(false);
+                            }
+                        }).catch((err) => {
+                            console.error('Error deleting company:', err);
+                            setDeleteModalVisible(false);
+                            setAlert({
+                                message: 'Failed to delete company. Please try again later.',
+                                type: 'error',
+                            });
+                        });
                     }
-                    setDeleteModalVisible(false);
                 }}
             />
         </View>

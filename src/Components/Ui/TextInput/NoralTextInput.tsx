@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import { TextInputProps, TextStyle } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { useTheme } from '../../../Contexts/ThemeProvider';
@@ -25,7 +25,7 @@ export default function NoralTextInput({placeholder = '', style = {}, color, onC
             placeholder={placeholder}
             autoCapitalize={capitalize}
             placeholderTextColor={ color ?? secondaryColor}
-            style={[{color: color ?? primaryColor, opacity: value ? 1 : 0.6}, style]}
+            style={[{color: color ?? primaryColor, opacity: value ? 1 : 0.6, fontFamily: 'Roboto-Medium', letterSpacing: 0.5}, style]}
             onChangeText={(text) => {
                 setValue(text);
                 if(onChangeText) {onChangeText(text);}

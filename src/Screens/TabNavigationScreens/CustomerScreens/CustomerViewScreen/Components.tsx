@@ -91,7 +91,7 @@ export function InvoiceListing() {
                 customerName="costomer name"
                 payAmount={1000}
                 pendingAmount={20}
-                totalAmount={1200}
+                totalAmount={1020}
                 type="Purchase"
             />
 
@@ -111,7 +111,7 @@ export function InvoiceListing() {
                 customerName="costomer name"
                 payAmount={1000}
                 pendingAmount={20}
-                totalAmount={1200}
+                totalAmount={1020}
                 type="Sales"
             />
             
@@ -129,8 +129,8 @@ export function InvoiceListing() {
                 billNo="100"
                 createOn="10-04-2025"
                 customerName="costomer name"
-                payAmount={1000}
-                pendingAmount={20}
+                payAmount={0}
+                pendingAmount={1200}
                 totalAmount={1200}
                 type="Sales"
             />

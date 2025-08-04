@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { Text, TextProps } from 'react-native';
+import { Text, TextProps, TextStyle } from 'react-native';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 
 
@@ -22,25 +22,27 @@ type Props = TextProps & {
     isPrimary?: boolean,
     useInvertTheme?: boolean,
     fontWeight?: FontWeight,
-    fontSize?: number
+    fontSize?: number,
+    style?: TextStyle,
+    letterSpacing?: number
 }
 
-export default function TextTheme({style, children, numberOfLines, color = '', isPrimary = true, useInvertTheme=false, fontWeight='medium', fontSize=12}: Props): React.JSX.Element {
+export default function TextTheme({ style, children, numberOfLines, color = '', isPrimary = true, useInvertTheme = false, fontWeight = 'regular', fontSize = 12, letterSpacing = 0 }: Props): React.JSX.Element {
 
-    let {primaryColor, secondaryColor, primaryBackgroundColor, secondaryBackgroundColor} = useTheme();
+    let { primaryColor, secondaryColor, primaryBackgroundColor, secondaryBackgroundColor } = useTheme();
 
-    if(!color) {
-        if(useInvertTheme) {
-            color =  isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
+    if (!color) {
+        if (useInvertTheme) {
+            color = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
         } else {
-            color =  isPrimary ? primaryColor : secondaryColor;
+            color = isPrimary ? primaryColor : secondaryColor;
         }
     }
 
     return (
         <Text
             numberOfLines={numberOfLines}
-            style={[style, { color, opacity: isPrimary ? 1 : 0.7, fontFamily: `Roboto-${Fonts[fontWeight] ?? 'Regular'}`, fontSize}]}
+            style={{ ...(style || {}), color, opacity: isPrimary ? 1 : 0.7, fontFamily: `Roboto-${Fonts[fontWeight] ?? 'Regular'}`, fontSize, letterSpacing }}
         >
             {children}
         </Text>

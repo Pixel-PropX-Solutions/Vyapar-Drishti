@@ -218,7 +218,6 @@ export function BillListing() {
                     createOn={item.created_at.split('T')[0]}
                     totalAmount={item.amount}
                     payAmount={item.amount}
-                    pendingAmount={0}
                     onPrint={() => { handleInvoice(item, () => { setPDFModalVisible(true); }); }}
                     onShare={() => { handleInvoice(item, handleShare); }}
                     onPress={() => { navigator.navigate('bill-info-screen', { id: item._id }); }}

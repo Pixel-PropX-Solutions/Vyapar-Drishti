@@ -13,15 +13,15 @@ type Props = ModalProps & {
     setVisible: Dispatch<SetStateAction<boolean>>,
     closeOnBack?: boolean
     onClose?: () => void,
-    onSelect: (ddmmyy: {year: number, month: number, date: number}) => void,
-    value?: {year: number, month: number, date: number}
+    onSelect: (ddmmyy: { year: number, month: number, date: number }) => void,
+    value?: { year: number, month: number, date: number }
 }
 
 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-export default function DateSelectorModal({visible, setVisible, onClose, closeOnBack=true, onSelect, value, ...props}: Props): React.JSX.Element {
-    
-    const {primaryColor} = useTheme();
+export default function DateSelectorModal({ visible, setVisible, onClose, closeOnBack = true, onSelect, value, ...props }: Props): React.JSX.Element {
+
+    const { primaryColor } = useTheme();
 
     const [date, setDate] = useState(value?.date ?? new Date().getDate());
     const [month, setMonth] = useState(value?.month ?? new Date().getMonth());
@@ -33,33 +33,33 @@ export default function DateSelectorModal({visible, setVisible, onClose, closeOn
         const nextMonth = (month + by + 12) % 12;
         setMonth(nextMonth);
 
-        if(0 <= month + by && month + by <= 11) return;
+        if (0 <= month + by && month + by <= 11) return;
 
         const nextYear = year + Math.floor((month + by) / 12);
         setYear(nextYear)
     }
 
     useEffect(() => {
-        if(visible) return;
+        if (visible) return;
 
         setDate(value?.date ?? new Date().getDate());
         setMonth(value?.month ?? new Date().getMonth());
         setYear(value?.year ?? new Date().getFullYear());
 
     }, [visible])
-   
+
     return (
         <Modal
             {...props}
-            visible={visible} 
-            onRequestClose={() => {setVisible(closeOnBack); if(onClose) onClose();}}
+            visible={visible}
+            onRequestClose={() => { setVisible(closeOnBack); if (onClose) onClose(); }}
             animationType="fade"
             backdropColor={'rgba(0,0,0,0.5)'}
         >
-            <View style={{width: '100%', height: '100%', padding: 20, alignItems: 'center', justifyContent: 'center'}} >
-                <AnimateButton style={{flex: 1, width: '100%'}} onPress={() => {setVisible(!closeOnBack)}} />
+            <View style={{ width: '100%', height: '100%', padding: 20, alignItems: 'center', justifyContent: 'center' }} >
+                <AnimateButton style={{ flex: 1, width: '100%' }} onPress={() => { setVisible(!closeOnBack) }} />
 
-                <BackgroundThemeView isPrimary={false} style={{padding: 12, borderRadius: 10, width: '100%', gap: 12}} >
+                <BackgroundThemeView isPrimary={false} style={{ padding: 12, borderRadius: 10, width: '100%', gap: 12 }} >
 
                     <TextTheme>Select Date</TextTheme>
 
@@ -67,43 +67,43 @@ export default function DateSelectorModal({visible, setVisible, onClose, closeOn
                         {monthNames[month]} {date}, {year}
                     </TextTheme>
 
-                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingInline: 10, height: 40, borderRadius: 40, borderWidth: 2, borderColor: primaryColor}} >
-                        <AnimateButton style={{borderRadius: 20, padding: 4}} onPress={() => {incrementMonth(-1)}}>
+                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingInline: 10, height: 40, borderRadius: 40, borderWidth: 2, borderColor: primaryColor }} >
+                        <AnimateButton style={{ borderRadius: 20, padding: 4 }} onPress={() => { incrementMonth(-1) }}>
                             <FeatherIcon name="chevron-left" size={20} />
                         </AnimateButton>
-            
-                        <Pressable onPress={() => {setYearModalVisible(true)}} >
+
+                        <Pressable onPress={() => { setYearModalVisible(true) }} >
                             <TextTheme fontSize={16} fontWeight={900} >{monthNames[month]}, {year}</TextTheme>
                         </Pressable>
-                        
-                        <AnimateButton style={{borderRadius: 20, padding: 4}} onPress={() => {incrementMonth(1)}}>
+
+                        <AnimateButton style={{ borderRadius: 20, padding: 4 }} onPress={() => { incrementMonth(1) }}>
                             <FeatherIcon name="chevron-right" size={20} />
                         </AnimateButton>
                     </View>
 
                     <DisplayCalender date={date} month={month} year={year} onSelect={(date) => setDate(date)} />
 
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 12}} >
-                        <NormalButton 
-                            isPrimary={false} text="Cancel" 
-                            textStyle={{fontWeight: 900, fontSize: 14}} 
-                            onPress={() => {setVisible(false)}}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 12 }} >
+                        <NormalButton
+                            isPrimary={false} text="Cancel"
+                            textStyle={{ fontWeight: 900, fontSize: 14 }}
+                            onPress={() => { setVisible(false) }}
                         />
-                        <NormalButton 
-                            text="Select" textStyle={{fontWeight: 900, fontSize: 14}} 
+                        <NormalButton
+                            text="Select" textStyle={{ fontWeight: 900, fontSize: 14 }}
                             onPress={() => {
-                                onSelect({year, month, date}); setVisible(false)
-                            }}    
+                                onSelect({ year, month, date }); setVisible(false)
+                            }}
                         />
                     </View>
                 </BackgroundThemeView>
 
-                <AnimateButton style={{flex: 1, width: '100%'}} onPress={() => {setVisible(!closeOnBack)}} />
+                <AnimateButton style={{ flex: 1, width: '100%' }} onPress={() => { setVisible(!closeOnBack) }} />
             </View>
 
             <YearSelectorModal
                 visible={isYearModalVisible} setVisible={setYearModalVisible}
-                setYear={setYear} year={year} 
+                setYear={setYear} year={year}
                 month={month} setMonth={setMonth}
                 date={date}
             />
@@ -117,13 +117,13 @@ type DisplayCalenderProps = {
     onSelect?: (date: number) => void
 }
 
-function DisplayCalender({date, month, year, onSelect}: DisplayCalenderProps): React.JSX.Element {
+function DisplayCalender({ date, month, year, onSelect }: DisplayCalenderProps): React.JSX.Element {
 
     const calenderMat = useMemo(() => {
         const calendar: number[][] = [];
 
         const firstDay = new Date(year, month, 1).getDay();
-        const totalDays = new Date(year, month + 1, 0).getDate(); 
+        const totalDays = new Date(year, month + 1, 0).getDate();
 
         let currentDay = 1;
         let week: number[] = [];
@@ -147,19 +147,19 @@ function DisplayCalender({date, month, year, onSelect}: DisplayCalenderProps): R
     const [selected, setSelected] = useState<number>(date ?? currentDate);
 
     function handleSelect(date: number) {
-        if(date !== 0) {
+        if (date !== 0) {
             setSelected(date);
 
-            if(onSelect) onSelect(date);
+            if (onSelect) onSelect(date);
         }
     }
-    
+
     return (
-        <View style={{alignItems: 'center', justifyContent: 'center', gap: 4}} >
-            <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}} >
+        <View style={{ alignItems: 'center', justifyContent: 'center', gap: 4 }} >
+            <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }} >
                 {
                     ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                        <View key={day} style={{aspectRatio: 1, width: 40, borderRadius: 8, alignItems: 'center', justifyContent: 'center'}}  >
+                        <View key={day} style={{ aspectRatio: 1, width: 40, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}  >
                             <TextTheme isPrimary={false} fontSize={14} fontWeight={900} >{day}</TextTheme>
                         </View>
                     ))
@@ -168,21 +168,21 @@ function DisplayCalender({date, month, year, onSelect}: DisplayCalenderProps): R
 
             {
                 calenderMat.map((week, y) => (
-                    <View key={`week-${y}`} style={{flexDirection: 'row', gap: 4, alignItems: 'center'}} >
+                    <View key={`week-${y}`} style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }} >
                         {
                             week.map((date, x) => (
-                                 <BackgroundThemeView 
-                                    key={`day-${y}-${x}`} 
+                                <BackgroundThemeView
+                                    key={`day-${y}-${x}`}
                                     isPrimary={currentDate === date && currentMonth === month && currentYear === year}
                                     backgroundColor={date === selected ? 'rgb(50,100,200)' : ''}
-                                    style={{ borderRadius: 8, overflow: 'hidden'}}  
+                                    style={{ borderRadius: 8, overflow: 'hidden' }}
                                 >
-                                    <AnimateButton 
+                                    <AnimateButton
                                         bubbleScale={3}
                                         onPress={() => handleSelect(date)}
-                                        style={{alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 40}}
+                                        style={{ alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 40 }}
                                     >
-                                        <TextTheme 
+                                        <TextTheme
                                             color={date === selected ? 'white' : ''}
                                             fontSize={14} fontWeight={900}
                                         >
@@ -199,7 +199,7 @@ function DisplayCalender({date, month, year, onSelect}: DisplayCalenderProps): R
     )
 }
 
-type Year = {year: number, month: number}
+type Year = { year: number, month: number }
 
 type YearSelectorModalProps = {
     visible: boolean, setVisible: Dispatch<SetStateAction<boolean>>,
@@ -208,18 +208,18 @@ type YearSelectorModalProps = {
     date: number
 }
 
-function YearSelectorModal({visible, setVisible, year, setYear, month, setMonth, date}: YearSelectorModalProps): React.JSX.Element {
+function YearSelectorModal({ visible, setVisible, year, setYear, month, setMonth, date }: YearSelectorModalProps): React.JSX.Element {
 
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth();
-    const years: number[] = Array.from({length: 20}, (_, i) => currentYear - i);
+    const years: number[] = Array.from({ length: 20 }, (_, i) => currentYear - i);
 
-    const data: Year[] =  useMemo(() => {
+    const data: Year[] = useMemo(() => {
         let data: Year[] = [];
-        for(let year of years) {
-            for(let month=11; month>=0; month--) {
-                if(currentMonth >= month || currentYear > year)
-                    data.push({year, month})
+        for (let year of years) {
+            for (let month = 11; month >= 0; month--) {
+                if (currentMonth >= month || currentYear > year)
+                    data.push({ year, month })
             }
         }
         return data;
@@ -230,10 +230,10 @@ function YearSelectorModal({visible, setVisible, year, setYear, month, setMonth,
             allItems={data}
             isItemSelected={!!year}
             visible={visible} setVisible={setVisible}
-            onSelect={item => {setYear(item.year); setMonth(item.month)}}
+            onSelect={item => { setYear(item.year); setMonth(item.month) }}
             keyExtractor={item => (item.year * 100 + item.month).toString()}
             SelectedItemContent={
-                <TextTheme style={{fontWeight: 900}} >{monthNames[month]} {date}, {year}</TextTheme>
+                <TextTheme style={{ fontWeight: 900 }} >{monthNames[month]} {date}, {year}</TextTheme>
             }
 
             renderItemContent={item => (<>
@@ -246,8 +246,8 @@ function YearSelectorModal({visible, setVisible, year, setYear, month, setMonth,
             </>)}
 
             filter={(item, val) => (
-                item.year.toString().startsWith(val) || 
-                item.year.toString().endsWith(val) || 
+                item.year.toString().startsWith(val) ||
+                item.year.toString().endsWith(val) ||
                 monthNames[item.month].toLowerCase().startsWith(val)
             )}
             title="Select Year"
