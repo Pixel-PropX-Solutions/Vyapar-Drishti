@@ -203,11 +203,10 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                     errors.name = 'Company name is required';
                 }
 
-                if (!data.email.trim()) {
-                    errors.email = 'Email is required';
-                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+                if (data.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
                     errors.email = 'Please enter a valid email address';
                 }
+
                 if (data.number && !/^\d{10}$/.test(data.number)) {
                     errors.number = 'Phone number must be 10 digits';
                 }
@@ -309,8 +308,17 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
         await dispatch(createCompany(formData)).unwrap().then((res) => {
             console.log('Company created:', res);
             if (res) {
-                dispatch(getCurrentUser());
+                dispatch(switchCompany(res))
+                    .unwrap().then((response) => {
+                        if (response) {
+                            dispatch(getCurrentUser());
+                            dispatch(getCompany());
+                            dispatch(getAllCompanies());
+                            handleClose();
+                        }
+                    });
                 dispatch(getAllCompanies());
+                dispatch(getCurrentUser());
                 handleClose();
                 if (setSecondaryVisible) { setSecondaryVisible(false); }
             }
@@ -364,7 +372,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
 
             <InputField
                 icon={<FeatherIcon name="at-sign" size={20} />}
-                placeholder="Company Email *"
+                placeholder="Company Email"
                 value={data.email}
                 field="email"
                 keyboardType="email-address"
@@ -461,6 +469,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                         error={validationErrors.pinCode}
                         keyboardType="numeric"
                     />
+
                 </View>
             </View>
             <CountrySelectorModal visible={isCountryModalVisible} country={data.country} field="country" setCountry={handleChange} setVisible={setCountryModalVisible} />
@@ -722,6 +731,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
             {/* Form Content */}
             <ScrollView
                 showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps='always'
             >
                 {renderCurrentSection()}
             </ScrollView>

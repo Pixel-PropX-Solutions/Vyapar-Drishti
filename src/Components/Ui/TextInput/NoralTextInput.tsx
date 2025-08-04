@@ -54,7 +54,7 @@ export default function NoralTextInput({placeholder = '', style = {}, color, onC
             placeholder={placeholder}
             autoCapitalize={capitalize}
             placeholderTextColor={ color ?? secondaryColor}
-            style={[{color: color ?? primaryColor, opacity: value ? 1 : 0.6}, style]}
+            style={[{color: color ?? primaryColor, opacity: value ? 1 : 0.6, fontFamily: 'Roboto-Medium', letterSpacing: 0.5}, style]}
             onChangeText={(text) => {
                 if(type === 'intiger') return handleIntiger(text);
                 if(type === 'decimal') return handleDecimal(text);

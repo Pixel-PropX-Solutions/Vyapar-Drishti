@@ -53,8 +53,7 @@ export function StateSelectorModal({ visible, setVisible, country, state, field 
             }
 
             renderItemContent={(item) => (<>
-                <TextTheme fontSize={16} fontWeight={900} >{item}</TextTheme>
-                {/* <TextTheme style={{ fontWeight: 600, fontSize: 16 }}>{item.currency}</TextTheme> */}
+                <TextTheme fontSize={16} >{item}</TextTheme>
             </>)}
         />
     );

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
-import { loginUser, register, getCurrentUser, updateUserSettings, switchCompany } from '../../Services/user';
+import { loginUser, register, getCurrentUser, updateUserSettings, switchCompany, deleteCompany } from '../../Services/user';
 import AuthStore from '../AuthStore';
 
 interface UserState {
@@ -43,6 +43,19 @@ const userSlice: Slice<UserState> = createSlice({
                 state.isAuthenticated = false; // Reset authentication on failure
             })
 
+            .addCase(deleteCompany.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(deleteCompany.fulfilled, (state, action: PayloadAction<{ accessToken: string; current_company_id: string; company_id: string; }>) => {
+                state.loading = false;
+                state.current_company_id = action.payload.current_company_id; // Update current company ID
+            })
+            .addCase(deleteCompany.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || 'Login failed';
+            })
+
             .addCase(switchCompany.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -62,14 +75,12 @@ const userSlice: Slice<UserState> = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(register.fulfilled, (state, action) => {
+            .addCase(register.fulfilled, (state) => {
                 state.loading = false;
-                state.isAuthenticated = action.payload.accessToken ? true : false;
             })
             .addCase(register.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message || 'Registration failed';
-                state.isAuthenticated = false;
             })
 
             .addCase(getCurrentUser.pending, (state) => {

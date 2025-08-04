@@ -43,8 +43,7 @@ export function CountrySelectorModal({ visible, setVisible, country, field = 'ma
             }
 
             renderItemContent={(item) => (<>
-                <TextTheme style={{ fontWeight: 900, fontSize: 16 }}>{item.name}</TextTheme>
-                {/* <TextTheme style={{ fontWeight: 600, fontSize: 16 }}>{item.currency}</TextTheme> */}
+                <TextTheme fontSize={16} >{item.name}</TextTheme>
             </>)}
         />
     );

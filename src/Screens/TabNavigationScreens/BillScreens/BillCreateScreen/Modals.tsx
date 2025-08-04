@@ -28,6 +28,8 @@ import { CustomerLoadingView } from '../../../../Components/Ui/Card/CustomerCard
 import ScaleAnimationView from '../../../../Components/Ui/Animation/ScaleAnimationView';
 import { SectionRowWithIcon } from '../../../../Components/Layouts/View/SectionView';
 import { setCustomers } from '../../../../Store/Reducers/customerReducer';
+import { MeasurmentUnitsData } from '../../../../Assets/objects-data/measurment-units-data';
+import { retry } from '@reduxjs/toolkit/query';
 
 
 type Props = {
@@ -246,14 +248,12 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
     const [data, setData] = useState({
         quantity: '',
         price: '',
-        unit: 'Unit',
+        unit: '',
         productId: '',
         name: '',
         hsnCode: '',
         gstRate: '',
     });
-
-
 
     const handleInputChange = (field: string, value: string | number | boolean) => {
         setData(prev => ({ ...prev, [field]: value }));

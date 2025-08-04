@@ -40,7 +40,17 @@ export default function SignUpScreen(): React.JSX.Element {
 
         await dispatch(register(info)).then((response) => {
             if (response.meta.requestStatus === 'fulfilled') {
-                setModalVisible(true);
+
+                setAlert({
+                    message: 'You have successfully registered. Please check your email for verification.',
+                    type: 'success',
+                });
+                dispatch((getCurrentUser()));
+                dispatch(getCompany());
+                setTimeout(() => {
+                    navigator.reset('tab-navigation');
+                }, 4000);
+                phone.current = { code: '', number: '' };
             } else {
                 setAlert({
                     message: 'Registration failed. Please try again.',

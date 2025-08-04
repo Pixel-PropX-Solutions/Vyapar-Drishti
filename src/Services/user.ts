@@ -118,6 +118,42 @@ export const switchCompany = createAsyncThunk(
 );
 
 
+
+export const deleteCompany = createAsyncThunk(
+  'delete/company',
+  async (
+    id: string,
+    { rejectWithValue }
+  ): Promise<{ accessToken: string, current_company_id: string, company_id: string } | any> => {
+    try {
+      const response = await userApi.delete(`/auth/delete/user/company/${id}`);
+      console.log('Delete Company Response:', response);
+
+      if (response.data.success === true) {
+        const accessToken = response.data.accessToken;
+        console.log('Access Token after deletion:', accessToken);
+        // 👇 Decode the token to get updated company ID
+        const company_id = response.data.company_id;
+        console.log('Company ID after deletion:', company_id);
+        const decoded: any = jwtDecode(accessToken);
+        console.log('Decoded Token:', decoded);
+        const current_company_id = decoded.current_company_id;
+        console.log('Current Company ID after deletion:', current_company_id);
+
+        AuthStore.set('accessToken', accessToken);
+        AuthStore.set('current_company_id', current_company_id);
+
+        console.log('Company deleted successfully adsdasdas:', response.data);
+
+        return { accessToken, current_company_id, company_id };
+      } else { return rejectWithValue('Login Failed: No access token recieved.'); }
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message);
+    }
+  }
+);
+
+
 export const updateUserSettings = createAsyncThunk(
   'update/user/settings',
   async (
