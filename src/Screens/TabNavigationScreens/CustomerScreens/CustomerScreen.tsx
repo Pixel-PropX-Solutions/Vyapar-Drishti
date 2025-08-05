@@ -4,17 +4,22 @@ import { View } from 'react-native';
 import { useCallback, useEffect, useState } from 'react';
 import RoundedPlusButton from '../../../Components/Ui/Button/RoundedPlusButton';
 import CreateCustomerModal from '../../../Components/Modal/Customer/CreateCustomerModal';
-import { useAppDispatch, useCustomerStore, useUserStore } from '../../../Store/ReduxStore';
+import { useAppDispatch, useCompanyStore, useCustomerStore, useUserStore } from '../../../Store/ReduxStore';
 import { viewAllCustomer } from '../../../Services/customer';
 import CustomerCard, { CustomerLoadingView } from '../../../Components/Ui/Card/CustomerCard';
 import ShowWhen from '../../../Components/Other/ShowWhen';
 import EmptyListView from '../../../Components/Layouts/View/EmptyListView';
 import CustomerTypeSelectorModal from '../../../Components/Modal/Customer/CustomerTypeSelectorModal';
-import { GetUserLedgers } from '../../../Utils/types';
+// import { GetUserLedgers } from '../../../Utils/types';
 import navigator from '../../../Navigation/NavigationService';
 import { useFocusEffect } from '@react-navigation/native';
 import EntityListingHeader from '../../../Components/Layouts/Header/EntityListingHeader';
 import { setCustomers } from '../../../Store/Reducers/customerReducer';
+import AnimateButton from '../../../Components/Ui/Button/AnimateButton';
+import TextTheme from '../../../Components/Ui/Text/TextTheme';
+import { useTheme } from '../../../Contexts/ThemeProvider';
+import BackgroundThemeView from '../../../Components/Layouts/View/BackgroundThemeView';
+import CreateAccountModal from '../../../Components/Modal/Customer/CreateAccountModal';
 
 
 export default function CustomerScreen(): React.JSX.Element {
@@ -22,11 +27,15 @@ export default function CustomerScreen(): React.JSX.Element {
     const dispatch = useAppDispatch();
     const { customers, isAllCustomerFetching, pageMeta } = useCustomerStore();
     const { current_company_id } = useUserStore();
+    const {company} = useCompanyStore()
+    const {primaryColor, primaryBackgroundColor} = useTheme()
 
-    const [filterCustomers, setFilterCustomers] = useState<GetUserLedgers[]>([]);
+    // const [filterCustomers, setFilterCustomers] = useState<GetUserLedgers[]>([]);
+    const [type, setType] = useState<'Customers' | 'Accounts'>('Customers');
 
     const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
     const [isCustomerTypeSelectorModalOpen, setCustomerTypeSelectorModalOpen] = useState<boolean>(false);
+    const [isAccountCreateModalVisible, setAccountCreateModalVisible] = useState<boolean>(false);
 
     function handleCustomerFetching() {
         if (isAllCustomerFetching) { return; }
@@ -37,19 +46,21 @@ export default function CustomerScreen(): React.JSX.Element {
 
 
     useEffect(() => {
-        if (!isCustomerTypeSelectorModalOpen) { dispatch(viewAllCustomer({ company_id: current_company_id ?? '', pageNumber: 1 })); }
+        if (!isCustomerTypeSelectorModalOpen) { dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 })); }
     }, [isCustomerTypeSelectorModalOpen]);
 
-    useEffect(() => {
-        setFilterCustomers(() => customers.filter((ledger) => ledger.parent === 'Creditors' || ledger.parent === 'Debtors'
-        ));
-    }, [customers]);
+    // useEffect(() => {
+    //     console.log(customers)
+    //     setFilterCustomers(() => customers.filter((ledger) => ledger.parent === 'Creditors' || ledger.parent === 'Debtors'
+    //     ));
+    // }, [customers]);
 
     useFocusEffect(
         useCallback(() => {
+            if(!['Accounts', 'Customers'].includes(type)) return;
             dispatch(setCustomers([]));
-            dispatch(viewAllCustomer({ company_id: current_company_id ?? '', pageNumber: 1 }));
-        }, [])
+            dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1, type }));
+        }, [type])
     );
 
     return (
@@ -59,10 +70,35 @@ export default function CustomerScreen(): React.JSX.Element {
                 onPressNotification={() => { navigator.navigate('notification-screen'); }}
             />
 
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            
+                {
+                    ["Customers", 'Accounts'].map(item => (
+                        <AnimateButton key={item}
+                            onPress={() => { setType(item as 'Accounts' | 'Customers'); }}
+
+                            bubbleColor={type === item ? primaryBackgroundColor : primaryColor}
+
+                            style={{
+                                alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 28,
+                                backgroundColor: type === item ? primaryColor : primaryBackgroundColor,
+                            }}
+                        >
+                            <TextTheme
+                                isPrimary={type === item}
+                                useInvertTheme={type === item}
+                                fontSize={12}
+                                fontWeight={900}
+                            >{item}</TextTheme>
+                        </AnimateButton>
+                    ))
+                }
+            </View>
+
             <FlatList
                 ListEmptyComponent={isAllCustomerFetching ? <CustomerLoadingView /> : <EmptyListView type="customer" />}
                 contentContainerStyle={{ marginTop: 12, width: '100%', height: '100%', gap: 20 }}
-                data={filterCustomers}
+                data={customers}
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => {
                     return (
@@ -101,9 +137,24 @@ export default function CustomerScreen(): React.JSX.Element {
             />
 
             <View style={{ position: 'absolute', right: 20, bottom: 20 }} >
-                <RoundedPlusButton size={60} iconSize={24} onPress={() => setCustomerTypeSelectorModalOpen(true)} />
+                <ShowWhen when={type === 'Accounts'} 
+                    otherwise={
+                        <RoundedPlusButton size={60} iconSize={24} onPress={() => setCustomerTypeSelectorModalOpen(true)} />
+                    }
+                >
+                    <BackgroundThemeView useInvertTheme={true} style={{overflow: 'hidden', borderRadius: 100}} >
+                        <AnimateButton 
+                            onPress={() => {setAccountCreateModalVisible(true)}} 
+                            style={{paddingInline: 20, height: 50, alignItems: 'center', justifyContent: 'center'}} 
+                        >
+                            <TextTheme useInvertTheme={true} fontSize={16} >+ Add Account</TextTheme>
+                        </AnimateButton>      
+                    </BackgroundThemeView>
+                </ShowWhen>
             </View>
 
+
+            <CreateAccountModal visible={isAccountCreateModalVisible} setVisible={setAccountCreateModalVisible} />
             <CustomerTypeSelectorModal visible={isCustomerTypeSelectorModalOpen} setVisible={setCustomerTypeSelectorModalOpen} setSecondaryVisible={setCreateCustomerModalOpen} />
             <CreateCustomerModal visible={isCreateCustomerModalOpen} setVisible={setCreateCustomerModalOpen} setPrimaryVisible={setCustomerTypeSelectorModalOpen} />
         </View>

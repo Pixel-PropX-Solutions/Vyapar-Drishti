@@ -3,6 +3,7 @@ import navigator from "../Navigation/NavigationService";
 import { useAppDispatch } from "../Store/ReduxStore";
 import { getCurrentUser } from "../Services/user";
 import AuthStore from "../Store/AuthStore";
+import { getCompany } from "../Services/company";
 
 
 type ReturnType = {
@@ -29,6 +30,7 @@ export default function useAuthentication(): ReturnType {
             }
             
             const {payload} = await dispatch(getCurrentUser()) as { payload: { user?: any } };
+            dispatch(getCompany())
             isAuthenticate.current = !!payload.user
         } catch(e) {
             console.log(e)

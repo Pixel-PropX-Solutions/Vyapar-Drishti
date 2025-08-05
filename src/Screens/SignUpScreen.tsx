@@ -42,16 +42,15 @@ export default function SignUpScreen(): React.JSX.Element {
         await dispatch(register(info)).then((response) => {
             if (response.meta.requestStatus === 'fulfilled') {
 
-                setAlert({
-                    message: 'You have successfully registered. Please check your email for verification.',
-                    type: 'success',
-                });
-                dispatch(getCurrentUser());
-                dispatch(getCompany());
-                setTimeout(() => {
-                    navigator.reset('tab-navigation');
-                }, 4000);
-                data.current.phone = { code: '', number: '' };
+                // setAlert({
+                //     message: 'You have successfully registered. Please check your email for verification.',
+                //     type: 'success',
+                // });
+                
+                setModalVisible(true)
+
+
+                data.current = { name: { first: '', last: '' }, email: '', phone: { code: '', number: '' }, password: '' };
             } else {
                 setAlert({
                     message: 'Registration failed. Please try again.',
@@ -88,7 +87,7 @@ export default function SignUpScreen(): React.JSX.Element {
                                 isRequired={true}
                                 message="first name have min 3 char"
                                 checkInputText={val => val.length > 2}
-                                autoCapitalize="words"
+                                capitalize='words'
                             />
                         </View>
 
@@ -98,7 +97,7 @@ export default function SignUpScreen(): React.JSX.Element {
                                 placeholder="Wick"
                                 onChangeText={val => { data.current.name.last = val; }}
                                 useTrim={true}
-                                autoCapitalize="words"
+                                capitalize="words"
                             />
                         </View>
                     </View>

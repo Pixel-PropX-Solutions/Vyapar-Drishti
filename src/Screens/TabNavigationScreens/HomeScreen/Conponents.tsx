@@ -25,15 +25,16 @@ export function Header(): React.JSX.Element {
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
+    const {company} = useCompanyStore();
     const { current_company_id, user } = useUserStore();
     const { isCompanyFetching } = useCompanyStore();
     const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
 
-
+    console.log(currentCompanyDetails, current_company_id)
     useEffect(() => {
         dispatch(getCurrentUser());
         dispatch(getAllCompanies());
-    }, [dispatch, current_company_id]);
+    }, []);
 
     return (
         <View style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'row', padding: 10, justifyContent: 'space-between' }} >
@@ -59,10 +60,12 @@ export function Header(): React.JSX.Element {
                         </>}
                     >
                         <TextTheme numberOfLines={1} fontSize={16} fontWeight={600} >
-                            {currentCompanyDetails?.company_name}
+                            {/* {currentCompanyDetails?.company_name} */}
+                            {company?.name}
                         </TextTheme>
                         <TextTheme numberOfLines={1} isPrimary={false}>
-                            {currentCompanyDetails?.email}
+                            {/* {currentCompanyDetails?.email} */}
+                            {company?.email}
                         </TextTheme>
                     </ShowWhen>
                 </View>

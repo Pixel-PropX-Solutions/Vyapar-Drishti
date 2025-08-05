@@ -63,6 +63,7 @@ export default function PasswordInput({placeholder='***********', label='Passwor
                     onFocus={() => setFocus(true)}
                     onBlur={() => setFocus(false)}
                     secureTextEntry={!isPasswordVisible}
+                    autoCapitalize="none"
                     style={{
                         opacity: inputText ? 1 : 0.7,
                         color, paddingTop: 14, flex: 1

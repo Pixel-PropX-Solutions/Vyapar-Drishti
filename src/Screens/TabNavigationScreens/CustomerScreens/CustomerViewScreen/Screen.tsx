@@ -13,6 +13,7 @@ import { SortOrder } from '../../../../Utils/types';
 import { useAppDispatch, useUserStore } from '../../../../Store/ReduxStore';
 import { getCustomer, getCustomerInvoices } from '../../../../Services/customer';
 
+
 export default function CustomerViewScreen() {
     const router = useRoute<RouteProp<StackParamsList, 'customer-view-screen'>>();
     const { id: customer_id } = router.params;
@@ -31,6 +32,7 @@ export default function CustomerViewScreen() {
         sortField: 'date',
         sortOrder: 'asc' as SortOrder,
     });
+
     const { searchQuery, type, page, startDate, endDate, rowsPerPage, sortField, sortOrder } = data;
     const [debouncedQuery, setDebouncedQuery] = useState<string>(searchQuery);
 
@@ -90,11 +92,11 @@ export default function CustomerViewScreen() {
             <ShowWhen when={!laoding} otherwise={<LoadinScreen />} >
                 <View style={{ paddingHorizontal: 20, paddingTop: 8, gap: 36, marginBottom: 8 }} >
                     <ProfileSection />
-                    <FilterRow />
+                    {/* <FilterRow /> */}
                 </View>
 
                 <BackgroundThemeView isPrimary={false} style={{ width: '100%', borderTopRightRadius: 40, borderTopLeftRadius: 40, padding: 20, flex: 1, gap: 20, paddingBottom: 0 }} >
-                    <MonthSelector />
+                    {/* <MonthSelector /> */}
                     <InvoiceListing />
 
                     <View style={{ minHeight: 40 }} />

@@ -601,7 +601,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
             </ScrollView>
 
             {/* Form Content */}
-            <ScrollView showsVerticalScrollIndicator={false} >
+            <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='always' >
                 {getCurrentStepFields()}
             </ScrollView>
             <View style={{ height: 10 }} />

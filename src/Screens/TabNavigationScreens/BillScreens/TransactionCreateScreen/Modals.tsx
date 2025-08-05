@@ -135,7 +135,7 @@ export function AccountSelectorModal({ visible, setVisible }: Props) {
     function handleProductFetching() {
         if (isAllCustomerFetching) { return; }
         if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
-        dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1 }));
+        dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1, type: 'Accounts' }));
     }
 
     useEffect(() => {
