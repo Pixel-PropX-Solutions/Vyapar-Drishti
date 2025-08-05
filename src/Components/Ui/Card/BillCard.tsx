@@ -1,4 +1,4 @@
-/* eslint-disable react/no-unstable-nested-components */
+
 /* eslint-disable react-native/no-inline-styles */
 import { View } from 'react-native';
 import TextTheme from '../Text/TextTheme';
@@ -29,16 +29,15 @@ export type BillCardProps = {
 
 
 export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, billNo, customerName, type, onPress, onShare, onPrint, onPayment, isPrimary = true }: BillCardProps) {
-
     const { currency } = useAppStorage();
 
     const isPending = payAmount < totalAmount;
     const status: 'paid' | 'pending' | 'partial' = totalAmount === payAmount ? 'paid' : payAmount === 0 ? 'pending' : 'partial';
 
     const rgb = useMemo<string>(() => {
-        if (status === 'pending') return '200,50,50';
-        if (status === 'partial') return '200,150,50';
-        if (['sales', 'receipt'].includes(type.toLowerCase())) return '50,200,150';
+        if (status === 'pending') { return '200,50,50'; }
+        if (status === 'partial') { return '200,150,50'; }
+        if (['sales', 'receipt'].includes(type.toLowerCase())) { return '50,200,150'; }
         return '50,150,200';
     }, [status, type]);
 
@@ -72,8 +71,8 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                                         style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingLeft: 8, borderRadius: 40, paddingBlock: 6, paddingRight: 12 }}
 
                                     >
-                                        <FeatherIcon color='white' name={status === 'paid' ? 'check-circle' : 'clock'} size={16} />
-                                        <TextTheme color='white' fontSize={14} fontWeight={900}>
+                                        <FeatherIcon color="white" name={status === 'paid' ? 'check-circle' : 'clock'} size={16} />
+                                        <TextTheme color="white" fontSize={14} fontWeight={900}>
                                             {status.charAt(0).toUpperCase() + status.slice(1)}
                                         </TextTheme>
                                     </BackgroundThemeView>
@@ -81,13 +80,13 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
 
                                 <AnimateButton onPress={onPrint} style={{ borderRadius: 50 }} >
                                     <BackgroundThemeView isPrimary={!isPrimary} style={{ alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 32 }}  >
-                                        <FeatherIcon name='printer' size={16} />
+                                        <FeatherIcon name="printer" size={16} />
                                     </BackgroundThemeView>
                                 </AnimateButton>
 
                                 <AnimateButton onPress={onShare} style={{ borderRadius: 50 }} >
                                     <BackgroundThemeView isPrimary={!isPrimary} style={{ alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 32 }}  >
-                                        <FeatherIcon name='share-2' size={16} />
+                                        <FeatherIcon name="share-2" size={16} />
                                     </BackgroundThemeView>
                                 </AnimateButton>
 
@@ -121,7 +120,7 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                                     style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingInline: 12, borderRadius: 8, paddingBlock: 6, backgroundColor: 'rgb(50,120,200)' }}
                                     onPress={onPayment}
                                 >
-                                    <TextTheme color='white' fontSize={14}>
+                                    <TextTheme color="white" fontSize={14}>
                                         Pay pending amount
                                     </TextTheme>
                                 </AnimateButton>
@@ -131,7 +130,7 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                 </AnimateButton>
             </BackgroundThemeView>
         </ScaleAnimationView>
-    )
+    );
 }
 
 
@@ -166,5 +165,5 @@ export function BillLoadingCard({ isPrimary = true, delay }: { isPrimary?: boole
                 </View>
             </BackgroundThemeView>
         </ScaleAnimationView>
-    )
+    );
 }

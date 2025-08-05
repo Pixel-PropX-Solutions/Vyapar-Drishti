@@ -1,13 +1,15 @@
-import { updateCustomer, getCustomer, createCustomer, deleteCustomer, restoreCustomer, viewAllCustomer, viewAllCustomers } from '../../Services/customer';
-import { PageMeta, GetUserLedgers, CustomersList, AccountingGroups } from '../../utils/types';
+import { updateCustomer, getCustomer, createCustomer, deleteCustomer, restoreCustomer, viewAllCustomer, viewAllCustomers, getCustomerInvoices } from '../../Services/customer';
+import { PageMeta, GetUserLedgers, CustomersList, AccountingGroups, GetCustomerInvoices } from '../../utils/types';
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 
 interface CustomerState {
     customers: Array<GetUserLedgers>;
     isAllCustomerFetching: boolean;
+    isAllCustomerInvoicesFetching: boolean;
     customer: any | null;
     customersList: Array<CustomersList> | [];
     customerType: AccountingGroups | null;
+    customerInvoices: Array<GetCustomerInvoices> | [];
     loading: boolean,
     error: string | null;
     pageMeta: PageMeta
@@ -16,7 +18,9 @@ interface CustomerState {
 const initialState: CustomerState = {
     customers: [],
     isAllCustomerFetching: false,
+    isAllCustomerInvoicesFetching: false,
     customersList: [],
+    customerInvoices: [],
     customerType: null,
     customer: null,
     pageMeta: {
@@ -39,6 +43,7 @@ const customerSlice: Slice<CustomerState> = createSlice({
         resetCustomerState: (state) => {
             state.customers = [];
             state.isAllCustomerFetching = false;
+            state.isAllCustomerInvoicesFetching = false;
             state.customer = null;
             state.customersList = [];
             state.customerType = null;
@@ -117,6 +122,24 @@ const customerSlice: Slice<CustomerState> = createSlice({
             .addCase(getCustomer.rejected, (state, action) => {
                 state.error = action.payload as string;
                 state.loading = false;
+            })
+
+            .addCase(getCustomerInvoices.pending, (state) => {
+                state.error = null;
+                state.isAllCustomerInvoicesFetching = true;
+            })
+            .addCase(getCustomerInvoices.fulfilled, (state, action: PayloadAction<any>) => {
+                if (action.payload.pageMeta.page == 1) {
+                    state.customerInvoices = action.payload.customerInvoices;
+                } else {
+                    state.customerInvoices = [...(state.customerInvoices ?? []), ...(action.payload.customerInvoices ?? [])];
+                }
+                state.pageMeta = action.payload.pageMeta;
+                state.isAllCustomerInvoicesFetching = false;
+            })
+            .addCase(getCustomerInvoices.rejected, (state, action) => {
+                state.error = action.payload as string;
+                state.isAllCustomerInvoicesFetching = false;
             })
 
 

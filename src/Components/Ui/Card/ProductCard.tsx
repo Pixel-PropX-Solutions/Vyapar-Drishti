@@ -28,19 +28,19 @@ export default function ProductCard({ item, isPrimary = true, onPress }: Product
     return (
         <ScaleAnimationView useRandomDelay={true} >
             <AnimateButton onPress={onPress} >
-                <BackgroundThemeView isPrimary={isPrimary} style={{borderRadius: 12, padding: 12, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} >
-                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 12}} >
-                        <BackgroundThemeView isPrimary={false} style={{alignItems: 'center', justifyContent: 'center', width: 40, aspectRatio: 1, borderRadius: 8}} >
-                            <TextTheme fontSize={14} >{item?.stock_item_name.split(' ').map(e => e[0]).join('').slice(0,2) ?? 'PN'}</TextTheme>
+                <BackgroundThemeView isPrimary={isPrimary} style={{ borderRadius: 12, padding: 12, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }} >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }} >
+                        <BackgroundThemeView isPrimary={false} style={{ alignItems: 'center', justifyContent: 'center', width: 40, aspectRatio: 1, borderRadius: 8 }} >
+                            <TextTheme fontSize={14} >{item?.stock_item_name.split(' ').map(e => e[0]).join('').slice(0, 2) ?? 'PN'}</TextTheme>
                         </BackgroundThemeView>
 
                         <View>
                             <TextTheme fontSize={14} >{sliceString(item.stock_item_name, 25)}</TextTheme>
-                            <View style={{flexDirection: 'row', gap: 14}} >
-                                <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}}>
+                            <View style={{ flexDirection: 'row', gap: 14 }} >
+                                <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
                                     <TextTheme color={rgb} fontSize={10} >Profit</TextTheme>
                                     <TextTheme color={rgb} fontSize={10} >{formatNumberForUI(mp, 10, 2)}%</TextTheme>
-                                    
+
                                     <ShowWhen when={mp !== 0} >
                                         <FeatherIcon color={rgb} name={`trending-${mp < 0 ? 'down' : 'up'}`} size={10} />
                                     </ShowWhen>
@@ -49,11 +49,11 @@ export default function ProductCard({ item, isPrimary = true, onPress }: Product
                         </View>
                     </View>
 
-                    <BackgroundThemeView isPrimary={false} style={{position: 'absolute', top: -2, right: 10, paddingInline: 8, borderRadius: 8, paddingBottom: 2}} >
-                        <TextTheme fontSize={12}>{item.purchase_qty - item.sales_qty} {item.unit}</TextTheme>
+                    <BackgroundThemeView isPrimary={false} style={{ position: 'absolute', top: -2, right: 10, paddingInline: 8, borderRadius: 8, paddingBottom: 2 }} >
+                        <TextTheme fontSize={12}>{item.current_stock} {item.unit}</TextTheme>
                     </BackgroundThemeView>
 
-                    <View style={{alignItems: 'flex-end'}} >
+                    <View style={{ alignItems: 'flex-end' }} >
                         <TextTheme fontSize={14}>{item.sales_value} {currency}</TextTheme>
                     </View>
                 </BackgroundThemeView>
@@ -67,15 +67,15 @@ export default function ProductCard({ item, isPrimary = true, onPress }: Product
 export function ProductLoadingCard({ isPrimary = false }: { isPrimary?: boolean }): React.JSX.Element {
     return (
         <ScaleAnimationView useRandomDelay={true} >
-            <BackgroundThemeView isPrimary={isPrimary} style={{padding: 12, borderRadius: 16, alignItems: 'center', flexDirection: 'row', gap: 12, position: 'relative'}} >
-                    <LoadingView isPrimary={!isPrimary} width={40} height={40} borderRadius={4} />
+            <BackgroundThemeView isPrimary={isPrimary} style={{ padding: 12, borderRadius: 16, alignItems: 'center', flexDirection: 'row', gap: 12, position: 'relative' }} >
+                <LoadingView isPrimary={!isPrimary} width={40} height={40} borderRadius={4} />
 
-                    <View style={{gap: 4}} >
-                        <LoadingView isPrimary={!isPrimary} width={100} height={14} borderRadius={4} />
-                        <LoadingView isPrimary={!isPrimary} width={60} height={10} borderRadius={4} />
-                    </View>
+                <View style={{ gap: 4 }} >
+                    <LoadingView isPrimary={!isPrimary} width={100} height={14} borderRadius={4} />
+                    <LoadingView isPrimary={!isPrimary} width={60} height={10} borderRadius={4} />
+                </View>
 
-                    <LoadingView isPrimary={!isPrimary} borderRadius={8} style={{position: 'absolute', top: -2, right: 10}} height={20} width={60} />
+                <LoadingView isPrimary={!isPrimary} borderRadius={8} style={{ position: 'absolute', top: -2, right: 10 }} height={20} width={60} />
             </BackgroundThemeView>
         </ScaleAnimationView>
     );

@@ -33,13 +33,13 @@ export type StackParamsList = {
 
     'company-profile-screen': undefined,
     'product-info-screen': { productId: string }
-    
+
     'create-bill-screen': { type: string, id: string }
     'create-transaction-screen': { type: string, id: string }
     'bill-info-screen': { id: string },
-    
-    'customer-info-screen': {id: string},
-    'customer-view-screen': {id: string},
+
+    'customer-info-screen': { id: string },
+    'customer-view-screen': { id: string },
 
     'inventory-screen': undefined
 
@@ -71,14 +71,14 @@ export default function StackNavigation(): React.JSX.Element {
                 />
 
                 <Stack.Screen name='app-update-screen' component={AppUpdateScreen}
-                    options={{animation: 'scale_from_center'}}
+                    options={{ animation: 'scale_from_center' }}
                 />
 
                 <Stack.Screen name="login-screen"
                     component={withSafeView(LoginScreen)}
                 />
 
-                <Stack.Screen name="forgot-password-screen"  
+                <Stack.Screen name="forgot-password-screen"
                     component={withSafeView(ForgotPasswordScreen)}
                 />
 
@@ -125,7 +125,7 @@ export default function StackNavigation(): React.JSX.Element {
                     options={{ animation: 'scale_from_center' }}
                 />
 
-                <Stack.Screen name='customer-view-screen' 
+                <Stack.Screen name='customer-view-screen'
                     component={CustomerViewScreen}
                 />
 

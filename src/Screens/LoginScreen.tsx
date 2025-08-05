@@ -1,42 +1,70 @@
 /* eslint-disable react-native/no-inline-styles */
-import { Pressable, TouchableWithoutFeedback, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import TextTheme from '../Components/Ui/Text/TextTheme';
 import LabelTextInput from '../Components/Ui/TextInput/LabelTextInput';
 import LogoImage from '../Components/Image/LogoImage';
 import NormalButton from '../Components/Ui/Button/NormalButton';
 import PasswordInput from '../Components/Ui/TextInput/PasswordInput';
-import { ScrollView, Text } from 'react-native-gesture-handler';
-import { useState } from 'react';
+import { ScrollView } from 'react-native-gesture-handler';
+import { useEffect, useState } from 'react';
 import { loginUser } from '../Services/user';
 import { useAlert } from '../Components/Ui/Alert/AlertProvider';
 import { useAppDispatch, useUserStore } from '../Store/ReduxStore';
 import navigator from '../Navigation/NavigationService';
 
 export default function LoginScreen(): React.JSX.Element {
-
     const { setAlert } = useAlert();
-
     const { loading } = useUserStore();
     const dispatch = useAppDispatch();
 
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [isFormValid, setIsFormValid] = useState<boolean>(false);
+
+    // Form validation
+    useEffect(() => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const isEmailValid = emailRegex.test(username.trim());
+        const isPasswordValid = password.length >= 6;
+        setIsFormValid(isEmailValid && isPasswordValid);
+    }, [username, password]);
 
     async function handleLogin() {
+        if (!username.trim() || !password.trim()) {
+            return setAlert({
+                type: 'error',
+                message: 'Please fill in all required fields.',
+            });
+        }
 
-        if (!(username && password)) { return setAlert({ type: 'error', message: 'all filds are required.' }); }
+        if (!isFormValid) {
+            return setAlert({
+                type: 'error',
+                message: 'Please enter a valid email and password (minimum 6 characters).',
+            });
+        }
 
         const formData = new FormData();
-        formData.append('username', username);
+        formData.append('username', username.trim());
         formData.append('password', password);
 
-        dispatch(loginUser(formData)).unwrap().then((res) => {
-            if (res && res?.accessToken) {
-                return navigator.reset('tab-navigation');
-            }
-        }).catch((err) => {
-            return setAlert({ type: 'error', message: err || 'invalid information' });
-        });
+        dispatch(loginUser(formData))
+            .unwrap()
+            .then((res) => {
+                if (res && res?.accessToken) {
+                    setAlert({
+                        type: 'success',
+                        message: 'Login successful! Welcome back.',
+                    });
+                    return navigator.reset('tab-navigation');
+                }
+            })
+            .catch((err) => {
+                return setAlert({
+                    type: 'error',
+                    message: err || 'Invalid credentials. Please try again.',
+                });
+            });
     }
 
 
@@ -63,7 +91,7 @@ export default function LoginScreen(): React.JSX.Element {
                     onChangeText={setUsername}
                     autoCapitalize="none"
                     useTrim={true}
-                    keyboardType='email-address'
+                    keyboardType="email-address"
                 />
 
                 <View>
@@ -73,15 +101,6 @@ export default function LoginScreen(): React.JSX.Element {
                         onChangeText={setPassword}
                         onSubmitEditing={handleLogin}
                     />
-
-                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 2, paddingRight: 8, marginTop: 6, justifyContent: 'flex-end'}} >
-                        <TextTheme>Can't remember password?</TextTheme>
-                        <Pressable onPress={() => { navigator.navigate('forgot-password-screen') }} >
-                            <TextTheme color='rgb(50,150,250)' isPrimary={false}>
-                                Reset password
-                            </TextTheme>
-                        </Pressable>
-                    </View>
                 </View>
 
                 <View style={{ display: 'flex' }} >
@@ -91,28 +110,35 @@ export default function LoginScreen(): React.JSX.Element {
                         text="Login"
                         onPress={handleLogin}
                     />
-
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2, paddingRight: 8, paddingTop: 12, justifyContent: 'center' }} >
+                        <TextTheme>Can't remember password?</TextTheme>
+                        <Pressable onPress={() => { navigator.navigate('forgot-password-screen'); }} >
+                            <TextTheme color="rgb(50,150,250)" isPrimary={false}>
+                                Reset password
+                            </TextTheme>
+                        </Pressable>
+                    </View>
                     <Pressable onPress={() => { navigator.replace('signup-screen'); }} >
                         <TextTheme style={{ paddingLeft: 4, paddingTop: 12, textAlign: 'center' }}>
                             Create new Account?
-                            <Text style={{ color: 'rgb(50,150,250)', fontWeight: 900, paddingLeft: 8 }}>
+                            <TextTheme fontWeight={900} color="rgb(50,150,250)" style={{ paddingLeft: 8, textDecorationLine: 'underline' }}>
                                 {' Sign Up'}
-                            </Text>
+                            </TextTheme>
                         </TextTheme>
                     </Pressable>
                 </View>
             </View>
-            
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 2, justifyContent: 'center', flexWrap: 'wrap'}} >
+
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }} >
                 <TextTheme>By signing in, you agree to our</TextTheme>
-                
-                <TextTheme color='rgb(50,150,200)' isPrimary={false} >
+
+                <TextTheme color="rgb(50,150,200)" isPrimary={false} style={{ textDecorationLine: 'underline' }} >
                     Terms of Service
                 </TextTheme>
-                
+
                 <TextTheme>and</TextTheme>
-                
-                <TextTheme color='rgb(50,150,200)' isPrimary={false} >
+
+                <TextTheme color="rgb(50,150,200)" isPrimary={false} style={{ textDecorationLine: 'underline' }} >
                     Privacy Policy
                 </TextTheme>
             </View>

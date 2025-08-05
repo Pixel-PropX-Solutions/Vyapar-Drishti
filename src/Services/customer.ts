@@ -137,7 +137,7 @@ export const getCustomer = createAsyncThunk(
     'get/customer',
     async (customer_id: string, { rejectWithValue }) => {
         try {
-            const response = await userApi.get(`/ledger/get/${customer_id}`);
+            const response = await userApi.get(`/ledger/view/${customer_id}`);
 
             if (response.data.success === true) {
                 return response.data.data[0];
@@ -151,6 +151,52 @@ export const getCustomer = createAsyncThunk(
         }
     }
 );
+
+export const getCustomerInvoices = createAsyncThunk(
+    'get/customer/invoices',
+    async ({
+        searchQuery,
+        company_id,
+        customer_id,
+        pageNumber,
+        type,
+        limit,
+        sortField,
+        sortOrder,
+        start_date,
+        end_date,
+    }: {
+        searchQuery: string;
+        customer_id: string;
+        company_id: string;
+        sortField: string;
+        type: string;
+        pageNumber: number;
+        limit: number;
+        sortOrder: string;
+        start_date: string;
+        end_date: string;
+    }, { rejectWithValue }) => {
+        try {
+            const response = await userApi.get(
+                `/ledger/view/invoices/${customer_id}?${company_id !== '' ? 'company_id=' + company_id : ''}${searchQuery !== '' ? '&search=' + searchQuery : ''}${type !== 'all' ? '&type=' + type : ''}&start_date=${start_date}&end_date=${end_date}&page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder === 'asc' ? '1' : '-1'
+                }`
+            );
+
+            console.log('Get Customer Invoices API Response', response);
+
+            if (response.data.success === true) {
+                const customerInvoices = response.data.data.docs;
+                const pageMeta = response.data.data.meta;
+                return { customerInvoices, pageMeta };
+            }
+            else { return rejectWithValue('Failed to fetch Customer profile'); }
+        } catch (error: any) {
+            return rejectWithValue(error?.response?.data?.message);
+        }
+    }
+);
+
 
 export const deleteCustomer = createAsyncThunk(
     'delete/customer',

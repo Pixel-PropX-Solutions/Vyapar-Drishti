@@ -1,4 +1,4 @@
-import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
+import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
 
 
 type Customer = {
@@ -15,7 +15,7 @@ type Account = {
 type ContextType = {
     customer: Customer | null,
     setCustomer: Dispatch<SetStateAction<Customer | null>>,
-    
+
     account: Account | null,
     setAccount: Dispatch<SetStateAction<Account | null>>,
 
@@ -30,9 +30,9 @@ type ContextType = {
 
     note: string,
     setNote: Dispatch<SetStateAction<string>>,
-
+    resetAllStates: () => void
     progress: number,
-    
+
 }
 
 const fn = () => { };
@@ -44,6 +44,7 @@ const TransactionContext = createContext<ContextType>({
     transactionNo: '', setTransactionNo: fn,
     createOn: '', setCreateOn: fn,
     note: '', setNote: fn,
+    resetAllStates: fn,
     progress: 0,
 });
 
@@ -52,7 +53,7 @@ export default function TransactionContextProvider({ children }: { children: Rea
 
     const [customer, setCustomer] = useState<Customer | null>(null);
     const [account, setAccount] = useState<Account | null>(null);
-    const [amount, setAmount] = useState<string>('');    
+    const [amount, setAmount] = useState<string>('');
     const [transactionNo, setTransactionNo] = useState<string>('TRX-000');
     const [createOn, setCreateOn] = useState<string>(new Date().toLocaleDateString());
     const [note, setNote] = useState<string>('');
@@ -61,11 +62,11 @@ export default function TransactionContextProvider({ children }: { children: Rea
 
     function resetAllStates(): void {
         setCustomer(null);
-        setAccount(null)
+        setAccount(null);
         setAmount('');
         setTransactionNo('TRX-000');
         setCreateOn(new Date().toLocaleDateString());
-        setNote('')
+        setNote('');
     }
 
 
@@ -77,21 +78,21 @@ export default function TransactionContextProvider({ children }: { children: Rea
         createOn, setCreateOn,
         progress,
         setProgress,
-        note, setNote
+        resetAllStates,
+        note, setNote,
     };
 
 
     useEffect(() => {
         let progress = 0;
-        if(transactionNo) progress++;
-        if(createOn) progress++;
-        if(amount) progress++;
-        if(customer) progress++;
-        if(note) progress++;
-        if(account) progress++;
+        if (transactionNo) { progress++; }
+        if (createOn) { progress++; }
+        if (amount) { progress++; }
+        if (customer) { progress++; }
+        if (account) { progress++; }
 
-        setProgress(progress / 6);
-    }, [transactionNo, createOn, customer, amount])
+        setProgress(progress / 5);
+    }, [transactionNo, createOn, customer, amount]);
 
 
     return (

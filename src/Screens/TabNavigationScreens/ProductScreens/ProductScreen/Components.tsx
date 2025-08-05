@@ -39,10 +39,10 @@ export function SummarySection() {
 
     const [GREEN, ORANGE, RED, YELLOW, BLUE] = ['50,200,150', '200,150,50', '250,50,50', '200,150,50', '50,150,200']
 
-    const Card = ({rgb, label, value}: {rgb: string, label: string, value: string}): React.JSX.Element => (
-        <View style={{backgroundColor: `rgba(${rgb},0.1)`, flex: 1, borderRadius: 12, position: 'relative', overflow: 'hidden'}} >
-            <View style={{width: '100%', position: 'absolute', bottom: 0, left: 0, height: 4, backgroundColor: `rgb(${rgb})`}} />
-            <View style={{padding: 12, width: '100%'}} >
+    const Card = ({ rgb, label, value }: { rgb: string, label: string, value: string }): React.JSX.Element => (
+        <View style={{ backgroundColor: `rgba(${rgb},0.1)`, flex: 1, borderRadius: 12, position: 'relative', overflow: 'hidden' }} >
+            <View style={{ width: '100%', position: 'absolute', bottom: 0, left: 0, height: 4, backgroundColor: `rgb(${rgb})` }} />
+            <View style={{ padding: 12, width: '100%' }} >
                 <TextTheme fontSize={14} fontWeight={900}>{value}</TextTheme>
                 <TextTheme isPrimary={false} fontSize={12}>{label}</TextTheme>
             </View>
@@ -50,8 +50,8 @@ export function SummarySection() {
     )
 
     return (
-        <View style={{width: '100%', gap: 8}} >
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 8, width: '100%'}} >
+        <View style={{ width: '100%', gap: 8 }} >
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, width: '100%' }} >
                 <Card rgb={RED} label="Neg. Stoke" value={`${negativeStock} Items`} />
                 <Card rgb={YELLOW} label="Low Stoke" value={`${lowStock} Items`} />
                 <Card rgb={BLUE} label="Well Stoke" value={`${positiveStock} Items`} />
@@ -73,7 +73,7 @@ export function ItemStatusFilter(): React.JSX.Element {
     const [selected, setSelected] = useState('All')
 
     return (
-        <View style={{gap: 4, width: '100%'}} >
+        <View style={{ gap: 4, width: '100%' }} >
             <ScrollView
                 horizontal={true}
                 contentContainerStyle={{ width: '100%', flexDirection: 'row', alignItems: 'center', gap: 8 }}
@@ -106,11 +106,11 @@ export function ItemStatusFilter(): React.JSX.Element {
 
 export function SortFilterSection() {
 
-    const {filters, handleFilter} = useProductContext();
+    const { filters, handleFilter } = useProductContext();
 
     return (
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBlock: 10}} >
-            <TextTheme isPrimary={false} fontSize={12} fontWeight={900} style={{paddingLeft: 4}}>Sort by default</TextTheme>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBlock: 10 }} >
+            <TextTheme isPrimary={false} fontSize={12} fontWeight={900} style={{ paddingLeft: 4 }}>Sort by default</TextTheme>
 
             <AnimateButton
                 style={{ height: 28, flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 40, paddingInline: 14 }}
@@ -132,8 +132,8 @@ export function ProductListing(): React.JSX.Element {
     const dispatch = useAppDispatch();
     const { current_company_id } = useUserStore();
     const { isProductsFetching, productsData, productsPageMeta } = useProductStore();
-    
-    const {filters} = useProductContext()
+
+    const { filters } = useProductContext()
 
     function handleProductFetching() {
         if (isProductsFetching) { return; }

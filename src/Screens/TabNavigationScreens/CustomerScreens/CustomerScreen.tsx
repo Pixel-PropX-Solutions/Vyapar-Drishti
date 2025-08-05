@@ -37,8 +37,7 @@ export default function CustomerScreen(): React.JSX.Element {
 
 
     useEffect(() => {
-        if (!isCustomerTypeSelectorModalOpen)
-            {dispatch(viewAllCustomer({ company_id: current_company_id ?? '', pageNumber: 1 }));}
+        if (!isCustomerTypeSelectorModalOpen) { dispatch(viewAllCustomer({ company_id: current_company_id ?? '', pageNumber: 1 })); }
     }, [isCustomerTypeSelectorModalOpen]);
 
     useEffect(() => {

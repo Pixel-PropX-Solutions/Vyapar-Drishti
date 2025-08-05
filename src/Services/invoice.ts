@@ -48,6 +48,27 @@ export const createInvoiceWithGST = createAsyncThunk(
 );
 
 
+export const getAllInvoiceGroups = createAsyncThunk(
+    'get/all/invoice/groups',
+    async (company_id: string, { rejectWithValue }) => {
+        try {
+            const response = await userApi.get(`/invoices/get/all/vouchar/type?company_id=${company_id}`);
+
+            console.log('Response from getAllInvoiceGroups:', response);
+
+            if (response.data.success === true) {
+                const invoiceGroups = response.data.data;
+                return { invoiceGroups };
+            }
+            else
+                {return rejectWithValue('Failed to fetch Customer profile');}
+        } catch (error: any) {
+            return rejectWithValue(error?.response?.data?.message);
+        }
+    }
+);
+
+
 export const getInvoiceCounter = createAsyncThunk(
     'view/invoices',
     async (

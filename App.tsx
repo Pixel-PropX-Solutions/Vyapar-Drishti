@@ -11,14 +11,14 @@ import AppStorageProvider from "./src/Contexts/AppStorageProvider";
 
 export default function App() {
   return (
-    <GestureHandlerRootView style={{flex: 1}} >
+    <GestureHandlerRootView style={{ flex: 1 }} >
       <SafeAreaProvider>
         <ThemeProvider>
           <AppStorageProvider>
             <Provider store={ReduxStore} >
               <AlertProvider>
-                <AlertCard/>
-                <StackNavigator/>
+                <AlertCard />
+                <StackNavigator />
               </AlertProvider>
             </Provider>
           </AppStorageProvider>

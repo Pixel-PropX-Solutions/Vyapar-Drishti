@@ -1,21 +1,27 @@
-import { RouteProp, useRoute } from "@react-navigation/native";
-import { StackParamsList } from "../../../../Navigation/StackNavigation";
-import { useTheme } from "../../../../Contexts/ThemeProvider";
-import { View } from "react-native";
-import AnimateButton from "../../../../Components/Ui/Button/AnimateButton";
-import FeatherIcon from "../../../../Components/Icon/FeatherIcon";
-import navigator from "../../../../Navigation/NavigationService";
-import TextTheme from "../../../../Components/Ui/Text/TextTheme";
-import ProgressBar from "../../../../Components/Ui/Animation/ProgressBar";
-import BackgroundThemeView from "../../../../Components/Layouts/View/BackgroundThemeView";
-import { useState } from "react";
-import DateSelectorModal from "../../../../Components/Modal/Selectors/DateSelectorModal";
-import { useTransactionContext } from "./Context";
-import { SectionRow, SectionRowWithIcon } from "../../../../Components/Layouts/View/SectionView";
-import { AmountModal, CustomerSelectorModal, DescriptionModal } from "./Modals";
-import { formatNumberForUI } from "../../../../Utils/functionTools";
-import NormalButton from "../../../../Components/Ui/Button/NormalButton";
-import ShowWhen from "../../../../Components/Other/ShowWhen";
+/* eslint-disable react-native/no-inline-styles */
+import { RouteProp, useRoute } from '@react-navigation/native';
+import { StackParamsList } from '../../../../Navigation/StackNavigation';
+import { useTheme } from '../../../../Contexts/ThemeProvider';
+import { View } from 'react-native';
+import AnimateButton from '../../../../Components/Ui/Button/AnimateButton';
+import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
+import navigator from '../../../../Navigation/NavigationService';
+import TextTheme from '../../../../Components/Ui/Text/TextTheme';
+import ProgressBar from '../../../../Components/Ui/Animation/ProgressBar';
+import BackgroundThemeView from '../../../../Components/Layouts/View/BackgroundThemeView';
+import { useEffect, useState } from 'react';
+import DateSelectorModal from '../../../../Components/Modal/Selectors/DateSelectorModal';
+import { useTransactionContext } from './Context';
+import { SectionRow, SectionRowWithIcon } from '../../../../Components/Layouts/View/SectionView';
+import { AccountSelectorModal, AmountModal, CustomerSelectorModal, DescriptionModal } from './Modals';
+import { formatNumberForUI, roundToDecimal } from '../../../../Utils/functionTools';
+import NormalButton from '../../../../Components/Ui/Button/NormalButton';
+import ShowWhen from '../../../../Components/Other/ShowWhen';
+import { useAppDispatch, useUserStore } from '../../../../Store/ReduxStore';
+import { createInvoice, getInvoiceCounter } from '../../../../Services/invoice';
+import { CreateInvoiceData } from '../../../../Utils/types';
+import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
+import LoadingModal from '../../../../Components/Modal/LoadingModal';
 
 
 
@@ -28,7 +34,7 @@ export function Header() {
 
     return (
         <View style={{
-            flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 20, paddingBlock: 10, paddingHorizontal: 20
+            flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 20, paddingBlock: 10, paddingHorizontal: 20,
         }} >
             <AnimateButton
                 onPress={() => navigator.goBack()}
@@ -57,7 +63,7 @@ export function Header() {
 
 export function ProgressBarSection(): React.JSX.Element {
 
-    const {progress} = useTransactionContext()
+    const { progress } = useTransactionContext();
 
     return (
         <View>
@@ -80,6 +86,25 @@ export function TransactionNoSelector() {
 
     const { transactionNo, setTransactionNo } = useTransactionContext();
     const { secondaryBackgroundColor } = useTheme();
+
+    const dispatch = useAppDispatch();
+    const router = useRoute<RouteProp<StackParamsList, 'create-transaction-screen'>>();
+    const { type: transactionType } = router.params;
+    const { current_company_id } = useUserStore();
+
+    useEffect(() => {
+        dispatch(getInvoiceCounter({
+            company_id: current_company_id || '',
+            voucher_type: transactionType,
+        })).then((response) => {
+            if (response.meta.requestStatus === 'fulfilled') {
+                setTransactionNo(response.payload.current_number);
+            }
+        }).catch((error) => {
+            console.error('Error fetching customers:', error);
+            // toast.error(error || "An unexpected error occurred. Please try again later.");
+        });
+    }, [dispatch, current_company_id, transactionType, setTransactionNo]);
 
     return (
         <AnimateButton style={{
@@ -165,7 +190,7 @@ export function CustomerSelector() {
 
     const router = useRoute<RouteProp<StackParamsList, 'create-transaction-screen'>>();
     const { type } = router.params;
-    
+
     const { customer } = useTransactionContext();
 
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
@@ -173,7 +198,7 @@ export function CustomerSelector() {
     return (<>
         <SectionRowWithIcon
             icon={<FeatherIcon name="user" size={20} />}
-            label={customer ? customer?.name : type === 'Income' ?  'Receive From' : 'Pay to'}
+            label={customer ? customer?.name : type === 'Receipt' ? 'Receive From' : 'Pay to'}
             text={customer ? customer?.group ?? 'No Group' : 'Tab to select'}
             backgroundColor={customer ? 'rgba(60,180,120, 0.5)' : ''}
             hasArrow={true}
@@ -188,49 +213,110 @@ export function CustomerSelector() {
 
 
 export function AccountSelector() {
+    const { account } = useTransactionContext();
+
+    const [isModalVisible, setModalVisible] = useState<boolean>(false);
+
+
     return (<>
         <SectionRowWithIcon
             icon={<FeatherIcon name="credit-card" size={20} />}
-            label={'Acccount'}
-            text={'Select Account'}  
+            label={account ? account?.name : 'Cash/Bank Account'}
+            text={account ? account?.name ?? 'No Account' : 'Tab to select'}
+            backgroundColor={account ? 'rgba(60,180,120, 0.5)' : ''}
             hasArrow={true}
             arrowIcon={<FeatherIcon name="chevron-right" size={20} />}
-            onPress={() => {}}
+            onPress={() => { setModalVisible(true); }}
         />
-    
-    </>)
+        <AccountSelectorModal visible={isModalVisible} setVisible={setModalVisible} />
+    </>);
 }
 
 export function DescriptionSection() {
 
-    const {note} = useTransactionContext();
+    const { note } = useTransactionContext();
 
-    const [isModalVisible, setModalVisible] = useState<boolean>(false)
+    const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
     return (<>
-        <AnimateButton onPress={() => {setModalVisible(true)}} style={{borderRadius: 12}} >
-            <BackgroundThemeView isPrimary={false} style={{padding: 12}} >
-                <View style={{flexDirection: 'row', gap: 12}} >
+        <AnimateButton onPress={() => { setModalVisible(true); }} style={{ borderRadius: 12 }} >
+            <BackgroundThemeView isPrimary={false} style={{ padding: 12 }} >
+                <View style={{ flexDirection: 'row', gap: 12 }} >
                     <FeatherIcon size={16} name="align-left" />
-                    <TextTheme>Add Note</TextTheme>
+                    <TextTheme>Add Notes</TextTheme>
                 </View>
-                <TextTheme isPrimary={false} fontSize={12}>
-                    {note || 'note ....'}
-                </TextTheme>
+
+                <View style={{ flexDirection: 'row', gap: 12, minHeight: 40 }} >
+                    <TextTheme isPrimary={false} fontSize={12} style={{ flex: 1, paddingTop: 4 }} >
+                        {note || 'Notes ....'}
+                    </TextTheme>
+                </View>
+
             </BackgroundThemeView>
         </AnimateButton>
 
         <DescriptionModal visible={isModalVisible} setVisible={setModalVisible} />
-    </>)
+    </>);
 }
 
 
 
 export function AmountBox() {
 
-    const {amount, customer, transactionNo, createOn, account} = useTransactionContext()
+    const { amount, customer, transactionNo, createOn, account, resetAllStates } = useTransactionContext();
+    const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
+    const { type: billType, id: billId } = router.params;
+
+    const dispatch = useAppDispatch();
+    const { currency } = useAppStorage();
+    const totalValue = roundToDecimal(Number(amount || '0'), 2);
+    const { user, current_company_id } = useUserStore();
+    const currentCompanyDetails = user.company.find((c: any) => c._id === current_company_id);
 
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
+    const [isCreating, setCreating] = useState<boolean>(false);
+
+    async function handleTransactionCreation() {
+        setCreating(true);
+        try {
+
+            let dataToSend: CreateInvoiceData = {
+                company_id: currentCompanyDetails?._id ?? '',
+                date: createOn.split('/').reverse().join('-'),
+                voucher_number: transactionNo,
+                voucher_type: billType,
+                voucher_type_id: billId,
+                reference_date: '',
+                narration: '',
+                place_of_supply: '',
+                reference_number: '',
+                due_date: '',
+                mode_of_transport: '',
+                status: 'Paid',
+                vehicle_number: '',
+                party_name: customer?.name ?? '',
+                party_name_id: customer?.id ?? '',
+                items: [],
+                accounting: [
+                    { amount: billType === 'Payment' ? -totalValue : totalValue, ledger: customer?.name ?? '', ledger_id: customer?.id ?? '', vouchar_id: '' },
+                    { amount: billType === 'Payment' ? totalValue : -totalValue, ledger: account?.name ?? '', ledger_id: account?.id ?? '', vouchar_id: '' },
+                ],
+            };
+
+            dispatch(createInvoice(dataToSend)).then(() => {
+                resetAllStates();
+                navigator.goBack();
+                setCreating(false);
+            }).catch((error) => {
+                resetAllStates();
+                console.error('Error creating transaction:', error);
+                setCreating(false);
+            });
+        } catch (error) {
+            setCreating(false);
+            console.error('Error creating transaction:', error);
+        }
+    }
 
     return (
         <View>
@@ -238,30 +324,31 @@ export function AmountBox() {
                 style={{ padding: 20, borderTopLeftRadius: 24, borderTopRightRadius: 24, shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.1, shadowRadius: 12, elevation: 10, gap: 12, borderColor: 'gray', borderWidth: 2, borderBottomWidth: 0 }}
             >
 
-                <SectionRow style={{ flexDirection: 'column' }} onPress={() => {setModalVisible(true)}} >    
+                <SectionRow style={{ flexDirection: 'column' }} onPress={() => { setModalVisible(true); }} >
                     <TextTheme isPrimary={false} fontSize={12} fontWeight={900}>
                         Enter Amount
                     </TextTheme>
 
                     <TextTheme fontWeight={900} fontSize={20}>
-                        {formatNumberForUI(Number(amount || '0'), 10)} {'INR'}
-                    </TextTheme>    
+                        {formatNumberForUI(Number(amount || '0'), 10)} {currency}
+                    </TextTheme>
                 </SectionRow>
 
                 <ShowWhen when={!!(amount && customer && transactionNo && createOn && account)} >
                     <NormalButton
-                        text="Create Bill"
+                        text="Add Transaction"
                         isPrimary={true}
                         color="white"
                         backgroundColor="rgb(50,200,150)"
-                        // isLoading={isCreating}
-                        // onLoadingText="Creating..."
-                        onPress={() => {}}
+                        isLoading={isCreating}
+                        onLoadingText="Creating..."
+                        onPress={handleTransactionCreation}
                     />
-                    </ShowWhen>
+                </ShowWhen>
             </BackgroundThemeView>
 
             <AmountModal visible={isModalVisible} setVisible={setModalVisible} />
+            <LoadingModal visible={isCreating} />
         </View>
-    )
+    );
 }

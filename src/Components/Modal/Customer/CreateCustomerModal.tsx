@@ -214,10 +214,8 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
         }
     }, [currentStep, data.account_holder, data.account_number, data.bank_branch, data.bank_ifsc, data.bank_name, data.email, data.gstin, data.mailing_country, data.mailing_pincode, data.mailing_state, data.name, data.number, isBankOptional, isGSTINOptional, isMailingAddressOptional, showBankDetails, showGSTIN, showMailingDetails]);
 
-    console.log('Data in Customer Create', data);
     const handleInputChange = useCallback((field: string, value: string | number | boolean) => {
         setData(prev => ({ ...prev, [field]: value }));
-        console.log('handle input change', field, value);
         // Only clear the error for the field being edited
         if (validationErrors[field]) {
             setValidationErrors(prev => {

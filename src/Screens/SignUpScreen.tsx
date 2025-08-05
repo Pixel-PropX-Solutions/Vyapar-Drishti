@@ -8,7 +8,7 @@ import { ScrollView, Text } from 'react-native-gesture-handler';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { isValidEmail } from '../Functions/StringOpations/pattenMaching';
 import { useAppDispatch, useUserStore } from '../Store/ReduxStore';
-import { register } from '../Services/user';
+import { getCurrentUser, register } from '../Services/user';
 import navigator from '../Navigation/NavigationService';
 import PhoneNoTextInput from '../Components/Ui/Option/PhoneNoTextInput';
 import { PhoneNumber } from '../Utils/types';
@@ -18,6 +18,7 @@ import { isValidMobileNumber } from '../Utils/functionTools';
 import LoadingModal from '../Components/Modal/LoadingModal';
 import CenterModal from '../Components/Modal/CenterModal';
 import FeatherIcon from '../Components/Icon/FeatherIcon';
+import { getCompany } from '../Services/company';
 
 export default function SignUpScreen(): React.JSX.Element {
 
@@ -26,16 +27,16 @@ export default function SignUpScreen(): React.JSX.Element {
     const { setAlert } = useAlert();
 
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
-    const data = useRef<{name: {first: string, last: string}, email: string, phone: PhoneNumber, password: string}>({name: {first: '', last: ''}, email: '', phone: {code: '', number: ''}, password: ''});
+    const data = useRef<{ name: { first: string, last: string }, email: string, phone: PhoneNumber, password: string }>({ name: { first: '', last: '' }, email: '', phone: { code: '', number: '' }, password: '' });
 
     async function handleSignUp() {
         const info = data.current;
 
-        if(
-            info.name.first.length < 3 || !isValidEmail(info.email) || 
-            info.password.length < 8 || !info.phone.code || 
+        if (
+            info.name.first.length < 3 || !isValidEmail(info.email) ||
+            info.password.length < 8 || !info.phone.code ||
             !isValidMobileNumber(info.phone.number)
-        ) return;
+        ) { return; }
 
 
         await dispatch(register(info)).then((response) => {
@@ -45,12 +46,12 @@ export default function SignUpScreen(): React.JSX.Element {
                     message: 'You have successfully registered. Please check your email for verification.',
                     type: 'success',
                 });
-                dispatch((getCurrentUser()));
+                dispatch(getCurrentUser());
                 dispatch(getCompany());
                 setTimeout(() => {
                     navigator.reset('tab-navigation');
                 }, 4000);
-                phone.current = { code: '', number: '' };
+                data.current.phone = { code: '', number: '' };
             } else {
                 setAlert({
                     message: 'Registration failed. Please try again.',
@@ -62,7 +63,7 @@ export default function SignUpScreen(): React.JSX.Element {
     }
 
     return (
-        <KeyboardAvoidingView behavior='padding' >
+        <KeyboardAvoidingView behavior="padding" >
             <ScrollView
                 style={{ width: '100%', height: '100%', paddingInline: 20 }} contentContainerStyle={{ alignItems: 'center' }}
                 keyboardShouldPersistTaps="handled"
@@ -82,10 +83,10 @@ export default function SignUpScreen(): React.JSX.Element {
                             <LabelTextInput
                                 label="First Name"
                                 placeholder="John"
-                                onChangeText={val => {data.current.name.first = val}}
+                                onChangeText={val => { data.current.name.first = val; }}
                                 useTrim={true}
                                 isRequired={true}
-                                message='first name have min 3 char'
+                                message="first name have min 3 char"
                                 checkInputText={val => val.length > 2}
                                 autoCapitalize="words"
                             />
@@ -95,7 +96,7 @@ export default function SignUpScreen(): React.JSX.Element {
                             <LabelTextInput
                                 label="Last Name"
                                 placeholder="Wick"
-                                onChangeText={val => {data.current.name.last = val}}
+                                onChangeText={val => { data.current.name.last = val; }}
                                 useTrim={true}
                                 autoCapitalize="words"
                             />
@@ -108,14 +109,14 @@ export default function SignUpScreen(): React.JSX.Element {
                         keyboardType="email-address"
                         checkInputText={isValidEmail}
                         message="Enter mail was invalid !!!"
-                        onChangeText={val => {data.current.email = val}}
+                        onChangeText={val => { data.current.email = val; }}
                         useTrim={true}
                         isRequired={true}
                         autoCapitalize="none"
                     />
 
                     <PhoneNoTextInput
-                        onChangePhoneNumber={val => {data.current.phone = val}}
+                        onChangePhoneNumber={val => { data.current.phone = val; }}
                         checkNumberIsValid={val => isValidMobileNumber(val) && val.length === 10}
                         isRequired={true}
                     />
@@ -124,7 +125,7 @@ export default function SignUpScreen(): React.JSX.Element {
                         <PasswordInput
                             checkInputText={(pass) => pass.length >= 8}
                             message="Password lenght is too short"
-                            onChangeText={val => {data.current.password = val}}
+                            onChangeText={val => { data.current.password = val; }}
                             isRequired={true}
                         />
                     </View>
@@ -150,17 +151,17 @@ export default function SignUpScreen(): React.JSX.Element {
 
                     </View>
 
-                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 2, flexWrap: 'wrap', justifyContent: 'center'}} >
-                        <TextTheme>By createing an account, you agree to our</TextTheme>
-                        
-                        <TextTheme color='rgb(50,150,200)' isPrimary={false} >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2, flexWrap: 'wrap', justifyContent: 'center' }} >
+                        <TextTheme>By creating an account, you agree to our</TextTheme>
+
+                        <TextTheme color="rgb(50,150,200)" isPrimary={false} style={{ textDecorationLine: 'underline' }} >
                             Terms of Service
                         </TextTheme>
-                        
+
                         <TextTheme>and</TextTheme>
-                        
-                        <TextTheme color='rgb(50,150,200)' isPrimary={false} >
-                            Privacy Policy
+
+                        <TextTheme color="rgb(50,150,200)" isPrimary={false} style={{ textDecorationLine: 'underline' }} >
+                            privacy policy
                         </TextTheme>
                     </View>
                 </View>
@@ -173,12 +174,12 @@ export default function SignUpScreen(): React.JSX.Element {
 }
 
 
-function SignUpModal({visible, setVisible}: {visible: boolean, setVisible: Dispatch<SetStateAction<boolean>>}): React.JSX.Element {
+function SignUpModal({ visible, setVisible }: { visible: boolean, setVisible: Dispatch<SetStateAction<boolean>> }): React.JSX.Element {
 
     async function handleVerification() {
         const url = 'googlegmail://inbox';
         const supported = await Linking.canOpenURL(url);
-        
+
         setVisible(false);
 
         if (supported) {
@@ -189,21 +190,21 @@ function SignUpModal({visible, setVisible}: {visible: boolean, setVisible: Dispa
     }
 
     return (
-        <CenterModal visible={visible} setVisible={setVisible} hasCloseButton={false} closeOnBack={false} 
+        <CenterModal visible={visible} setVisible={setVisible} hasCloseButton={false} closeOnBack={false}
             actionButtons={[
-                {title: 'Back to Login', onPress: () => {setVisible(false); navigator.replace('login-screen');}, isPrimary: false},
-                {title: 'Verify Account', onPress: handleVerification},
+                { title: 'Back to Login', onPress: () => { setVisible(false); navigator.replace('login-screen'); }, isPrimary: false },
+                { title: 'Verify Account', onPress: handleVerification },
             ]}
         >
-            <View style={{alignItems: 'center', width: '100%', justifyContent: 'center', paddingBlock: 20}} >
-                <FeatherIcon name="check-circle" color="rgb(50,200,150)" size={60} style={{marginBottom: 20}} />
-            
+            <View style={{ alignItems: 'center', width: '100%', justifyContent: 'center', paddingBlock: 20 }} >
+                <FeatherIcon name="check-circle" color="rgb(50,200,150)" size={60} style={{ marginBottom: 20 }} />
+
                 <TextTheme fontSize={28} fontWeight={800} >Account Created</TextTheme>
-        
-                <TextTheme isPrimary={false} style={{textAlign: 'center', marginBlock: 12}} >
+
+                <TextTheme isPrimary={false} style={{ textAlign: 'center', marginBlock: 12 }} >
                     We've sent a mail to verify account. Please check your inbox and spam folder and follow the instructions to verify your account.
                 </TextTheme>
             </View>
         </CenterModal>
-    )
+    );
 }

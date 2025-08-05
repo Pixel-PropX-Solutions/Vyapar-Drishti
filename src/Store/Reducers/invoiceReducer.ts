@@ -1,7 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AuthStates } from '../../Utils/enums';
 import { GetAllVouchars, GetInvoiceData, PageMeta } from '../../Utils/types';
-import { createInvoice, viewAllInvoices, viewInvoice } from '../../Services/invoice';
+import { createInvoice, getAllInvoiceGroups, viewAllInvoices, viewInvoice } from '../../Services/invoice';
 
 interface InvoiceState {
     authState: AuthStates;
@@ -11,6 +11,10 @@ interface InvoiceState {
     loading: boolean;
     error: string | null;
     isInvoiceFeaching: boolean;
+    invoiceGroups: Array<{
+        _id: string;
+        name: string;
+    }>;
 }
 
 const initialState: InvoiceState = {
@@ -26,13 +30,14 @@ const initialState: InvoiceState = {
     loading: false,
     error: null,
     isInvoiceFeaching: false,
+    invoiceGroups: [],
 };
 
 const invoiceSlice = createSlice({
     name: 'invoice',
     initialState,
     reducers: {
-        setInvoice(state, {payload}) {
+        setInvoice(state, { payload }) {
             state.invoices = payload
         }
     },
@@ -71,6 +76,19 @@ const invoiceSlice = createSlice({
                 state.isInvoiceFeaching = false;
             })
 
+            .addCase(getAllInvoiceGroups.pending, (state) => {
+                state.error = null;
+                state.loading = true;
+            })
+            .addCase(getAllInvoiceGroups.fulfilled, (state, action: PayloadAction<any>) => {
+                state.invoiceGroups = action.payload.invoiceGroups;
+                state.loading = false;
+            })
+            .addCase(getAllInvoiceGroups.rejected, (state, action) => {
+                state.error = action.payload as string;
+                state.loading = false;
+            })
+
             .addCase(createInvoice.pending, (state) => {
                 state.loading = true;
             })
@@ -88,4 +106,4 @@ const invoiceSlice = createSlice({
 const invoiceReducer = invoiceSlice.reducer;
 export default invoiceReducer;
 
-export const {setInvoice} = invoiceSlice.actions
+export const { setInvoice } = invoiceSlice.actions

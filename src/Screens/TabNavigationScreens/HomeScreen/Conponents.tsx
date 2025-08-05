@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import { useEffect, useState } from 'react';
-import { useAppDispatch, useCompanyStore, useUserStore } from '../../../Store/ReduxStore';
+import { useAppDispatch, useCompanyStore, useInvoiceStore, useUserStore } from '../../../Store/ReduxStore';
 import { getAllCompanies } from '../../../Services/company';
 import { getCurrentUser } from '../../../Services/user';
 import { Linking, Share, View } from 'react-native';
@@ -17,6 +17,8 @@ import { CompanySwitchModal } from './Modals';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 import { BASE_APP_URL, BASE_WEB_URL } from '../../../../env';
 import { useAppStorage } from '../../../Contexts/AppStorageProvider';
+import MaterialDesignIcon from '../../../Components/Icon/MaterialDesignIcon';
+import { getAllInvoiceGroups } from '../../../Services/invoice';
 
 export function Header(): React.JSX.Element {
 
@@ -122,6 +124,19 @@ export function MonthlyInfoSection(): React.JSX.Element {
 export function QuickAccessSection(): React.JSX.Element {
 
     const { secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
+    const { invoiceGroups } = useInvoiceStore();
+    const dispatch = useAppDispatch();
+    const { user, current_company_id } = useUserStore();
+
+    const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
+    useEffect(() => {
+        dispatch(getAllInvoiceGroups(currentCompanyDetails?._id || ''));
+    }, [currentCompanyDetails?._id, dispatch]);
+
+    const getInvoiceGroup = (name: string) => {
+        const invoiceGroup = invoiceGroups.find((inv) => inv.name === name);
+        return { type: invoiceGroup?.name, id: invoiceGroup?._id || '' } as { type: string, id: string };
+    };
 
     type QuickAccessBoxProps = { icon: React.ReactNode, text: string, label: string, onPress: () => void }
     // eslint-disable-next-line react/no-unstable-nested-components
@@ -149,30 +164,30 @@ export function QuickAccessSection(): React.JSX.Element {
                         label="Sales"
                         text="Add new sales bill"
                         icon={<FeatherIcon name="trending-up" size={16} />}
-                        onPress={() => { navigator.navigate('create-bill-screen', { type: 'Sales', id: '34e81b1d-5735-437a-a475-e27265eba005' }); }}
+                        onPress={() => { navigator.navigate('create-bill-screen', getInvoiceGroup('Sales')); }}
                     />
 
                     <QuickAccessBox
                         label="Purchase"
                         text="Add purchase"
                         icon={<FeatherIcon name="shopping-cart" size={16} />}
-                        onPress={() => { navigator.navigate('create-bill-screen', { type: 'Purchase', id: 'fe9221db-5990-41a0-976a-3cb4f78aef0f' }); }}
+                        onPress={() => { navigator.navigate('create-bill-screen', getInvoiceGroup('Purchase')); }}
                     />
                 </View>
 
                 <View style={{ flexDirection: 'row', gap: 12 }}>
                     <QuickAccessBox
-                        label="Recipt"
-                        text="Add income "
-                        icon={<FeatherIcon name="download" size={16} />}
-                        onPress={() => { navigator.navigate('create-transaction-screen', { type: 'Income', id: 'fe9221db-5990-41a0-976a-3cb4f78aef0f' }); }}
+                        label="Receipt"
+                        text="Receive payment"
+                        icon={<MaterialDesignIcon name="cash-plus" size={24} />}
+                        onPress={() => { navigator.navigate('create-transaction-screen', getInvoiceGroup('Receipt')); }}
                     />
 
                     <QuickAccessBox
-                        label="Expenses"
-                        text="Add expense"
-                        icon={<FeatherIcon name="upload" size={16} />}
-                        onPress={() => { navigator.navigate('create-transaction-screen', { type: 'Expenes', id: '34e81b1d-5735-437a-a475-e27265eba005' }); }}
+                        label="Payment"
+                        text="Make payment"
+                        icon={<MaterialDesignIcon name="cash-minus" size={24} />}
+                        onPress={() => { navigator.navigate('create-transaction-screen', getInvoiceGroup('Payment')); }}
                     />
                 </View>
 
@@ -181,7 +196,7 @@ export function QuickAccessSection(): React.JSX.Element {
                         label="Rate us"
                         text="Rate us on play store"
                         icon={<FeatherIcon name="star" size={16} />}
-                        onPress={() => { Linking.openURL(BASE_APP_URL) }}
+                        onPress={() => { Linking.openURL(BASE_APP_URL); }}
                     />
 
                     <QuickAccessBox
