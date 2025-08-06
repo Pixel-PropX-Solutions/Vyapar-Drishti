@@ -21,11 +21,36 @@ export const getCurrentUser = createAsyncThunk(
       if (response.data.success === true) {
         const user = response.data.data[0];
         return { user };
-      } else { return rejectWithValue('Login Failed: No access token recieved.'); }
+      } else { return rejectWithValue('Failed to fetch current user.'); }
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message ||
-        'Login failed: Invalid credentials or server error.'
+        'Failed to fetch current user.'
+      );
+    }
+  }
+);
+
+export const getAppVersion = createAsyncThunk(
+  'get/app/version',
+  async (_, { rejectWithValue }): Promise<{ latest_version: string, minimum_version: string } | any> => {
+    try {
+      const response = await userApi.get('/auth/app-version', {
+        headers: {
+          withCredentials: false, // Ensure cookies are sent with the request
+        },
+      });
+      console.log('App version response', response.data);
+
+      if (response.data.success === true) {
+        const latest_version = response.data.latest_version;
+        const minimum_version = response.data.minimum_version;
+        return { latest_version, minimum_version };
+      } else { return rejectWithValue('Failed to fetch app version.'); }
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+        'Failed to fetch app version.'
       );
     }
   }
@@ -74,7 +99,7 @@ export const register = createAsyncThunk(
       const response = await userApi.post('/auth/register', userData);
       console.log('register response', response.data);
 
-      if (response.data.ok === true) {  
+      if (response.data.ok === true) {
         return;
       } else {
         return rejectWithValue(
@@ -101,12 +126,14 @@ export const switchCompany = createAsyncThunk(
       console.log('Switch company response:', response);
 
       if (response.data.success === true) {
-        const accessToken = response.data.accessToken;
-        // 👇 Decode the token to get updated company ID
+        const { accessToken } = response.data;
         const decoded: any = jwtDecode(accessToken);
         const current_company_id = decoded.current_company_id;
         AuthStore.set('accessToken', accessToken);
         AuthStore.set('current_company_id', current_company_id);
+        console.log('Switched company successfully:', response.data);
+        console.log('Access Token after switching company:', accessToken);
+        console.log('Current Company ID after switching:', current_company_id);
         return { accessToken, current_company_id };
       } else {
         return rejectWithValue('Login failed: Unknown error.');

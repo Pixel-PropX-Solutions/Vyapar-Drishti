@@ -158,9 +158,34 @@ export function FilterModal({ visible, setVisible }: Props) {
             visible={visible} setVisible={setVisible}
             style={{ paddingInline: 20, gap: 24 }}
         >
-            <TextTheme fontSize={20} fontWeight={900}>Invoice Filters</TextTheme>
+            <TextTheme fontSize={20} fontWeight={900}>Bills Filters</TextTheme>
+            <SectionView label="Type" style={{ flexDirection: 'row', gap: 12, alignItems: 'center', flexWrap: 'wrap' }} >
+                {
+                    ['Invoices', 'Sales', 'Purchase', 'Transactions', 'Payment', 'Receipt'].map(item => (
+                        <AnimateButton key={item}
+                            onPress={() => {
+                                handleFilter('billType', item as 'Invoices' | 'Sales' | 'Purchase' | 'Transactions' | 'Payment' | 'Receipt');
+                                setVisible(false);
+                            }}
+                            bubbleColor={item === filters.billType ? primaryBackgroundColor : primaryColor}
 
-            <SectionView label="Sort by" style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }} >
+                            style={{
+                                alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 32,
+                                backgroundColor: item === filters.billType ? primaryColor : primaryBackgroundColor,
+                            }}
+                        >
+                            <TextTheme
+                                isPrimary={item === filters.billType}
+                                useInvertTheme={item === filters.billType}
+                                fontSize={12}
+                                fontWeight={900}
+                            >{item}</TextTheme>
+                        </AnimateButton>
+                    ))
+                }
+            </SectionView>
+
+            {/* <SectionView label="Sort by" style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }} >
                 {
                     ['Default', 'Date', 'Amount', 'Type'].map(item => (
                         <AnimateButton key={item}
@@ -204,7 +229,7 @@ export function FilterModal({ visible, setVisible }: Props) {
                         </AnimateButton>
                     ))
                 }
-            </SectionView>
+            </SectionView> */}
         </BottomModal>
     );
 }

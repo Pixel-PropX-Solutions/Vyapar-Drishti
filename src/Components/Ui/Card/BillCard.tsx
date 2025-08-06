@@ -64,7 +64,7 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                             </View>
 
                             <View style={{ flexDirection: 'row', gap: 8 }} >
-                                <ShowWhen when={status === 'pending' || type.toLowerCase() === 'sales'} >
+                                <ShowWhen when={false} >
                                     <BackgroundThemeView
                                         isPrimary={!isPrimary}
                                         backgroundColor={`rgb(${rgb})`}
@@ -78,17 +78,17 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                                     </BackgroundThemeView>
                                 </ShowWhen>
 
-                                <AnimateButton onPress={onPrint} style={{ borderRadius: 50 }} >
+                                {['sales', 'purchase'].includes(type.toLowerCase()) && <AnimateButton onPress={onPrint} style={{ borderRadius: 50 }} >
                                     <BackgroundThemeView isPrimary={!isPrimary} style={{ alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 32 }}  >
                                         <FeatherIcon name="printer" size={16} />
                                     </BackgroundThemeView>
-                                </AnimateButton>
+                                </AnimateButton>}
 
-                                <AnimateButton onPress={onShare} style={{ borderRadius: 50 }} >
+                                {['sales', 'purchase'].includes(type.toLowerCase()) && <AnimateButton onPress={onShare} style={{ borderRadius: 50 }} >
                                     <BackgroundThemeView isPrimary={!isPrimary} style={{ alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 32 }}  >
                                         <FeatherIcon name="share-2" size={16} />
                                     </BackgroundThemeView>
-                                </AnimateButton>
+                                </AnimateButton>}
 
                             </View>
                         </View>
@@ -107,7 +107,7 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                             </View>
                         </View>
 
-                        <ShowWhen when={isPending} >
+                        <ShowWhen when={false} >
                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }} >
                                 <View>
                                     <TextTheme fontSize={18} fontWeight={900}>

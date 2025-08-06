@@ -1,28 +1,37 @@
+/* eslint-disable react-native/no-inline-styles */
 import { useCallback } from 'react';
 import LogoImage from '../Components/Image/LogoImage';
 import { View } from 'react-native';
 import navigator from '../Navigation/NavigationService';
 import { isVersionLower } from '../Utils/functionTools';
-import DeviceInfo from 'react-native-device-info';
-import { APP_VERSION } from '../../env';
 import useAuthentication from '../Hooks/useAuthentication';
 import { useFocusEffect } from '@react-navigation/native';
 import Loader from '../Components/Ui/Loader';
+import { useAppDispatch } from '../Store/ReduxStore';
+import { getAppVersion } from '../Services/user';
+import { getVersion } from 'react-native-device-info';
+
 
 export default function SplashScreen(): React.JSX.Element {
 
     const { navigate } = useAuthentication();
+    const dispatch = useAppDispatch();
 
     useFocusEffect(
         useCallback(() => {
             const timeout = setTimeout(() => {
-                if (!isVersionLower(DeviceInfo.getVersion(), APP_VERSION)) {
-                    navigate();
-                } else {
-                    navigator.reset('app-update-screen');
-                }
+                dispatch(getAppVersion())
+                    .then((res) => {
+                        if (isVersionLower(getVersion(), res.payload.latest_version)) {
+                            navigator.reset('app-update-screen');
+                        } else {
+                            navigate();
+                        }
+                    })
+                    .catch(() => {
+                        navigate();
+                    });
             }, 1000);
-
             return () => clearTimeout(timeout);
         }, [])
     );

@@ -57,6 +57,7 @@ type ViewAllProductsType = {
   limit?: number;
   searchQuery?: string;
   category?: string;
+  stock_status?: string;
   sortField?: string;
   sortOrder?: string;
   // is_deleted: boolean;
@@ -72,6 +73,7 @@ export const viewAllProducts = createAsyncThunk(
       searchQuery = '',
       category = 'All',
       sortField = 'created_at',
+      stock_status = 'all',
       sortOrder = '1',
       // is_deleted,
     }: ViewAllProductsType,
@@ -99,7 +101,7 @@ export const viewAllProducts = createAsyncThunk(
         sortOrder,
       });
       const response = await userApi.get(
-        `/product/view/all/product?company_id=${company_id}&search=${searchQuery}${category === 'All' ? '' : '&category=' + category}&page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder}`
+        `/product/view/all/product?company_id=${company_id}&search=${searchQuery}${category === 'All' ? '' : '&category=' + category}${stock_status === 'all' ? '' : '&stock_status=' + stock_status}&page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder}`
       );
       console.log('viewAllProduct response', response.data);
 

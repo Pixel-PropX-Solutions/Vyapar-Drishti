@@ -7,7 +7,7 @@ import { SectionRowWithIcon } from '../../../Components/Layouts/View/SectionView
 import LogoImage from '../../../Components/Image/LogoImage';
 import { useAppDispatch, useCompanyStore, useUserStore } from '../../../Store/ReduxStore';
 import { setIsCompanyFetching } from '../../../Store/Reducers/companyReducer';
-import { getCurrentUser, switchCompany, updateUserSettings } from '../../../Services/user';
+import { getCurrentUser, switchCompany } from '../../../Services/user';
 import { createCompany, getAllCompanies, getCompany } from '../../../Services/company';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 import { useAlert } from '../../../Components/Ui/Alert/AlertProvider';
@@ -24,6 +24,8 @@ import { CountrySelectorModal } from '../../../Components/Modal/CountrySelectorM
 import { StateSelectorModal } from '../../../Components/Modal/StateSelectorModal';
 import CollapsabeMenu from '../../../Components/Other/CollapsabeMenu';
 import NormalButton from '../../../Components/Ui/Button/NormalButton';
+import AuthStore from '../../../Store/AuthStore';
+import { setCurrentCompanyId } from '../../../Store/Reducers/userReducer';
 
 
 type Props = {
@@ -35,8 +37,8 @@ export function CompanySwitchModal({ visible, setVisible }: Props) {
 
     const dispatch = useAppDispatch();
     const { companies } = useCompanyStore();
-    const { user, current_company_id } = useUserStore();
-    console.log('Current Company ID:', current_company_id);
+    const { current_company_id, user } = useUserStore();
+    const currentCompanyId = current_company_id || AuthStore.getString('current_company_id') || user?.user_settings?.current_company_id || '';
 
     const [isCreateModalVisible, setCreateModalVisible] = useState(false);
 
@@ -64,16 +66,17 @@ export function CompanySwitchModal({ visible, setVisible }: Props) {
                             label={name}
                             text={email}
                             icon={<LogoImage size={44} imageSrc={image ?? ''} />}
-                            backgroundColor={_id === current_company_id ? 'rgb(50,150,250)' : ''}
-                            color={_id === current_company_id ? 'white' : ''}
+                            backgroundColor={_id === currentCompanyId ? 'rgb(50,150,250)' : ''}
+                            color={_id === currentCompanyId ? 'white' : ''}
                             onPress={() => {
-                                if (_id === current_company_id) { return setVisible(false); }
+                                if (_id === currentCompanyId) { return setVisible(false); }
 
                                 dispatch(setIsCompanyFetching(true));
 
                                 dispatch(switchCompany(_id))
                                     .unwrap().then((response) => {
                                         if (response) {
+                                            dispatch(setCurrentCompanyId(_id));
                                             dispatch(getCurrentUser());
                                             dispatch(getCompany());
                                         }

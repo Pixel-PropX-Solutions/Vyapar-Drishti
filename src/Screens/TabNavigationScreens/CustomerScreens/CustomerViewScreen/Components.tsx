@@ -226,7 +226,7 @@ export function InvoiceListing() {
                             billNo={item.voucher_number}
                             createOn={item.date}
                             customerName={item.customer}
-                            payAmount={1000}
+                            payAmount={0}
                             totalAmount={item.amount}
                             type={item.voucher_type}
                             onPrint={() => { handleInvoice(item, () => { setPDFModalVisible(true); }); }}

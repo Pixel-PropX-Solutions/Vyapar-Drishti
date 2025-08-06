@@ -29,6 +29,16 @@ export function Header(): React.JSX.Element {
     );
 }
 
+const Card = ({ rgb, label, value }: { rgb: string, label: string, value: string }): React.JSX.Element => (
+    <View style={{ backgroundColor: `rgba(${rgb},0.1)`, flex: 1, borderRadius: 12, position: 'relative', overflow: 'hidden' }} >
+        <View style={{ width: '100%', position: 'absolute', bottom: 0, left: 0, height: 4, backgroundColor: `rgb(${rgb})` }} />
+        <View style={{ padding: 12, width: '100%' }} >
+            <TextTheme fontSize={14} fontWeight={900}>{value}</TextTheme>
+            <TextTheme isPrimary={false} fontSize={12}>{label}</TextTheme>
+        </View>
+    </View>
+);
+
 
 export function SummarySection() {
 
@@ -37,24 +47,14 @@ export function SummarySection() {
     const positiveStock = productsPageMeta.positive_stock ?? 0;
     const lowStock = productsPageMeta.low_stock ?? 0;
 
-    const [GREEN, ORANGE, RED, YELLOW, BLUE] = ['50,200,150', '200,150,50', '250,50,50', '200,150,50', '50,150,200']
-
-    const Card = ({ rgb, label, value }: { rgb: string, label: string, value: string }): React.JSX.Element => (
-        <View style={{ backgroundColor: `rgba(${rgb},0.1)`, flex: 1, borderRadius: 12, position: 'relative', overflow: 'hidden' }} >
-            <View style={{ width: '100%', position: 'absolute', bottom: 0, left: 0, height: 4, backgroundColor: `rgb(${rgb})` }} />
-            <View style={{ padding: 12, width: '100%' }} >
-                <TextTheme fontSize={14} fontWeight={900}>{value}</TextTheme>
-                <TextTheme isPrimary={false} fontSize={12}>{label}</TextTheme>
-            </View>
-        </View>
-    )
+    const [GREEN, ORANGE, RED, YELLOW, BLUE] = ['50,200,150', '200,150,50', '250,50,50', '200,150,50', '50,150,200'];
 
     return (
         <View style={{ width: '100%', gap: 8 }} >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, width: '100%' }} >
-                <Card rgb={RED} label="Neg. Stoke" value={`${negativeStock} Items`} />
-                <Card rgb={YELLOW} label="Low Stoke" value={`${lowStock} Items`} />
-                <Card rgb={BLUE} label="Well Stoke" value={`${positiveStock} Items`} />
+                <Card rgb={RED} label="Neg. Stock" value={`${negativeStock} Items`} />
+                <Card rgb={YELLOW} label="Low Stock" value={`${lowStock} Items`} />
+                <Card rgb={BLUE} label="Well Stock" value={`${positiveStock} Items`} />
             </View>
 
             {/* <View style={{flexDirection: 'row', alignItems: 'center', gap: 8, width: '100%'}} >
@@ -62,15 +62,14 @@ export function SummarySection() {
                 <Card rgb={ORANGE} label="Purchase Value" value="1,000.00 INR" />
             </View> */}
         </View>
-    )
+    );
 }
 
 
 export function ItemStatusFilter(): React.JSX.Element {
 
     const { primaryColor, primaryBackgroundColor } = useTheme();
-
-    const [selected, setSelected] = useState('All')
+    const { filters, handleFilter } = useProductContext();
 
     return (
         <View style={{ gap: 4, width: '100%' }} >
@@ -79,22 +78,24 @@ export function ItemStatusFilter(): React.JSX.Element {
                 contentContainerStyle={{ width: '100%', flexDirection: 'row', alignItems: 'center', gap: 8 }}
             >
                 {
-                    ['All', 'Neg Stoke', 'Low Stoke', 'Well Stoke'].map(type => (
+                    ['all', 'negative', 'low', 'positive'].map(type => (
                         <AnimateButton key={type}
-                            onPress={() => { setSelected(type) }}
-                            bubbleColor={type === selected ? primaryBackgroundColor : primaryColor}
+                            onPress={() => { handleFilter('status', type as 'all' | 'negative' | 'low' | 'positive'); }}
+                            bubbleColor={type === filters.status ? primaryBackgroundColor : primaryColor}
 
                             style={{
                                 alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 28,
-                                backgroundColor: type === selected ? primaryColor : primaryBackgroundColor,
+                                backgroundColor: type === filters.status ? primaryColor : primaryBackgroundColor,
                             }}
                         >
                             <TextTheme
-                                isPrimary={type === selected}
-                                useInvertTheme={type === selected}
+                                isPrimary={type === filters.status}
+                                useInvertTheme={type === filters.status}
                                 fontSize={12}
                                 fontWeight={900}
-                            >{type}</TextTheme>
+                            >
+                                {type === 'all' ? 'All' : type.charAt(0).toUpperCase() + type.slice(1)}
+                            </TextTheme>
                         </AnimateButton>
                     ))
                 }
@@ -114,7 +115,7 @@ export function SortFilterSection() {
 
             <AnimateButton
                 style={{ height: 28, flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 40, paddingInline: 14 }}
-                onPress={() => { handleFilter('useAscOrder', !filters.useAscOrder) }}
+                onPress={() => { handleFilter('useAscOrder', !filters.useAscOrder); }}
             >
                 <FeatherIcon
                     name={filters.useAscOrder ? 'arrow-up' : 'arrow-down'}
@@ -123,7 +124,7 @@ export function SortFilterSection() {
                 <TextTheme fontSize={12}>{filters.useAscOrder ? 'Asc' : 'Des'}</TextTheme>
             </AnimateButton>
         </View>
-    )
+    );
 }
 
 
@@ -133,19 +134,19 @@ export function ProductListing(): React.JSX.Element {
     const { current_company_id } = useUserStore();
     const { isProductsFetching, productsData, productsPageMeta } = useProductStore();
 
-    const { filters } = useProductContext()
+    const { filters } = useProductContext();
 
     function handleProductFetching() {
         if (isProductsFetching) { return; }
         if (productsPageMeta.total <= productsPageMeta.page * productsPageMeta.limit) { return; }
-        dispatch(viewAllProducts({ company_id: current_company_id ?? '', pageNumber: productsPageMeta.page + 1 }));
+        dispatch(viewAllProducts({ company_id: current_company_id ?? '', stock_status: filters.status, pageNumber: productsPageMeta.page + 1 }));
     }
 
     useFocusEffect(
         useCallback(() => {
             dispatch(setProductsData([]));
-            dispatch(viewAllProducts({ company_id: current_company_id ?? '', pageNumber: 1 }));
-        }, [])
+            dispatch(viewAllProducts({ company_id: current_company_id ?? '', stock_status: filters.status, pageNumber: 1 }));
+        }, [filters])
     );
 
     return (

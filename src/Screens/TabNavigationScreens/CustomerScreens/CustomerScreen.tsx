@@ -20,17 +20,18 @@ import TextTheme from '../../../Components/Ui/Text/TextTheme';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 import BackgroundThemeView from '../../../Components/Layouts/View/BackgroundThemeView';
 import CreateAccountModal from '../../../Components/Modal/Customer/CreateAccountModal';
+import AuthStore from '../../../Store/AuthStore';
 
 
 export default function CustomerScreen(): React.JSX.Element {
 
     const dispatch = useAppDispatch();
     const { customers, isAllCustomerFetching, pageMeta } = useCustomerStore();
-    const { current_company_id } = useUserStore();
-    const {company} = useCompanyStore()
-    const {primaryColor, primaryBackgroundColor} = useTheme()
+    const { user, current_company_id } = useUserStore();
+    const currentCompanyId = current_company_id || AuthStore.getString('current_company_id') || user?.user_settings?.current_company_id || '';
+    const { company } = useCompanyStore();
+    const { primaryColor, primaryBackgroundColor } = useTheme();
 
-    // const [filterCustomers, setFilterCustomers] = useState<GetUserLedgers[]>([]);
     const [type, setType] = useState<'Customers' | 'Accounts'>('Customers');
 
     const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
@@ -46,20 +47,14 @@ export default function CustomerScreen(): React.JSX.Element {
 
 
     useEffect(() => {
-        if (!isCustomerTypeSelectorModalOpen) { dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1 })); }
+        if (!isCustomerTypeSelectorModalOpen) { dispatch(viewAllCustomer({ company_id: currentCompanyId, pageNumber: 1, type: type })); }
     }, [isCustomerTypeSelectorModalOpen]);
-
-    // useEffect(() => {
-    //     console.log(customers)
-    //     setFilterCustomers(() => customers.filter((ledger) => ledger.parent === 'Creditors' || ledger.parent === 'Debtors'
-    //     ));
-    // }, [customers]);
 
     useFocusEffect(
         useCallback(() => {
-            if(!['Accounts', 'Customers'].includes(type)) return;
+            if (!['Accounts', 'Customers'].includes(type)) { return; }
             dispatch(setCustomers([]));
-            dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: 1, type }));
+            dispatch(viewAllCustomer({ company_id: currentCompanyId, pageNumber: 1, type: type }));
         }, [type])
     );
 
@@ -70,10 +65,10 @@ export default function CustomerScreen(): React.JSX.Element {
                 onPressNotification={() => { navigator.navigate('notification-screen'); }}
             />
 
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-            
+            {/* <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+
                 {
-                    ["Customers", 'Accounts'].map(item => (
+                    ['Customers', 'Accounts'].map(item => (
                         <AnimateButton key={item}
                             onPress={() => { setType(item as 'Accounts' | 'Customers'); }}
 
@@ -93,7 +88,7 @@ export default function CustomerScreen(): React.JSX.Element {
                         </AnimateButton>
                     ))
                 }
-            </View>
+            </View> */}
 
             <FlatList
                 ListEmptyComponent={isAllCustomerFetching ? <CustomerLoadingView /> : <EmptyListView type="customer" />}
@@ -137,18 +132,18 @@ export default function CustomerScreen(): React.JSX.Element {
             />
 
             <View style={{ position: 'absolute', right: 20, bottom: 20 }} >
-                <ShowWhen when={type === 'Accounts'} 
+                <ShowWhen when={type === 'Accounts'}
                     otherwise={
                         <RoundedPlusButton size={60} iconSize={24} onPress={() => setCustomerTypeSelectorModalOpen(true)} />
                     }
                 >
-                    <BackgroundThemeView useInvertTheme={true} style={{overflow: 'hidden', borderRadius: 100}} >
-                        <AnimateButton 
-                            onPress={() => {setAccountCreateModalVisible(true)}} 
-                            style={{paddingInline: 20, height: 50, alignItems: 'center', justifyContent: 'center'}} 
+                    <BackgroundThemeView useInvertTheme={true} style={{ overflow: 'hidden', borderRadius: 100 }} >
+                        <AnimateButton
+                            onPress={() => { setAccountCreateModalVisible(true); }}
+                            style={{ paddingInline: 20, height: 50, alignItems: 'center', justifyContent: 'center' }}
                         >
                             <TextTheme useInvertTheme={true} fontSize={16} >+ Add Account</TextTheme>
-                        </AnimateButton>      
+                        </AnimateButton>
                     </BackgroundThemeView>
                 </ShowWhen>
             </View>

@@ -7,7 +7,7 @@ import FeatherIcon from "../../Icon/FeatherIcon";
 import { ReactNode } from "react";
 
 
-type Props = { 
+type Props = {
     label: string,
     children: React.ReactNode,
     style?: ViewStyle,
@@ -17,14 +17,14 @@ type Props = {
     labelMargin?: number
 }
 
-export default function SectionView({label, children, style, containerStyle, labelColor, labelContainerChildren, labelMargin=12}: Props): React.JSX.Element {
+export default function SectionView({ label, children, style, containerStyle, labelColor, labelContainerChildren, labelMargin = 12 }: Props): React.JSX.Element {
 
     return (
         <View style={containerStyle}>
-            <View style={{flexDirection: 'row', alignItems: 'center', width: '100%', marginBottom: labelMargin}} >
-                <TextTheme 
+            <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%', marginBottom: labelMargin }} >
+                <TextTheme
                     isPrimary={false}
-                    style={{paddingLeft: 4}}
+                    style={{ paddingLeft: 4 }}
                     fontWeight={900}
                     fontSize={20}
                     color={labelColor}
@@ -52,22 +52,22 @@ type SectionRowProps = {
     gap?: number
 }
 
-export function SectionRow({isPrimary=false, backgroundColor, onPress, children, label='', style, isLabelPrimary=false, gap=12}: SectionRowProps): React.JSX.Element {
+export function SectionRow({ isPrimary = false, backgroundColor, onPress, children, label = '', style, isLabelPrimary = false, gap = 12 }: SectionRowProps): React.JSX.Element {
 
-    const {secondaryBackgroundColor, primaryBackgroundColor} = useTheme();
-    if(!backgroundColor) backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
+    const { secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
+    if (!backgroundColor) backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
 
 
     return (
-        <AnimateButton 
-            style={{padding: 12, borderRadius: 12, backgroundColor, width: '100%', gap}}
+        <AnimateButton
+            style={{ padding: 12, borderRadius: 12, backgroundColor, width: '100%', gap }}
             onPress={onPress}
             bubbleScale={30}
         >
             <ShowWhen when={label !== ''}>
                 <TextTheme isPrimary={isLabelPrimary} fontSize={16} fontWeight={900}>{label}</TextTheme>
             </ShowWhen>
-            <View style={[{flexDirection: 'row', alignItems: 'center'}, style]} >
+            <View style={[{ flexDirection: 'row', alignItems: 'center' }, style]} >
                 {children}
             </View>
         </AnimateButton>
@@ -75,7 +75,7 @@ export function SectionRow({isPrimary=false, backgroundColor, onPress, children,
 }
 
 
-type SectionArrowRow = { 
+type SectionArrowRow = {
     text: string,
     onPress: () => void,
     icon?: React.ReactNode,
@@ -85,19 +85,19 @@ type SectionArrowRow = {
     textColor?: string
 }
 
-export function SectionArrowRow({isPrimary=false, backgroundColor, onPress, text, icon, arrowSize=24, textColor}: SectionArrowRow): React.JSX.Element { 
+export function SectionArrowRow({ isPrimary = false, backgroundColor, onPress, text, icon, arrowSize = 24, textColor }: SectionArrowRow): React.JSX.Element {
 
-    const {secondaryBackgroundColor, primaryBackgroundColor} = useTheme();
-    if(!backgroundColor) backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
+    const { secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
+    if (!backgroundColor) backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
 
     return <AnimateButton
-        style={{padding: 20, borderRadius: 16, backgroundColor, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}
+        style={{ padding: 20, borderRadius: 16, backgroundColor, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
         onPress={onPress}
         bubbleScale={30}
     >
-        <View style={{alignItems: 'center', flexDirection: 'row', gap: 16}} >
+        <View style={{ alignItems: 'center', flexDirection: 'row', gap: 16 }} >
             {icon}
-            <TextTheme 
+            <TextTheme
                 color={textColor}
                 fontWeight={900}
                 fontSize={16}
@@ -111,7 +111,7 @@ export function SectionArrowRow({isPrimary=false, backgroundColor, onPress, text
 }
 
 
-type SectionRowWithIcon = { 
+type SectionRowWithIcon = {
     label: string,
     text: string,
     onPress: () => void,
@@ -125,33 +125,33 @@ type SectionRowWithIcon = {
     arrowIcon?: ReactNode
 }
 
-export function SectionRowWithIcon({isPrimary=false, onPress, label, text, icon, hasArrow=false, backgroundColor='', color, children, iconContainerColor='', arrowIcon}: SectionRowWithIcon): React.JSX.Element {
-    const {secondaryBackgroundColor, primaryBackgroundColor} = useTheme();
-   
-    if(backgroundColor === '') backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
-    if(iconContainerColor === '') iconContainerColor = isPrimary ? secondaryBackgroundColor : primaryBackgroundColor;
+export function SectionRowWithIcon({ isPrimary = false, onPress, label, text, icon, hasArrow = false, backgroundColor = '', color, children, iconContainerColor = '', arrowIcon }: SectionRowWithIcon): React.JSX.Element {
+    const { secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
+
+    if (backgroundColor === '') backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
+    if (iconContainerColor === '') iconContainerColor = isPrimary ? secondaryBackgroundColor : primaryBackgroundColor;
 
 
     return (
-        <AnimateButton 
+        <AnimateButton
             onPress={onPress}
             bubbleScale={30}
-            style={{padding: 12, borderRadius: 16, backgroundColor, width: '100%', alignItems: 'center', flexDirection: 'row', gap: 12, justifyContent: 'space-between'}}
+            style={{ padding: 12, borderRadius: 16, backgroundColor, width: '100%', alignItems: 'center', flexDirection: 'row', gap: 12, justifyContent: 'space-between' }}
         >
-            <View style={{alignItems: 'center', flexDirection: 'row', gap: 12, flex: 1}}>
-                <View style={{alignItems: 'center', justifyContent: 'center', width: 44, aspectRatio: 1, overflow: 'hidden', borderRadius: 12, backgroundColor: iconContainerColor}} >
+            <View style={{ alignItems: 'center', flexDirection: 'row', gap: 12, flex: 1 }}>
+                <View style={{ alignItems: 'center', justifyContent: 'center', width: 44, aspectRatio: 1, overflow: 'hidden', borderRadius: 12, backgroundColor: iconContainerColor }} >
                     {icon}
                 </View>
 
-                <View style={{flex: 1}} >
+                <View style={{ flex: 1 }} >
                     <TextTheme color={color} numberOfLines={1} fontSize={14} fontWeight={800} >{label}</TextTheme>
                     <TextTheme color={color} isPrimary={false} fontSize={12} numberOfLines={2} fontWeight={700}>{text}</TextTheme>
                 </View>
             </View>
-        
+
             <ShowWhen when={hasArrow} otherwise={children} >
                 {arrowIcon || <FeatherIcon name="arrow-right" size={20} color={color} />}
-            </ShowWhen>  
+            </ShowWhen>
         </AnimateButton>
     )
 }

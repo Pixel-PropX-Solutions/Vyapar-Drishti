@@ -19,18 +19,20 @@ import { BASE_APP_URL, BASE_WEB_URL } from '../../../../env';
 import { useAppStorage } from '../../../Contexts/AppStorageProvider';
 import MaterialDesignIcon from '../../../Components/Icon/MaterialDesignIcon';
 import { getAllInvoiceGroups } from '../../../Services/invoice';
+import AuthStore from '../../../Store/AuthStore';
 
 export function Header(): React.JSX.Element {
 
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
-    const {company} = useCompanyStore();
     const { current_company_id, user } = useUserStore();
     const { isCompanyFetching } = useCompanyStore();
-    const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
-
-    console.log(currentCompanyDetails, current_company_id)
+    const currentCompanyId = current_company_id || AuthStore.getString('current_company_id') || user?.user_settings?.current_company_id || '';
+    const currentCompanyDetails = user?.company?.find((c: any) => c._id === currentCompanyId);
+    // console.log('Current Company Details:', currentCompanyDetails);
+    // console.log('Current Company ', company);
+    // console.log('Current Company ID:', current_company_id);
     useEffect(() => {
         dispatch(getCurrentUser());
         dispatch(getAllCompanies());
@@ -60,12 +62,10 @@ export function Header(): React.JSX.Element {
                         </>}
                     >
                         <TextTheme numberOfLines={1} fontSize={16} fontWeight={600} >
-                            {/* {currentCompanyDetails?.company_name} */}
-                            {company?.name}
+                            {currentCompanyDetails?.company_name}
                         </TextTheme>
                         <TextTheme numberOfLines={1} isPrimary={false}>
-                            {/* {currentCompanyDetails?.email} */}
-                            {company?.email}
+                            {currentCompanyDetails?.email}
                         </TextTheme>
                     </ShowWhen>
                 </View>

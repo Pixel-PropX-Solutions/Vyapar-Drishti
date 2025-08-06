@@ -47,45 +47,58 @@ export function BillTypeFilter(): React.JSX.Element {
 
     const { primaryColor, primaryBackgroundColor } = useTheme();
     const { filters, handleFilter } = useBillContext();
+    const [isFilterModalVisible, setFilterModalVisible] = useState<boolean>(false);
 
     return (
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingInline: 20 }} >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingInline: 20 }} >
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
 
-                {
-                    ['Invoices', 'Sales', 'Purchase'].map(type => (
-                        <AnimateButton key={type}
-                            onPress={() => { handleFilter('billType', type as 'Invoices' | 'Sales' | 'Purchase' | 'Transactions'); }}
+                    {
+                        ['Invoices', 'Transactions', 'More'].map(type => (
+                            <AnimateButton key={type}
+                                onPress={() => {
+                                    if (type === 'More') {
+                                        setFilterModalVisible(true);
+                                        return;
+                                    } else {
+                                        handleFilter('billType', type as 'all' | 'Sales' | 'Purchase' | 'Transactions' | 'Payment' | 'Receipt' | 'More');
+                                    }
+                                }}
 
-                            bubbleColor={type === filters.billType ? primaryBackgroundColor : primaryColor}
+                                bubbleColor={type === filters.billType ? primaryBackgroundColor : primaryColor}
 
-                            style={{
-                                alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 28,
-                                backgroundColor: type === filters.billType ? primaryColor : primaryBackgroundColor,
-                            }}
-                        >
-                            <TextTheme
-                                isPrimary={type === filters.billType}
-                                useInvertTheme={type === filters.billType}
-                                fontSize={12}
-                                fontWeight={900}
-                            >{type === 'Invoices' ? 'All' : type}</TextTheme>
-                        </AnimateButton>
-                    ))
-                }
+                                style={{
+                                    alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 28,
+                                    backgroundColor: type === filters.billType ? primaryColor : primaryBackgroundColor,
+                                }}
+                            >
+                                <TextTheme
+                                    isPrimary={type === filters.billType}
+                                    useInvertTheme={type === filters.billType}
+                                    fontSize={12}
+                                    fontWeight={900}
+                                >
+                                    {type === 'More' ? <FeatherIcon name="more-horizontal" size={16} /> : type}
+                                </TextTheme>
+                            </AnimateButton>
+                        ))
+                    }
+                </View>
+
+                <AnimateButton
+                    style={{ height: 28, flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 40, paddingInline: 14 }}
+                    onPress={() => { handleFilter('useAscOrder', !filters.useAscOrder); }}
+                >
+                    <FeatherIcon
+                        name={filters.useAscOrder ? 'arrow-up' : 'arrow-down'}
+                        size={16}
+                    />
+                    <TextTheme fontSize={12}>{filters.useAscOrder ? 'Asc' : 'Des'}</TextTheme>
+                </AnimateButton>
             </View>
-
-            <AnimateButton
-                style={{ height: 28, flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 40, paddingInline: 14 }}
-                onPress={() => { handleFilter('useAscOrder', !filters.useAscOrder); }}
-            >
-                <FeatherIcon
-                    name={filters.useAscOrder ? 'arrow-up' : 'arrow-down'}
-                    size={16}
-                />
-                <TextTheme fontSize={12}>{filters.useAscOrder ? 'Asc' : 'Des'}</TextTheme>
-            </AnimateButton>
-        </View>
+            <FilterModal visible={isFilterModalVisible} setVisible={setFilterModalVisible} />
+        </>
     );
 }
 

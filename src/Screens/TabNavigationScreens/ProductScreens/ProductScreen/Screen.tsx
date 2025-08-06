@@ -8,19 +8,19 @@ export default function ProductScreen() {
     return (
         <ProductContextProvider>
             <View style={{ width: '100%', height: '100%' }}>
-                <View style={{paddingInline: 20}} >
+                <View style={{ paddingInline: 20 }} >
                     <Header />
                     <SummarySection />
-                    <View style={{marginTop: 20}} >
-                        <ItemStatusFilter/>
+                    <View style={{ marginTop: 20 }} >
+                        <ItemStatusFilter />
                     </View>
                 </View>
 
-                <BackgroundThemeView isPrimary={false} style={{width: '100%', flex: 1, borderTopLeftRadius: 40, borderTopRightRadius: 40, paddingInline: 20, paddingBottom: 0, marginTop: 10}} >
-                    <SortFilterSection/>
+                <BackgroundThemeView isPrimary={false} style={{ width: '100%', flex: 1, borderTopLeftRadius: 40, borderTopRightRadius: 40, paddingInline: 20, paddingBottom: 0, marginTop: 10 }} >
+                    {/* <SortFilterSection/> */}
                     <ProductListing />
                     <CreateProductButton />
-                </BackgroundThemeView> 
+                </BackgroundThemeView>
             </View>
         </ProductContextProvider>
     );

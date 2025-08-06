@@ -7,7 +7,7 @@ type Filters = {
     sortBy: string,
     useAscOrder: boolean,
     status: 'all' | 'paid' | 'pending',
-    billType: 'Sales' | 'Purchase' | 'Invoices' | 'Transactions'
+    billType: 'all' | 'Sales' | 'Purchase' | 'Invoices' | 'Transactions' | 'Payment' | 'Receipt' | 'More'
 }
 
 type ContextType = {

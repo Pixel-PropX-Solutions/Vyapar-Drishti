@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useBillContext } from './Context';
 import { useTheme } from '../../../../Contexts/ThemeProvider';
 import BottomModal from '../../../../Components/Modal/BottomModal';
@@ -30,6 +30,7 @@ import { SectionRowWithIcon } from '../../../../Components/Layouts/View/SectionV
 import { setCustomers } from '../../../../Store/Reducers/customerReducer';
 import { MeasurmentUnitsData } from '../../../../Assets/objects-data/measurment-units-data';
 import { retry } from '@reduxjs/toolkit/query';
+import { TextInput } from 'react-native-gesture-handler';
 
 
 type Props = {
@@ -442,6 +443,62 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
                 visible={isCreateModalOpen}
                 setVisible={setCreateModalOpen}
             />
+        </BottomModal>
+    );
+}
+
+
+export function BillNoEditorModal({ visible, setVisible }: Props) {
+
+    const { billNo, setBillNo } = useBillContext();
+    const { primaryColor, secondaryColor } = useTheme();
+
+    const [text, setText] = useState<string>(billNo);
+    const input = useRef<TextInput>(null);
+
+    useEffect(() => {
+        if (visible) { setText(billNo); }
+    }, [billNo, visible]);
+
+    useEffect(() => {
+        if (!visible) { return; }
+
+        setTimeout(() => {
+            input.current?.focus();
+        }, 250);
+    }, [visible]);
+
+    return (
+        <BottomModal
+            visible={visible} setVisible={setVisible}
+            style={{ paddingInline: 20, gap: 16 }}
+            actionButtons={[{
+                title: 'Set',
+                color: 'white',
+                backgroundColor: 'rgb(50,200,150)',
+                onPress: () => { setBillNo(text); setVisible(false); },
+            }]}
+        >
+            <TextTheme fontSize={20} fontWeight={900}>Enter Bill No</TextTheme>
+
+            <View style={{ borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, width: '100%', flexDirection: 'row', alignItems: 'center' }} >
+                <TextInput
+                    ref={input}
+                    value={text}
+                    placeholder="INVOICE NO"
+                    style={{ fontSize: 16, flex: 1, opacity: text ? 1 : 0.8 }}
+                    placeholderTextColor={secondaryColor}
+                    multiline={true}
+                    keyboardType="default"
+                    autoCapitalize="characters"
+                    onChangeText={val => {
+                        setText(val);
+                    }}
+                />
+
+            </View>
+
+            <View style={{ minHeight: 10 }} />
         </BottomModal>
     );
 }

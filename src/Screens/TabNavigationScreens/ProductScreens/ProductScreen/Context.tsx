@@ -4,7 +4,7 @@ import { useUserStore } from '../../../../Store/ReduxStore';
 type Filters = {
     sortBy: string,
     useAscOrder: boolean,
-    status: 'all' | 'neg' | 'low' | 'pos'
+    status: 'all' | 'negative' | 'low' | 'positive'
 }
 
 type ContextType = {

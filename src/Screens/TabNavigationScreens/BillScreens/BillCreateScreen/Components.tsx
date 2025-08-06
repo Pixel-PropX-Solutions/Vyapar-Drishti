@@ -22,7 +22,7 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { StackParamsList } from '../../../../Navigation/StackNavigation';
 import { createInvoice, createInvoiceWithGST, getInvoiceCounter } from '../../../../Services/invoice';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
-import { ProductInfoUpdateModal, ProductSelectorModal, CustomerSelectorModal } from './Modals';
+import { ProductInfoUpdateModal, ProductSelectorModal, CustomerSelectorModal, BillNoEditorModal } from './Modals';
 
 export function Header() {
 
@@ -105,6 +105,7 @@ export function BillNoSelector() {
     const { type: billType } = router.params;
     const { current_company_id } = useUserStore();
     const { secondaryBackgroundColor } = useTheme();
+    const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
     useEffect(() => {
         dispatch(getInvoiceCounter({
@@ -121,24 +122,36 @@ export function BillNoSelector() {
     }, [dispatch, current_company_id, billType]);
 
     return (
-        <AnimateButton style={{
-            padding: 8, borderRadius: 16, flex: 1, flexDirection: 'row', borderColor: secondaryBackgroundColor, gap: 12, alignItems: 'center', backgroundColor: billNo ? 'rgba(60, 180, 120, 0.5)' : secondaryBackgroundColor,
-        }}>
-            <BackgroundThemeView
-                style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }}
+        <>
+            <AnimateButton style={{
+                padding: 8, borderRadius: 16, flex: 1, flexDirection: 'row', borderColor: secondaryBackgroundColor, gap: 12, alignItems: 'center', backgroundColor: billNo ? 'rgba(60, 180, 120, 0.5)' : secondaryBackgroundColor,
+            }}
+                onPress={() => {
+                    if (
+                        billType === 'Purchase'
+                    ) { setModalVisible(true); }
+                }}
             >
-                <FeatherIcon name="hash" size={16} />
-            </BackgroundThemeView>
+                <BackgroundThemeView
+                    style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }}
+                >
+                    <FeatherIcon name="hash" size={16} />
+                </BackgroundThemeView>
 
-            <View style={{ flex: 1 }}>
-                <TextTheme style={{ fontSize: 14, fontWeight: '700', marginBottom: 2 }}>
-                    Bill No
-                </TextTheme>
-                <TextTheme isPrimary={false} style={{ fontSize: 13, fontWeight: '500' }}>
-                    {billNo || 'Auto-generated'}
-                </TextTheme>
-            </View>
-        </AnimateButton>
+                <View style={{ flex: 1 }}  >
+                    <TextTheme style={{ fontSize: 14, fontWeight: '700', marginBottom: 2 }}>
+                        Bill No
+                    </TextTheme>
+                    <TextTheme isPrimary={false} style={{ fontSize: 13, fontWeight: '500' }}>
+                        {billNo || 'Auto-generated'}
+                    </TextTheme>
+                </View>
+            </AnimateButton>
+            <BillNoEditorModal
+                visible={isModalVisible}
+                setVisible={setModalVisible}
+            />
+        </>
     );
 }
 
