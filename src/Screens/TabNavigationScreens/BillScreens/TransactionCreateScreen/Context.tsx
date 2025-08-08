@@ -54,7 +54,7 @@ export default function TransactionContextProvider({ children }: { children: Rea
     const [customer, setCustomer] = useState<Customer | null>(null);
     const [account, setAccount] = useState<Account | null>(null);
     const [amount, setAmount] = useState<string>('');
-    const [transactionNo, setTransactionNo] = useState<string>('TRX-000');
+    const [transactionNo, setTransactionNo] = useState<string>('AutoGen');
     const [createOn, setCreateOn] = useState<string>(new Date().toLocaleDateString());
     const [note, setNote] = useState<string>('');
     const [progress, setProgress] = useState<number>(0);
@@ -64,7 +64,7 @@ export default function TransactionContextProvider({ children }: { children: Rea
         setCustomer(null);
         setAccount(null);
         setAmount('');
-        setTransactionNo('TRX-000');
+        setTransactionNo('AutoGen');
         setCreateOn(new Date().toLocaleDateString());
         setNote('');
     }

@@ -332,11 +332,10 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
                 allItems={filterItemsList}
                 keyExtractor={(item) => item.id}
                 isItemSelected={false}
-                
+
                 filter={(item, val) => (
-                    item.name.toLowerCase().startsWith(val) ||
-                    item.hsn_code.toLowerCase().startsWith(val) ||
-                    item.name.replaceAll(' ', '').startsWith(val.replaceAll(' ', ''))
+                    item.name.toLowerCase().includes(val) ||
+                    item.hsn_code.toLowerCase().includes(val)
                 )}
 
                 actionButtons={[{
@@ -358,8 +357,8 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
 
                     setUnitModalVisible(true);
                 }}
-               
-                
+
+
                 renderItemContent={(item) => (
                     <View style={{ flex: 1 }} >
                         <TextTheme fontSize={14} fontWeight={700} >{item.name}</TextTheme>
@@ -373,7 +372,7 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
                 isFetching={isFetching}
                 whenFetchingComponent={
                     <ProductLoadingCard />
-                }    
+                }
             />
 
             <BottomModal

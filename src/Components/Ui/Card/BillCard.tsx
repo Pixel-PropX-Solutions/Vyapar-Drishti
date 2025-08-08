@@ -50,7 +50,7 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
     return (
         <ScaleAnimationView useRandomDelay={true} >
             <BackgroundThemeView isPrimary={isPrimary} style={{ borderRadius: 10, overflow: 'hidden' }} >
-                <AnimateButton onPress={onPress} >
+                <AnimateButton onPress={() => { if (['sales', 'purchase'].includes(type.toLowerCase())) { onPress && onPress(); } }} >
                     <View style={{ width: 4, height: '100%', backgroundColor: `rgb(${rgb})`, position: 'absolute', left: 0, top: 0 }} />
                     <View style={{ width: '100%', height: '100%', backgroundColor: `rgba(${rgb},0.1)`, position: 'absolute', left: 0, top: 0 }} />
 

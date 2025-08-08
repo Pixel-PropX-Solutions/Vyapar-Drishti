@@ -350,7 +350,7 @@ export function AmountBox() {
                 style={{ padding: 20, borderTopLeftRadius: 24, borderTopRightRadius: 24, shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.1, shadowRadius: 12, elevation: 10, gap: 12, borderColor: 'gray', borderWidth: 2, borderBottomWidth: 0 }}
             >
 
-                <SectionRow style={{ flexDirection: 'column' }} onPress={() => { setModalVisible(true); }} >
+                <SectionRow style={{ flexDirection: 'column' }} >
                     <TextTheme isPrimary={false} fontSize={12} >
                         Amount
                     </TextTheme>
@@ -373,7 +373,7 @@ export function AmountBox() {
                 </ShowWhen>
             </BackgroundThemeView>
 
-            <AmountModal visible={isModalVisible} setVisible={setModalVisible} />
+            {/* <AmountModal visible={isModalVisible} setVisible={setModalVisible} /> */}
             <LoadingModal visible={isCreating} />
         </View>
     );
