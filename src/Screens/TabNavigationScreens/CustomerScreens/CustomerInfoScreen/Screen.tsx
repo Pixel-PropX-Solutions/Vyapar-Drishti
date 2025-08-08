@@ -134,7 +134,7 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                 setVisible={setDeleteModalVisible}
                 handleDelete={handleDelete}
                 passkey={'Customer Name'}
-                message="Once you delete the product then no way to go back."
+                message="Once you delete the customer then no way to go back."
             />
 
             <CustomerInfoUpdateModal

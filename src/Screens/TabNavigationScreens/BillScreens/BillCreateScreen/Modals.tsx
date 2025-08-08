@@ -296,6 +296,7 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
         if (!visible && isCreateModalOpen) { return; }
 
         setIsFetching(true);
+        setItemsList([]);
         dispatch(viewProductsWithId(current_company_id || '')).then((response) => {
             if (response.meta.requestStatus === 'fulfilled') {
                 const products = response.payload;
@@ -323,75 +324,56 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
     }, [products, itemsList]);
 
     return (
-        <BottomModal
-            visible={visible}
-            setVisible={setVisible}
-            style={{ padding: 20, gap: 20 }}
-            actionButtons={[{
-                key: 'create-product',
-                title: 'Create New Product',
-                onPress: () => setCreateModalOpen(true),
-                color: 'white',
-                backgroundColor: 'rgb(50,200,150)',
-                icon: <MaterialIcon name="add" size={16} />,
-            }]}>
-            <TextTheme style={{ fontWeight: 800, fontSize: 16 }} >Select Product</TextTheme>
-
-            <View
-                style={{ borderWidth: 2, borderColor: primaryColor, borderRadius: 100, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', paddingLeft: 10, paddingRight: 16 }}
-            >
-                <MaterialIcon name="search" size={20} />
-
-                <NoralTextInput
-                    placeholder="Search"
-                    style={{ flex: 1 }}
-                />
-            </View>
-
-            <FlatList
-                contentContainerStyle={{ gap: 20, paddingBottom: 80, paddingTop: 12 }}
-                data={filterItemsList}
+        <>
+            <ItemSelectorModal<{ id: string; name: string; unit: string, gst: string, hsn_code: string }>
+                title='Select Product'
+                visible={visible} setVisible={setVisible}
+                closeOnSelect={false}
+                allItems={filterItemsList}
                 keyExtractor={(item) => item.id}
-                keyboardShouldPersistTaps="always"
-
-                ListEmptyComponent={
-                    <ShowWhen when={!isFetching} otherwise={<ProductLoadingCard />} >
-                        <EmptyListView type="product" />
-                    </ShowWhen>
-                }
-
-                renderItem={({ item }) => (
-                    <ScaleAnimationView useRandomDelay={true} >
-                        <SectionRowWithIcon
-                            label={sliceString(item.name, 30) ?? ''}
-                            text={item.hsn_code ?? 'No hsn code'}
-                            onPress={() => {
-                                setUnitModalVisible(true);
-                                setData(pre => ({
-                                    ...pre, ...{
-                                        productId: item.id, unit: item.unit, name: item.name,
-                                        hsnCode: item.hsn_code ?? '', gstRate: item.gst,
-                                    },
-                                }));
-                            }}
-                            icon={<TextTheme style={{ fontSize: 16, fontWeight: 900 }} >{item.name[0].toUpperCase()}</TextTheme>}
-
-                        >
-                            <ShowWhen when={!!item.gst} >
-                                <BackgroundThemeView style={{ position: 'absolute', top: -2, right: 10, paddingInline: 8, borderRadius: 8, paddingBottom: 2 }} >
-                                    <TextTheme isPrimary={false} style={{ fontSize: 12 }} >
-                                        GST {item.gst}%
-                                    </TextTheme>
-                                </BackgroundThemeView>
-                            </ShowWhen>
-                        </SectionRowWithIcon>
-                    </ScaleAnimationView>
+                isItemSelected={false}
+                
+                filter={(item, val) => (
+                    item.name.toLowerCase().startsWith(val) ||
+                    item.hsn_code.toLowerCase().startsWith(val) ||
+                    item.name.replaceAll(' ', '').startsWith(val.replaceAll(' ', ''))
                 )}
 
-                ListFooterComponentStyle={{ gap: 20 }}
-                ListFooterComponent={<ShowWhen when={isFetching}>
+                actionButtons={[{
+                    key: 'create-product',
+                    title: 'Create New Product',
+                    onPress: () => setCreateModalOpen(true),
+                    color: 'white',
+                    backgroundColor: 'rgb(50,200,150)',
+                    icon: <MaterialIcon name="add" size={16} color='white' />,
+                }]}
+
+                onSelect={item => {
+                    setData(pre => ({
+                        ...pre, ...{
+                            productId: item.id, unit: item.unit, name: item.name,
+                            hsnCode: item.hsn_code ?? '', gstRate: item.gst,
+                        },
+                    }));
+
+                    setUnitModalVisible(true);
+                }}
+               
+                
+                renderItemContent={(item) => (
+                    <View style={{ flex: 1 }} >
+                        <TextTheme fontSize={14} fontWeight={700} >{item.name}</TextTheme>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
+                            <TextTheme isPrimary={false}>{item.hsn_code || 'No HSN Code'}</TextTheme>
+                            {item.gst && <TextTheme isPrimary={false}>{item.gst}%</TextTheme>}
+                        </View>
+                    </View>
+                )}
+
+                isFetching={isFetching}
+                whenFetchingComponent={
                     <ProductLoadingCard />
-                </ShowWhen>}
+                }    
             />
 
             <BottomModal
@@ -443,7 +425,7 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
                 visible={isCreateModalOpen}
                 setVisible={setCreateModalOpen}
             />
-        </BottomModal>
+        </>
     );
 }
 

@@ -22,6 +22,7 @@ import { createInvoice, getInvoiceCounter } from '../../../../Services/invoice';
 import { CreateInvoiceData } from '../../../../Utils/types';
 import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
+import MaterialDesignIcon from '../../../../Components/Icon/MaterialDesignIcon';
 
 
 
@@ -232,6 +233,31 @@ export function AccountSelector() {
     </>);
 }
 
+export function AmountSection() {
+    const {amount} = useTransactionContext()
+    const {currency} = useAppStorage()
+    
+    const router = useRoute<RouteProp<StackParamsList, 'create-transaction-screen'>>();
+    const { type } = router.params;
+
+    const [isModalVisible, setModalVisible] = useState<boolean>(false);
+
+
+    return (<>
+        <SectionRowWithIcon
+            icon={<MaterialDesignIcon name={type === 'Receipt' ? "cash-plus" : 'cash-minus'} size={24} />}
+            label={amount ? `${amount} ${currency}` : type === 'Receipt' ? 'Received Amount' : "Pay Amount"}
+            text={amount ? type === 'Receipt' ? "amount received" : 'amount pay' : 'Tab to enter amount'}
+            backgroundColor={amount ? 'rgba(60,180,120, 0.5)' : ''}
+            hasArrow={true}
+            arrowIcon={<FeatherIcon name="chevron-right" size={20} />}
+            onPress={() => { setModalVisible(true); }}
+        />
+
+        <AmountModal visible={isModalVisible} setVisible={setModalVisible} />
+    </>);
+}
+
 export function DescriptionSection() {
 
     const { note } = useTransactionContext();
@@ -325,8 +351,8 @@ export function AmountBox() {
             >
 
                 <SectionRow style={{ flexDirection: 'column' }} onPress={() => { setModalVisible(true); }} >
-                    <TextTheme isPrimary={false} fontSize={12} fontWeight={900}>
-                        Enter Amount
+                    <TextTheme isPrimary={false} fontSize={12} >
+                        Amount
                     </TextTheme>
 
                     <TextTheme fontWeight={900} fontSize={20}>

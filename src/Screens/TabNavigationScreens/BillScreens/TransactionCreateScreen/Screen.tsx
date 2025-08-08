@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import { ScrollView, View } from 'react-native';
 import TransactionContextProvider from './Context';
-import { AccountSelector, AmountBox, CustomerSelector, DateSelector, DescriptionSection, Header, ProgressBarSection, TransactionNoSelector } from './Components';
+import { AccountSelector, AmountBox, AmountSection, CustomerSelector, DateSelector, DescriptionSection, Header, ProgressBarSection, TransactionNoSelector } from './Components';
 import TextTheme from '../../../../Components/Ui/Text/TextTheme';
 
 export default function TransitionCreateScreen() {
@@ -27,6 +27,7 @@ export default function TransitionCreateScreen() {
 
                     <CustomerSelector />
                     <AccountSelector />
+                    <AmountSection/>
                     <DescriptionSection />
                 </ScrollView>
 

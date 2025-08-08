@@ -16,7 +16,7 @@ type Props<item> = {
     visible: boolean,
     setVisible: Dispatch<SetStateAction<boolean>>,
     onSelect: (item: item) => void,
-    SelectedItemContent: ReactNode,
+    SelectedItemContent?: ReactNode,
     renderItemContent: (item: item) => ReactNode
     keyExtractor: (item: item, index: number) => string,
     filter: (item: item, val: string) => boolean,
@@ -105,18 +105,20 @@ export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItem
                 keyExtractor={keyExtractor}
 
                 renderItem={({ item }) => (
-                    <SectionRow
-                        style={{ justifyContent: 'space-between', ...renderItemStyle }}
-                        onPress={() => {
-                            if (closeOnSelect)
-                                setVisible(false)
+                    <ScaleAnimationView style={{width: '100%'}} useRandomDelay={true} >
+                        <SectionRow
+                            style={{ justifyContent: 'space-between', ...renderItemStyle }}
+                            onPress={() => {
+                                if (closeOnSelect)
+                                    setVisible(false)
 
-                            setData(allItems)
-                            if (onSelect) onSelect(item)
-                        }}
-                    >
-                        {renderItemContent(item)}
-                    </SectionRow>
+                                setData(allItems)
+                                if (onSelect) onSelect(item)
+                            }}
+                        >
+                            {renderItemContent(item)}
+                        </SectionRow>
+                    </ScaleAnimationView>
                 )}
 
                 ListFooterComponentStyle={{ gap: 20 }}
