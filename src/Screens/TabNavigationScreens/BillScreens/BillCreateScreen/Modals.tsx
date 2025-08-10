@@ -91,7 +91,7 @@ export function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }
                         value={products[editProductIndex]?.quantity}
                         placeholder="Quantity"
                         keyboardType="number-pad"
-                        type='decimal-3'
+                        type="decimal-3"
                     />
                 </View>
             </View>
@@ -105,7 +105,7 @@ export function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }
                         value={products[editProductIndex]?.price}
                         placeholder="Enter rate"
                         keyboardType="number-pad"
-                        type='decimal-2'
+                        type="decimal-2"
                     />
                 </View>
 
@@ -244,7 +244,6 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
     const [isUnitModalVisible, setUnitModalVisible] = useState<boolean>(false);
     const [isCreateModalOpen, setCreateModalOpen] = useState<boolean>(false);
     const [itemsList, setItemsList] = useState<{ id: string; name: string; unit: string, gst: string, hsn_code: string }[]>([]);
-    const [filterItemsList, setFilterItemsList] = useState<{ id: string; name: string; unit: string, gst: string, hsn_code: string }[]>([]);
 
     const [data, setData] = useState({
         quantity: '',
@@ -319,17 +318,13 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
 
     }, [dispatch, isCreateModalOpen, current_company_id, visible]);
 
-    useEffect(() => {
-        setFilterItemsList(itemsList.filter(item => !(products.some(pro => pro.id === item.id))));
-    }, [products, itemsList]);
-
     return (
         <>
             <ItemSelectorModal<{ id: string; name: string; unit: string, gst: string, hsn_code: string }>
                 title="Select Product"
                 visible={visible} setVisible={setVisible}
                 closeOnSelect={false}
-                allItems={filterItemsList}
+                allItems={itemsList}
                 keyExtractor={(item) => item.id}
                 isItemSelected={false}
 
@@ -361,7 +356,10 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
 
                 renderItemContent={(item) => (
                     <View style={{ flex: 1 }} >
-                        <TextTheme fontSize={14} fontWeight={700} >{item.name}</TextTheme>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <TextTheme fontSize={14} fontWeight={700} >{item.name}</TextTheme>
+                            <TextTheme fontSize={12} fontWeight={500} isPrimary={false} >{item.unit}</TextTheme>
+                        </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
                             <TextTheme isPrimary={false}>{item.hsn_code || 'No HSN Code'}</TextTheme>
                             {item.gst && <TextTheme isPrimary={false}>{item.gst}%</TextTheme>}
@@ -385,39 +383,65 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
                 }]}
 
             >
-                <TextTheme style={{ fontWeight: 800, fontSize: 16 }} >Select Quantity</TextTheme>
+                <TextTheme fontSize={16} fontWeight={800} >Select Quantity</TextTheme>
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }} >
                     <View style={{ flex: 1, paddingRight: 8 }} >
-                        <InputField
-                            type='decimal-3'
-                            icon={<FeatherIcon name="package" size={20} />}
-                            field="quantity"
-                            handleChange={handleInputChange}
-                            defaultValue={data.quantity}
-                            placeholder="Quantity"
-                            keyboardType="number-pad"
-                        />
+
+
+                        <View style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            borderWidth: 1,
+                            borderColor: primaryColor,
+                            borderRadius: 12,
+                            paddingHorizontal: 12,
+                            paddingVertical: 8,
+                            backgroundColor: 'transparent',
+                            opacity: 1,
+                            marginTop: 10,
+                        }} >
+                            <FeatherIcon name="package" size={20} />
+                            <NoralTextInput
+                                type={MeasurmentUnitsData.find(unit => unit.value === data.unit)?.si_representation || 'integer'}
+                                placeholder="Quantity"
+                                style={{ fontSize: 16, fontWeight: 500, flex: 1 }}
+                                onChangeText={text => handleInputChange('quantity', text)}
+                                keyboardType="number-pad"
+                            />
+                        </View>
                     </View>
                 </View>
 
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }} >
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'flex-end' }} >
                     <View style={{ flex: 1, paddingRight: 8 }} >
-                        <InputField
-                            type='decimal-2'
-                            icon={<MaterialIcon name="currency-rupee" size={20} />}
-                            field="price"
-                            handleChange={handleInputChange}
-                            defaultValue={data.price}
-                            placeholder="Enter rate"
-                            keyboardType="number-pad"
-                        />
+                        <View style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            borderWidth: 1,
+                            borderColor: primaryColor,
+                            borderRadius: 12,
+                            paddingHorizontal: 12,
+                            paddingVertical: 8,
+                            backgroundColor: 'transparent',
+                            opacity: 1,
+                            marginTop: 10,
+                        }} >
+                            <MaterialIcon name="currency-rupee" size={20} />
+                            <NoralTextInput
+                                type="decimal-2"
+                                placeholder="Enter rate"
+                                style={{ fontSize: 16, fontWeight: 500, flex: 1 }}
+                                onChangeText={text => handleInputChange('price', text)}
+                                keyboardType="number-pad"
+                            />
+                        </View>
                     </View>
 
                     <AnimateButton
-                        style={{ marginBlock: 16, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, paddingLeft: 8, paddingRight: 20 }}
+                        style={{ marginBlock: 5, flexDirection: 'row', alignItems: 'flex-end', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, paddingLeft: 8, paddingRight: 20 }}
                     >
-                        <TextTheme style={{ fontSize: 14, fontWeight: 900 }}>/ {data.unit ?? 'Unit'}</TextTheme>
+                        <TextTheme fontSize={16} fontWeight={900}>/ {data.unit ?? 'Unit'}</TextTheme>
                     </AnimateButton>
                 </View>
             </BottomModal>

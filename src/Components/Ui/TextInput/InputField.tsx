@@ -46,7 +46,7 @@ export const InputField = ({
     handleChange: (field: string, value: string | boolean | number) => void;
     secondaryButtonAction?: () => void;
     error?: string,
-    type?: 'string' | 'intiger' | 'decimal' | `decimal-${number}`,
+    type?: 'string' | 'integer' | 'decimal' | `decimal-${number}`,
     defaultValue?: string
     // required?: boolean,
 }) => {

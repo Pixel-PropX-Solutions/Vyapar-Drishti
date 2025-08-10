@@ -1,11 +1,12 @@
-import { Text, TextInputProps, View } from "react-native";
-import TextTheme from "../Text/TextTheme";
-import { useState } from "react";
-import { TextInput } from "react-native-gesture-handler";
-import { useTheme } from "../../../Contexts/ThemeProvider";
-import AnimateButton from "../Button/AnimateButton";
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import ShowWhen from "../../Other/ShowWhen";
+/* eslint-disable react-native/no-inline-styles */
+import { Text, TextInputProps, View } from 'react-native';
+import TextTheme from '../Text/TextTheme';
+import { useState } from 'react';
+import { TextInput } from 'react-native-gesture-handler';
+import { useTheme } from '../../../Contexts/ThemeProvider';
+import AnimateButton from '../Button/AnimateButton';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import ShowWhen from '../../Other/ShowWhen';
 
 
 type Props = TextInputProps & {
@@ -19,9 +20,9 @@ type Props = TextInputProps & {
     isRequired?: boolean
 }
 
-export default function PasswordInput({placeholder='***********', label='Password', onChangeText, focusColor='rgb(50, 150, 250)', massageTextColor='rgb(200,50,50)', checkInputText, message, isRequired=false, ...props}: Props): React.JSX.Element {
+export default function PasswordInput({ placeholder = '***********', label = 'Password', onChangeText, focusColor = 'rgb(50, 150, 250)', massageTextColor = 'rgb(200,50,50)', checkInputText, message, isRequired = false, ...props }: Props): React.JSX.Element {
 
-    const {primaryColor: color, primaryBackgroundColor: backgroundColor} = useTheme();
+    const { primaryColor: color, primaryBackgroundColor: backgroundColor } = useTheme();
 
     const [isFocus, setFocus] = useState<boolean>(false);
     const [inputText, setInputText] = useState<string>('');
@@ -31,21 +32,21 @@ export default function PasswordInput({placeholder='***********', label='Passwor
     function handleOnChangeText(text: string): void {
         setInputText(text);
 
-        if(onChangeText) onChangeText(text);
-        if(checkInputText) setInputTextValid(checkInputText(text));
-        if(!text) setInputTextValid(true);
+        if (onChangeText) {onChangeText(text);}
+        if (checkInputText) {setInputTextValid(checkInputText(text));}
+        if (!text) {setInputTextValid(true);}
     }
 
     return (
         <View>
-            <View 
+            <View
                 style={{
                     borderWidth: 2, paddingInline: 12, borderRadius: 12, position: 'relative', display: 'flex', flexDirection: 'row', alignItems: 'center',
                     borderColor: isInputTextValid ? isFocus ? focusColor : color : massageTextColor,
-                }} 
+                }}
             >
-                <TextTheme 
-                    style={{position: 'absolute', left: 16, top: 0, transform: [{translateY: '-50%'}], backgroundColor, paddingInline: 4, borderRadius: 4}}
+                <TextTheme
+                    style={{ position: 'absolute', left: 16, top: 0, transform: [{ translateY: '-50%' }], backgroundColor, paddingInline: 4, borderRadius: 4 }}
                     color={isInputTextValid ? isFocus ? focusColor : color : massageTextColor}
                 >
                     {label}
@@ -54,7 +55,7 @@ export default function PasswordInput({placeholder='***********', label='Passwor
                     </ShowWhen>
                 </TextTheme>
 
-                <TextInput  
+                <TextInput
                     {...props}
                     value={inputText}
                     placeholder={placeholder}
@@ -66,24 +67,24 @@ export default function PasswordInput({placeholder='***********', label='Passwor
                     autoCapitalize="none"
                     style={{
                         opacity: inputText ? 1 : 0.7,
-                        color, paddingTop: 14, flex: 1
+                        color, paddingTop: 14, flex: 1,
                     }}
                 />
 
-                <AnimateButton 
+                <AnimateButton
                     onPress={() => setPasswordVsible((pre) => !pre)}
-                    style={{aspectRatio: 1, borderRadius: '50%', height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center'}} 
+                    style={{ aspectRatio: 1, borderRadius: '50%', height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
-                    <MaterialIcons name={isPasswordVisible ? "visibility-off" : "visibility"} size={20} color={color} />
+                    <MaterialIcons name={isPasswordVisible ? 'visibility-off' : 'visibility'} size={20} color={color} />
                 </AnimateButton>
             </View>
             {
                 !(isInputTextValid || isFocus) ? (
-                        <TextTheme color={massageTextColor} style={{paddingLeft: 6}} >
-                            {message}
-                        </TextTheme>
-                    ) : null
+                    <TextTheme color={massageTextColor} style={{ paddingLeft: 6 }} >
+                        {message}
+                    </TextTheme>
+                ) : null
             }
         </View>
-    )
+    );
 }

@@ -30,9 +30,7 @@ export function Header(): React.JSX.Element {
     const { isCompanyFetching } = useCompanyStore();
     const currentCompanyId = current_company_id || AuthStore.getString('current_company_id') || user?.user_settings?.current_company_id || '';
     const currentCompanyDetails = user?.company?.find((c: any) => c._id === currentCompanyId);
-    // console.log('Current Company Details:', currentCompanyDetails);
-    // console.log('Current Company ', company);
-    // console.log('Current Company ID:', current_company_id);
+
     useEffect(() => {
         dispatch(getCurrentUser());
         dispatch(getAllCompanies());

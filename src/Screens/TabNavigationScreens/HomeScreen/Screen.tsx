@@ -10,7 +10,7 @@ export default function HomeScreen(): React.JSX.Element {
             <ScrollView
                 style={{ marginTop: 12, width: '100%', height: '100%', paddingHorizontal: 20 }}
                 contentContainerStyle={{ gap: 32 }}
-                keyboardShouldPersistTaps='always'
+                keyboardShouldPersistTaps="always"
             >
                 {/* <MonthlyInfoSection /> */}
                 <QuickAccessSection />

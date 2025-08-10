@@ -36,11 +36,12 @@ type Props = {
 export function CompanySwitchModal({ visible, setVisible }: Props) {
 
     const dispatch = useAppDispatch();
-    const { companies } = useCompanyStore();
-    const { current_company_id, user } = useUserStore();
+    const { companies, isCompanyFetching } = useCompanyStore();
+    const { current_company_id, user, } = useUserStore();
     const currentCompanyId = current_company_id || AuthStore.getString('current_company_id') || user?.user_settings?.current_company_id || '';
 
     const [isCreateModalVisible, setCreateModalVisible] = useState(false);
+    const [isSwitching, setSwitching] = useState(false);
 
     return (<>
         <BottomModal
@@ -70,6 +71,7 @@ export function CompanySwitchModal({ visible, setVisible }: Props) {
                             color={_id === currentCompanyId ? 'white' : ''}
                             onPress={() => {
                                 if (_id === currentCompanyId) { return setVisible(false); }
+                                setSwitching(true);
 
                                 dispatch(setIsCompanyFetching(true));
 
@@ -79,9 +81,12 @@ export function CompanySwitchModal({ visible, setVisible }: Props) {
                                             dispatch(setCurrentCompanyId(_id));
                                             dispatch(getCurrentUser());
                                             dispatch(getCompany());
+                                            setVisible(false);
+                                            setSwitching(false);
                                         }
+                                        setSwitching(false);
+                                        setVisible(false);
                                     });
-                                setVisible(false);
                             }}
                         />
                     ))
@@ -95,6 +100,7 @@ export function CompanySwitchModal({ visible, setVisible }: Props) {
             setVisible={setCreateModalVisible}
             setSecondaryVisible={setVisible}
         />
+        <LoadingModal visible={isSwitching || isCompanyFetching} />
     </>);
 }
 

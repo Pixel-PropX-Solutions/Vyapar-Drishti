@@ -39,7 +39,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
     const { user, current_company_id } = useUserStore();
     const dispatch = useAppDispatch();
     const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
-    const gst_enable:boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
+    const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
     const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
     const [currentStep, setCurrentStep] = useState<number>(0);
     const [bankExpanded, setBankExpanded] = useState<boolean>(false);
@@ -339,7 +339,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                         </ShowWhen> */}
 
                         {/* GSTIN */}
-                        <ShowWhen when={showGSTIN}>
+                        {gst_enable && <ShowWhen when={showGSTIN}>
                             <InputField
                                 icon={<FeatherIcon name="file-text" size={20} color={primaryColor} />}
                                 field="gstin"
@@ -350,7 +350,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                 secondaryButton={true}
                                 secondaryButtonAction={() => { }}
                             />
-                        </ShowWhen>
+                        </ShowWhen>}
 
                         {/* Name */}
                         <InputField

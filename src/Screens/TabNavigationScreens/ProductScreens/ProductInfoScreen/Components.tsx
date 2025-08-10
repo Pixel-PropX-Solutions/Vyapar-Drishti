@@ -25,22 +25,21 @@ export function HeroSection(): React.JSX.Element {
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <View style={{ gap: 16 }} >
                 <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }} >
-                    <FeatherIcon name="package" size={32} />
-                    <View>
-                        <ShowWhen when={!loading}
-                            otherwise={<>
-                                <LoadingView width={100} height={16} style={{ marginBottom: 4 }} />
-                                <LoadingView width={80} height={8} />
-                            </>}
-                        >
-                            <TextTheme fontWeight={900} fontSize={16}>
+
+                    {loading ? <>
+                        <LoadingView width={100} height={16} style={{ marginBottom: 4 }} />
+                        <LoadingView width={80} height={8} />
+                    </> :
+                        <>
+                            <FeatherIcon name="package" size={32} />
+                            <TextTheme fontWeight={900} fontSize={16} style={{ flexWrap: 'wrap', maxWidth: 200 }} >
                                 {product?.stock_item_name}
                             </TextTheme>
                             <TextTheme isPrimary={false} fontWeight={500} fontSize={12}>
                                 {product?.gst_hsn_code}
                             </TextTheme>
-                        </ShowWhen>
-                    </View>
+                        </>
+                    }
                 </View>
 
                 <View >
@@ -53,7 +52,7 @@ export function HeroSection(): React.JSX.Element {
                         <TextTheme fontWeight={900} fontSize={20}>
                             {currency} {formatNumberForUI(((item?.purchase_value ?? 0) - (item?.sales_value ?? 0)), 10)}
                         </TextTheme>
-                        <TextTheme isPrimary={false} fontWeight={900} fontSize={12}>In Stock Value</TextTheme>
+                        <TextTheme isPrimary={false} fontWeight={900} fontSize={12}>Current Stock Value</TextTheme>
                     </ShowWhen>
                 </View>
             </View>
@@ -152,7 +151,7 @@ export function InfoSection() {
             <SectionRow style={{ justifyContent: 'space-between' }} >
                 <TextTheme fontSize={16} fontWeight={900} >Name</TextTheme>
                 <TextTheme isPrimary={false} fontSize={16} fontWeight={900} >
-                    {loading ? 'fetching...' : product?.stock_item_name}
+                    {loading ? 'fetching...' : (product?.stock_item_name?.length ?? 0) > 25 ? product?.stock_item_name.slice(0, 25) + '...' : product?.stock_item_name ?? 'Not Set'}
                 </TextTheme>
             </SectionRow>
 

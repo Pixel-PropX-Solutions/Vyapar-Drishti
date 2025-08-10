@@ -288,13 +288,13 @@ export function ProductListing() {
             </ShowWhen>}
 
             data={products}
-            keyExtractor={item => item.id}
-            renderItem={({ item }) => (
+            keyExtractor={(item, index) => `${item.id}-${index}`}
+            renderItem={({ item, index }) => (
                 <SectionRow
                     style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12, position: 'relative' }}
                     onPress={() => {
                         setUpdateModalVisible(true);
-                        setProductIndex(products.findIndex(p => p.id === item.id));
+                        setProductIndex(index);
                     }}
                 >
                     <View>
