@@ -365,7 +365,6 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
             <InputField
                 icon={<FeatherIcon name="user" size={20} />}
                 placeholder="Company Name *"
-                value={data.name}
                 autoFocus={true}
                 field="name"
                 capitalize="words"
@@ -376,7 +375,6 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
             <InputField
                 icon={<FeatherIcon name="at-sign" size={20} />}
                 placeholder="Company Email"
-                value={data.email}
                 field="email"
                 keyboardType="email-address"
                 handleChange={handleChange}
@@ -400,7 +398,6 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
             <InputField
                 icon={<FeatherIcon name="globe" size={20} />}
                 placeholder="Website URL"
-                value={data.website}
                 field="website"
                 handleChange={handleChange}
                 error={validationErrors.website}
@@ -415,7 +412,6 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
             <InputField
                 icon={<FeatherIcon name="type" size={20} />}
                 placeholder="Contact Person Name"
-                value={data.mailing_name}
                 field="mailing_name"
                 capitalize="words"
                 handleChange={handleChange}
@@ -424,7 +420,6 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
             <InputField
                 icon={<FeatherIcon name="map-pin" size={20} />}
                 placeholder="Company Address Line 1"
-                value={data.address_1}
                 field="address_1"
                 capitalize="words"
                 handleChange={handleChange}
@@ -434,7 +429,6 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
             <InputField
                 icon={<FeatherIcon name="map-pin" size={20} />}
                 placeholder="Company Address Line 2"
-                value={data.address_2}
                 field="address_2"
                 capitalize="words"
                 handleChange={handleChange}
@@ -466,7 +460,6 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                     <InputField
                         icon={<FeatherIcon name="navigation" size={20} />}
                         placeholder="PIN Code"
-                        value={data.pinCode}
                         field="pinCode"
                         handleChange={handleChange}
                         error={validationErrors.pinCode}
@@ -487,7 +480,6 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
             <InputField
                 icon={<FeatherIcon name="file-text" size={20} />}
                 placeholder="GSTIN"
-                value={data.gstin}
                 field="gstin"
                 capitalize="characters"
                 handleChange={handleChange}
@@ -497,7 +489,6 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
             {/* <InputField
                 icon={<FeatherIcon name="credit-card" size={20} />}
                 placeholder="PAN Number"
-                value={data.pan_number}
                 field="pan_number"
                 capitalize="characters"
                 handleChange={handleChange}
@@ -595,7 +586,6 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                 <InputField
                     icon={<FeatherIcon name="credit-card" size={20} />}
                     placeholder="Account Number"
-                    value={data.account_number}
                     field="account_number"
                     handleChange={handleChange}
                     error={validationErrors.account_number}
@@ -605,7 +595,6 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                 {/* <InputField
                     icon={<FeatherIcon name="user" size={20} />}
                     placeholder="Account Holder Name"
-                    value={data.account_holder}
                     field="account_holder"
                     capitalize="characters"
                     handleChange={handleChange}
@@ -615,7 +604,6 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                 <InputField
                     icon={<FeatherIcon name="home" size={20} />}
                     placeholder="Bank Name"
-                    value={data.bank_name}
                     capitalize="characters"
                     field="bank_name"
                     handleChange={handleChange}
@@ -624,7 +612,6 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                 <InputField
                     icon={<FeatherIcon name="git-branch" size={20} />}
                     placeholder="Bank Branch"
-                    value={data.bank_branch}
                     capitalize="words"
                     field="bank_branch"
                     handleChange={handleChange}
@@ -633,7 +620,6 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                 <InputField
                     icon={<FeatherIcon name="hash" size={20} />}
                     placeholder="IFSC Code"
-                    value={data.bank_ifsc}
                     capitalize="characters"
                     field="bank_ifsc"
                     handleChange={handleChange}
@@ -643,7 +629,6 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
                 {/* <InputField
                 icon={<FeatherIcon name="image" size={20} />}
                 placeholder="QR Code URL"
-                value={data.qr_code_url}
                 field="qr_code_url"
                 handleChange={handleChange}
                 error={validationErrors.qr_code_url}

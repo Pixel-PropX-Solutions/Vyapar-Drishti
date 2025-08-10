@@ -5,18 +5,22 @@ type Filters = {
     sortBy: string,
     useAscOrder: boolean,
     status: 'all' | 'negative' | 'low' | 'positive'
+    category?: string,
+    group?: string,
 }
 
 type ContextType = {
     isGstEnable: boolean,
-    filters: Filters, handleFilter: <Key extends keyof Filters>(key: Key, val: Filters[Key]) => void
+    filters: Filters, handleFilter: <Key extends keyof Filters>(key: Key, val: Filters[Key]) => void,
+    resetFilters: () => void,
 }
 
 
 const fn = () => { };
 const Context = createContext<ContextType>({
     isGstEnable: false,
-    filters: { sortBy: '', useAscOrder: false, status: 'all' }, handleFilter: fn,
+    filters: { sortBy: 'created_at', useAscOrder: false, status: 'all', category: 'All', group: 'All' }, handleFilter: fn,
+    resetFilters: fn,
 });
 
 
@@ -27,7 +31,7 @@ export default function ProductContextProvider({ children }: { children: ReactNo
     const gst_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_gst;
 
 
-    const [filters, setFilters] = useState<Filters>({ sortBy: 'Default', useAscOrder: false, status: 'all'});
+    const [filters, setFilters] = useState<Filters>({ sortBy: 'created_at', useAscOrder: false, status: 'all', category: 'All', group: 'All' });
 
     function handleFilter<Key extends keyof Filters>(key: Key, val: Filters[Key]) {
         setFilters(pre => ({
@@ -35,9 +39,13 @@ export default function ProductContextProvider({ children }: { children: ReactNo
         }));
     }
 
+    function resetFilters() {
+        setFilters({ sortBy: 'created_at', useAscOrder: false, status: 'all', category: 'All', group: 'All' });
+    }
+
     const states = {
         isGstEnable: gst_enable,
-        filters, handleFilter,
+        filters, handleFilter, resetFilters,
     };
 
     return <Context.Provider value={states} children={children} />;

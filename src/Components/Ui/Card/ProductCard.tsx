@@ -22,8 +22,21 @@ export default function ProductCard({ item, isPrimary = true, onPress }: Product
 
     const { currency } = useAppStorage();
 
-    const mp = item.sales_value ? 100 * ((item.sales_value - item.purchase_value) || 0) / (item.sales_value || 1) : 0;
-    const rgb = mp < 0 ? 'rgb(200,50,50)' : mp == 0 ? '' : 'rgb(50,200,150)'
+    // Calculate average purchase rate including opening rate and opening balance/quantity if available
+    const totalPurchaseQty = (item.purchase_qty || 0) + (item.opening_balance || 0);
+    // Use opening_rate for opening_balance if opening_value is null
+    const openingValue = (item.opening_balance || 0) * (item.opening_rate || 0);
+    const totalPurchaseValueFixed = (item.purchase_value || 0) + openingValue;
+    const avgPurchaseRate = totalPurchaseQty > 0
+        ? totalPurchaseValueFixed / totalPurchaseQty
+        : item.avg_purchase_rate || item.opening_rate || 0;
+
+    // Margin profit calculation: ((avg_sale_rate - avgPurchaseRate) / avg_sale_rate) * 100
+    const mp = item.sales_value
+        ? 100 * ((item.avg_sales_rate - avgPurchaseRate) || 0) / (item.avg_sales_rate || 1)
+        : 0;
+    const rgb = mp < 0 ? 'rgb(200,50,50)' : mp === 0 ? '' : 'rgb(50,200,150)';
+
 
     return (
         <ScaleAnimationView useRandomDelay={true} >
@@ -35,7 +48,7 @@ export default function ProductCard({ item, isPrimary = true, onPress }: Product
                         </BackgroundThemeView>
 
                         <View>
-                            <TextTheme fontSize={14} >{sliceString(item.stock_item_name, 25)}</TextTheme>
+                            <TextTheme fontSize={item.stock_item_name.length > 25 ? 12 : 14} >{sliceString(item.stock_item_name, item.stock_item_name.length > 25 ? 30 : 25)}</TextTheme>
                             <View style={{ flexDirection: 'row', gap: 14 }} >
                                 <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
                                     <TextTheme color={rgb} fontSize={10} >Profit</TextTheme>

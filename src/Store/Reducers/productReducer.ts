@@ -31,10 +31,10 @@ interface ProductState {
     positive_stock: number,
     negative_stock: number,
     low_stock: number,
-    unique: Array<string>,
+    unique_categories: Array<string>,
+    unique_groups: Array<string>,
   };
   isProductsFetching: boolean;
-
   error: string | null;
 }
 
@@ -63,7 +63,8 @@ const initialState: ProductState = {
     positive_stock: 0,
     negative_stock: 0,
     low_stock: 0,
-    unique: [],
+    unique_categories: [],
+    unique_groups: [],
   },
   error: null,
 };
@@ -76,7 +77,7 @@ const productSlice = createSlice({
       state.productId = action.payload.productId;
       state.deletionModal = !state.deletionModal;
     },
-    setProductsData(state, action: PayloadAction<Array<GetProduct>>){
+    setProductsData(state, action: PayloadAction<Array<GetProduct>>) {
       state.productsData = action.payload
     }
   },

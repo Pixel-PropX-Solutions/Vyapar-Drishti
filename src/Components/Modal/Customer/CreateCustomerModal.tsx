@@ -344,7 +344,6 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                 icon={<FeatherIcon name="file-text" size={20} color={primaryColor} />}
                                 field="gstin"
                                 placeholder={`GSTIN ${isGSTINOptional ? '(Optional)' : '*'}`}
-                                value={data.gstin}
                                 capitalize="characters"
                                 handleChange={handleInputChange}
                                 error={validationErrors.gstin}
@@ -358,7 +357,6 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                             icon={<FeatherIcon name="user" size={20} color={primaryColor} />}
                             field="name"
                             placeholder="Billing Name"
-                            value={data.name}
                             handleChange={handleInputChange}
                             error={validationErrors.name}
                             capitalize="words"
@@ -370,7 +368,6 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                             icon={<FeatherIcon name="mail" size={20} color={primaryColor} />}
                             field="email"
                             placeholder="Email Address (Optional)"
-                            value={data.email}
                             handleChange={handleInputChange}
                             error={validationErrors.email}
                         />
@@ -395,7 +392,6 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                             icon={<FeatherIcon name="user" size={20} color={primaryColor} />}
                             field="mailing_name"
                             placeholder="Contact Person Name"
-                            value={data.mailing_name}
                             handleChange={handleInputChange}
                             capitalize="words"
                             error={validationErrors.mailing_name}
@@ -405,7 +401,6 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                             icon={<FeatherIcon name="map-pin" size={20} color={primaryColor} />}
                             field="mailing_address"
                             placeholder={`Contact Address ${isMailingAddressOptional ? '(Optional)' : ''}`}
-                            value={data.mailing_address}
                             handleChange={handleInputChange}
                             error={validationErrors.mailing_address}
                             capitalize="words"
@@ -433,7 +428,6 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                     icon={<FeatherIcon name="hash" size={20} color={primaryColor} />}
                                     field="mailing_pincode"
                                     placeholder="Pincode"
-                                    value={data.mailing_pincode}
                                     handleChange={handleInputChange}
                                     error={validationErrors.mailing_pincode}
                                     keyboardType="numeric"
@@ -458,7 +452,6 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                 icon={<FeatherIcon name="hash" size={20} color={primaryColor} />}
                                 field="account_number"
                                 placeholder="Account Number"
-                                value={data.account_number}
                                 handleChange={handleInputChange}
                                 error={validationErrors.account_number}
                                 keyboardType="numeric"
@@ -468,7 +461,6 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                 field="account_holder"
                                 placeholder="Account Holder Name"
                                 capitalize="characters"
-                                value={data.account_holder}
                                 handleChange={handleInputChange}
                                 error={validationErrors.account_holder}
                             />
@@ -479,7 +471,6 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                         field="bank_name"
                                         placeholder="Bank Name"
                                         capitalize="characters"
-                                        value={data.bank_name}
                                         handleChange={handleInputChange}
                                         error={validationErrors.bank_name}
                                     />
@@ -491,7 +482,6 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                         field="bank_ifsc"
                                         placeholder="IFSC Code"
                                         capitalize="characters"
-                                        value={data.bank_ifsc}
                                         handleChange={handleInputChange}
                                         error={validationErrors.bank_ifsc}
                                     />
@@ -503,7 +493,6 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                 field="bank_branch"
                                 placeholder="Branch Name"
                                 capitalize="words"
-                                value={data.bank_branch}
                                 handleChange={handleInputChange}
                                 error={validationErrors.bank_branch}
                             />

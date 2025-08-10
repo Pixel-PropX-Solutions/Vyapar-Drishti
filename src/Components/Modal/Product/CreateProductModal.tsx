@@ -245,7 +245,6 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                     <InputField
                         icon={<FeatherIcon name="package" size={20} color={primaryColor} />}
                         placeholder="Product Name *"
-                        value={data.stock_item_name}
                         field="stock_item_name"
                         handleChange={handleChange}
                         error={validationErrors.stock_item_name}
@@ -269,7 +268,6 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                     <InputField
                         icon={<FeatherIcon name="file-text" size={20} color={primaryColor} />}
                         placeholder="Description"
-                        value={data.description}
                         field="description"
                         multiline={true}
                         handleChange={handleChange}
@@ -278,7 +276,6 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                     {/* <InputField
                         icon={<FeatherIcon name="folder" size={20} color={primaryColor} />}
                         placeholder="Category"
-                        value={data.category}
                         field="category"
                         handleChange={handleChange}
                     />
@@ -286,7 +283,6 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                     <InputField
                         icon={<FeatherIcon name="grid" size={20} color={primaryColor} />}
                         placeholder="Group"
-                        value={data.group}
                         field="group"
                         handleChange={handleChange}
                     />
@@ -294,7 +290,6 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                     <InputField
                         icon={<FeatherIcon name="alert-triangle" size={20} color={primaryColor} />}
                         placeholder="Low Stock Alert Level"
-                        value={data.low_stock_alert}
                         field="low_stock_alert"
                         keyboardType="number-pad"
                         handleChange={handleChange}
@@ -321,7 +316,6 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                             <InputField
                                 icon={<FeatherIcon name="hash" size={20} color={primaryColor} />}
                                 placeholder="HSN/SAC Code"
-                                value={data.gst_hsn_code}
                                 field="gst_hsn_code"
                                 handleChange={handleChange}
                             />
@@ -344,7 +338,6 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                                 {data.gst_taxability === 'taxable' && (<InputField
                                     icon={<FeatherIcon name="percent" size={20} color={primaryColor} />}
                                     placeholder="GST Percentage"
-                                    value={data.gst_percentage}
                                     field="gst_percentage"
                                     keyboardType="numeric"
                                     handleChange={handleChange}

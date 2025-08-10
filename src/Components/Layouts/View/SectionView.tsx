@@ -1,10 +1,11 @@
-import { View, ViewStyle } from "react-native";
-import { useTheme } from "../../../Contexts/ThemeProvider";
-import TextTheme from "../../Ui/Text/TextTheme";
-import AnimateButton from "../../Ui/Button/AnimateButton";
-import ShowWhen from "../../Other/ShowWhen";
-import FeatherIcon from "../../Icon/FeatherIcon";
-import { ReactNode } from "react";
+/* eslint-disable react-native/no-inline-styles */
+import { View, ViewStyle } from 'react-native';
+import { useTheme } from '../../../Contexts/ThemeProvider';
+import TextTheme from '../../Ui/Text/TextTheme';
+import AnimateButton from '../../Ui/Button/AnimateButton';
+import ShowWhen from '../../Other/ShowWhen';
+import FeatherIcon from '../../Icon/FeatherIcon';
+import { ReactNode } from 'react';
 
 
 type Props = {
@@ -38,7 +39,7 @@ export default function SectionView({ label, children, style, containerStyle, la
                 {children}
             </View>
         </View>
-    )
+    );
 }
 
 type SectionRowProps = {
@@ -55,7 +56,7 @@ type SectionRowProps = {
 export function SectionRow({ isPrimary = false, backgroundColor, onPress, children, label = '', style, isLabelPrimary = false, gap = 12 }: SectionRowProps): React.JSX.Element {
 
     const { secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
-    if (!backgroundColor) backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
+    if (!backgroundColor) {backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;}
 
 
     return (
@@ -71,7 +72,7 @@ export function SectionRow({ isPrimary = false, backgroundColor, onPress, childr
                 {children}
             </View>
         </AnimateButton>
-    )
+    );
 }
 
 
@@ -88,7 +89,7 @@ type SectionArrowRow = {
 export function SectionArrowRow({ isPrimary = false, backgroundColor, onPress, text, icon, arrowSize = 24, textColor }: SectionArrowRow): React.JSX.Element {
 
     const { secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
-    if (!backgroundColor) backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
+    if (!backgroundColor) {backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;}
 
     return <AnimateButton
         style={{ padding: 20, borderRadius: 16, backgroundColor, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
@@ -107,7 +108,7 @@ export function SectionArrowRow({ isPrimary = false, backgroundColor, onPress, t
         </View>
 
         <FeatherIcon name="arrow-right" size={arrowSize} color={textColor} />
-    </AnimateButton>
+    </AnimateButton>;
 }
 
 
@@ -128,8 +129,8 @@ type SectionRowWithIcon = {
 export function SectionRowWithIcon({ isPrimary = false, onPress, label, text, icon, hasArrow = false, backgroundColor = '', color, children, iconContainerColor = '', arrowIcon }: SectionRowWithIcon): React.JSX.Element {
     const { secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
 
-    if (backgroundColor === '') backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
-    if (iconContainerColor === '') iconContainerColor = isPrimary ? secondaryBackgroundColor : primaryBackgroundColor;
+    if (backgroundColor === '') {backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;}
+    if (iconContainerColor === '') {iconContainerColor = isPrimary ? secondaryBackgroundColor : primaryBackgroundColor;}
 
 
     return (
@@ -153,5 +154,5 @@ export function SectionRowWithIcon({ isPrimary = false, onPress, label, text, ic
                 {arrowIcon || <FeatherIcon name="arrow-right" size={20} color={color} />}
             </ShowWhen>
         </AnimateButton>
-    )
+    );
 }

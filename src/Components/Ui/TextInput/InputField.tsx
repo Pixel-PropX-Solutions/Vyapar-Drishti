@@ -32,7 +32,7 @@ export const InputField = ({
     icon: React.ReactNode,
     placeholder: string,
     info?: string,
-    value: string | number | Date | boolean,
+    value?: string | number | Date | boolean,
     field: string,
     keyboardType?: | 'default' | 'number-pad' | 'decimal-pad' | 'numeric' | 'email-address' | 'phone-pad' | 'url'
     | 'ascii-capable' | 'numbers-and-punctuation' | 'name-phone-pad' | 'twitter' | 'web-search' | 'visible-password';
@@ -75,7 +75,7 @@ export const InputField = ({
                         transform: [{ translateY: multiline ? -10 : 0 }],
                         textAlignVertical: multiline ? 'top' : 'center',
                     }}
-                    value={value.toString()}
+                    value={value?.toString()}
                     capitalize={capitalize}
                     keyboardType={keyboardType}
                     multiline={multiline}

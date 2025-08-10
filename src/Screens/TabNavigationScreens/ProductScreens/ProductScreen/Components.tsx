@@ -17,6 +17,7 @@ import { setProductsData } from '../../../../Store/Reducers/productReducer';
 import TextTheme from '../../../../Components/Ui/Text/TextTheme';
 import { useTheme } from '../../../../Contexts/ThemeProvider';
 import { useProductContext } from './Context';
+import { FilterModal } from './Modals';
 
 
 export function Header(): React.JSX.Element {
@@ -65,42 +66,74 @@ export function SummarySection() {
     );
 }
 
+const sortValues = [{
+    label: 'Default',
+    value: 'created_at',
+}, {
+    label: 'Name',
+    value: 'stock_item_name',
+}, {
+    label: 'Quantity',
+    value: 'current_stock',
+}, {
+    label: 'Unit',
+    value: 'unit',
+}, {
+    label: 'Restock Date',
+    value: 'last_restock_date',
+}];
+
 
 export function ItemStatusFilter(): React.JSX.Element {
 
     const { primaryColor, primaryBackgroundColor } = useTheme();
     const { filters, handleFilter } = useProductContext();
+    const [isFilterModalVisible, setFilterModalVisible] = useState<boolean>(false);
 
     return (
-        <View style={{ gap: 4, width: '100%' }} >
-            <ScrollView
-                horizontal={true}
-                contentContainerStyle={{ width: '100%', flexDirection: 'row', alignItems: 'center', gap: 8 }}
-            >
-                {
-                    ['all', 'negative', 'low', 'positive'].map(type => (
-                        <AnimateButton key={type}
-                            onPress={() => { handleFilter('status', type as 'all' | 'negative' | 'low' | 'positive'); }}
-                            bubbleColor={type === filters.status ? primaryBackgroundColor : primaryColor}
+        <>
+            <View style={{ gap: 4, width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
+                <View style={{ gap: 4, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }} >
+                    <TextTheme isPrimary={true} fontSize={14} fontWeight={900} color={primaryColor}>
+                        Sort By
+                    </TextTheme>
 
-                            style={{
-                                alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 28,
-                                backgroundColor: type === filters.status ? primaryColor : primaryBackgroundColor,
-                            }}
+                    <AnimateButton
+                        onPress={() => {
+                            setFilterModalVisible(true);
+                        }}
+
+                        bubbleColor={primaryBackgroundColor}
+
+                        style={{
+                            alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 28,
+                            backgroundColor: primaryColor,
+                        }}
+                    >
+                        <TextTheme
+                            isPrimary={true}
+                            useInvertTheme={true}
+                            fontSize={12}
+                            fontWeight={900}
                         >
-                            <TextTheme
-                                isPrimary={type === filters.status}
-                                useInvertTheme={type === filters.status}
-                                fontSize={12}
-                                fontWeight={900}
-                            >
-                                {type === 'all' ? 'All' : type.charAt(0).toUpperCase() + type.slice(1)}
-                            </TextTheme>
-                        </AnimateButton>
-                    ))
-                }
-            </ScrollView>
-        </View>
+                            {sortValues.find(item => item.value === filters.sortBy)?.label || 'Default'}
+                        </TextTheme>
+                    </AnimateButton>
+
+                </View>
+                <AnimateButton
+                    style={{ height: 28, flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 40, paddingInline: 14 }}
+                    onPress={() => { handleFilter('useAscOrder', !filters.useAscOrder); }}
+                >
+                    <FeatherIcon
+                        name={filters.useAscOrder ? 'arrow-up' : 'arrow-down'}
+                        size={16}
+                    />
+                    <TextTheme fontSize={12}>{filters.useAscOrder ? 'Asc' : 'Des'}</TextTheme>
+                </AnimateButton>
+            </View>
+            <FilterModal visible={isFilterModalVisible} setVisible={setFilterModalVisible} />
+        </>
     );
 }
 
@@ -139,20 +172,20 @@ export function ProductListing(): React.JSX.Element {
     function handleProductFetching() {
         if (isProductsFetching) { return; }
         if (productsPageMeta.total <= productsPageMeta.page * productsPageMeta.limit) { return; }
-        dispatch(viewAllProducts({ company_id: current_company_id ?? '', stock_status: filters.status, pageNumber: productsPageMeta.page + 1 }));
+        dispatch(viewAllProducts({ company_id: current_company_id ?? '', pageNumber: productsPageMeta.page + 1, group: filters.group, category: filters.category, sortField: filters.sortBy, sortOrder: filters.useAscOrder ? 'asc' : 'desc' }));
     }
 
     useFocusEffect(
         useCallback(() => {
             dispatch(setProductsData([]));
-            dispatch(viewAllProducts({ company_id: current_company_id ?? '', stock_status: filters.status, pageNumber: 1 }));
+            dispatch(viewAllProducts({ company_id: current_company_id ?? '', pageNumber: 1, group: filters.group, category: filters.category, sortField: filters.sortBy, sortOrder: filters.useAscOrder ? 'asc' : 'desc' }));
         }, [filters])
     );
 
     return (
         <FlatList
             ListEmptyComponent={isProductsFetching ? <ProductLoadingCard isPrimary={true} /> : <EmptyListView type="product" />}
-            contentContainerStyle={{ gap: 20, paddingBottom: 80, paddingTop: 12 }}
+            contentContainerStyle={{ gap: 10, paddingBottom: 80, paddingTop: 12 }}
             data={productsData}
             keyExtractor={(item, index) => `${item._id}${index}`}
 
@@ -163,7 +196,7 @@ export function ProductListing(): React.JSX.Element {
                 />
             )}
 
-            ListFooterComponentStyle={{ gap: 20 }}
+            ListFooterComponentStyle={{ gap: 10 }}
             ListFooterComponent={
                 <ShowWhen when={isProductsFetching}>
                     {

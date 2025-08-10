@@ -10,8 +10,8 @@ import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
 import MaterialIcon from '../../../../Components/Icon/MaterialIcon';
 import AnimateButton from '../../../../Components/Ui/Button/AnimateButton';
 import { useAppDispatch, useCustomerStore, useUserStore } from '../../../../Store/ReduxStore';
-import { GetUserLedgers } from '../../../../Utils/types';
-import { viewAllCustomer } from '../../../../Services/customer';
+import { CustomersList, GetUserLedgers } from '../../../../Utils/types';
+import { viewAllCustomer, viewAllCustomers } from '../../../../Services/customer';
 import { ItemSelectorModal } from '../../../../Components/Modal/Selectors/ItemSelectorModal';
 import BackgroundThemeView from '../../../../Components/Layouts/View/BackgroundThemeView';
 import CustomerTypeSelectorModal from '../../../../Components/Modal/Customer/CustomerTypeSelectorModal';
@@ -89,7 +89,6 @@ export function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }
                         icon={<FeatherIcon name="package" size={20} />}
                         field="quantity"
                         handleChange={setInfo}
-                        value={info?.quantity ?? ''}
                         placeholder="Quantity"
                         keyboardType="number-pad"
                     />
@@ -102,7 +101,6 @@ export function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }
                         icon={<MaterialIcon name="currency-rupee" size={20} />}
                         field="price"
                         handleChange={setInfo}
-                        value={info?.price ?? ''}
                         placeholder="Enter rate"
                         keyboardType="number-pad"
                     />
@@ -125,38 +123,37 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
 
     const { current_company_id } = useUserStore();
     const { setCustomer, customer } = useBillContext();
-    const { customers, isAllCustomerFetching, pageMeta } = useCustomerStore();
+    const { isAllCustomerFetching, customersList } = useCustomerStore();
 
     const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
     const [isCustomerTypeSelectorModalOpen, setCustomerTypeSelectorModalOpen] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
 
-    const [filterCustomers, setFilterCustomers] = useState<GetUserLedgers[]>([]);
+    const [filterCustomers, setFilterCustomers] = useState<CustomersList[]>([]);
 
 
     function handleProductFetching() {
         if (isAllCustomerFetching) { return; }
-        if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
-        dispatch(viewAllCustomer({ company_id: current_company_id ?? '', pageNumber: pageMeta.page + 1 }));
+        dispatch(viewAllCustomers(current_company_id ?? ''));
     }
 
     useEffect(() => {
         if (visible && !isCreateCustomerModalOpen) {
             dispatch(setCustomers([]));
-            dispatch(viewAllCustomer({ company_id: current_company_id ?? '', pageNumber: 1 }));
+            dispatch(viewAllCustomers(current_company_id ?? ''));
         }
     }, [isCreateCustomerModalOpen, visible]);
 
     useEffect(() => {
         setFilterCustomers(
-            customers.filter((ledger) => ledger.parent === 'Creditors' || ledger.parent === 'Debtors')
+            customersList.filter((ledger) => ledger.parent === 'Creditors' || ledger.parent === 'Debtors')
         );
-    }, [customers]);
+    }, [customersList]);
 
 
     return (<>
-        <ItemSelectorModal<GetUserLedgers>
+        <ItemSelectorModal<CustomersList>
             visible={visible}
             setVisible={setVisible}
             title="Select Customer"
@@ -191,10 +188,10 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
             )}
 
             filter={(item, val) =>
-                item.phone?.number.startsWith(val) ||
-                item.phone?.number.endsWith(val) ||
+                item.phone?.number.includes(val.toLowerCase()) ||
+                item.phone?.number.includes(val.toLowerCase()) ||
                 item.ledger_name.toLowerCase().split(' ').some(word => (
-                    word.startsWith(val)
+                    word.includes(val.toLowerCase())
                 ))
             }
 
@@ -326,7 +323,7 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
     return (
         <>
             <ItemSelectorModal<{ id: string; name: string; unit: string, gst: string, hsn_code: string }>
-                title='Select Product'
+                title="Select Product"
                 visible={visible} setVisible={setVisible}
                 closeOnSelect={false}
                 allItems={filterItemsList}
@@ -344,7 +341,7 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
                     onPress: () => setCreateModalOpen(true),
                     color: 'white',
                     backgroundColor: 'rgb(50,200,150)',
-                    icon: <MaterialIcon name="add" size={16} color='white' />,
+                    icon: <MaterialIcon name="add" size={16} color="white" />,
                 }]}
 
                 onSelect={item => {
@@ -390,11 +387,10 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }} >
                     <View style={{ flex: 1, paddingRight: 8 }} >
                         <InputField
-                            type='decimal2'
+                            type="decimal2"
                             icon={<FeatherIcon name="package" size={20} />}
                             field="quantity"
                             handleChange={handleInputChange}
-                            value={data.quantity}
                             placeholder="Quantity"
                             keyboardType="number-pad"
                         />
@@ -407,7 +403,6 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
                             icon={<MaterialIcon name="currency-rupee" size={20} />}
                             field="price"
                             handleChange={handleInputChange}
-                            value={data.price}
                             placeholder="Enter rate"
                             keyboardType="number-pad"
                         />

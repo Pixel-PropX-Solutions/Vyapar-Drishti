@@ -174,6 +174,7 @@ export interface CustomersList {
   ledger_name: string,
   parent: string,
   alias: string,
+  phone: PhoneNumber;
 }
 
 export interface GetAllUserGroups {
@@ -536,6 +537,7 @@ export interface GetProduct {
   purchase_qty: number;
   purchase_value: number;
   sales_qty: number;
+  avg_sales_rate: number;
   sales_value: number;
   // Optional fields
   opening_balance?: number;

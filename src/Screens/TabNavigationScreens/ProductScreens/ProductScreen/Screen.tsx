@@ -10,10 +10,10 @@ export default function ProductScreen() {
             <View style={{ width: '100%', height: '100%' }}>
                 <View style={{ paddingInline: 20 }} >
                     <Header />
-                    <SummarySection />
+                    <ItemStatusFilter />
+                    {/* <SummarySection />
                     <View style={{ marginTop: 20 }} >
-                        <ItemStatusFilter />
-                    </View>
+                    </View> */}
                 </View>
 
                 <BackgroundThemeView isPrimary={false} style={{ width: '100%', flex: 1, borderTopLeftRadius: 40, borderTopRightRadius: 40, paddingInline: 20, paddingBottom: 0, marginTop: 10 }} >
