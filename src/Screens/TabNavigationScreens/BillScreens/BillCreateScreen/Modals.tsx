@@ -79,7 +79,6 @@ export function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }
                 title: 'Save', onPress: handleSave, color: 'white',
                 backgroundColor: 'rgb(50,200,150)',
             }]}
-
         >
             <TextTheme style={{ fontWeight: 800, fontSize: 16 }} >Select Quantity</TextTheme>
 
@@ -89,8 +88,10 @@ export function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }
                         icon={<FeatherIcon name="package" size={20} />}
                         field="quantity"
                         handleChange={setInfo}
+                        value={products[editProductIndex]?.quantity}
                         placeholder="Quantity"
                         keyboardType="number-pad"
+                        type='decimal-3'
                     />
                 </View>
             </View>
@@ -101,8 +102,10 @@ export function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }
                         icon={<MaterialIcon name="currency-rupee" size={20} />}
                         field="price"
                         handleChange={setInfo}
+                        value={products[editProductIndex]?.price}
                         placeholder="Enter rate"
                         keyboardType="number-pad"
+                        type='decimal-2'
                     />
                 </View>
 
@@ -387,10 +390,11 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }} >
                     <View style={{ flex: 1, paddingRight: 8 }} >
                         <InputField
-                            type="decimal2"
+                            type='decimal-3'
                             icon={<FeatherIcon name="package" size={20} />}
                             field="quantity"
                             handleChange={handleInputChange}
+                            defaultValue={data.quantity}
                             placeholder="Quantity"
                             keyboardType="number-pad"
                         />
@@ -400,9 +404,11 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }} >
                     <View style={{ flex: 1, paddingRight: 8 }} >
                         <InputField
+                            type='decimal-2'
                             icon={<MaterialIcon name="currency-rupee" size={20} />}
                             field="price"
                             handleChange={handleInputChange}
+                            defaultValue={data.price}
                             placeholder="Enter rate"
                             keyboardType="number-pad"
                         />

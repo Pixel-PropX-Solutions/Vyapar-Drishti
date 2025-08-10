@@ -12,7 +12,7 @@ type Props = TextInputProps & {
     color?: string,
     autoFocus?: boolean,
     capitalize?: 'none' | 'sentences' | 'words' | 'characters',
-    type?: 'string' | 'intiger' | 'decimal' | `decimal${number}`
+    type?: 'string' | 'intiger' | 'decimal' | `decimal-${number}`
 }
 
 export default function NoralTextInput({placeholder = '', style = {}, color, onChangeText, capitalize = 'none', autoFocus = false, type='string', ...props}: Props): React.JSX.Element {
@@ -28,13 +28,20 @@ export default function NoralTextInput({placeholder = '', style = {}, color, onC
     }
 
     function handleDecimal(text: string) {
-        if(type.includes('decimal')) {
-            let pre = type.replace('decimal', '');
+        if('0123456789'.includes(text.at(-1) ?? '')) {
+            const temp = type.split('-');
 
-            if('0123456789'.includes(text.at(-1) ?? ''))
-                setValue(pre.length === 0 ? text : parseFloat(text).toFixed(parseInt(pre)));
-            else if(text.at(-1) === '.' && !value.includes('.'))
+            const floatPart = text.split('.')[1] ?? '';
+            if(floatPart.length > parseInt(temp[1] ?? '6')) {
+                setValue(
+                    parseFloat(text)
+                    .toFixed(parseInt(temp[1] ?? '6'))
+                )
+            } else {
                 setValue(text);
+            }
+        } else if(text.at(-1) === '.' && !text.slice(0, text.length-1).includes('.')) {
+            setValue(text);
         }
     }
 
@@ -57,7 +64,7 @@ export default function NoralTextInput({placeholder = '', style = {}, color, onC
             style={[{color: color ?? primaryColor, opacity: value ? 1 : 0.6, fontFamily: 'Roboto-Medium', letterSpacing: 0.5}, style]}
             onChangeText={(text) => {
                 if(type === 'intiger') return handleIntiger(text);
-                if(type === 'decimal') return handleDecimal(text);
+                if(type.startsWith('decimal')) return handleDecimal(text);
                 return setValue(text)
             }}
            autoFocus={autoFocus}
