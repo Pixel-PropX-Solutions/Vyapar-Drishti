@@ -30,11 +30,16 @@ export function Header(): React.JSX.Element {
 
     const [isFilterModalVisible, setFilterModalVisible] = useState<boolean>(false);
 
+    const {handleFilter} = useBillContext()
+
     return (
         <View style={{ paddingInline: 20 }} >
             <EntityListingHeader
                 title="Bills"
                 onPressNotification={() => { navigator.navigate('notification-screen'); }}
+                searchButtonOpations={{
+                    onQueryChange: (query) => {handleFilter('searchQuery', query)}
+                }}
             />
 
             <FilterModal visible={isFilterModalVisible} setVisible={setFilterModalVisible} />
@@ -161,8 +166,11 @@ export function BillListing() {
     function handleRefresh() {
         if (refreshing) { return; }
         setRefreshing(true);
-        dispatch(viewAllInvoices({ company_id: current_company_id ?? '', pageNumber: 1, type: filters.billType }))
-            .finally(() => setRefreshing(false));
+        dispatch(viewAllInvoices({ 
+            company_id: current_company_id ?? '', 
+            pageNumber: 1, type: filters.billType,
+            searchQuery: filters.searchQuery
+        })).finally(() => setRefreshing(false));
     }
 
     async function handleInvoice(invoice: GetAllVouchars, callback: () => void) {

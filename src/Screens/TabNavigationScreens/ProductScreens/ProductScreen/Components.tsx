@@ -20,11 +20,18 @@ import { useProductContext } from './Context';
 
 
 export function Header(): React.JSX.Element {
+
+    const {handleFilter} = useProductContext()
+
     return (
         <EntityListingHeader
             paddingBlock={10}
             title="Products"
             onPressNotification={() => { navigator.navigate('notification-screen'); }}
+            searchButtonOpations={{
+                placeholder: 'Search Product',
+                onQueryChange: (query) => { handleFilter('searchQuery', query) }
+            }}
         />
     );
 }
@@ -145,7 +152,11 @@ export function ProductListing(): React.JSX.Element {
     useFocusEffect(
         useCallback(() => {
             dispatch(setProductsData([]));
-            dispatch(viewAllProducts({ company_id: current_company_id ?? '', stock_status: filters.status, pageNumber: 1 }));
+            dispatch(viewAllProducts({ 
+                company_id: current_company_id ?? '', 
+                stock_status: filters.status, pageNumber: 1,
+                searchQuery: filters.searchQuery
+            }));
         }, [filters])
     );
 

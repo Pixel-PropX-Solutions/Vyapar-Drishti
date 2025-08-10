@@ -33,6 +33,7 @@ export default function CustomerScreen(): React.JSX.Element {
     const { primaryColor, primaryBackgroundColor } = useTheme();
 
     const [type, setType] = useState<'Customers' | 'Accounts'>('Customers');
+    const [searchQuery, setSearchQuery] = useState<string>('')
 
     const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
     const [isCustomerTypeSelectorModalOpen, setCustomerTypeSelectorModalOpen] = useState<boolean>(false);
@@ -54,8 +55,8 @@ export default function CustomerScreen(): React.JSX.Element {
         useCallback(() => {
             if (!['Accounts', 'Customers'].includes(type)) { return; }
             dispatch(setCustomers([]));
-            dispatch(viewAllCustomer({ company_id: currentCompanyId, pageNumber: 1, type: type }));
-        }, [type])
+            dispatch(viewAllCustomer({ company_id: currentCompanyId, pageNumber: 1, type: type, searchQuery }));
+        }, [type, searchQuery])
     );
 
     return (
@@ -63,6 +64,9 @@ export default function CustomerScreen(): React.JSX.Element {
             <EntityListingHeader
                 title="Customers"
                 onPressNotification={() => { navigator.navigate('notification-screen'); }}
+                searchButtonOpations={{
+                    onQueryChange: setSearchQuery
+                }}
             />
 
             {/* <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>

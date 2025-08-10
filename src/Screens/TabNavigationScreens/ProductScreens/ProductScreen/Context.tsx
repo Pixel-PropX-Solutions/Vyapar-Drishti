@@ -4,7 +4,8 @@ import { useUserStore } from '../../../../Store/ReduxStore';
 type Filters = {
     sortBy: string,
     useAscOrder: boolean,
-    status: 'all' | 'negative' | 'low' | 'positive'
+    status: 'all' | 'negative' | 'low' | 'positive',
+    searchQuery: string
 }
 
 type ContextType = {
@@ -16,7 +17,7 @@ type ContextType = {
 const fn = () => { };
 const Context = createContext<ContextType>({
     isGstEnable: false,
-    filters: { sortBy: '', useAscOrder: false, status: 'all' }, handleFilter: fn,
+    filters: { sortBy: '', useAscOrder: false, status: 'all', searchQuery: '' }, handleFilter: fn,
 });
 
 
@@ -27,7 +28,7 @@ export default function ProductContextProvider({ children }: { children: ReactNo
     const gst_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_gst;
 
 
-    const [filters, setFilters] = useState<Filters>({ sortBy: 'Default', useAscOrder: false, status: 'all'});
+    const [filters, setFilters] = useState<Filters>({ sortBy: 'Default', useAscOrder: false, status: 'all', searchQuery: ''});
 
     function handleFilter<Key extends keyof Filters>(key: Key, val: Filters[Key]) {
         setFilters(pre => ({
