@@ -28,11 +28,12 @@ export const InputField = ({
     error,
     type='string',
     // required = false,
+    defaultValue
 }: {
     icon: React.ReactNode,
     placeholder: string,
     info?: string,
-    value: string | number | Date | boolean,
+    value?: string | number | Date | boolean,
     field: string,
     keyboardType?: | 'default' | 'number-pad' | 'decimal-pad' | 'numeric' | 'email-address' | 'phone-pad' | 'url'
     | 'ascii-capable' | 'numbers-and-punctuation' | 'name-phone-pad' | 'twitter' | 'web-search' | 'visible-password';
@@ -45,7 +46,8 @@ export const InputField = ({
     handleChange: (field: string, value: string | boolean | number) => void;
     secondaryButtonAction?: () => void;
     error?: string,
-    type?: 'string' | 'intiger' | 'decimal' | `decimal${number}`
+    type?: 'string' | 'intiger' | 'decimal' | `decimal-${number}`,
+    defaultValue?: string
     // required?: boolean,
 }) => {
     const { primaryColor, secondaryBackgroundColor } = useTheme();
@@ -65,6 +67,8 @@ export const InputField = ({
                 {icon}
 
                 <NoralTextInput
+                    value={value?.toString()}
+                    defaultValue={defaultValue}
                     placeholder={placeholder}
                     style={{
                         fontSize: 16,
@@ -75,7 +79,6 @@ export const InputField = ({
                         transform: [{ translateY: multiline ? -10 : 0 }],
                         textAlignVertical: multiline ? 'top' : 'center',
                     }}
-                    value={value.toString()}
                     capitalize={capitalize}
                     keyboardType={keyboardType}
                     multiline={multiline}
