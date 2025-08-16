@@ -8,9 +8,12 @@ type Filters = {
     useAscOrder: boolean,
     status: 'all' | 'paid' | 'pending',
     billType: 'all' | 'Sales' | 'Purchase' | 'Invoices' | 'Transactions' | 'Payment' | 'Receipt' | 'More',
+    searchQuery: string,
     startDate?: string,
     endDate?: string,
 }
+
+const FilterDefaultValue: Filters = { sortBy: '', useAscOrder: false, status: 'all', billType: 'Invoices', searchQuery: '' }
 
 type ContextType = {
     date: Date, setDate: Dispatch<SetStateAction<Date>>,

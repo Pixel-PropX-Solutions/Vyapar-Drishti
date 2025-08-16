@@ -33,6 +33,7 @@ export default function CustomerScreen(): React.JSX.Element {
     const currentCompanyId = current_company_id || AuthStore.getString('current_company_id') || user?.user_settings?.current_company_id || '';
     const { company } = useCompanyStore();
     const { primaryColor, primaryBackgroundColor } = useTheme();
+    const [searchQuery, setSearchQuery] = useState<string>('')
 
     const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
     const [isCustomerTypeSelectorModalOpen, setCustomerTypeSelectorModalOpen] = useState<boolean>(false);
@@ -54,8 +55,8 @@ export default function CustomerScreen(): React.JSX.Element {
         useCallback(() => {
             // if (!['Accounts', 'Customers'].includes(type)) { return; }
             dispatch(setCustomers([]));
-            dispatch(viewAllCustomer({ company_id: currentCompanyId, pageNumber: 1, type: filters.type }));
-        }, [filters.type])
+            dispatch(viewAllCustomer({ company_id: currentCompanyId, pageNumber: 1, type: filters.type, searchQuery }));
+        }, [filters.type, searchQuery])
     );
 
     return (
@@ -64,6 +65,9 @@ export default function CustomerScreen(): React.JSX.Element {
                 <EntityListingHeader
                     title="Customers"
                     onPressNotification={() => { navigator.navigate('notification-screen'); }}
+                searchButtonOpations={{
+                    onQueryChange: setSearchQuery
+                }}
                 />
 
                 {/* <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>

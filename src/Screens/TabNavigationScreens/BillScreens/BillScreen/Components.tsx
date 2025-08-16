@@ -30,11 +30,16 @@ export function Header(): React.JSX.Element {
 
     const [isFilterModalVisible, setFilterModalVisible] = useState<boolean>(false);
 
+    const {handleFilter} = useBillContext()
+
     return (
         <View style={{ paddingInline: 20 }} >
             <EntityListingHeader
                 title="Bills"
                 onPressNotification={() => { navigator.navigate('notification-screen'); }}
+                searchButtonOpations={{
+                    onQueryChange: (query) => {handleFilter('searchQuery', query)}
+                }}
             />
 
             <FilterModal visible={isFilterModalVisible} setVisible={setFilterModalVisible} />

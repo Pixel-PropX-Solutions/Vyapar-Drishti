@@ -21,11 +21,18 @@ import { FilterModal } from './Modals';
 
 
 export function Header(): React.JSX.Element {
+
+    const {handleFilter} = useProductContext()
+
     return (
         <EntityListingHeader
             paddingBlock={10}
             title="Products"
             onPressNotification={() => { navigator.navigate('notification-screen'); }}
+            searchButtonOpations={{
+                placeholder: 'Search Product',
+                onQueryChange: (query) => { handleFilter('searchQuery', query) }
+            }}
         />
     );
 }
@@ -178,7 +185,11 @@ export function ProductListing(): React.JSX.Element {
     useFocusEffect(
         useCallback(() => {
             dispatch(setProductsData([]));
-            dispatch(viewAllProducts({ company_id: current_company_id ?? '', pageNumber: 1, group: filters.group, category: filters.category, sortField: filters.sortBy, sortOrder: filters.useAscOrder ? 'asc' : 'desc' }));
+            dispatch(viewAllProducts({ 
+                company_id: current_company_id ?? '', 
+                pageNumber: 1,
+                searchQuery: filters.searchQuery
+           , group: filters.group, category: filters.category, sortField: filters.sortBy, sortOrder: filters.useAscOrder ? 'asc' : 'desc' }));
         }, [filters])
     );
 
