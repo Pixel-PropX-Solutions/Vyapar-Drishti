@@ -237,7 +237,7 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
 
     const dispatch = useAppDispatch();
     const { primaryColor } = useTheme();
-    const { products, setProducts } = useBillContext();
+    const { setProducts } = useBillContext();
     const { current_company_id } = useUserStore();
 
     const [isFetching, setIsFetching] = useState(false);

@@ -5,7 +5,8 @@ type AlertType = 'error' | 'success' | 'info' | 'warning' | null;
 type AlertMsgType = {
     type: AlertType,
     message?: string,
-    id?: string
+    id?: string,
+    duration?: number
 }
 
 type AlertContextType = {
@@ -18,6 +19,7 @@ const AlertContext = createContext<AlertContextType>({
         type: null,
         message: '',
         id: '',
+        duration: 5000,
     },
     setAlert: () => { },
 });

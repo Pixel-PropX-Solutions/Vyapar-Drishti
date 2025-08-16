@@ -13,7 +13,7 @@ import ShowWhen from '../../../../Components/Other/ShowWhen';
 import LoadingView from '../../../../Components/Layouts/View/LoadingView';
 import { AddressInfoUpdateModal, BankInfoUpdateModal, CustomerInfoUpdateModal } from './Modals';
 import { useAppDispatch, useCustomerStore } from '../../../../Store/ReduxStore';
-import { getCustomer } from '../../../../Services/customer';
+import { getCustomer, getCustomerInfo } from '../../../../Services/customer';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -22,7 +22,7 @@ export default function CustomerInfoScreen(): React.JSX.Element {
     const { id } = navigator.getParams('customer-info-screen') ?? {};
 
     const dispatch = useAppDispatch();
-    const { customer, loading } = useCustomerStore();
+    const { customerInfo: customer, loading } = useCustomerStore();
 
 
     const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
@@ -39,12 +39,13 @@ export default function CustomerInfoScreen(): React.JSX.Element {
 
     useFocusEffect(
         useCallback(() => {
-            if(id)
-                dispatch(getCustomer(id ?? ''));
+            if (id) {
+                dispatch(getCustomerInfo(id ?? ''));
+            }
         }, [id])
     );
 
-    if(!id) return <></>
+    if (!id) { return <></>; }
 
     return (
         <View style={{ width: '100%', height: '100%' }} >
@@ -96,7 +97,7 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                     }
                 >
                     <InfoRow label="Contact Person Name" value={customer?.mailing_name || 'Not Set'} />
-                    <InfoRow label="Contact Address" value={customer?.mailing_address || 'Not Set'} />
+                    <InfoRow label="Billing Address" value={customer?.mailing_address || 'Not Set'} />
                     <InfoRow label="State" value={customer?.mailing_state || 'Not Set'} />
                     <InfoRow label="Country" value={customer?.mailing_country || 'Not Set'} />
                     <InfoRow label="Postal Code" value={customer?.mailing_pincode || 'Not Set'} />
@@ -164,7 +165,7 @@ const InfoRow: React.FC<{ label: string, value: string | number }> = ({ label, v
     const alignInRow = (typeof value === 'number' ? value.toString() : value).length < 25;
 
     return (
-        <SectionRow style={alignInRow ? {justifyContent: 'space-between'} : {flexDirection: 'column', alignItems: 'flex-start'}} >
+        <SectionRow style={alignInRow ? { justifyContent: 'space-between' } : { flexDirection: 'column', alignItems: 'flex-start' }} >
             <TextTheme fontSize={16} fontWeight={900} >{label}</TextTheme>
             <TextTheme isPrimary={false} fontSize={alignInRow ? 16 : 12} fontWeight={900} >
                 {value}

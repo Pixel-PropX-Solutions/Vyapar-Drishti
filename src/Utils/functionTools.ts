@@ -23,6 +23,23 @@ export function stringToNumber(str: string, pre = 2, originalType = true) {
     return Number(numberString);
 }
 
+export const formatLocalDate = (date: Date): string => {
+    const pad = (n: number): string => n.toString().padStart(2, '0');
+    return (
+        date.getFullYear() +
+        '-' +
+        pad(date.getMonth() + 1) +
+        '-' +
+        pad(date.getDate()) +
+        'T' +
+        pad(date.getHours()) +
+        ':' +
+        pad(date.getMinutes()) +
+        ':' +
+        pad(date.getSeconds()) +
+        '.000Z'
+    );
+};
 
 export function createString(len: number, char = ' ') {
     let str = '';
@@ -113,7 +130,7 @@ export const formatDate = (dateString: string): string => {
 
 export function arrayToFormData(arr: [key: string, val: string | boolean][]): FormData {
     const form = new FormData;
-    for(let [key, val] of arr){
+    for (let [key, val] of arr) {
         let value = typeof val === 'boolean' ? val ? 'true' : 'false' : val || ''
         form.append(key, value ?? '');
     }
@@ -122,15 +139,33 @@ export function arrayToFormData(arr: [key: string, val: string | boolean][]): Fo
 
 
 export function isVersionLower(current: string, target: string) {
-  const cur = current.split('.').map(Number);
-  const tgt = target.split('.').map(Number);
-  for (let i = 0; i < tgt.length; i++) {
-    if ((cur[i] ?? 0) < (tgt[i] ?? 0)) return true;
-    if ((cur[i] ?? 0) > (tgt[i] ?? 0)) return false;
-  }
-  return false;
+    const cur = current.split('.').map(Number);
+    const tgt = target.split('.').map(Number);
+    for (let i = 0; i < tgt.length; i++) {
+        if ((cur[i] ?? 0) < (tgt[i] ?? 0)) return true;
+        if ((cur[i] ?? 0) > (tgt[i] ?? 0)) return false;
+    }
+    return false;
 }
 
+export const getInitials = (name: string): string => {
+    if (!name) return '';
+    return name
+        .split(' ')
+        .map(word => word.charAt(0))
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+};
+
+export const getFormattedName = (name: string): string => {
+    // Returns the name in sentences case where the first letter of each word is capitalized.
+    if (!name) return '';
+    return name
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+};
 
 export function isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -138,8 +173,8 @@ export function isValidEmail(email: string): boolean {
 }
 
 export function isValidMobileNumber(num: string): boolean {
-    for(let char of num) {
-        if(!'0123456789'.includes(char)) 
+    for (let char of num) {
+        if (!'0123456789'.includes(char))
             return false;
     }
     return true;

@@ -38,6 +38,8 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
     const [isTaxabilityModalVisible, setTaxabilityModalVisible] = useState<boolean>(false);
     const [isGoodsNatureModalVisible, setGoodsNatureModalVisible] = useState<boolean>(false);
+    const [isOpeningStockVisible, setOpeningStockVisible] = useState<boolean>(false);
+
 
     const [data, setData] = useState({
         stock_item_name: '',
@@ -79,6 +81,18 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
             ...prevState,
             [field]: value,
         }));
+
+        if (field === 'opening_rate' && value === 'opening_balance') {
+            setData((prevState) => ({
+                ...prevState,
+                opening_value: prevState.opening_balance * prevState.opening_rate,
+            }));
+        } else if (field === 'opening_balance' && value === 'opening_rate') {
+            setData((prevState) => ({
+                ...prevState,
+                opening_value: prevState.opening_balance * prevState.opening_rate,
+            }));
+        }
 
         if (validationErrors[field]) {
             setValidationErrors(prev => ({ ...prev, [field]: '' }));
@@ -214,7 +228,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 20 }}
-                keyboardShouldPersistTaps='always'
+                keyboardShouldPersistTaps="always"
             >
                 <View style={{ alignItems: 'center', marginBottom: 24 }}>
                     <View style={{
@@ -293,10 +307,38 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                         field="low_stock_alert"
                         keyboardType="number-pad"
                         handleChange={handleChange}
-                        info="Set a threshold for low stock alert. Default is 10."
-
+                        info="Set a threshold for low stock alert. Default is 0."
                     />
-
+                    {/* <CollapsabeMenu
+                        expanded={isOpeningStockVisible}
+                        setExpanded={setOpeningStockVisible}
+                        header="Opening Stock Information"
+                    >
+                        <InputField
+                            icon={<FeatherIcon name="package" size={20} color={primaryColor} />}
+                            placeholder="Opening Quantity"
+                            field="opening_balance"
+                            keyboardType="number-pad"
+                            handleChange={handleChange}
+                            info="Set the initial stock quantity. Default is 0."
+                        />
+                        <InputField
+                            icon={<FeatherIcon name="tag" size={20} color={primaryColor} />}
+                            placeholder="Opening Rate"
+                            field="opening_rate"
+                            keyboardType="number-pad"
+                            handleChange={handleChange}
+                            info="Set the initial rate per unit. Default is 0."
+                        />
+                        <InputField
+                            icon={<FeatherIcon name="archive" size={20} color={primaryColor} />}
+                            placeholder="Opening Value"
+                            field="opening_value"
+                            keyboardType="number-pad"
+                            handleChange={handleChange}
+                            info="Set the initial value of stock. Default is 0."
+                        />
+                    </CollapsabeMenu> */}
 
                 </CollapsabeMenu>
                 {/* GST Information */}
@@ -305,14 +347,14 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                     justifyContent: 'center',
                     alignItems: 'center',
                     marginBottom: 12,
-                    marginLeft: 8,
+                    marginTop: 10,
                 }}>
                     <CollapsabeMenu
                         expanded={gstInfoExpanded}
                         setExpanded={setGstInfoExpanded}
                         header="GST Information"
                     >
-                        <View style={{ marginTop: 10 }}>
+                        <View>
                             <InputField
                                 icon={<FeatherIcon name="hash" size={20} color={primaryColor} />}
                                 placeholder="HSN/SAC Code"

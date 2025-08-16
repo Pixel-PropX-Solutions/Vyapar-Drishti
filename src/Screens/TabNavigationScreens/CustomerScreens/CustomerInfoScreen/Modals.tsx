@@ -4,13 +4,12 @@ import BottomModal from '../../../../Components/Modal/BottomModal';
 import TextTheme from '../../../../Components/Ui/Text/TextTheme';
 import { ScrollView, View } from 'react-native';
 import LabelTextInput from '../../../../Components/Ui/TextInput/LabelTextInput';
-import ShowWhen from '../../../../Components/Other/ShowWhen';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
 import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
 import PhoneNoTextInput from '../../../../Components/Ui/Option/PhoneNoTextInput';
 import { useAppDispatch, useCustomerStore, useUserStore } from '../../../../Store/ReduxStore';
 import MaterialIcon from '../../../../Components/Icon/MaterialIcon';
-import { getCustomer, updateCustomerDetails } from '../../../../Services/customer';
+import { getCustomerInfo, updateCustomerDetails } from '../../../../Services/customer';
 import navigator from '../../../../Navigation/NavigationService';
 import { SelectField } from '../../../../Components/Ui/TextInput/SelectField';
 import { CountrySelectorModal } from '../../../../Components/Modal/CountrySelectorModal';
@@ -26,7 +25,7 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
 
     const { user, current_company_id } = useUserStore();
     const dispatch = useAppDispatch();
-    const { customer } = useCustomerStore();
+    const { customerInfo:customer } = useCustomerStore();
     const currentCompanyDetails = user?.company?.find((company: any) => company._id === current_company_id);
     const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
     const [loading, setLoading] = useState<boolean>(false);
@@ -49,15 +48,15 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
         setLoading(true);
         console.log({ ledger_details });
         dispatch(updateCustomerDetails({ ledger_details: ledger_details.current, id: id ?? '' })).then(() => {
-            dispatch(getCustomer(id ?? ''));
+            dispatch(getCustomerInfo(id ?? ''));
             setLoading(false);
             setVisible(false);
         }).catch((error) => {
-            dispatch(getCustomer(id ?? ''));
+            dispatch(getCustomerInfo(id ?? ''));
             console.log('Error while updating the customer details', error);
             setLoading(false);
         }).finally(() => {
-            dispatch(getCustomer(id ?? ''));
+            dispatch(getCustomerInfo(id ?? ''));
             setVisible(false);
             setLoading(false);
         });
@@ -140,7 +139,7 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
 
 export function AddressInfoUpdateModal({ visible, setVisible }: Props): React.JSX.Element {
     const { id } = navigator.getParams('customer-info-screen') ?? {};
-    const { customer } = useCustomerStore();
+    const { customerInfo:customer } = useCustomerStore();
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState<boolean>(false);
     const [isCountryModalVisible, setCountryModalVisible] = useState<boolean>(false);
@@ -165,15 +164,15 @@ export function AddressInfoUpdateModal({ visible, setVisible }: Props): React.JS
         setLoading(true);
         console.log({ ledger_details });
         dispatch(updateCustomerDetails({ ledger_details: ledger_details.current, id: id ?? '' })).then(() => {
-            dispatch(getCustomer(id ?? ''));
+            dispatch(getCustomerInfo(id ?? ''));
             setLoading(false);
             setVisible(false);
         }).catch((error) => {
-            dispatch(getCustomer(id ?? ''));
+            dispatch(getCustomerInfo(id ?? ''));
             console.log('Error while updating the customer details', error);
             setLoading(false);
         }).finally(() => {
-            dispatch(getCustomer(id ?? ''));
+            dispatch(getCustomerInfo(id ?? ''));
             setVisible(false);
             setLoading(false);
         });
@@ -269,7 +268,7 @@ export function AddressInfoUpdateModal({ visible, setVisible }: Props): React.JS
 
 export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.Element {
     const { id } = navigator.getParams('customer-info-screen') ?? {};
-    const { customer } = useCustomerStore();
+    const { customerInfo:customer } = useCustomerStore();
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -292,15 +291,15 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
         setLoading(true);
         console.log({ ledger_details });
         dispatch(updateCustomerDetails({ ledger_details: ledger_details.current, id: id ?? '' })).then(() => {
-            dispatch(getCustomer(id ?? ''));
+            dispatch(getCustomerInfo(id ?? ''));
             setLoading(false);
             setVisible(false);
         }).catch((error) => {
-            dispatch(getCustomer(id ?? ''));
+            dispatch(getCustomerInfo(id ?? ''));
             console.log('Error while updating the customer details', error);
             setLoading(false);
         }).finally(() => {
-            dispatch(getCustomer(id ?? ''));
+            dispatch(getCustomerInfo(id ?? ''));
             setVisible(false);
             setLoading(false);
         });

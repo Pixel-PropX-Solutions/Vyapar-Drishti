@@ -19,7 +19,7 @@ type Props = {
 
 export function DateSelectorModal({ visible, setVisible }: Props): React.JSX.Element {
 
-    const { date, setDate } = useBillContext();
+    const { date, setDate, handleFilter } = useBillContext();
 
     type Date = { year: number, month: number }
 
@@ -43,7 +43,11 @@ export function DateSelectorModal({ visible, setVisible }: Props): React.JSX.Ele
             title="Select Year"
             isItemSelected={!!date.year}
             visible={visible} setVisible={setVisible}
-            onSelect={item => { setDate(item); }}
+            onSelect={item => {
+                setDate(item);
+                handleFilter('startDate', new Date(item.year, item.month, 1).toISOString());
+                handleFilter('endDate', new Date(item.year, item.month + 1, 0).toISOString());
+            }}
             keyExtractor={item => (item.year * 100 + item.month).toString()}
             SelectedItemContent={
                 <TextTheme fontWeight={900}>{getMonthByIndex(date.month)} {date.year}</TextTheme>

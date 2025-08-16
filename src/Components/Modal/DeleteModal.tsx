@@ -45,7 +45,7 @@ export default function DeleteModal({ visible, setVisible, message, passkey, han
                 icon: <MaterialIcon name="delete" size={20} color="white" />,
             }]}
         >
-            <TextTheme color='rgb(250,10,50)' fontSize={20} fontWeight={900} >Delete Warning</TextTheme>
+            <TextTheme color="rgb(250,10,50)" fontSize={20} fontWeight={900} >Delete Warning</TextTheme>
             <TextTheme fontSize={14} fontWeight={700} >{message}</TextTheme>
 
 

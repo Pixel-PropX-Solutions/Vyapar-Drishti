@@ -6,8 +6,10 @@ type Date = { year: number, month: number }
 type Filters = {
     sortBy: string,
     useAscOrder: boolean,
-    status: 'all' | 'paid' | 'pending',
-    billType: 'all' | 'Sales' | 'Purchase' | 'Invoices' | 'Transactions' | 'Payment' | 'Receipt' | 'More',
+    searchQuery: '',
+    filterState: 'All-States',
+    type: 'Customers' | 'Accounts',
+    invoiceType: 'all' | 'Sales' | 'Purchase' | 'Payment' | 'Receipt',
     startDate?: string,
     endDate?: string,
 }
@@ -23,11 +25,11 @@ const fn = () => { };
 const Context = createContext<ContextType>({
     date: { year: 0, month: 0 }, setDate: fn,
     isGstEnable: false,
-    filters: { sortBy: '', useAscOrder: false, status: 'all', billType: 'Invoices', startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(), endDate: new Date().toISOString() }, handleFilter: fn,
+    filters: { sortBy: '', useAscOrder: false, searchQuery: '', filterState: 'All-States', type: 'Customers', startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(), endDate: new Date().toISOString(), invoiceType: 'all' }, handleFilter: fn,
 });
 
 
-export default function BillContextProvider({ children }: { children: ReactNode }): React.JSX.Element {
+export default function CustomerContextProvider({ children }: { children: ReactNode }): React.JSX.Element {
 
     const { user, current_company_id } = useUserStore();
     const currentCompnayDetails = user?.company.find((c: any) => c._id === current_company_id);
@@ -35,7 +37,7 @@ export default function BillContextProvider({ children }: { children: ReactNode 
 
 
     const [date, setDate] = useState<Date>({ year: new Date().getFullYear(), month: new Date().getMonth() });
-    const [filters, setFilters] = useState<Filters>({ sortBy: 'Default', useAscOrder: false, status: 'all', billType: 'Invoices', startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(), endDate: new Date().toISOString() });
+    const [filters, setFilters] = useState<Filters>({ sortBy: 'date', useAscOrder: false, searchQuery: '', filterState: 'All-States', type: 'Customers', startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(), endDate: new Date().toISOString(), invoiceType: 'all' });
 
     function handleFilter<Key extends keyof Filters>(key: Key, val: Filters[Key]) {
         setFilters(pre => ({
@@ -53,6 +55,6 @@ export default function BillContextProvider({ children }: { children: ReactNode 
 }
 
 
-export function useBillContext() {
+export function useCustomerContext() {
     return useContext(Context);
 }

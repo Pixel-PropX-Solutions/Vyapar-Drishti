@@ -1,39 +1,40 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
-import { useTheme } from "../../../Contexts/ThemeProvider";
-import { Pressable, View } from "react-native";
-import AnimateButton from "../Button/AnimateButton";
-import FeatherIcon from "../../Icon/FeatherIcon";
-import TextTheme from "../Text/TextTheme";
-import { getMonthByIndex } from "../../../Utils/functionTools";
-import { ItemSelectorModal } from "../../Modal/Selectors/ItemSelectorModal";
+/* eslint-disable react-native/no-inline-styles */
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { useTheme } from '../../../Contexts/ThemeProvider';
+import { Pressable, View } from 'react-native';
+import AnimateButton from '../Button/AnimateButton';
+import FeatherIcon from '../../Icon/FeatherIcon';
+import TextTheme from '../Text/TextTheme';
+import { getMonthByIndex } from '../../../Utils/functionTools';
+import { ItemSelectorModal } from '../../Modal/Selectors/ItemSelectorModal';
 
 
-type Date = {month: number, year: number}
+type Date = { month: number, year: number }
 type Props = {
     onSelect?: (date: Date) => void,
     value?: Date
 }
 
-export default function MonthSelector({value, onSelect}: Props) {
-    
+export default function MonthSelector({ value, onSelect }: Props) {
+
     const { primaryColor } = useTheme();
 
     const time = useMemo(() => new Date(), []);
 
-    const [date, setDate] = useState<Date>(value ?? {month: time.getMonth(), year: time.getFullYear()});
+    const [date, setDate] = useState<Date>(value ?? { month: time.getMonth(), year: time.getFullYear() });
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
     function incrementMonth(by: number) {
         const nextMonth = (date.month + by + 12) % 12;
         const nextYear = date.year + Math.floor((date.month + by) / 12);
         setDate({ year: nextYear, month: nextMonth });
+        if (onSelect) { onSelect({ year: nextYear, month: nextMonth }); }
     }
 
     useEffect(() => {
-        if(value)
-            setDate(value);
-        
-    }, [value])
+        if (value) { setDate(value); }
+
+    }, [value]);
 
     return (
         <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingInline: 10, height: 40, borderRadius: 40, borderWidth: 2, borderColor: primaryColor }} >
@@ -50,8 +51,13 @@ export default function MonthSelector({value, onSelect}: Props) {
             </AnimateButton>
 
             <DateSelectorModal
-                date={date} setDate={setDate}
-                visible={isModalVisible} setVisible={setModalVisible}
+                date={date}
+                setDate={(newDate: Date) => {
+                    setDate(newDate);
+                    if (onSelect) { onSelect(newDate); }
+                }}
+                visible={isModalVisible}
+                setVisible={setModalVisible}
             />
         </View>
     );
@@ -61,12 +67,10 @@ export default function MonthSelector({value, onSelect}: Props) {
 type ModalProps = {
     visible: boolean,
     setVisible: Dispatch<SetStateAction<boolean>>,
-    date: Date, setDate: Dispatch<SetStateAction<Date>>
+    date: Date, setDate: (date: Date) => void,
 }
 
 function DateSelectorModal({ visible, setVisible, date, setDate }: ModalProps): React.JSX.Element {
-
-    type Date = { year: number, month: number }
 
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth();
@@ -95,10 +99,10 @@ function DateSelectorModal({ visible, setVisible, date, setDate }: ModalProps): 
             }
 
             renderItemContent={item => (<>
-                <TextTheme isPrimary={item.year === date.year && item.month == date.month} fontSize={20} fontWeight={900}>
+                <TextTheme isPrimary={item.year === date.year && item.month === date.month} fontSize={20} fontWeight={900}>
                     {getMonthByIndex(item.month)}
                 </TextTheme>
-                <TextTheme isPrimary={item.year === date.year && item.month == date.month} fontSize={20} fontWeight={900}>
+                <TextTheme isPrimary={item.year === date.year && item.month === date.month} fontSize={20} fontWeight={900}>
                     {item.year}
                 </TextTheme>
             </>)}

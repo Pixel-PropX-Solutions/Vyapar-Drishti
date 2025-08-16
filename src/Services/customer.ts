@@ -133,9 +133,10 @@ export const viewCustomer = createAsyncThunk(
 
 export const getCustomer = createAsyncThunk(
     'get/customer',
-    async (customer_id: string, { rejectWithValue }) => {
+    async ({ customer_id, start_date, end_date }: { customer_id: string, start_date: string, end_date: string }, { rejectWithValue }) => {
         try {
-            const response = await userApi.get(`/ledger/view/${customer_id}`);
+            const response = await userApi.get(`/ledger/view/${customer_id}?start_date=${start_date}&end_date=${end_date}`);
+            console.log('getCustomer response', response);
 
             if (response.data.success === true) {
                 return response.data.data[0];
@@ -150,31 +151,53 @@ export const getCustomer = createAsyncThunk(
     }
 );
 
+export const getCustomerInfo = createAsyncThunk(
+    'get/customer/info',
+    async (customer_id: string, { rejectWithValue }) => {
+        try {
+            const response = await userApi.get(`/ledger/get/${customer_id}`);
+            console.log('getCustomerInfo response', response);
+
+            if (response.data.success === true) {
+                return response.data.data[0];
+            }
+            else { return rejectWithValue('Failed to fetch Customer profile'); }
+        } catch (error: any) {
+            return rejectWithValue(
+                error.response?.data?.message ||
+                'Failed: Unable to fetch chemist profile'
+            );
+        }
+    }
+);
+
+type viewCutomerInvoicesType = {
+    searchQuery?: string;
+    customer_id: string;
+    company_id: string;
+    sortField?: string;
+    type?: string;
+    pageNumber: number;
+    limit?: number;
+    sortOrder: 'asc' | 'desc';
+    start_date?: string;
+    end_date?: string;
+}
+
 export const getCustomerInvoices = createAsyncThunk(
     'get/customer/invoices',
     async ({
-        searchQuery,
+        searchQuery = '',
         company_id,
         customer_id,
-        pageNumber,
-        type,
-        limit,
-        sortField,
-        sortOrder,
-        start_date,
-        end_date,
-    }: {
-        searchQuery: string;
-        customer_id: string;
-        company_id: string;
-        sortField: string;
-        type: string;
-        pageNumber: number;
-        limit: number;
-        sortOrder: string;
-        start_date: string;
-        end_date: string;
-    }, { rejectWithValue }) => {
+        pageNumber = 1,
+        type = 'all',
+        limit = 10,
+        sortField = 'date',
+        sortOrder = 'asc',
+        start_date = '',
+        end_date = '',
+    }: viewCutomerInvoicesType, { rejectWithValue }) => {
         try {
             const response = await userApi.get(
                 `/ledger/view/invoices/${customer_id}?${company_id !== '' ? 'company_id=' + company_id : ''}${searchQuery !== '' ? '&search=' + searchQuery : ''}${type !== 'all' ? '&type=' + type : ''}&start_date=${start_date}&end_date=${end_date}&page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder === 'asc' ? '1' : '-1'
@@ -185,8 +208,8 @@ export const getCustomerInvoices = createAsyncThunk(
 
             if (response.data.success === true) {
                 const customerInvoices = response.data.data.docs;
-                const pageMeta = response.data.data.meta;
-                return { customerInvoices, pageMeta };
+                const customerInvoicesPageMeta = response.data.data.meta;
+                return { customerInvoices, customerInvoicesPageMeta };
             }
             else { return rejectWithValue('Failed to fetch Customer profile'); }
         } catch (error: any) {

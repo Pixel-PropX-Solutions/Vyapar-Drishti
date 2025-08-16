@@ -30,6 +30,10 @@ export function Header(): React.JSX.Element {
     const { isCompanyFetching } = useCompanyStore();
     const currentCompanyId = current_company_id || AuthStore.getString('current_company_id') || user?.user_settings?.current_company_id || '';
     const currentCompanyDetails = user?.company?.find((c: any) => c._id === currentCompanyId);
+    const fy = currentCompanyDetails?.financial_year_start;
+    const financialYear = fy
+        ? `FY: ${fy.slice(0, 4)} - ${parseInt(fy.slice(0, 4), 10) + 1}`
+        : '';
 
     useEffect(() => {
         dispatch(getCurrentUser());
@@ -63,7 +67,7 @@ export function Header(): React.JSX.Element {
                             {currentCompanyDetails?.company_name}
                         </TextTheme>
                         <TextTheme numberOfLines={1} isPrimary={false}>
-                            {currentCompanyDetails?.email}
+                            {financialYear || ''}
                         </TextTheme>
                     </ShowWhen>
                 </View>

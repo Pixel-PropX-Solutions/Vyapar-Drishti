@@ -2,7 +2,6 @@
 import { ScrollView, View } from 'react-native';
 import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
 import TextTheme from '../../../../Components/Ui/Text/TextTheme';
-import NormalButton from '../../../../Components/Ui/Button/NormalButton';
 import AnimateButton from '../../../../Components/Ui/Button/AnimateButton';
 import { useTheme } from '../../../../Contexts/ThemeProvider';
 import { useCallback, useEffect, useState } from 'react';
@@ -14,51 +13,66 @@ import ShowWhen from '../../../../Components/Other/ShowWhen';
 import { getCustomer, getCustomerInvoices } from '../../../../Services/customer';
 import { StackParamsList } from '../../../../Navigation/StackNavigation';
 import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
-import { GetCustomerInvoices, SortOrder } from '../../../../Utils/types';
+import { GetCustomerInvoices } from '../../../../Utils/types';
 import EmptyListView from '../../../../Components/Layouts/View/EmptyListView';
 import usePDFHandler from '../../../../Hooks/usePDFHandler';
 import { printGSTInvoices, printInvoices } from '../../../../Services/invoice';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
+import { StatsCard } from '../../../../Components/Ui/Card/StatsCard';
+import { useCustomerContext } from './Context';
+import { formatLocalDate } from '../../../../Utils/functionTools';
 
 
 export function ProfileSection() {
-    const { customer, loading } = useCustomerStore();
+    const { customer, isAllCustomerFetching } = useCustomerStore();
+    const [GREEN, ORANGE, RED, YELLOW, BLUE] = ['50,200,150', '200,150,50', '250,50,50', '200,150,50', '50,150,200'];
     const router = useRoute<RouteProp<StackParamsList, 'customer-view-screen'>>();
     const { id: customer_id } = router.params;
     const dispatch = useAppDispatch();
+    const { filters } = useCustomerContext();
     useEffect(() => {
         if (customer_id) {
-            dispatch(getCustomer(customer_id));
+            dispatch(getCustomer({ customer_id: customer_id, start_date: formatLocalDate(new Date(filters.startDate ?? '')), end_date: formatLocalDate(new Date(filters.endDate ?? '')) })); // Adjusted to match the new API signature
         }
-    }, [dispatch, customer_id]);
+    }, [dispatch, customer_id, filters.startDate, filters.endDate]);
 
     if (!customer_id) { return <></>; }
 
     return (
         <View style={{ gap: 16 }} >
-            <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }} >
-                <AnimateButton
-                    style={{ aspectRatio: 1, width: 40, borderRadius: 40, alignItems: 'center', justifyContent: 'center' }}
-                    onPress={() => { navigator.goBack(); }}
-                >
-                    <FeatherIcon name="chevron-left" size={20} />
-                </AnimateButton>
-                <View>
-                    <TextTheme fontWeight={900} fontSize={16}>
-                        {customer?.ledger_name}
-                    </TextTheme>
-                    <TextTheme isPrimary={false} fontWeight={500} fontSize={12}>
-                        {customer?.parent}
-                    </TextTheme>
+            <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'space-between' }} >
+                <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }} >
+                    <AnimateButton
+                        style={{ aspectRatio: 1, width: 40, borderRadius: 40, alignItems: 'center', justifyContent: 'center' }}
+                        onPress={() => { navigator.goBack(); }}
+                    >
+                        <FeatherIcon name="chevron-left" size={20} />
+                    </AnimateButton>
+                    <View>
+                        <TextTheme fontWeight={700} fontSize={16}>
+                            {customer?.ledger_name}
+                        </TextTheme>
+                        <TextTheme isPrimary={false} fontWeight={500} fontSize={12}>
+                            {customer?.parent}
+                        </TextTheme>
+                    </View>
+                </View>
+
+                <View style={{ marginRight: 8 }} >
+                    <AnimateButton
+                        onPress={() => { navigator.navigate('customer-info-screen', { id: customer_id }); }}
+                        style={{ width: 40, aspectRatio: 1, borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.1)' }}
+                    >
+                        <FeatherIcon name="eye" size={16} />
+                    </AnimateButton>
                 </View>
             </View>
-
-            <NormalButton
-                text="View full Profile"
-                textSize={12} height={36}
-                textWeight={600} isPrimary={false}
-                onPress={() => { navigator.navigate('customer-info-screen', { id: customer_id }); }}
-            />
+            <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'space-between' }} >
+                <StatsCard rgb={(customer?.opening_balance ?? 0) < 0 ? RED : GREEN} label="Opening" value={Math.abs(customer?.opening_balance ?? 0).toString()} />
+                <StatsCard rgb={RED} label="Debit" value={Math.abs(customer?.total_debit ?? 0).toString()} />
+                <StatsCard rgb={GREEN} label="Credit" value={Math.abs(customer?.total_credit ?? 0).toString()} />
+                <StatsCard rgb={(customer?.total_amount ?? 0) < 0 ? RED : GREEN} label="Closing" value={Math.abs(customer?.total_amount ?? 0).toString()} />
+            </View>
         </View>
     );
 }
@@ -100,27 +114,17 @@ export function FilterRow(): React.JSX.Element {
 }
 
 
-
 export function InvoiceListing() {
-    const { customerInvoices, isAllCustomerInvoicesFetching, pageMeta } = useCustomerStore();
     const router = useRoute<RouteProp<StackParamsList, 'customer-view-screen'>>();
     const { id: customer_id } = router.params;
     const dispatch = useAppDispatch();
+    const { filters, handleFilter } = useCustomerContext();
+    console.log('filters', filters);
     const { user, current_company_id } = useUserStore();
+    const { customerInvoicesPageMeta, customerInvoices, isAllCustomerInvoicesFetching } = useCustomerStore();
     const currentCompnayDetails = user?.company.find((c: any) => c._id === current_company_id);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [data, setData] = useState({
-        searchQuery: '',
-        type: 'all',
-        page: 1,
-        startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(),
-        endDate: new Date().toISOString(),
-        rowsPerPage: 10,
-        sortField: 'date',
-        sortOrder: 'asc' as SortOrder,
-    });
-    const { searchQuery, type, page, startDate, endDate, rowsPerPage, sortField, sortOrder } = data;
-    const [debouncedQuery, setDebouncedQuery] = useState<string>(searchQuery);
+
+    const [debouncedQuery, setDebouncedQuery] = useState<string>(filters.searchQuery);
     const gst_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_gst;
 
     const { init, isGenerating, setIsGenerating, PDFViewModal, handleShare } = usePDFHandler();
@@ -154,69 +158,69 @@ export function InvoiceListing() {
         }
     }
 
-    const fetchCustomersInvoices = useCallback(async () => {
+
+    function handleCustomerInvoiceFetching() {
+        if (isAllCustomerInvoicesFetching) { return; }
+        if (customerInvoicesPageMeta.total <= customerInvoicesPageMeta.page * customerInvoicesPageMeta.limit) { return; }
         dispatch(getCustomerInvoices({
             searchQuery: debouncedQuery,
             company_id: current_company_id || '',
             customer_id: customer_id || '',
-            pageNumber: page,
-            type,
-            limit: rowsPerPage,
-            sortField,
-            sortOrder,
-            start_date: new Date(startDate).toISOString(),
-            end_date: new Date(endDate).toISOString(),
+            type: filters.invoiceType,
+            pageNumber: customerInvoicesPageMeta.page + 1,
+            sortField: filters.sortBy,
+            sortOrder: filters.useAscOrder ? 'asc' : 'desc',
+            start_date: formatLocalDate(new Date(filters.startDate ?? '')),
+            end_date: formatLocalDate(new Date(filters.endDate ?? '')),
         }));
-    }, [current_company_id, customer_id, dispatch, endDate, page, rowsPerPage, debouncedQuery, sortField, sortOrder, startDate, type]);
+    }
+
+    useEffect(() => {
+        if (customer_id) {
+            dispatch(getCustomer({ customer_id: customer_id, start_date: formatLocalDate(new Date(filters.startDate ?? '')), end_date: formatLocalDate(new Date(filters.endDate ?? '')) })); // Adjusted to match the new API signature
+        }
+    }, [dispatch, customer_id, filters.startDate, filters.endDate]);
 
     useFocusEffect(
         useCallback(() => {
-            setLoading(true);
-            fetchCustomersInvoices().finally(() => setLoading(false));
-        }, [fetchCustomersInvoices])
+            dispatch(getCustomerInvoices({
+                searchQuery: debouncedQuery,
+                company_id: current_company_id || '',
+                customer_id: customer_id || '',
+                pageNumber: 1,
+                type: filters.invoiceType,
+                sortField: filters.sortBy,
+                sortOrder: filters.useAscOrder ? 'asc' : 'desc',
+                start_date: formatLocalDate(new Date(filters.startDate ?? '')),
+                end_date: formatLocalDate(new Date(filters.endDate ?? '')),
+            }));
+        }, [current_company_id, customer_id, debouncedQuery, filters.endDate, filters.invoiceType, filters.sortBy, filters.startDate, filters.useAscOrder])
     );
 
+    // Debounce logic: delay setting the debouncedQuery
     useEffect(() => {
         const handler = setTimeout(() => {
-            setDebouncedQuery(searchQuery);
+            setDebouncedQuery(filters.searchQuery);
         }, 300);
 
         return () => {
             clearTimeout(handler);
         };
-    }, [searchQuery]);
+    }, [filters.searchQuery]);
 
-    function handleCustomerInvoicesFetching() {
-        if (isAllCustomerInvoicesFetching) { return; }
-        if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
-
-        dispatch(getCustomerInvoices({
-            searchQuery: debouncedQuery,
-            company_id: current_company_id || '',
-            customer_id: customer_id || '',
-            pageNumber: page + 1,
-            type,
-            limit: rowsPerPage,
-            sortField,
-            sortOrder,
-            start_date: new Date(startDate).toISOString(),
-            end_date: new Date(endDate).toISOString(),
-        }));
-    }
-
-    // Fetch customers when debouncedQuery or other filters change
-    useEffect(() => {
-        if (debouncedQuery) {
-            fetchCustomersInvoices();
-        }
-    }, [debouncedQuery, page, rowsPerPage, sortField, sortOrder, type, fetchCustomersInvoices]);
 
 
     return (
         <>
             <FlatList
-                ListEmptyComponent={(isAllCustomerInvoicesFetching || loading) ? <BillLoadingCard /> : <EmptyListView type="customer" />}
-                contentContainerStyle={{ marginTop: 12, width: '100%', height: '100%', gap: 20 }}
+                ListEmptyComponent={
+                    isAllCustomerInvoicesFetching ?
+                        <BillLoadingCard /> :
+                        <EmptyListView
+                            title="No invoices found for this period."
+                            text="Try adjusting your filters or adding a new invoice." />
+                }
+                contentContainerStyle={{ marginTop: 12, width: '100%', gap: 20 }}
                 data={customerInvoices}
                 keyExtractor={(item) => item.vouchar_id}
                 renderItem={({ item }) => {
@@ -237,10 +241,10 @@ export function InvoiceListing() {
                 }}
 
                 ListFooterComponentStyle={{ gap: 20 }}
-                ListFooterComponent={<ShowWhen when={isAllCustomerInvoicesFetching || loading} >
+                ListFooterComponent={<ShowWhen when={isAllCustomerInvoicesFetching} >
                     {
                         Array.from({
-                            length: Math.min(2, pageMeta.total - (customerInvoices?.length ?? 0)) + 1,
+                            length: Math.min(2, customerInvoicesPageMeta.total - (customerInvoices?.length ?? 0)) + 1,
                         },
                             (_, i) => i
                         ).map(item => (
@@ -256,7 +260,7 @@ export function InvoiceListing() {
                     let height = layoutMeasurement.height;
 
                     if (totalHeight - height < contentOffsetY + 400) {
-                        handleCustomerInvoicesFetching();
+                        handleCustomerInvoiceFetching();
                     }
                 }}
             />

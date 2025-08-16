@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
-import { loginUser, register, getCurrentUser, updateUserSettings, switchCompany, deleteCompany, getAppVersion } from '../../Services/user';
+import { loginUser, register, getCurrentUser, updateUserSettings, switchCompany, deleteCompany, getAppVersion, forgetPassword } from '../../Services/user';
 import AuthStore from '../AuthStore';
 
 interface UserState {
@@ -110,6 +110,18 @@ const userSlice: Slice<UserState> = createSlice({
                 state.minimum_version = action.payload.minimum_version;
             })
             .addCase(getAppVersion.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || 'Failed to fetch app version';
+            })
+
+            .addCase(forgetPassword.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(forgetPassword.fulfilled, (state, action) => {
+                state.loading = false;
+            })
+            .addCase(forgetPassword.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message || 'Failed to fetch app version';
             })

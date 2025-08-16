@@ -179,7 +179,7 @@ export function DateSelector() {
             })()}
 
             onSelect={({ year, month, date }) => {
-                setCreateOn(`${date}/${(month + 1).toString().padStart(2, '0')}/${year}`);
+                setCreateOn(`${date.toString().padStart(2, '0')}/${(month + 1).toString().padStart(2, '0')}/${year}`);
             }}
         />
     </>);

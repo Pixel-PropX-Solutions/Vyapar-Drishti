@@ -61,35 +61,41 @@ export function CompanySwitchModal({ visible, setVisible }: Props) {
             <ScrollView contentContainerStyle={{ gap: 16 }} >
 
                 {
-                    companies.map(({ _id, name, email, image }) => (
-                        <SectionRowWithIcon
-                            key={_id}
-                            label={name}
-                            text={email}
-                            icon={<LogoImage size={44} imageSrc={image ?? ''} />}
-                            backgroundColor={_id === currentCompanyId ? 'rgb(50,150,250)' : ''}
-                            color={_id === currentCompanyId ? 'white' : ''}
-                            onPress={() => {
-                                if (_id === currentCompanyId) { return setVisible(false); }
-                                setSwitching(true);
+                    companies.map(({ _id, name, financial_year_start, image }) => {
+                        const fy = financial_year_start;
+                        const financialYear = fy
+                            ? `FY: ${fy.slice(0, 4)} - ${parseInt(fy.slice(0, 4), 10) + 1}`
+                            : '';
+                        return (
+                            <SectionRowWithIcon
+                                key={_id}
+                                label={name}
+                                text={financialYear}
+                                icon={<LogoImage size={44} imageSrc={image ?? ''} />}
+                                backgroundColor={_id === currentCompanyId ? 'rgb(50,150,250)' : ''}
+                                color={_id === currentCompanyId ? 'white' : ''}
+                                onPress={() => {
+                                    if (_id === currentCompanyId) { return setVisible(false); }
+                                    setSwitching(true);
 
-                                dispatch(setIsCompanyFetching(true));
+                                    dispatch(setIsCompanyFetching(true));
 
-                                dispatch(switchCompany(_id))
-                                    .unwrap().then((response) => {
-                                        if (response) {
-                                            dispatch(setCurrentCompanyId(_id));
-                                            dispatch(getCurrentUser());
-                                            dispatch(getCompany());
-                                            setVisible(false);
+                                    dispatch(switchCompany(_id))
+                                        .unwrap().then((response) => {
+                                            if (response) {
+                                                dispatch(setCurrentCompanyId(_id));
+                                                dispatch(getCurrentUser());
+                                                dispatch(getCompany());
+                                                setVisible(false);
+                                                setSwitching(false);
+                                            }
                                             setSwitching(false);
-                                        }
-                                        setSwitching(false);
-                                        setVisible(false);
-                                    });
-                            }}
-                        />
-                    ))
+                                            setVisible(false);
+                                        });
+                                }}
+                            />
+                        )
+                    })
                 }
 
             </ScrollView>

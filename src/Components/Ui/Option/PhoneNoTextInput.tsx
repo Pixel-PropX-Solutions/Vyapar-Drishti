@@ -32,13 +32,13 @@ type Props = TextInputProps & {
 
 }
 
-export default function PhoneNoTextInput({ label, onChangeText, focusColor = 'rgb(50, 150, 250)', messageTextColor = 'rgb(200,50,50)', checkNumberIsValid, message, phoneNumber, isRequired = false, placeholder = 'XXXXX-97548', onChangePhoneNumber, ...props }: Props): React.JSX.Element {
+export default function PhoneNoTextInput({ label, onChangeText, focusColor = 'rgb(50, 150, 250)', messageTextColor = 'rgb(200,50,50)', checkNumberIsValid, message, phoneNumber, isRequired = false, placeholder = 'Enter phone number', onChangePhoneNumber, ...props }: Props): React.JSX.Element {
 
     const { primaryColor: color, primaryBackgroundColor: backgroundColor } = useTheme();
 
     const [isFocus, setFocus] = useState<boolean>(false);
     const [number, setNumber] = useState<string>(phoneNumber?.number ?? '');
-    const [code, setCode] = useState<string>(phoneNumber?.code ?? '');
+    const [code, setCode] = useState<string>(phoneNumber?.code ?? '+91');
     const [isInputTextValid, setInputTextValid] = useState<boolean>(true);
 
     const [isCodeModalVisible, setCodeModalVisible] = useState<boolean>(false);
@@ -127,7 +127,7 @@ export default function PhoneNoTextInput({ label, onChangeText, focusColor = 'rg
             </View>
             {
                 !(isInputTextValid || isFocus) ? (
-                    <TextTheme color={messageTextColor} style={{ paddingLeft: 6}} >
+                    <TextTheme color={messageTextColor} style={{ paddingLeft: 6 }} >
                         {message ?? 'Invalid phone number'}
                     </TextTheme>
                 ) : null

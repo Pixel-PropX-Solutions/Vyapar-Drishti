@@ -2,49 +2,49 @@
 
 
 export type SortField =
-  | "name"
-  | "shop_name"
-  | "city"
-  | "state"
-  | "created_at"
+  | 'name'
+  | 'shop_name'
+  | 'city'
+  | 'state'
+  | 'created_at'
   | 'product_name'
-  | "category"
-  | "available_quantity"
-  | "available_product_price"
-  | "company_name";
+  | 'category'
+  | 'available_quantity'
+  | 'available_product_price'
+  | 'company_name';
 
 export type ProductSortField =
-  | "stock_item_name"
+  | 'stock_item_name'
   | 'selling_price'
   | 'purchase_price'
-  | "category"
-  | "created_at"
-  | "updated_at"
-  | "opening_quantity"
-  | "opening_purchase_price"
-  | "show_active_stock"
-  | "gst_hsn_code"
+  | 'category'
+  | 'created_at'
+  | 'updated_at'
+  | 'opening_quantity'
+  | 'opening_purchase_price'
+  | 'show_active_stock'
+  | 'gst_hsn_code'
   | 'unit'
-  | "hsn_code";
+  | 'hsn_code';
 
 export type CategorySortField =
-  | "category_name"
+  | 'category_name'
   | 'description'
   | 'created_at'
   | 'parent'
-  | "updated_at";
+  | 'updated_at';
 
 export type CustomerSortField =
-  | "name"
+  | 'name'
   | 'company_name'
   // | 'credit_limit'
   // | 'balance_type'
   | 'city'
   | 'state'
-  | "created_at";
+  | 'created_at';
 
 
-export type SortOrder = "asc" | "desc";
+export type SortOrder = 'asc' | 'desc';
 
 export interface Units {
   id: string;
@@ -151,22 +151,68 @@ export interface GetUserLedgers {
   user_id: string,
   company_id: string,
   phone?: PhoneNumber,
-  qr_image: string,
   email?: string,
   parent: string,
-  mailing_name: string,
-  mailing_pincode: string,
+  parent_id: string,
   mailing_country?: string,
   opening_balance: number,
-  is_deemed_positive: boolean,
+  total_amount: number,
   image?: string | File | null,
   mailing_state: string,
-  is_revenue: boolean,
-  mailing_address?: string,
   alias?: string,
+  gstin?: string;
   created_at: string,
   updated_at: string,
-  is_deleted: boolean
+}
+
+export interface GetCustomerInfo {
+  _id: string,
+  ledger_name: string,
+  company_id: string,
+  user_id: string,
+  parent: string,
+  parent_id: string,
+  alias: string | null,
+  is_revenue: boolean,
+  is_deemed_positive: boolean,
+  opening_balance: number,
+  image: string | File | null,
+  qr_image: string | File | null,
+  is_deleted: boolean,
+  mailing_name: string | null,
+  mailing_address: string | null,
+  mailing_state: string | null,
+  mailing_country: string | null,
+  mailing_pincode: string | null,
+  email: string | null,
+  phone: {
+    code: string | null,
+    number: string | null
+  },
+  gstin: string | null,
+  gst_registration_type: string | null,
+  gst_supply_type: string | null,
+  account_holder: string | null,
+  account_number: string | null,
+  bank_ifsc: string | null,
+  bank_name: string | null,
+  bank_branch: string | null,
+  created_at: string,
+  updated_at: string
+}
+
+
+export interface GetCustomerProfile {
+  _id: string,
+  ledger_name: string,
+  parent: string,
+  phone: PhoneNumber,
+  email: string,
+  gstin: string,
+  opening_balance: number,
+  total_amount: number,
+  total_debit: number,
+  total_credit: number,
 }
 
 export interface CustomersList {

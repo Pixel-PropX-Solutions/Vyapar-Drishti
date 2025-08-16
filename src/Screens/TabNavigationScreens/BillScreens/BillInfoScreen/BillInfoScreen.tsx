@@ -9,16 +9,20 @@ import NormalButton from '../../../../Components/Ui/Button/NormalButton';
 import { StackParamsList } from '../../../../Navigation/StackNavigation';
 import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import { useAppDispatch, useInvoiceStore, useUserStore } from '../../../../Store/ReduxStore';
-import { printGSTInvoices, printInvoices, viewInvoice } from '../../../../Services/invoice';
+import { deleteGSTInvoice, deleteInvoice, printGSTInvoices, printInvoices, viewInvoice } from '../../../../Services/invoice';
 import { useCallback, useState } from 'react';
 import { formatDate, roundToDecimal } from '../../../../Utils/functionTools';
 import usePDFHandler from '../../../../Hooks/usePDFHandler';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
+import { GetAllVouchars } from '../../../../Utils/types';
+import navigator from '../../../../Navigation/NavigationService';
+import { useAlert } from '../../../../Components/Ui/Alert/AlertProvider';
 
 export default function BillInfoScreen(): React.JSX.Element {
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
     const { id: invoiceId } = router.params;
     const dispatch = useAppDispatch();
+    const { setAlert } = useAlert();
     const { user, current_company_id } = useUserStore();
     const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
     const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst || false;
@@ -61,6 +65,39 @@ export default function BillInfoScreen(): React.JSX.Element {
         }, [])
     );
 
+    const handleDeleteInvoice = (_id: string) => {
+        if (gst_enable) {
+            dispatch(deleteGSTInvoice({ vouchar_id: _id, company_id: current_company_id || '' })).unwrap().then(() => {
+                navigator.goBack();
+                setAlert({
+                    type: 'success',
+                    message: 'Invoice deleted successfully!',
+                    duration: 1000,
+                });
+            }).catch((error) => {
+                setAlert({
+                    type: 'error',
+                    message: error || 'An unexpected error occurred. Please try again later.',
+                    duration: 1000,
+                });
+            });
+        } else {
+            dispatch(deleteInvoice({ vouchar_id: _id, company_id: current_company_id || '' })).unwrap().then(() => {
+                setAlert({
+                    type: 'success',
+                    message: 'Invoice deleted successfully!',
+                    duration: 1000,
+                });
+                navigator.goBack();
+            }).catch((error) => {
+                setAlert({
+                    type: 'error',
+                    message: error || 'An unexpected error occurred. Please try again later.',
+                    duration: 1000,
+                });
+            });
+        }
+    };
 
     if (!invoiceData) {
         return (
@@ -73,8 +110,9 @@ export default function BillInfoScreen(): React.JSX.Element {
         <View style={{ gap: 12, height: '100%' }} >
             <View style={{ flex: 1, marginTop: 12 }} >
                 <EntityInfoHeader
-                    onPressDelete={() => { }}
+                    onPressDelete={() => { handleDeleteInvoice(invoiceData._id); }}
                     onPressEdit={() => { }}
+                    invoiceNumber={invoiceData.voucher_number}
                 />
 
                 <ScrollView contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }} >
@@ -98,25 +136,25 @@ export default function BillInfoScreen(): React.JSX.Element {
                         <SectionRow >
                             <View style={{ flex: 1, gap: 12 }} >
                                 <View >
-                                <TextTheme fontSize={14} fontWeight={900}>{invoiceData.party_name}</TextTheme>
-                                <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>{invoiceData.party_details.parent}</TextTheme>
+                                    <TextTheme fontSize={14} fontWeight={900}>{invoiceData.party_name}</TextTheme>
+                                    <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>{invoiceData.party_details.parent}</TextTheme>
                                 </View>
 
                                 <View style={{ gap: 4 }}>
-                                    <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }} >
+                                    {invoiceData.party_details.phone.number && <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }} >
                                         <FeatherIcon isPrimary={false} name="phone" size={12} />
                                         <TextTheme isPrimary={false} fontSize={12}>{invoiceData.party_details.phone.code} {invoiceData.party_details.phone.number}</TextTheme>
-                                    </View>
+                                    </View>}
 
                                     {invoiceData.party_details.email && <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }} >
                                         <FeatherIcon isPrimary={false} name="mail" size={12} />
                                         <TextTheme isPrimary={false} fontSize={12} fontWeight={900}>{invoiceData.party_details.email}</TextTheme>
                                     </View>}
 
-                                    <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }} >
+                                    {(invoiceData.party_details.mailing_address || invoiceData.party_details.mailing_state) && <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }} >
                                         <FeatherIcon isPrimary={false} name="map-pin" size={12} />
                                         <TextTheme isPrimary={false} fontSize={12} fontWeight={900}>{invoiceData.party_details.mailing_address ?? invoiceData.party_details.mailing_state}</TextTheme>
-                                    </View>
+                                    </View>}
                                 </View>
                             </View>
                         </SectionRow>
@@ -129,7 +167,7 @@ export default function BillInfoScreen(): React.JSX.Element {
                                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }} >
                                         <View>
                                             <TextTheme fontSize={14} fontWeight={900}>{item.item}</TextTheme>
-                                            <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>{item.hsn_code}</TextTheme>
+                                            {item.hsn_code && <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>{item.hsn_code}</TextTheme>}
                                         </View>
 
                                         <View style={{ alignItems: 'flex-end' }} >
@@ -140,12 +178,12 @@ export default function BillInfoScreen(): React.JSX.Element {
 
                                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
 
-                                        <View style={{ alignItems: 'flex-end' }} >
+                                        <View style={{ alignItems: 'flex-start' }} >
                                             <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>Item Rate</TextTheme>
                                             <TextTheme fontSize={14} fontWeight={900}>{roundToDecimal(Number(item.rate), 2)} INR</TextTheme>
                                         </View>
 
-                                        {gst_enable && <View style={{ alignItems: 'flex-end' }} >
+                                        {gst_enable && <View style={{ alignItems: 'flex-start' }} >
                                             <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>GST Amount</TextTheme>
                                             <TextTheme fontSize={14} fontWeight={900}>{roundToDecimal(Number(item.gst_amount), 2)} INR</TextTheme>
                                         </View>}
@@ -203,6 +241,6 @@ export default function BillInfoScreen(): React.JSX.Element {
             </BackgroundThemeView>
             <PDFViewModal visible={isPDFModalVisible} setVisible={setPDFModalVisible} />
             <LoadingModal visible={isGenerating} />
-        </View>
+        </View >
     );
 }

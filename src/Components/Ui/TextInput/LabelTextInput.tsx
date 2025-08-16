@@ -64,7 +64,7 @@ export default function LabelTextInput({ label, icon, containerStyle, onChangeTe
                 <TextInput
                     {...props}
                     value={inputText}
-                    placeholderTextColor={color}
+                    placeholderTextColor={'rgba(0,0,0,0.4)'}
                     autoCapitalize={capitalize}
                     onChangeText={handleOnChangeText}
                     onFocus={() => setFocus(true)}
@@ -86,7 +86,7 @@ export default function LabelTextInput({ label, icon, containerStyle, onChangeTe
             </View>
             {
                 !(isInputTextValid || isFocus) ? (
-                    <TextTheme color={messageTextColor} style={{paddingLeft: 6}} >
+                    <TextTheme color={messageTextColor} style={{ paddingLeft: 6 }} >
                         {message}
                     </TextTheme>
                 ) : null

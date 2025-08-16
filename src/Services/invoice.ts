@@ -60,8 +60,7 @@ export const getAllInvoiceGroups = createAsyncThunk(
                 const invoiceGroups = response.data.data;
                 return { invoiceGroups };
             }
-            else
-                {return rejectWithValue('Failed to fetch Customer profile');}
+            else { return rejectWithValue('Failed to fetch Customer profile'); }
         } catch (error: any) {
             return rejectWithValue(error?.response?.data?.message);
         }
@@ -117,7 +116,7 @@ export const viewAllInvoices = createAsyncThunk(
             searchQuery = '',
             type = '',
             limit = 10,
-            sortField = 'created_at',
+            sortField = 'date',
             sortOrder = '1',
             start_date = '',
             end_date = '',
@@ -168,6 +167,59 @@ export const viewInvoice = createAsyncThunk(
                 const invoiceData = response.data.data;
                 return { invoiceData };
             } else { return rejectWithValue('Login Failed: No access token recieved.'); }
+        } catch (error: any) {
+            return rejectWithValue(error?.response?.data?.message);
+        }
+    }
+);
+
+export const deleteInvoice = createAsyncThunk(
+    'delete/invoice',
+    async (
+        {
+            vouchar_id,
+            company_id,
+        }: {
+            vouchar_id: string;
+            company_id: string;
+        },
+        { rejectWithValue }
+    ) => {
+        try {
+            const response = await userApi.delete(
+                `/invoices/delete/${vouchar_id}?company_id=${company_id}`
+            );
+
+            if (response.data.success === true) {
+                return;
+            } else {return rejectWithValue('Login Failed: No access token recieved.');}
+        } catch (error: any) {
+            return rejectWithValue(error?.response?.data?.message);
+        }
+    }
+);
+
+
+export const deleteGSTInvoice = createAsyncThunk(
+    'delete/gst/invoice',
+    async (
+        {
+            vouchar_id,
+            company_id,
+        }: {
+            vouchar_id: string;
+            company_id: string;
+        },
+        { rejectWithValue }
+    ) => {
+        try {
+            const response = await userApi.delete(
+                `/invoices/gst/delete/${vouchar_id}?company_id=${company_id}`
+            );
+
+            if (response.data.success === true) {
+                return;
+            } else {return rejectWithValue('Login Failed: No access token recieved.');}
         } catch (error: any) {
             return rejectWithValue(error?.response?.data?.message);
         }

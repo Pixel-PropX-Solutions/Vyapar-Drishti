@@ -3,7 +3,7 @@ import { Pressable, View } from 'react-native';
 import AnimateButton from '../../../../Components/Ui/Button/AnimateButton';
 import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
 import TextTheme from '../../../../Components/Ui/Text/TextTheme';
-import { getMonthByIndex } from '../../../../Utils/functionTools';
+import { formatLocalDate, getMonthByIndex } from '../../../../Utils/functionTools';
 import { useTheme } from '../../../../Contexts/ThemeProvider';
 import { useCallback, useState } from 'react';
 import { useBillContext } from './Context';
@@ -106,7 +106,7 @@ export function BillTypeFilter(): React.JSX.Element {
 export function DateSelector() {
 
     const { primaryColor } = useTheme();
-    const { date, setDate } = useBillContext();
+    const { date, setDate, handleFilter } = useBillContext();
 
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
@@ -114,6 +114,8 @@ export function DateSelector() {
         const nextMonth = (date.month + by + 12) % 12;
         const nextYear = date.year + Math.floor((date.month + by) / 12);
         setDate({ year: nextYear, month: nextMonth });
+        handleFilter('startDate', new Date(nextYear, nextMonth, 1).toISOString());
+        handleFilter('endDate', new Date(nextYear, nextMonth + 1, 0).toISOString());
     }
 
     return (
@@ -155,13 +157,13 @@ export function BillListing() {
     function handleInvoiceFetching() {
         if (isInvoiceFeaching) { return; }
         if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
-        dispatch(viewAllInvoices({ company_id: current_company_id ?? '', pageNumber: pageMeta.page + 1, type: filters.billType }));
+        dispatch(viewAllInvoices({ company_id: current_company_id ?? '', pageNumber: pageMeta.page + 1, type: filters.billType, sortOrder: filters.useAscOrder ? '1' : '-1', start_date: formatLocalDate(new Date(filters.startDate ?? '')), end_date: formatLocalDate(new Date(filters.endDate ?? '')) }));
     }
 
     function handleRefresh() {
         if (refreshing) { return; }
         setRefreshing(true);
-        dispatch(viewAllInvoices({ company_id: current_company_id ?? '', pageNumber: 1, type: filters.billType }))
+        dispatch(viewAllInvoices({ company_id: current_company_id ?? '', pageNumber: 1, type: filters.billType, sortOrder: filters.useAscOrder ? '1' : '-1', start_date: formatLocalDate(new Date(filters.startDate ?? '')), end_date: formatLocalDate(new Date(filters.endDate ?? '')) }))
             .finally(() => setRefreshing(false));
     }
 
@@ -194,12 +196,12 @@ export function BillListing() {
 
     useFocusEffect(
         useCallback(() => {
-            dispatch(setInvoice([]))
+            dispatch(setInvoice([]));
             dispatch(viewAllInvoices({
                 company_id: current_company_id ?? '', pageNumber: 1, type: filters.billType, sortOrder: filters.useAscOrder ? '1' : '-1',
-                // start_date: ''
+                start_date: formatLocalDate(new Date(filters.startDate ?? '')), end_date: formatLocalDate(new Date(filters.endDate ?? ''))
             }));
-        }, [filters])
+        }, [current_company_id, filters.billType, filters.useAscOrder, filters.startDate, filters.endDate])
     );
 
     return (<>
@@ -213,7 +215,7 @@ export function BillListing() {
 
             ListEmptyComponent={
                 <ShowWhen when={!isInvoiceFeaching} otherwise={<BillLoadingCard />} >
-                    <EmptyListView type="invoice" />
+                    <EmptyListView title={`No ${filters.billType} records found.`} text={`Try adjusting your filters or create a new ${filters.billType}.`} />
                 </ShowWhen>
             }
 
@@ -228,7 +230,7 @@ export function BillListing() {
                     billNo={item.voucher_number}
                     type={item.voucher_type}
                     customerName={item.party_name}
-                    createOn={item.created_at.split('T')[0]}
+                    createOn={item.date}
                     totalAmount={item.amount}
                     payAmount={item.amount}
                     onPrint={() => { handleInvoice(item, () => { setPDFModalVisible(true); }); }}

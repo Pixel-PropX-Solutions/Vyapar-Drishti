@@ -46,10 +46,8 @@ export default function SignUpScreen(): React.JSX.Element {
                 //     message: 'You have successfully registered. Please check your email for verification.',
                 //     type: 'success',
                 // });
-                
-                setModalVisible(true)
 
-
+                setModalVisible(true);
                 data.current = { name: { first: '', last: '' }, email: '', phone: { code: '', number: '' }, password: '' };
             } else {
                 setAlert({
@@ -122,10 +120,12 @@ export default function SignUpScreen(): React.JSX.Element {
 
                     <View>
                         <PasswordInput
-                            checkInputText={(pass) => pass.length >= 8}
-                            message="Password lenght is too short"
+                            checkInputText={(pass) => pass.length >= 6}
+                            message={data.current.password.length < 6 ? 'Password must be at least 6 characters long.' : ''}
+                            label="Password"
                             onChangeText={val => { data.current.password = val; }}
                             isRequired={true}
+
                         />
                     </View>
 
@@ -186,6 +186,7 @@ function SignUpModal({ visible, setVisible }: { visible: boolean, setVisible: Di
         } else {
             Linking.openURL('https://mail.google.com/');
         }
+        navigator.replace('login-screen');
     }
 
     return (

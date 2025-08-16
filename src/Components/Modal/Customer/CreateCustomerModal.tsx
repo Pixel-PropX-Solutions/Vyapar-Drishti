@@ -47,7 +47,29 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
     const [isStateModalVisible, setStateModalVisible] = useState<boolean>(false);
     const phone = useRef<PhoneNumber>({ code: '', number: '' });
 
-    const [data, setData] = useState({
+    // Change data from useState to useRef
+    type DataType = {
+        name: string;
+        email: string;
+        code: string;
+        number: string;
+        image: string;
+        mailing_name: string;
+        mailing_address: string;
+        mailing_country: string;
+        mailing_state: string;
+        mailing_pincode: string;
+        company_id: string;
+        parent: string;
+        parent_id: string;
+        bank_name: string;
+        account_number: string;
+        bank_ifsc: string;
+        bank_branch: string;
+        account_holder: string;
+        gstin: string;
+    };
+    const data = useRef<DataType>({
         name: '',
         email: '',
         code: '',
@@ -119,7 +141,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
 
     useEffect(() => {
         // Reset form when modal visibility changes
-        setData({
+        data.current = {
             name: '',
             email: '',
             code: '',
@@ -139,7 +161,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
             bank_branch: '',
             account_holder: '',
             gstin: '',
-        });
+        };
 
     }, [customerType?._id, customerType?.accounting_group_name, user?.user_settings?.current_company_id, visible]);
 
@@ -147,64 +169,64 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
         const errors: Record<string, string> = {};
         switch (currentStep) {
             case 0:
-                if (showGSTIN && !isGSTINOptional && !data.gstin.trim()) {
+                if (showGSTIN && !isGSTINOptional && !data.current.gstin.trim()) {
                     errors.gstin = 'GSTIN is required';
                 }
 
-                if (showGSTIN && data.gstin && !isGSTINOptional && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][A-Z0-9][Z][0-9A-Z]$/.test(data.gstin)) {
+                if (showGSTIN && data.current.gstin && !isGSTINOptional && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][A-Z0-9][Z][0-9A-Z]$/.test(data.current.gstin)) {
                     errors.gstin = 'Please enter a valid GSTIN';
                 }
 
-                if (!data.name.trim()) {
+                if (!data.current.name.trim()) {
                     errors.name = 'Customer Name is required';
                 }
 
-                if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+                if (data.current.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.current.email)) {
                     errors.email = 'Please enter a valid email address';
                 }
-                if (data.number && !/^\d{10}$/.test(data.number)) {
+                if (data.current.number && !/^\d{10}$/.test(data.current.number)) {
                     errors.number = 'Phone number must be 10 digits';
                 }
                 setValidationErrors(errors);
                 return Object.keys(errors).length === 0;
             case 1:
-                if (showMailingDetails && !isMailingAddressOptional && !(data.mailing_state || '').trim()) {
+                if (showMailingDetails && !isMailingAddressOptional && !(data.current.mailing_state || '').trim()) {
                     errors.mailing_state = 'Mailing State is required';
                 }
-                if (showMailingDetails && !isMailingAddressOptional && !(data.mailing_country || '').trim()) {
+                if (showMailingDetails && !isMailingAddressOptional && !(data.current.mailing_country || '').trim()) {
                     errors.mailing_country = 'Mailing country is required';
                 }
-                if (showMailingDetails && !isMailingAddressOptional && data.mailing_pincode && !/^\d{6}$/.test(data.mailing_pincode)) {
+                if (showMailingDetails && !isMailingAddressOptional && data.current.mailing_pincode && !/^\d{6}$/.test(data.current.mailing_pincode)) {
                     errors.mailing_pincode = 'PIN code must be 6 digits';
                 }
                 setValidationErrors(errors);
                 return Object.keys(errors).length === 0;
             case 2:
-                if (showBankDetails && !isBankOptional && !data.account_number.trim()) {
+                if (showBankDetails && !isBankOptional && !data.current.account_number.trim()) {
                     errors.account_number = 'Account number is required';
                 }
 
-                if (showBankDetails && !isBankOptional && !data.account_holder.trim()) {
+                if (showBankDetails && !isBankOptional && !data.current.account_holder.trim()) {
                     errors.account_holder = 'Account holder name is required';
                 }
 
-                if (showBankDetails && !isBankOptional && !data.bank_name.trim()) {
+                if (showBankDetails && !isBankOptional && !data.current.bank_name.trim()) {
                     errors.bank_name = 'Bank name is required';
                 }
 
-                if (showBankDetails && !isBankOptional && !data.bank_branch.trim()) {
+                if (showBankDetails && !isBankOptional && !data.current.bank_branch.trim()) {
                     errors.bank_branch = 'Bank branch name is required';
                 }
 
-                if (showBankDetails && !isBankOptional && !data.bank_ifsc.trim()) {
+                if (showBankDetails && !isBankOptional && !data.current.bank_ifsc.trim()) {
                     errors.bank_ifsc = 'IFSC code is required';
                 }
 
-                if (showBankDetails && data.account_number && !isBankOptional && !/^\d{9,18}$/.test(data.account_number)) {
+                if (showBankDetails && data.current.account_number && !isBankOptional && !/^\d{9,18}$/.test(data.current.account_number)) {
                     errors.account_number = 'Please enter a valid bank account number';
                 }
 
-                if (data.bank_ifsc && !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(data.bank_ifsc)) {
+                if (data.current.bank_ifsc && !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(data.current.bank_ifsc)) {
                     errors.bank_ifsc = 'Please enter a valid IFSC code';
                 }
                 setValidationErrors(errors);
@@ -212,14 +234,16 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
             default:
                 return false;
         }
-    }, [currentStep, data.account_holder, data.account_number, data.bank_branch, data.bank_ifsc, data.bank_name, data.email, data.gstin, data.mailing_country, data.mailing_pincode, data.mailing_state, data.name, data.number, isBankOptional, isGSTINOptional, isMailingAddressOptional, showBankDetails, showGSTIN, showMailingDetails]);
+    }, [currentStep, isBankOptional, isGSTINOptional, isMailingAddressOptional, showBankDetails, showGSTIN, showMailingDetails]);
 
+    // Remove setData, update handleInputChange to use data.current
     const handleInputChange = useCallback((field: string, value: string | number | boolean) => {
-        setData(prev => ({ ...prev, [field]: value }));
-        // Only clear the error for the field being edited
+        if (!(field in data.current)) return;
+        (data.current as any)[field] = value;
         if (validationErrors[field]) {
             setValidationErrors(prev => {
-                const { [field]: _, ...rest } = prev;
+                const rest = { ...prev };
+                delete rest[field];
                 return rest;
             });
         }
@@ -246,7 +270,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
         }
 
         const formData = new FormData();
-        Object.entries(data).forEach(([key, value]) => {
+        Object.entries(data.current).forEach(([key, value]) => {
             if (value) { formData.append(key, value); }
         });
 
@@ -263,7 +287,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
     }
 
     const resetForm = async () => {
-        setData({
+        data.current = {
             name: '',
             email: '',
             code: '+91',
@@ -283,7 +307,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
             bank_branch: '',
             account_holder: '',
             gstin: '',
-        });
+        };
         dispatch(setCustomerType(null));
         setValidationErrors({});
         setCurrentStep(0);
@@ -347,6 +371,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                 capitalize="characters"
                                 handleChange={handleInputChange}
                                 error={validationErrors.gstin}
+                                value={data.current.gstin}
                                 secondaryButton={true}
                                 secondaryButtonAction={() => { }}
                             />
@@ -356,8 +381,10 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                         <InputField
                             icon={<FeatherIcon name="user" size={20} color={primaryColor} />}
                             field="name"
+                            autoFocus={true}
                             placeholder="Billing Name"
                             handleChange={handleInputChange}
+                            value={data.current.name}
                             error={validationErrors.name}
                             capitalize="words"
                             info="This name will be used for billing and invoicing purposes."
@@ -368,6 +395,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                             icon={<FeatherIcon name="mail" size={20} color={primaryColor} />}
                             field="email"
                             placeholder="Email Address (Optional)"
+                            value={data.current.email}
                             handleChange={handleInputChange}
                             error={validationErrors.email}
                         />
@@ -391,7 +419,9 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                         <InputField
                             icon={<FeatherIcon name="user" size={20} color={primaryColor} />}
                             field="mailing_name"
+                            autoFocus={true}
                             placeholder="Contact Person Name"
+                            value={data.current.mailing_name}
                             handleChange={handleInputChange}
                             capitalize="words"
                             error={validationErrors.mailing_name}
@@ -400,8 +430,9 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                         <InputField
                             icon={<FeatherIcon name="map-pin" size={20} color={primaryColor} />}
                             field="mailing_address"
-                            placeholder={`Contact Address ${isMailingAddressOptional ? '(Optional)' : ''}`}
+                            placeholder={`Billing Address ${isMailingAddressOptional ? '(Optional)' : ''}`}
                             handleChange={handleInputChange}
+                            // value={data.current.mailing_address}
                             error={validationErrors.mailing_address}
                             capitalize="words"
                             multiline
@@ -409,7 +440,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                         <SelectField
                             icon={<FeatherIcon name="globe" size={20} color={primaryColor} />}
                             placeholder="Select Country *"
-                            value={data.mailing_country}
+                            value={data.current.mailing_country}
                             onPress={() => setCountryModalVisible(true)}
                             error={validationErrors.mailing_country}
                         />
@@ -418,7 +449,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                 <SelectField
                                     icon={<FeatherIcon name="globe" size={20} color={primaryColor} />}
                                     placeholder="Select State *"
-                                    value={data.mailing_state}
+                                    value={data.current.mailing_state}
                                     onPress={() => setStateModalVisible(true)}
                                     error={validationErrors.mailing_state}
                                 />
@@ -427,6 +458,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                 <InputField
                                     icon={<FeatherIcon name="hash" size={20} color={primaryColor} />}
                                     field="mailing_pincode"
+                                    value={data.current.mailing_pincode}
                                     placeholder="Pincode"
                                     handleChange={handleInputChange}
                                     error={validationErrors.mailing_pincode}
@@ -453,6 +485,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                 field="account_number"
                                 placeholder="Account Number"
                                 handleChange={handleInputChange}
+                                value={data.current.account_number}
                                 error={validationErrors.account_number}
                                 keyboardType="numeric"
                             />
@@ -462,6 +495,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                 placeholder="Account Holder Name"
                                 capitalize="characters"
                                 handleChange={handleInputChange}
+                                value={data.current.account_holder}
                                 error={validationErrors.account_holder}
                             />
                             <View style={{ flexDirection: 'row', gap: 12 }}>
@@ -470,6 +504,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                         icon={<FeatherIcon name="credit-card" size={20} color={primaryColor} />}
                                         field="bank_name"
                                         placeholder="Bank Name"
+                                        value={data.current.bank_name}
                                         capitalize="characters"
                                         handleChange={handleInputChange}
                                         error={validationErrors.bank_name}
@@ -482,6 +517,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                         field="bank_ifsc"
                                         placeholder="IFSC Code"
                                         capitalize="characters"
+                                        value={data.current.bank_ifsc}
                                         handleChange={handleInputChange}
                                         error={validationErrors.bank_ifsc}
                                     />
@@ -493,6 +529,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                                 field="bank_branch"
                                 placeholder="Branch Name"
                                 capitalize="words"
+                                value={data.current.bank_branch}
                                 handleChange={handleInputChange}
                                 error={validationErrors.bank_branch}
                             />
@@ -551,7 +588,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
             <ScrollView horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{ paddingHorizontal: 10, gap: 12 }}
-                keyboardShouldPersistTaps='always'
+                keyboardShouldPersistTaps="always"
             >
                 <View style={{
                     display: 'flex',
@@ -590,12 +627,12 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
             </ScrollView>
 
             {/* Form Content */}
-            <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='always' >
+            <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="always" >
                 {getCurrentStepFields()}
             </ScrollView>
             <View style={{ height: 10 }} />
-            <CountrySelectorModal visible={isCountryModalVisible} country={data.mailing_country} setCountry={handleInputChange} setVisible={setCountryModalVisible} />
-            <StateSelectorModal visible={isStateModalVisible} country={data.mailing_country} state={data.mailing_state} setState={handleInputChange} setVisible={setStateModalVisible} />
+            <CountrySelectorModal visible={isCountryModalVisible} country={data.current.mailing_country} setCountry={handleInputChange} setVisible={setCountryModalVisible} />
+            <StateSelectorModal visible={isStateModalVisible} country={data.current.mailing_country} state={data.current.mailing_state} setState={handleInputChange} setVisible={setStateModalVisible} />
             <LoadingModal visible={loading} />
         </BottomModal>
     );

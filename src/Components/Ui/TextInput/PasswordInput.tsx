@@ -15,12 +15,13 @@ type Props = TextInputProps & {
     onChangeText?: (text: string) => void,
     focusColor?: string,
     message?: string,
+    errorMessage?: string,
     massageTextColor?: string,
     checkInputText?: (text: string) => boolean,
     isRequired?: boolean
 }
 
-export default function PasswordInput({ placeholder = '***********', label = 'Password', onChangeText, focusColor = 'rgb(50, 150, 250)', massageTextColor = 'rgb(200,50,50)', checkInputText, message, isRequired = false, ...props }: Props): React.JSX.Element {
+export default function PasswordInput({ placeholder = '***********', label = 'Password', onChangeText, focusColor = 'rgb(50, 150, 250)', massageTextColor = 'rgb(200,50,50)', checkInputText, message, errorMessage, isRequired = false, ...props }: Props): React.JSX.Element {
 
     const { primaryColor: color, primaryBackgroundColor: backgroundColor } = useTheme();
 
@@ -32,9 +33,9 @@ export default function PasswordInput({ placeholder = '***********', label = 'Pa
     function handleOnChangeText(text: string): void {
         setInputText(text);
 
-        if (onChangeText) {onChangeText(text);}
-        if (checkInputText) {setInputTextValid(checkInputText(text));}
-        if (!text) {setInputTextValid(true);}
+        if (onChangeText) { onChangeText(text); }
+        if (checkInputText) { setInputTextValid(checkInputText(text)); }
+        if (!text) { setInputTextValid(true); }
     }
 
     return (
@@ -59,7 +60,7 @@ export default function PasswordInput({ placeholder = '***********', label = 'Pa
                     {...props}
                     value={inputText}
                     placeholder={placeholder}
-                    placeholderTextColor={color}
+                    placeholderTextColor={'rgba(0,0,0,0.4)'}
                     onChangeText={handleOnChangeText}
                     onFocus={() => setFocus(true)}
                     onBlur={() => setFocus(false)}
@@ -79,7 +80,14 @@ export default function PasswordInput({ placeholder = '***********', label = 'Pa
                 </AnimateButton>
             </View>
             {
-                !(isInputTextValid || isFocus) ? (
+                !isInputTextValid ? (
+                    <TextTheme color={massageTextColor} style={{ paddingLeft: 6 }} >
+                        {errorMessage || 'This field is required.'}
+                    </TextTheme>
+                ) : null
+            }
+            {
+                isFocus ? (
                     <TextTheme color={massageTextColor} style={{ paddingLeft: 6 }} >
                         {message}
                     </TextTheme>

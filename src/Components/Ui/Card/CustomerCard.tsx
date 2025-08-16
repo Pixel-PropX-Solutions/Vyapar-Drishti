@@ -1,84 +1,83 @@
 /* eslint-disable react-native/no-inline-styles */
-import { Animated, useAnimatedValue, View } from "react-native";
-import TextTheme from "../Text/TextTheme";
-import FeatherIcon from "../../Icon/FeatherIcon";
-import { useTheme } from "../../../Contexts/ThemeProvider";
-import AnimateButton from "../Button/AnimateButton";
-// import numberToString from "../../Functions/Numbers/numberToString";
-import ShowWhen from "../../Other/ShowWhen";
-import LoadingView from "../../Layouts/View/LoadingView";
-import { sliceString } from "../../../Utils/functionTools";
-import { useEffect } from "react";
-import BackgroundThemeView from "../../Layouts/View/BackgroundThemeView";
-import ScaleAnimationView from "../Animation/ScaleAnimationView";
-// import BackgroundThemeView from "../View/BackgroundThemeView";
+import { View } from 'react-native';
+import TextTheme from '../Text/TextTheme';
+import FeatherIcon from '../../Icon/FeatherIcon';
+import { useTheme } from '../../../Contexts/ThemeProvider';
+import AnimateButton from '../Button/AnimateButton';
+import ShowWhen from '../../Other/ShowWhen';
+import LoadingView from '../../Layouts/View/LoadingView';
+import { formatNumberForUI, getFormattedName, getInitials, sliceString } from '../../../Utils/functionTools';
+import BackgroundThemeView from '../../Layouts/View/BackgroundThemeView';
+import ScaleAnimationView from '../Animation/ScaleAnimationView';
+import { GetUserLedgers } from '../../../Utils/types';
 
 
 type CustomerCardProps = {
-    name: string,
-    groupName: string,
-    createOn: string,
-    phoneNo?: string,
+    item: GetUserLedgers,
     onPress?: () => void,
     backgroundColor?: string,
     color?: string
 }
 
-export default function CustomerCard({ name, groupName, createOn, phoneNo = '', onPress = () => {}, backgroundColor = '' }: CustomerCardProps): React.JSX.Element {
+export default function CustomerCard({ item, onPress = () => { } }: CustomerCardProps): React.JSX.Element {
+    const { ledger_name, parent, phone, total_amount } = item;
 
-    const { secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
-    backgroundColor = backgroundColor || secondaryBackgroundColor;
+    const { primaryBackgroundColor } = useTheme();
+    const bgColor = ['Debtors', 'Creditors'].includes(parent) ? (total_amount < 0 ? 'rgba(200,0,0, .1)' : 'rgba(50,200,150, .1)') : primaryBackgroundColor;
+    const avatarColor = ['Debtors', 'Creditors'].includes(parent) ? (total_amount < 0 ? 'rgba(200,0,0, .4)' : 'rgba(50,200,150, .4)') : 'transparent';
+    const borderColor = ['Debtors', 'Creditors'].includes(parent) ? (total_amount < 0 ? 'rgba(200,0,0, .8)' : 'rgba(50,200,150, .8)') : primaryBackgroundColor;
 
     return (
         <ScaleAnimationView useRandomDelay={true} >
             <AnimateButton
-                style={{ padding: 12, borderRadius: 16, backgroundColor }} bubbleScale={30}
+                style={{ padding: 12, borderRadius: 16, backgroundColor: bgColor, borderColor: borderColor, borderWidth: 1 }} bubbleScale={30}
                 onPress={onPress}
             >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }} >
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                        <View style={{ borderRadius: 50, aspectRatio: 1, width: 40, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: primaryBackgroundColor, backgroundColor }} >
-                            <TextTheme fontSize={18} fontWeight={900}>{name[0]}</TextTheme>
+                        <View style={{ borderRadius: 50, aspectRatio: 1, width: 40, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: primaryBackgroundColor, backgroundColor: avatarColor }} >
+                            <TextTheme fontSize={15} fontWeight={600}>{getInitials(ledger_name)}</TextTheme>
                         </View>
 
                         <View>
-                            <TextTheme fontSize={18} fontWeight={900}>{sliceString(name, 20)}</TextTheme>
-                            <TextTheme fontSize={12}>{groupName}</TextTheme>
+                            <TextTheme fontSize={16} fontWeight={600}>{getFormattedName(sliceString(ledger_name, 18) ?? '')}</TextTheme>
+                            <TextTheme fontSize={12}>{parent}</TextTheme>
                         </View>
                     </View>
 
                     <View style={{ alignItems: 'flex-end' }} >
-                        <ShowWhen when={phoneNo !== ''} >
+                        <ShowWhen when={phone?.number !== ''} >
                             <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }} >
-                                <TextTheme isPrimary={false} fontSize={12}>{phoneNo}</TextTheme>
+                                <TextTheme isPrimary={false} fontSize={12}>{phone?.code} {phone?.number}</TextTheme>
                                 <FeatherIcon isPrimary={false} name="phone" size={12} />
                             </View>
                         </ShowWhen>
 
                         <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }} >
-                            <TextTheme isPrimary={false} fontSize={12}>{createOn.split('T')[0]}</TextTheme>
-                            <FeatherIcon isPrimary={false} name="calendar" size={12} />
+                            <TextTheme isPrimary={true} fontSize={14} fontWeight={900} color={total_amount < 0 ? 'rgba(200,0,0, .8)' : 'rgba(50,200,150, .8)'}>
+                                {total_amount < 0 ? ' DR' : ' CR'} {formatNumberForUI(Math.abs(total_amount))} INR
+                            </TextTheme>
                         </View>
                     </View>
                 </View>
             </AnimateButton>
         </ScaleAnimationView>
-    )
+    );
 }
 
 
 
 
-export function CustomerLoadingView({isPrimary=false}): React.JSX.Element {
+export function CustomerLoadingView({ isPrimary = false }): React.JSX.Element {
     return (
         <ScaleAnimationView useRandomDelay={true} >
-            <BackgroundThemeView isPrimary={isPrimary} style={{padding: 12, borderRadius: 16, gap: 4}} >
+            <BackgroundThemeView isPrimary={isPrimary} style={{ padding: 12, borderRadius: 16, gap: 4 }} >
                 <LoadingView height={14} width={150} isPrimary={!isPrimary} />
-                <View style={{justifyContent: 'space-between', flexDirection: 'row'}} >
+                <View style={{ justifyContent: 'space-between', flexDirection: 'row' }} >
                     <LoadingView height={12} width={80} isPrimary={!isPrimary} />
                     <LoadingView height={12} width={60} isPrimary={!isPrimary} />
-                </View>     
+                </View>
             </BackgroundThemeView>
         </ScaleAnimationView>
-    )
+    );
 }

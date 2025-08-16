@@ -208,13 +208,11 @@ export const forgetPassword = createAsyncThunk(
   'user/forgetPassword',
   async ({ email }: { email: string }, { rejectWithValue }) => {
     try {
-      const response = await userApi.put('/auth/forgetPassword', {
-        email,
-      });
+      const response = await userApi.post(`/auth/forgot/password/${email}`);
+      console.log('Forget Password Response:', response);
 
-      if (response.data.sucess === true) {
-        console.log('reset link share on registered mailID');
-        return 1;
+      if (response.data.success === true) {
+        return;
       } else {
         return rejectWithValue(
           'Registration failed: No access token received.'
@@ -223,39 +221,6 @@ export const forgetPassword = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || 'Registration failed: Server error.'
-      );
-    }
-  }
-);
-
-export const resetPassword = createAsyncThunk(
-  'user/resetPassword',
-  async (
-    {
-      password,
-      confirmPassword,
-      token,
-    }: { password: string; confirmPassword: string; token: string },
-    { rejectWithValue }
-  ) => {
-    try {
-      const response = await userApi.put('/auth/resetPassword', {
-        password,
-        confirmPassword,
-        token,
-      });
-
-      console.log('reset Password res', response);
-      if (response.data.sucess === true) {
-        console.log('reset link share on registered mailID');
-        return 1;
-      } else {
-        return rejectWithValue('Password not updated.');
-      }
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message ||
-        'Password updation failed: Server error.'
       );
     }
   }
