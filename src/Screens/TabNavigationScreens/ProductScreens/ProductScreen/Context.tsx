@@ -41,7 +41,7 @@ export default function ProductContextProvider({ children }: { children: ReactNo
     }
 
     function resetFilters() {
-        setFilters({ sortBy: 'created_at', useAscOrder: false, status: 'all', category: 'All', group: 'All' });
+        setFilters({ sortBy: 'created_at', useAscOrder: false, status: 'all', searchQuery: '', category: 'All', group: 'All' });
     }
 
     const states = {

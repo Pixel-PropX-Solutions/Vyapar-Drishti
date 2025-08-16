@@ -13,7 +13,7 @@ type Filters = {
     endDate?: string,
 }
 
-const FilterDefaultValue: Filters = { sortBy: '', useAscOrder: false, status: 'all', billType: 'Invoices', searchQuery: '' }
+const FilterDefaultValue: Filters = { searchQuery:'', sortBy: '', useAscOrder: false, status: 'all', billType: 'Invoices', startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(), endDate: new Date().toISOString() };
 
 type ContextType = {
     date: Date, setDate: Dispatch<SetStateAction<Date>>,
@@ -26,7 +26,7 @@ const fn = () => { };
 const Context = createContext<ContextType>({
     date: { year: 0, month: 0 }, setDate: fn,
     isGstEnable: false,
-    filters: { sortBy: '', useAscOrder: false, status: 'all', billType: 'Invoices', startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(), endDate: new Date().toISOString() }, handleFilter: fn,
+    filters: FilterDefaultValue, handleFilter: fn,
 });
 
 
@@ -38,7 +38,7 @@ export default function BillContextProvider({ children }: { children: ReactNode 
 
 
     const [date, setDate] = useState<Date>({ year: new Date().getFullYear(), month: new Date().getMonth() });
-    const [filters, setFilters] = useState<Filters>({ sortBy: 'Default', useAscOrder: false, status: 'all', billType: 'Invoices', startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(), endDate: new Date().toISOString() });
+    const [filters, setFilters] = useState<Filters>(FilterDefaultValue);
 
     function handleFilter<Key extends keyof Filters>(key: Key, val: Filters[Key]) {
         setFilters(pre => ({

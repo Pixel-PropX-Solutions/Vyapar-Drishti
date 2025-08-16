@@ -30,7 +30,7 @@ export function Header(): React.JSX.Element {
 
     const [isFilterModalVisible, setFilterModalVisible] = useState<boolean>(false);
 
-    const {handleFilter} = useBillContext()
+    const { handleFilter } = useBillContext();
 
     return (
         <View style={{ paddingInline: 20 }} >
@@ -38,7 +38,7 @@ export function Header(): React.JSX.Element {
                 title="Bills"
                 onPressNotification={() => { navigator.navigate('notification-screen'); }}
                 searchButtonOpations={{
-                    onQueryChange: (query) => {handleFilter('searchQuery', query)}
+                    onQueryChange: (query) => { handleFilter('searchQuery', query); },
                 }}
             />
 
@@ -203,10 +203,10 @@ export function BillListing() {
         useCallback(() => {
             dispatch(setInvoice([]));
             dispatch(viewAllInvoices({
-                company_id: current_company_id ?? '', pageNumber: 1, type: filters.billType, sortOrder: filters.useAscOrder ? '1' : '-1',
-                start_date: formatLocalDate(new Date(filters.startDate ?? '')), end_date: formatLocalDate(new Date(filters.endDate ?? ''))
+                company_id: current_company_id ?? '', pageNumber: 1, type: filters.billType, sortOrder: filters.useAscOrder ? '1' : '-1', searchQuery: filters.searchQuery,
+                start_date: formatLocalDate(new Date(filters.startDate ?? '')), end_date: formatLocalDate(new Date(filters.endDate ?? '')),
             }));
-        }, [current_company_id, filters.billType, filters.useAscOrder, filters.startDate, filters.endDate])
+        }, [current_company_id, filters.billType, filters.useAscOrder, filters.startDate, filters.endDate, filters.searchQuery])
     );
 
     return (<>

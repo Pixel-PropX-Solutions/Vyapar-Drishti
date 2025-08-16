@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { useCallback, useEffect, useState } from 'react';
 import RoundedPlusButton from '../../../Components/Ui/Button/RoundedPlusButton';
 import CreateCustomerModal from '../../../Components/Modal/Customer/CreateCustomerModal';
-import { useAppDispatch, useCompanyStore, useCustomerStore, useUserStore } from '../../../Store/ReduxStore';
+import { useAppDispatch, useCustomerStore, useUserStore } from '../../../Store/ReduxStore';
 import { viewAllCustomer } from '../../../Services/customer';
 import CustomerCard, { CustomerLoadingView } from '../../../Components/Ui/Card/CustomerCard';
 import ShowWhen from '../../../Components/Other/ShowWhen';
@@ -17,7 +17,6 @@ import EntityListingHeader from '../../../Components/Layouts/Header/EntityListin
 import { setCustomers } from '../../../Store/Reducers/customerReducer';
 import AnimateButton from '../../../Components/Ui/Button/AnimateButton';
 import TextTheme from '../../../Components/Ui/Text/TextTheme';
-import { useTheme } from '../../../Contexts/ThemeProvider';
 import BackgroundThemeView from '../../../Components/Layouts/View/BackgroundThemeView';
 import CreateAccountModal from '../../../Components/Modal/Customer/CreateAccountModal';
 import AuthStore from '../../../Store/AuthStore';
@@ -28,11 +27,9 @@ export default function CustomerScreen(): React.JSX.Element {
 
     const dispatch = useAppDispatch();
     const { customers, isAllCustomerFetching, pageMeta } = useCustomerStore();
-    const { filters, handleFilter } = useCustomerContext();
+    const { filters } = useCustomerContext();
     const { user, current_company_id } = useUserStore();
     const currentCompanyId = current_company_id || AuthStore.getString('current_company_id') || user?.user_settings?.current_company_id || '';
-    const { company } = useCompanyStore();
-    const { primaryColor, primaryBackgroundColor } = useTheme();
     const [searchQuery, setSearchQuery] = useState<string>('')
 
     const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
@@ -48,7 +45,7 @@ export default function CustomerScreen(): React.JSX.Element {
 
 
     useEffect(() => {
-        if (!isCustomerTypeSelectorModalOpen) { dispatch(viewAllCustomer({ company_id: currentCompanyId, pageNumber: 1, type: filters.type })); }
+        if (!isCustomerTypeSelectorModalOpen) { dispatch(viewAllCustomer({ company_id: currentCompanyId, pageNumber: 1, type: filters.type, searchQuery })); }
     }, [isCustomerTypeSelectorModalOpen]);
 
     useFocusEffect(
@@ -65,9 +62,9 @@ export default function CustomerScreen(): React.JSX.Element {
                 <EntityListingHeader
                     title="Customers"
                     onPressNotification={() => { navigator.navigate('notification-screen'); }}
-                searchButtonOpations={{
-                    onQueryChange: setSearchQuery
-                }}
+                    searchButtonOpations={{
+                        onQueryChange: setSearchQuery
+                    }}
                 />
 
                 {/* <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>

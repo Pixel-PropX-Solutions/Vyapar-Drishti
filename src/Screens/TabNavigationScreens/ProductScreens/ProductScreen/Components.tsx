@@ -22,7 +22,7 @@ import { FilterModal } from './Modals';
 
 export function Header(): React.JSX.Element {
 
-    const {handleFilter} = useProductContext()
+    const { handleFilter } = useProductContext();
 
     return (
         <EntityListingHeader
@@ -31,7 +31,7 @@ export function Header(): React.JSX.Element {
             onPressNotification={() => { navigator.navigate('notification-screen'); }}
             searchButtonOpations={{
                 placeholder: 'Search Product',
-                onQueryChange: (query) => { handleFilter('searchQuery', query) }
+                onQueryChange: (query) => { handleFilter('searchQuery', query); },
             }}
         />
     );
@@ -179,17 +179,18 @@ export function ProductListing(): React.JSX.Element {
     function handleProductFetching() {
         if (isProductsFetching) { return; }
         if (productsPageMeta.total <= productsPageMeta.page * productsPageMeta.limit) { return; }
-        dispatch(viewAllProducts({ company_id: current_company_id ?? '', pageNumber: productsPageMeta.page + 1, group: filters.group, category: filters.category, sortField: filters.sortBy, sortOrder: filters.useAscOrder ? 'asc' : 'desc' }));
+        dispatch(viewAllProducts({ company_id: current_company_id ?? '', searchQuery: filters.searchQuery, pageNumber: productsPageMeta.page + 1, group: filters.group, category: filters.category, sortField: filters.sortBy, sortOrder: filters.useAscOrder ? 'asc' : 'desc' }));
     }
 
     useFocusEffect(
         useCallback(() => {
             dispatch(setProductsData([]));
-            dispatch(viewAllProducts({ 
-                company_id: current_company_id ?? '', 
+            dispatch(viewAllProducts({
+                company_id: current_company_id ?? '',
                 pageNumber: 1,
                 searchQuery: filters.searchQuery
-           , group: filters.group, category: filters.category, sortField: filters.sortBy, sortOrder: filters.useAscOrder ? 'asc' : 'desc' }));
+                , group: filters.group, category: filters.category, sortField: filters.sortBy, sortOrder: filters.useAscOrder ? 'asc' : 'desc'
+            }));
         }, [filters])
     );
 
