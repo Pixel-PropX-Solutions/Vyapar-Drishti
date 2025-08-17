@@ -65,8 +65,9 @@ export default function TransactionContextProvider({ children }: { children: Rea
         setAccount(null);
         setAmount('');
         setTransactionNo('AutoGen');
-        setCreateOn(new Date().toLocaleDateString());
         setNote('');
+        const time = new Date()
+        setCreateOn(`${time.getDate()}/${(time.getMonth() + 1).toString().padStart(2, '0')}/${time.getFullYear()}`);
     }
 
 
@@ -93,6 +94,11 @@ export default function TransactionContextProvider({ children }: { children: Rea
 
         setProgress(progress / 5);
     }, [transactionNo, createOn, customer, amount]);
+
+    useEffect(() => {
+        const time = new Date();
+        setCreateOn(`${time.getDate()}/${(time.getMonth() + 1).toString().padStart(2, '0')}/${time.getFullYear()}`);
+    }, [])
 
 
     return (

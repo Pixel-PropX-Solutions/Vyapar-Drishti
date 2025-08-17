@@ -60,45 +60,43 @@ export default function DateSelectorModal({ visible, setVisible, onClose, closeO
             <View style={{ width: '100%', height: '100%', padding: 20, alignItems: 'center', justifyContent: 'center' }} >
                 <AnimateButton style={{ flex: 1, width: '100%' }} onPress={() => { setVisible(!closeOnBack) }} />
 
-                <ScaleAnimationView style={{width: '100%'}} delay={500}>
-                    <BackgroundThemeView isPrimary={false} style={{padding: 12, borderRadius: 10, width: '100%', gap: 12}} >
+                <BackgroundThemeView isPrimary={false} style={{padding: 12, borderRadius: 10, width: '100%', gap: 12}} >
 
-                        <TextTheme>Select Date</TextTheme>
+                    <TextTheme>Select Date</TextTheme>
 
-                        <TextTheme fontSize={28} fontWeight={900} >
-                            {monthNames[month]} {date}, {year}
-                        </TextTheme>
+                    <TextTheme fontSize={28} fontWeight={900} >
+                        {monthNames[month]} {date}, {year}
+                    </TextTheme>
 
-                        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingInline: 10, height: 40, borderRadius: 40, borderWidth: 2, borderColor: primaryColor}} >
-                            <AnimateButton style={{borderRadius: 20, padding: 4}} onPress={() => {incrementMonth(-1)}}>
-                                <FeatherIcon name="chevron-left" size={20} />
-                            </AnimateButton>
-                
-                            <Pressable onPress={() => {setYearModalVisible(true)}} >
-                                <TextTheme fontSize={16} fontWeight={900} >{monthNames[month]}, {year}</TextTheme>
-                            </Pressable>
-                            
-                            <AnimateButton style={{borderRadius: 20, padding: 4}} onPress={() => {incrementMonth(1)}}>
-                                <FeatherIcon name="chevron-right" size={20} />
-                            </AnimateButton>
-                        </View>
+                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingInline: 10, height: 40, borderRadius: 40, borderWidth: 2, borderColor: primaryColor}} >
+                        <AnimateButton style={{borderRadius: 20, padding: 4}} onPress={() => {incrementMonth(-1)}}>
+                            <FeatherIcon name="chevron-left" size={20} />
+                        </AnimateButton>
+            
+                        <Pressable onPress={() => {setYearModalVisible(true)}} >
+                            <TextTheme fontSize={16} fontWeight={900} >{monthNames[month]}, {year}</TextTheme>
+                        </Pressable>
+                        
+                        <AnimateButton style={{borderRadius: 20, padding: 4}} onPress={() => {incrementMonth(1)}}>
+                            <FeatherIcon name="chevron-right" size={20} />
+                        </AnimateButton>
+                    </View>
 
-                        <DisplayCalender date={date} month={month} year={year} onSelect={(date) => setDate(date)} />
+                    <DisplayCalender date={date} month={month} year={year} onSelect={(date) => setDate(date)} />
 
-                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 12}} >
-                            <NormalButton 
-                                isPrimary={false} text="Cancel" 
-                                onPress={() => {setVisible(false)}}
-                            />
-                            <NormalButton 
-                                text="Select" 
-                                onPress={() => {
-                                    onSelect({year, month, date}); setVisible(false)
-                                }}    
-                            />
-                        </View>
-                    </BackgroundThemeView>
-                </ScaleAnimationView>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 12}} >
+                        <NormalButton 
+                            isPrimary={false} text="Cancel" 
+                            onPress={() => {setVisible(false)}}
+                        />
+                        <NormalButton 
+                            text="Select" 
+                            onPress={() => {
+                                onSelect({year, month, date}); setVisible(false)
+                            }}    
+                        />
+                    </View>
+                </BackgroundThemeView>
 
                 <AnimateButton style={{ flex: 1, width: '100%' }} onPress={() => { setVisible(!closeOnBack) }} />
             </View>
