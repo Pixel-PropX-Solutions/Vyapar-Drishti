@@ -1,20 +1,35 @@
 import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
 
 
-type Product = {
-    id: string,
-    price: number,
-    quantity: number,
-    name: string,
-    hsnCode: string,
-    unit: string,
-    gstRate: string
+export type Product = {
+    // vouchar_id: string,
+    item: string, item_id: string, unit: string, hsn_code: string, quantity: number, rate: number, amount: number, discount_amount: number, tax_rate: number, tax_amount: number, total_amount: number
 }
+
+const productDefaultValue: Product = {item: '', item_id: '', unit: '', hsn_code: '', quantity: 0, rate: 0, amount: 0, discount_amount: 0, tax_rate: 0, tax_amount: 0, total_amount: 0}
 
 type Customer = {
     id: string,
     name: string,
     group: string
+}
+
+type AdditionalDetails = {
+    dueDate: string,
+    payAmount: string,
+    transportMode: string,
+    vechicleNumber: string,
+    note: string
+}
+
+type HandleAdditionalDetails = <Field extends keyof AdditionalDetails>(field: Field, val: AdditionalDetails[Field]) => void;
+
+const additionalDetailsDefaultValue: AdditionalDetails = {
+    dueDate: '',
+    payAmount: '',
+    transportMode: '',
+    vechicleNumber: '',
+    note: ''
 }
 
 type ContextType = {
@@ -32,7 +47,10 @@ type ContextType = {
     createOn: string,
     setCreateOn: Dispatch<SetStateAction<string>>,
 
-    progress: number,
+    additionalDetails: AdditionalDetails,
+    handleAdditionalDetails: HandleAdditionalDetails
+
+    progress: number,    
 
     resetAllStates: () => void
 }
@@ -48,6 +66,8 @@ const Context = createContext<ContextType>({
     createOn: '', setCreateOn: fn,
     resetAllStates: fn,
     progress: 0,
+    additionalDetails: additionalDetailsDefaultValue,
+    handleAdditionalDetails: fn
 });
 
 
@@ -60,10 +80,18 @@ export default function BillContextProvider({ children }: { children: React.Reac
     const [billNo, setBillNo] = useState<string>('INV-000');
     const [createOn, setCreateOn] = useState<string>(new Date().toLocaleDateString());
     const [progress, setProgress] = useState<number>(0);
+    const [additionalDetails, setAdditionalDetails] = useState<AdditionalDetails>(additionalDetailsDefaultValue);
+
+    const handleAdditionalDetails: HandleAdditionalDetails = (field, val) => {
+        setAdditionalDetails(pre => ({
+            ...pre, [field]: val
+        }));
+    }
 
     function resetAllStates(): void {
         setProducts([]); setCreateOn(new Date().toLocaleDateString());
         setCustomer(null); setTotalValue(0);
+        setAdditionalDetails(additionalDetailsDefaultValue)
     }
 
     const states = {
@@ -74,10 +102,12 @@ export default function BillContextProvider({ children }: { children: React.Reac
         createOn, setCreateOn,
         resetAllStates,
         progress,
+
+        additionalDetails, handleAdditionalDetails
     };
 
     useEffect(() => {
-        setTotalValue(() => products.reduce((acc, pro) => acc + (pro.price * pro.quantity) + (((pro.price * pro.quantity) * Number(pro.gstRate)) / 100), 0));
+        setTotalValue(() => products.reduce((acc, pro) => acc + pro.total_amount, 0));
     }, [products]);
 
     useEffect(() => {
@@ -104,3 +134,6 @@ export default function BillContextProvider({ children }: { children: React.Reac
 export function useBillContext() {
     return useContext(Context);
 }
+
+
+

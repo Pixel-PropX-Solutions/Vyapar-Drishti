@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import TextTheme from '../../../../Components/Ui/Text/TextTheme';
 import BillContextProvider from './Context';
-import { AmountBox, BillNoSelector, CustomerSelector, DateSelector, Header, ProductListing, ProductSelector, ProgressBar } from './Components';
+import { AdditionalDetailSelector, AmountBox, BillNoSelector, CustomerSelector, DateSelector, Header, ProductListing, ProductSelector, ProgressBar } from './Components';
 
 
 export default function BillCreateScreen() {
@@ -32,6 +32,7 @@ export default function BillCreateScreen() {
 
                         <CustomerSelector />
                         <ProductSelector />
+                        <AdditionalDetailSelector/>
                     </View>
 
                     <ProductListing />

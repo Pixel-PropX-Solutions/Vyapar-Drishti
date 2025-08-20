@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import DateSelectorModal from '../../../../Components/Modal/Selectors/DateSelectorModal';
 import { useTransactionContext } from './Context';
 import { SectionRow, SectionRowWithIcon } from '../../../../Components/Layouts/View/SectionView';
-import { AccountSelectorModal, AmountModal, CustomerSelectorModal, DescriptionModal } from './Modals';
+import { AccountSelectorModal, CustomerSelectorModal } from './Modals';
 import { formatNumberForUI, roundToDecimal } from '../../../../Utils/functionTools';
 import NormalButton from '../../../../Components/Ui/Button/NormalButton';
 import ShowWhen from '../../../../Components/Other/ShowWhen';
@@ -23,6 +23,7 @@ import { CreateInvoiceData } from '../../../../Utils/types';
 import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
 import MaterialDesignIcon from '../../../../Components/Icon/MaterialDesignIcon';
+import AutoFocusInputModal from '../../../../Components/Ui/TextInput/AutoFocusInputModal';
 
 
 
@@ -234,7 +235,7 @@ export function AccountSelector() {
 }
 
 export function AmountSection() {
-    const {amount} = useTransactionContext()
+    const {amount, setAmount} = useTransactionContext()
     const {currency} = useAppStorage()
     
     const router = useRoute<RouteProp<StackParamsList, 'create-transaction-screen'>>();
@@ -254,13 +255,32 @@ export function AmountSection() {
             onPress={() => { setModalVisible(true); }}
         />
 
-        <AmountModal visible={isModalVisible} setVisible={setModalVisible} />
+        <AutoFocusInputModal 
+            visible={isModalVisible} setVisible={setModalVisible} 
+            label='Add Amount'
+            placeholder='0.00'
+            keyboardType='number-pad'
+            onSet={setAmount}
+
+            inputValueFilters={(cur, old) => {
+                const char = cur.at(-1) ?? '';
+
+                if (cur.length > 1 && cur[0] === '0' && cur[1] === '0') return old;
+                if(!'0123456789.'.includes(char)) return old;
+                if(char === '.' && cur.slice(0, -1).includes('.')) return old;
+
+                if(cur.length > 1 && cur[0] === '0' && !cur.includes('.')) return cur.slice(1);
+                return cur;
+            }}
+
+            containerChild={<TextTheme fontSize={16} fontWeight={600} >{currency}</TextTheme>}
+        />
     </>);
 }
 
 export function DescriptionSection() {
 
-    const { note } = useTransactionContext();
+    const { note, setNote } = useTransactionContext();
 
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
@@ -281,7 +301,15 @@ export function DescriptionSection() {
             </BackgroundThemeView>
         </AnimateButton>
 
-        <DescriptionModal visible={isModalVisible} setVisible={setModalVisible} />
+        <AutoFocusInputModal 
+            visible={isModalVisible} 
+            setVisible={setModalVisible}
+            label='Add Note'
+            placeholder='Type note that you want to attach' 
+            multiline={true}
+            numberOfLines={5}
+            onSet={setNote}
+        />
     </>);
 }
 

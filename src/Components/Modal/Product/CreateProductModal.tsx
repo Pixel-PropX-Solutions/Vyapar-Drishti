@@ -273,76 +273,8 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
 
                 </CollapsabeMenu>
 
-                {/* Additional Information */}
-                <CollapsabeMenu
-                    expanded={additionalInfoExpanded}
-                    setExpanded={setAdditionalInfoExpanded}
-                    header="Additional Information"
-                >
-                    <InputField
-                        icon={<FeatherIcon name="file-text" size={20} color={primaryColor} />}
-                        placeholder="Description"
-                        field="description"
-                        multiline={true}
-                        handleChange={handleChange}
-                    />
-
-                    {/* <InputField
-                        icon={<FeatherIcon name="folder" size={20} color={primaryColor} />}
-                        placeholder="Category"
-                        field="category"
-                        handleChange={handleChange}
-                    />
-
-                    <InputField
-                        icon={<FeatherIcon name="grid" size={20} color={primaryColor} />}
-                        placeholder="Group"
-                        field="group"
-                        handleChange={handleChange}
-                    />
-                    */}
-                    <InputField
-                        icon={<FeatherIcon name="alert-triangle" size={20} color={primaryColor} />}
-                        placeholder="Low Stock Alert Level"
-                        field="low_stock_alert"
-                        keyboardType="number-pad"
-                        handleChange={handleChange}
-                        info="Set a threshold for low stock alert. Default is 0."
-                    />
-                    {/* <CollapsabeMenu
-                        expanded={isOpeningStockVisible}
-                        setExpanded={setOpeningStockVisible}
-                        header="Opening Stock Information"
-                    >
-                        <InputField
-                            icon={<FeatherIcon name="package" size={20} color={primaryColor} />}
-                            placeholder="Opening Quantity"
-                            field="opening_balance"
-                            keyboardType="number-pad"
-                            handleChange={handleChange}
-                            info="Set the initial stock quantity. Default is 0."
-                        />
-                        <InputField
-                            icon={<FeatherIcon name="tag" size={20} color={primaryColor} />}
-                            placeholder="Opening Rate"
-                            field="opening_rate"
-                            keyboardType="number-pad"
-                            handleChange={handleChange}
-                            info="Set the initial rate per unit. Default is 0."
-                        />
-                        <InputField
-                            icon={<FeatherIcon name="archive" size={20} color={primaryColor} />}
-                            placeholder="Opening Value"
-                            field="opening_value"
-                            keyboardType="number-pad"
-                            handleChange={handleChange}
-                            info="Set the initial value of stock. Default is 0."
-                        />
-                    </CollapsabeMenu> */}
-
-                </CollapsabeMenu>
                 {/* GST Information */}
-                {gst_enable && (<View style={{
+                {!gst_enable && (<View style={{
                     borderRadius: 30,
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -389,6 +321,76 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                         </View>
                     </CollapsabeMenu>
                 </View>)}
+
+                {/* Additional Information */}
+                <CollapsabeMenu
+                    expanded={additionalInfoExpanded}
+                    setExpanded={setAdditionalInfoExpanded}
+                    header="Additional Information"
+                >
+                    <InputField
+                        icon={<FeatherIcon name="file-text" size={20} color={primaryColor} />}
+                        placeholder="Description"
+                        field="description"
+                        multiline={true}
+                        handleChange={handleChange}
+                    />
+
+                    {/* <InputField
+                        icon={<FeatherIcon name="folder" size={20} color={primaryColor} />}
+                        placeholder="Category"
+                        field="category"
+                        handleChange={handleChange}
+                    />
+
+                    <InputField
+                        icon={<FeatherIcon name="grid" size={20} color={primaryColor} />}
+                        placeholder="Group"
+                        field="group"
+                        handleChange={handleChange}
+                    />
+                    */}
+                    <InputField
+                        icon={<FeatherIcon name="alert-triangle" size={20} color={primaryColor} />}
+                        placeholder="Low Stock Alert Level"
+                        field="low_stock_alert"
+                        keyboardType="number-pad"
+                        handleChange={handleChange}
+                        info="Set a threshold for low stock alert. Default is 0."
+                    />
+
+                </CollapsabeMenu>
+                    <CollapsabeMenu
+                        expanded={isOpeningStockVisible}
+                        setExpanded={setOpeningStockVisible}
+                        header="Opening Stock Information"
+                    >
+                        <InputField
+                            icon={<FeatherIcon name="package" size={20} color={primaryColor} />}
+                            placeholder="Opening Quantity"
+                            field="opening_balance"
+                            keyboardType="number-pad"
+                            handleChange={handleChange}
+                            info="Set the initial stock quantity. Default is 0."
+                        />
+                        <InputField
+                            icon={<FeatherIcon name="tag" size={20} color={primaryColor} />}
+                            placeholder="Opening Rate"
+                            field="opening_rate"
+                            keyboardType="number-pad"
+                            handleChange={handleChange}
+                            info="Set the initial rate per unit. Default is 0."
+                        />
+                        <InputField
+                            icon={<FeatherIcon name="archive" size={20} color={primaryColor} />}
+                            placeholder="Opening Value"
+                            field="opening_value"
+                            keyboardType="number-pad"
+                            handleChange={handleChange}
+                            info="Set the initial value of stock. Default is 0."
+                        />
+                    </CollapsabeMenu>
+                
             </ScrollView>
 
 

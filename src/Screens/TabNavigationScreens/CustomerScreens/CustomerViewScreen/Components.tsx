@@ -30,6 +30,8 @@ export function ProfileSection() {
     const { id: customer_id } = router.params;
     const dispatch = useAppDispatch();
     const { filters } = useCustomerContext();
+    const {secondaryBackgroundColor} = useTheme()
+
     useEffect(() => {
         if (customer_id) {
             dispatch(getCustomer({ customer_id: customer_id, start_date: formatLocalDate(new Date(filters.startDate ?? '')), end_date: formatLocalDate(new Date(filters.endDate ?? '')) })); // Adjusted to match the new API signature
@@ -43,7 +45,7 @@ export function ProfileSection() {
             <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'space-between' }} >
                 <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }} >
                     <AnimateButton
-                        style={{ aspectRatio: 1, width: 40, borderRadius: 40, alignItems: 'center', justifyContent: 'center' }}
+                        style={{ aspectRatio: 1, width: 40, borderRadius: 40, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: secondaryBackgroundColor }}
                         onPress={() => { navigator.goBack(); }}
                     >
                         <FeatherIcon name="chevron-left" size={20} />

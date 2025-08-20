@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import { TextInputProps, View, ViewStyle } from 'react-native';
 import TextTheme from '../Text/TextTheme';
-import { ReactNode, Ref, useState } from 'react';
+import { ReactNode, Ref, useEffect, useRef, useState } from 'react';
 import { Text, TextInput } from 'react-native-gesture-handler';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 import Popover from '../../Other/Popover';
@@ -23,12 +23,17 @@ type Props = TextInputProps & {
     infoMessageWidth?: number,
     isRequired?: boolean,
     capitalize?: 'none' | 'sentences' | 'words' | 'characters',
+    postChild?: ReactNode,
+    autoFocus?: boolean,
+    valueRefreshDipendency?: any[],
+    isNeedValueRefresh?: () => boolean
 }
 
-export default function LabelTextInput({ label, icon, containerStyle, onChangeText, focusColor = 'rgb(50, 150, 250)', messageTextColor = 'rgb(200,50,50)', checkInputText, message, value = '', useTrim = true, infoMessage = '', capitalize = 'none', infoIconSize = 20, infoMessageWidth, isRequired = false, ...props }: Props): React.JSX.Element {
+export default function LabelTextInput({ label, icon, containerStyle, onChangeText, focusColor = 'rgb(50, 150, 250)', messageTextColor = 'rgb(200,50,50)', checkInputText, message, value = '', useTrim = true, infoMessage = '', capitalize = 'none', infoIconSize = 20, infoMessageWidth, isRequired = false, postChild, autoFocus, valueRefreshDipendency, isNeedValueRefresh, ...props }: Props): React.JSX.Element {
 
     const { primaryColor: color, primaryBackgroundColor: backgroundColor } = useTheme();
 
+    const input = useRef<TextInput>(null)
     const [isFocus, setFocus] = useState<boolean>(false);
     const [inputText, setInputText] = useState<string>(value);
     const [isInputTextValid, setInputTextValid] = useState<boolean>(true);
@@ -40,6 +45,24 @@ export default function LabelTextInput({ label, icon, containerStyle, onChangeTe
         if (checkInputText) { setInputTextValid(checkInputText(text)); }
         if (!text) { setInputTextValid(true); }
     }
+
+    useEffect(() => {
+        if(isNeedValueRefresh && isNeedValueRefresh()) {
+            setInputText(value);
+        } else  {
+            setInputText(value);
+        }
+    }, [...(valueRefreshDipendency ?? [])])
+
+    useEffect(() => {
+        if(!autoFocus) return;
+
+        const timeout = setTimeout(() => {
+            input.current?.focus();
+        }, 350);
+
+        return () => clearTimeout(timeout);
+    }, [])
 
     return (
         <View style={containerStyle} >
@@ -63,7 +86,9 @@ export default function LabelTextInput({ label, icon, containerStyle, onChangeTe
                 {icon ?? null}
                 <TextInput
                     {...props}
+                    ref={input}
                     value={inputText}
+                    autoFocus={false}
                     placeholderTextColor={'rgba(0,0,0,0.4)'}
                     autoCapitalize={capitalize}
                     onChangeText={handleOnChangeText}
@@ -74,6 +99,8 @@ export default function LabelTextInput({ label, icon, containerStyle, onChangeTe
                         color, paddingTop: 14, flex: 1,
                     }}
                 />
+                
+                {postChild ? postChild : null}
 
                 <ShowWhen when={!!infoMessage} >
                     <Popover

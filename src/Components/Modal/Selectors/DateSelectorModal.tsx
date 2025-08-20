@@ -8,6 +8,7 @@ import FeatherIcon from "../../Icon/FeatherIcon";
 import { useTheme } from "../../../Contexts/ThemeProvider";
 import { ItemSelectorModal } from "./ItemSelectorModal";
 import ScaleAnimationView from "../../Ui/Animation/ScaleAnimationView";
+import { compareDates } from "../../../Utils/functionTools";
 
 type Props = ModalProps & {
     visible: boolean,
@@ -15,12 +16,13 @@ type Props = ModalProps & {
     closeOnBack?: boolean
     onClose?: () => void,
     onSelect: (ddmmyy: { year: number, month: number, date: number }) => void,
-    value?: { year: number, month: number, date: number }
+    value?: { year: number, month: number, date: number },
+    selectFutureData?: boolean
 }
 
 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-export default function DateSelectorModal({ visible, setVisible, onClose, closeOnBack = true, onSelect, value, ...props }: Props): React.JSX.Element {
+export default function DateSelectorModal({ visible, setVisible, onClose, closeOnBack = true, onSelect, value, selectFutureData=false, ...props }: Props): React.JSX.Element {
 
     const { primaryColor } = useTheme();
 
@@ -32,11 +34,13 @@ export default function DateSelectorModal({ visible, setVisible, onClose, closeO
 
     function incrementMonth(by: number) {
         const nextMonth = (month + by + 12) % 12;
+        if(!selectFutureData && compareDates([date, nextMonth, year]) === 1) return;
         setMonth(nextMonth);
-
+        
         if (0 <= month + by && month + by <= 11) return;
-
+        
         const nextYear = year + Math.floor((month + by) / 12);
+        if(!selectFutureData && compareDates([date, nextMonth, nextYear]) === 1) return;
         setYear(nextYear)
     }
 
@@ -82,7 +86,7 @@ export default function DateSelectorModal({ visible, setVisible, onClose, closeO
                         </AnimateButton>
                     </View>
 
-                    <DisplayCalender date={date} month={month} year={year} onSelect={(date) => setDate(date)} />
+                    <DisplayCalender date={date} month={month} year={year} onSelect={(date) => setDate(date)} selectFutureData={selectFutureData}  />
 
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 12}} >
                         <NormalButton 
@@ -106,6 +110,7 @@ export default function DateSelectorModal({ visible, setVisible, onClose, closeO
                 setYear={setYear} year={year}
                 month={month} setMonth={setMonth}
                 date={date}
+                selectFutureData={selectFutureData}
             />
         </Modal>
     )
@@ -114,10 +119,11 @@ export default function DateSelectorModal({ visible, setVisible, onClose, closeO
 
 type DisplayCalenderProps = {
     date: number, month: number, year: number,
-    onSelect?: (date: number) => void
+    onSelect?: (date: number) => void,
+    selectFutureData: boolean
 }
 
-function DisplayCalender({ date, month, year, onSelect }: DisplayCalenderProps): React.JSX.Element {
+function DisplayCalender({ date, month, year, onSelect, selectFutureData }: DisplayCalenderProps): React.JSX.Element {
 
     const calenderMat = useMemo(() => {
         const calendar: number[][] = [];
@@ -147,6 +153,8 @@ function DisplayCalender({ date, month, year, onSelect }: DisplayCalenderProps):
     const [selected, setSelected] = useState<number>(date ?? currentDate);
 
     function handleSelect(date: number) {
+        if(!selectFutureData && compareDates([date, month, year]) === 1) return;
+
         if (date !== 0) {
             setSelected(date);
 
@@ -205,10 +213,11 @@ type YearSelectorModalProps = {
     visible: boolean, setVisible: Dispatch<SetStateAction<boolean>>,
     year: number, setYear: Dispatch<SetStateAction<number>>,
     month: number, setMonth: Dispatch<SetStateAction<number>>,
-    date: number
+    date: number,
+    selectFutureData: boolean
 }
 
-function YearSelectorModal({ visible, setVisible, year, setYear, month, setMonth, date }: YearSelectorModalProps): React.JSX.Element {
+function YearSelectorModal({ visible, setVisible, year, setYear, month, setMonth, date, selectFutureData }: YearSelectorModalProps): React.JSX.Element {
 
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth();
@@ -218,7 +227,7 @@ function YearSelectorModal({ visible, setVisible, year, setYear, month, setMonth
         let data: Year[] = [];
         for (let year of years) {
             for (let month = 11; month >= 0; month--) {
-                if (currentMonth >= month || currentYear > year)
+                if (selectFutureData || currentMonth >= month || currentYear > year)
                     data.push({ year, month })
             }
         }
@@ -233,7 +242,7 @@ function YearSelectorModal({ visible, setVisible, year, setYear, month, setMonth
             onSelect={item => { setYear(item.year); setMonth(item.month) }}
             keyExtractor={item => (item.year * 100 + item.month).toString()}
             SelectedItemContent={
-                <TextTheme style={{ fontWeight: 900 }} >{monthNames[month]} {date}, {year}</TextTheme>
+                <TextTheme fontWeight={600} color="white" >{monthNames[month]} {date}, {year}</TextTheme>
             }
 
             renderItemContent={item => (<>

@@ -1,10 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import { useBillContext } from './Context';
+import { Product, useBillContext } from './Context';
 import { useTheme } from '../../../../Contexts/ThemeProvider';
 import BottomModal from '../../../../Components/Modal/BottomModal';
 import TextTheme from '../../../../Components/Ui/Text/TextTheme';
-import { Alert, FlatList, View } from 'react-native';
+import { Alert, FlatList, ScrollView, View } from 'react-native';
 import { InputField } from '../../../../Components/Ui/TextInput/InputField';
 import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
 import MaterialIcon from '../../../../Components/Icon/MaterialIcon';
@@ -26,11 +26,16 @@ import { ProductLoadingCard } from '../../../../Components/Ui/Card/ProductCard';
 import CreateProductModal from '../../../../Components/Modal/Product/CreateProductModal';
 import { CustomerLoadingView } from '../../../../Components/Ui/Card/CustomerCard';
 import ScaleAnimationView from '../../../../Components/Ui/Animation/ScaleAnimationView';
-import { SectionRowWithIcon } from '../../../../Components/Layouts/View/SectionView';
+import SectionView, { SectionRow, SectionRowWithIcon } from '../../../../Components/Layouts/View/SectionView';
 import { setCustomers } from '../../../../Store/Reducers/customerReducer';
 import { MeasurmentUnitsData } from '../../../../Assets/objects-data/measurment-units-data';
 import { retry } from '@reduxjs/toolkit/query';
 import { TextInput } from 'react-native-gesture-handler';
+import LabelTextInput from '../../../../Components/Ui/TextInput/LabelTextInput';
+import AutoFocusInputModal from '../../../../Components/Ui/TextInput/AutoFocusInputModal';
+import DateSelectorModal from '../../../../Components/Modal/Selectors/DateSelectorModal';
+import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
+import { useProduct } from './Hooks';
 
 
 type Props = {
@@ -41,34 +46,30 @@ type Props = {
 
 export function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }: Props & { editProductIndex: number }): React.JSX.Element {
 
-    const { products, setProducts } = useBillContext();
-    const { primaryColor } = useTheme();
+    const {setAlert} = useAlert()
+    const { products } = useBillContext();
+    const {currency} = useAppStorage()
 
-    const [info, _setInfo] = useState(products[editProductIndex]);
-
-    const setInfo = (field: string, value: string | number | boolean) => {
-        _setInfo(prev => ({
-            ...prev,
-            [field]: value,
-        }));
-    };
+    const product = useProduct(editProductIndex, visible);
 
     function handleSave() {
-        setVisible(false);
-        setProducts(prev => {
-            let temp = [...prev];
-            temp[editProductIndex] = info;
-            return temp;
-        });
-    }
+        if(product.data.quantity <= 0 || product.data.rate <= 0) {
+            setAlert({
+                id: 'create-bill-product-selector-modal',
+                type: 'error', message: 'please enter all required information !!!',
+            });
+            
+            return;
+        };
 
-    useEffect(() => {
-        _setInfo(products[editProductIndex]);
-    }, [products, editProductIndex]);
+        setVisible(false);
+        product.update();
+    }
 
     if (products.length === 0 || editProductIndex < 0 || editProductIndex >= products.length) {
         return <></>;
     }
+
 
     return (
         <BottomModal
@@ -80,41 +81,81 @@ export function ProductInfoUpdateModal({ visible, setVisible, editProductIndex }
                 backgroundColor: 'rgb(50,200,150)',
             }]}
         >
-            <TextTheme style={{ fontWeight: 800, fontSize: 16 }} >Select Quantity</TextTheme>
+            <ScrollView 
+                contentContainerStyle={{gap: 24}} 
+                showsVerticalScrollIndicator={false}
+            >
+                    <SectionView  
+                        label='Fill Details'
+                        style={{gap: 14}}
+                    >
+                        <LabelTextInput
+                            label='Quantity'
+                            placeholder='Enter Quantity'
+                            keyboardType='numeric'
+                            value={product.data.quantity.toString()}
+                            valueRefreshDipendency={[product.data.item_id, editProductIndex]}
+                            checkInputText={(val) => 0 < Number(val)}
+                            postChild={<TextTheme>{currency} / {product.data.unit}</TextTheme>}
+                            icon={<FeatherIcon name='package' size={16} />}
+                            onChangeText={(val) => {product.handleData('quantity', Number(val))}}
+                            autoFocus={true}
+                        />
+                        
+                        <LabelTextInput
+                            label='Rate'
+                            placeholder='Enter per unit rate'
+                            keyboardType='numeric'
+                            value={product.data.rate.toString()}
+                            valueRefreshDipendency={[product.data.item_id, editProductIndex]}
+                            checkInputText={(val) => 0 < Number(val)}
+                            postChild={<TextTheme>{currency} / {product.data.unit}</TextTheme>}
+                            icon={<MaterialIcon name="currency-rupee" size={16} />}
+                            onChangeText={(val) => {product.handleData('rate', Number(val))}}
+                        />
+                        
+                        <LabelTextInput
+                            label='Discount'
+                            placeholder='Enter discount amount'
+                            keyboardType='numeric'
+                            value={product.data.discount_amount.toString()}
+                            checkInputText={(val) => 0 < Number(val)}
+                            valueRefreshDipendency={[product.data.item_id, editProductIndex]}
+                            postChild={<TextTheme>{currency} / {product.data.unit}</TextTheme>}
+                            icon={<MaterialIcon name="currency-rupee" size={16} />}
+                            onChangeText={(val) => {product.handleData('discount_amount', Number(val))}}
+                        />
+                    </SectionView>
 
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }} >
-                <View style={{ flex: 1, paddingRight: 8 }} >
-                    <InputField
-                        icon={<FeatherIcon name="package" size={20} />}
-                        field="quantity"
-                        handleChange={setInfo}
-                        value={products[editProductIndex]?.quantity}
-                        placeholder="Quantity"
-                        keyboardType="number-pad"
-                        type="decimal-3"
-                    />
-                </View>
-            </View>
+                    <SectionView label='Snap Short' style={{gap: 4}} >
+                        <SectionRow style={{justifyContent: 'space-between'}}>
+                            <TextTheme isPrimary={false} fontWeight={600} >Sub Total</TextTheme>
+                            <TextTheme fontWeight={600}>{product.data.amount} {currency}</TextTheme>
+                        </SectionRow>
 
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }} >
-                <View style={{ flex: 1, paddingRight: 8 }} >
-                    <InputField
-                        icon={<MaterialIcon name="currency-rupee" size={20} />}
-                        field="price"
-                        handleChange={setInfo}
-                        value={products[editProductIndex]?.price}
-                        placeholder="Enter rate"
-                        keyboardType="number-pad"
-                        type="decimal-2"
-                    />
-                </View>
+                        <SectionRow style={{justifyContent: 'space-between'}}>
+                            <TextTheme isPrimary={false} fontWeight={600} >Discount Amount</TextTheme>
+                            <TextTheme fontWeight={600}>{product.data.discount_amount} {currency}</TextTheme>
+                        </SectionRow>
 
-                <AnimateButton
-                    style={{ marginBlock: 16, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, paddingLeft: 8, paddingRight: 20 }}
-                >
-                    <TextTheme style={{ fontSize: 14, fontWeight: 900 }}>/ {'Unit'}</TextTheme>
-                </AnimateButton>
-            </View>
+                        <SectionRow style={{justifyContent: 'space-between'}}>
+                            <TextTheme isPrimary={false} fontWeight={600} >Tax Rate</TextTheme>
+                            <TextTheme fontWeight={600}>{product.data.tax_rate} %</TextTheme>
+                        </SectionRow>
+                        
+                        <SectionRow style={{justifyContent: 'space-between'}}>
+                            <TextTheme isPrimary={false} fontWeight={600} >Tax Amount</TextTheme>
+                            <TextTheme fontWeight={600}>{product.data.tax_amount} {currency}</TextTheme>
+                        </SectionRow>
+
+                        <SectionRow style={{justifyContent: 'space-between'}}>
+                            <TextTheme isPrimary={false} fontWeight={600} >Grand Total</TextTheme>
+                            <TextTheme fontWeight={600}>{product.data.total_amount} {currency}</TextTheme>
+                        </SectionRow>
+                    </SectionView>
+
+                    <View style={{minHeight: 40}} />
+                </ScrollView>
         </BottomModal>
     );
 }
@@ -234,10 +275,9 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
 export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.Element {
 
     const { setAlert } = useAlert();
+    const {currency} = useAppStorage()
 
     const dispatch = useAppDispatch();
-    const { primaryColor } = useTheme();
-    const { setProducts } = useBillContext();
     const { current_company_id } = useUserStore();
 
     const [isFetching, setIsFetching] = useState(false);
@@ -245,47 +285,17 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
     const [isCreateModalOpen, setCreateModalOpen] = useState<boolean>(false);
     const [itemsList, setItemsList] = useState<{ id: string; name: string; unit: string, gst: string, hsn_code: string }[]>([]);
 
-    const [data, setData] = useState({
-        quantity: '',
-        price: '',
-        unit: '',
-        productId: '',
-        name: '',
-        hsnCode: '',
-        gstRate: '',
-    });
-
-    const handleInputChange = (field: string, value: string | number | boolean) => {
-        setData(prev => ({ ...prev, [field]: value }));
-    };
+    const product = useProduct();
 
     function handleProduct() {
-        if (!data.price || !data.quantity) {
+        if (!(product.data.rate > 0 && product.data.quantity > 0 && product.data.discount_amount >= 0)) {
             return setAlert({
                 id: 'create-bill-product-selector-modal',
-                type: 'error', message: 'please enter all required information !!!',
+                type: 'error', message: 'please enter valid information !!!',
             });
         }
 
-        setProducts((pro) => [...pro, {
-            id: data.productId,
-            price: Number(data.price),
-            quantity: Number(data.quantity),
-            name: data.name,
-            hsnCode: data.hsnCode,
-            unit: data.unit,
-            gstRate: data.gstRate,
-        }]);
-
-        setData({
-            quantity: '',
-            price: '',
-            unit: 'Unit',
-            productId: '',
-            name: '',
-            hsnCode: '',
-            gstRate: '',
-        });
+        product.add();
 
         setUnitModalVisible(false);
         setVisible(false);
@@ -343,13 +353,11 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
                 }]}
 
                 onSelect={item => {
-                    setData(pre => ({
-                        ...pre, ...{
-                            productId: item.id, unit: item.unit, name: item.name,
-                            hsnCode: item.hsn_code ?? '', gstRate: item.gst,
-                        },
-                    }));
-
+                    product.handleData('item_id', item.id);
+                    product.handleData('unit', item.unit);
+                    product.handleData('item', item.name);
+                    product.handleData('hsn_code', item.hsn_code);
+                    product.handleData('tax_rate', Number(item.gst ?? '0'));
                     setUnitModalVisible(true);
                 }}
 
@@ -376,81 +384,250 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
             <BottomModal
                 alertId="create-bill-product-selector-modal"
                 visible={isUnitModalVisible} setVisible={setUnitModalVisible}
-                style={{ padding: 20, gap: 20 }}
+                style={{ padding: 20 }}
                 actionButtons={[{
                     title: '+ Add', onPress: handleProduct, color: 'white',
                     backgroundColor: 'rgb(50,200,150)',
                 }]}
 
             >
-                <TextTheme fontSize={16} fontWeight={800} >Select Quantity</TextTheme>
-
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }} >
-                    <View style={{ flex: 1, paddingRight: 8 }} >
-
-
-                        <View style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            borderWidth: 1,
-                            borderColor: primaryColor,
-                            borderRadius: 12,
-                            paddingHorizontal: 12,
-                            paddingVertical: 8,
-                            backgroundColor: 'transparent',
-                            opacity: 1,
-                            marginTop: 10,
-                        }} >
-                            <FeatherIcon name="package" size={20} />
-                            <NoralTextInput
-                                type={MeasurmentUnitsData.find(unit => unit.value === data.unit)?.si_representation || 'integer'}
-                                placeholder="Quantity"
-                                style={{ fontSize: 16, fontWeight: 500, flex: 1 }}
-                                onChangeText={text => handleInputChange('quantity', text)}
-                                keyboardType="number-pad"
-                            />
-                        </View>
-                    </View>
-                </View>
-
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'flex-end' }} >
-                    <View style={{ flex: 1, paddingRight: 8 }} >
-                        <View style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            borderWidth: 1,
-                            borderColor: primaryColor,
-                            borderRadius: 12,
-                            paddingHorizontal: 12,
-                            paddingVertical: 8,
-                            backgroundColor: 'transparent',
-                            opacity: 1,
-                            marginTop: 10,
-                        }} >
-                            <MaterialIcon name="currency-rupee" size={20} />
-                            <NoralTextInput
-                                type="decimal-2"
-                                placeholder="Enter rate"
-                                style={{ fontSize: 16, fontWeight: 500, flex: 1 }}
-                                onChangeText={text => handleInputChange('price', text)}
-                                keyboardType="number-pad"
-                            />
-                        </View>
-                    </View>
-
-                    <AnimateButton
-                        style={{ marginBlock: 5, flexDirection: 'row', alignItems: 'flex-end', borderWidth: 0, borderBottomWidth: 2, borderColor: primaryColor, gap: 12, paddingLeft: 8, paddingRight: 20 }}
+                <ScrollView contentContainerStyle={{gap: 24}} showsVerticalScrollIndicator={false} >
+                    <SectionView  
+                        label='Fill Details'
+                        style={{gap: 14}}
                     >
-                        <TextTheme fontSize={16} fontWeight={900}>/ {data.unit ?? 'Unit'}</TextTheme>
-                    </AnimateButton>
-                </View>
+                        <LabelTextInput
+                            label='Quantity'
+                            placeholder='Enter Quantity'
+                            keyboardType='numeric'
+                            checkInputText={(val) => 0 < Number(val)}
+                            postChild={<TextTheme>{product.data.unit}</TextTheme>}
+                            icon={<FeatherIcon name='package' size={16} />}
+                            onChangeText={(val) => {product.handleData('quantity', Number(val))}}
+                            autoFocus={true}
+                        />
+                        
+                        <LabelTextInput
+                            label='Rate'
+                            placeholder='Enter per unit rate'
+                            keyboardType='numeric'
+                            checkInputText={(val) => 0 < Number(val)}
+                            postChild={<TextTheme>{currency} / {product.data.unit}</TextTheme>}
+                            icon={<MaterialIcon name="currency-rupee" size={16} />}
+                            onChangeText={(val) => {product.handleData('rate', Number(val))}}
+                        />
+                        
+                        <LabelTextInput
+                            label='Discount'
+                            placeholder='Enter discount amount'
+                            keyboardType='numeric'
+                            checkInputText={(val) => 0 < Number(val)}
+                            postChild={<TextTheme>{currency} / {product.data.unit}</TextTheme>}
+                            icon={<MaterialIcon name="currency-rupee" size={16} />}
+                            onChangeText={(val) => {product.handleData('discount_amount', Number(val))}}
+                        />
+                    </SectionView>
+
+                    <SectionView label='Snap Short' style={{gap: 4}} >
+                        <SectionRow style={{justifyContent: 'space-between'}}>
+                            <TextTheme isPrimary={false} fontWeight={600} >Sub Total</TextTheme>
+                            <TextTheme fontWeight={600}>{product.data.amount} {currency}</TextTheme>
+                        </SectionRow>
+
+                        <SectionRow style={{justifyContent: 'space-between'}}>
+                            <TextTheme isPrimary={false} fontWeight={600} >Discount Amount</TextTheme>
+                            <TextTheme fontWeight={600}>{product.data.discount_amount} {currency}</TextTheme>
+                        </SectionRow>
+
+                        <SectionRow style={{justifyContent: 'space-between'}}>
+                            <TextTheme isPrimary={false} fontWeight={600} >Tax Rate</TextTheme>
+                            <TextTheme fontWeight={600}>{product.data.tax_rate} %</TextTheme>
+                        </SectionRow>
+                        
+                        <SectionRow style={{justifyContent: 'space-between'}}>
+                            <TextTheme isPrimary={false} fontWeight={600} >Tax Amount</TextTheme>
+                            <TextTheme fontWeight={600}>{product.data.tax_amount} {currency}</TextTheme>
+                        </SectionRow>
+
+                        <SectionRow style={{justifyContent: 'space-between'}}>
+                            <TextTheme isPrimary={false} fontWeight={600} >Grand Total</TextTheme>
+                            <TextTheme fontWeight={600}>{product.data.total_amount} {currency}</TextTheme>
+                        </SectionRow>
+                    </SectionView>
+
+                    <View style={{minHeight: 40}} />
+                </ScrollView>
             </BottomModal>
+
             <CreateProductModal
                 visible={isCreateModalOpen}
                 setVisible={setCreateModalOpen}
             />
         </>
     );
+}
+
+
+export function AdditionDetailModal({visible, setVisible}: Props): React.JSX.Element {
+
+    const {currency} = useAppStorage()
+    const {additionalDetails: info, handleAdditionalDetails: handleInfo} = useBillContext();
+
+    const [isVechicleNoModalVisible, setVevhicleNoModalVisible] = useState(false);
+    const [isDateModalVisible, setDateModalVisible] = useState(false);
+    const [isPayAmountModalVisible, setPayAmountModalVisible] = useState(false);
+    const [isTransportModeModalVisible, setTransportModeModalVisible] = useState(false);
+    const [isNoteModalVisible, setNoteModalVisible] = useState(false);
+
+    return (
+        <BottomModal 
+            visible={visible} 
+            setVisible={setVisible}
+            style={{paddingInline: 20, gap: 20}}
+            actionButtons={[{
+                title: 'Save', onPress: () => {},
+                backgroundColor: 'rgb(50,200,150)',
+                color: 'white'
+            }]}
+        >
+            <TextTheme fontSize={16} fontWeight={600} >Fill Addition Details</TextTheme>
+
+            <ScrollView
+                contentContainerStyle={{width: '100%', gap: 12}}
+                keyboardShouldPersistTaps='always'
+            >
+                <View style={{flexDirection: 'row', gap: 12, alignItems: 'center', width: '100%', position: 'relative'}} >
+                    <View style={{flex: 1}}>
+                        <SectionRowWithIcon
+                            label='Status'
+                            text='bill status'
+                            onPress={() => {}}
+                            icon={<FeatherIcon name='check-circle' size={16} />}
+                        />
+                    </View>
+
+                    <View style={{flex: 1}}>
+                        <SectionRowWithIcon
+                            label='Due Date'
+                            onPress={() => {setDateModalVisible(true)}}
+                            text={info.dueDate || 'Select due date'}
+                            icon={<FeatherIcon name='calendar' size={16} />}
+                        />
+                    </View>
+                </View>
+
+                <SectionRowWithIcon
+                    label='Pay Amount'
+                    onPress={() => {setPayAmountModalVisible(true)}}
+                    text={info.payAmount ? `${info.payAmount} ${currency}` : 'Tap to add pay amount'}
+                    hasArrow={true}
+                    icon={<FeatherIcon name='dollar-sign' size={16} />}
+                />
+
+                <SectionRowWithIcon
+                    label='Transport Mode'
+                    onPress={() => {setTransportModeModalVisible(true)}}
+                    text={info.transportMode || 'Tap to select mode of transport'}
+                    hasArrow={true}
+                    icon={<FeatherIcon name='truck' size={16} />}
+                />
+                
+                <SectionRowWithIcon
+                    label='Vechicle Number'
+                    onPress={() => {setVevhicleNoModalVisible(true)}}
+                    text={info.vechicleNumber || 'Tap to add vechile number'}
+                    hasArrow={true}
+                    icon={<FeatherIcon name='hash' size={16} />}
+                />
+
+                <AnimateButton onPress={() => { setNoteModalVisible(true); }} style={{ borderRadius: 12 }} >
+                    <BackgroundThemeView isPrimary={false} style={{ padding: 12 }} >
+                        <View style={{ flexDirection: 'row', gap: 12 }} >
+                            <FeatherIcon size={16} name="align-left" />
+                            <TextTheme>Add Notes</TextTheme>
+                        </View>
+        
+                        <View style={{ flexDirection: 'row', gap: 12, minHeight: 40 }} >
+                            <TextTheme isPrimary={false} fontSize={12} style={{ flex: 1, paddingTop: 4 }} >
+                                {info.note || 'Notes ....'}
+                            </TextTheme>
+                        </View>
+                    </BackgroundThemeView>
+                </AnimateButton>
+            </ScrollView>
+
+            <AutoFocusInputModal 
+                label='Vechicle Number'
+                defaultValue={info.vechicleNumber ?? ''}
+                placeholder='Enter vechicle number'
+                visible={isVechicleNoModalVisible} setVisible={setVevhicleNoModalVisible}
+                onSet={(val) => {handleInfo('vechicleNumber', val)}}
+            />
+            
+            <AutoFocusInputModal 
+                label='Pay Amount'
+                placeholder='Enter pay amount'
+                defaultValue={info.payAmount}
+                visible={isPayAmountModalVisible} setVisible={setPayAmountModalVisible}
+                containerChild={<TextTheme fontSize={16} fontWeight={600}>INR</TextTheme>}
+                keyboardType='number-pad'
+                onSet={(val) => {handleInfo('payAmount', val)}}
+                inputValueFilters={(cur, old) => {
+                    const char = cur.at(-1) ?? '';
+
+                    if (cur.length > 1 && cur[0] === '0' && cur[1] === '0') return old;
+                    if(!'0123456789.'.includes(char)) return old;
+                    if(char === '.' && cur.slice(0, -1).includes('.')) return old;
+
+                    if(cur.length > 1 && cur[0] === '0' && !cur.includes('.')) return cur.slice(1);
+                    return cur;
+                }}
+            />
+
+            <DateSelectorModal 
+                visible={isDateModalVisible} setVisible={setDateModalVisible}
+                onSelect={({year, month, date}) => {
+                    handleInfo('dueDate', `${date}/${month.toString().padStart(2, '0')}/${year}`)
+                }}
+            />
+
+            <ItemSelectorModal<string>
+                visible={isTransportModeModalVisible} 
+                setVisible={setTransportModeModalVisible}
+                
+                title='Transport Mode'
+                allItems={[]}
+                onSelect={(val) => {handleInfo('transportMode', val)}}
+                
+                keyExtractor={item => item}
+                
+                isItemSelected={!!info.transportMode}
+
+                SelectedItemContent={
+                    <TextTheme color='white' >{info.transportMode}</TextTheme>
+                }
+                
+                
+                renderItemContent={(item) => (
+                    <TextTheme>{item}</TextTheme>
+                )}
+
+                filter={() => true}
+            />
+
+            <AutoFocusInputModal 
+                visible={isNoteModalVisible} 
+                setVisible={setNoteModalVisible}
+                label='Add Note'
+                placeholder='Type note that you want to attach' 
+                defaultValue={info.note}
+                multiline={true}
+                numberOfLines={10}
+                onSet={(val) => {handleInfo('note', val)}}
+            />
+
+        </BottomModal>
+    )
 }
 
 

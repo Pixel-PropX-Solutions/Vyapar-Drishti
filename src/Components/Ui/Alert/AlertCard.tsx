@@ -33,7 +33,7 @@ type Props = {
 export default function AlertCard({ id }: Props): React.JSX.Element {
 
     const { alert, setAlert } = useAlert();
-    const { type, message, id: alertId, duration: alertDuration } = alert;
+    const { type, message, id: alertId, duration: alertDuration = 5000 } = alert;
 
 
 
@@ -53,13 +53,13 @@ export default function AlertCard({ id }: Props): React.JSX.Element {
         setRuning(true);
         Animated.sequence([
             Animated.timing(transtion0to1, {
-                toValue: 1, duration: alertDuration, useNativeDriver: true,
+                toValue: 1, duration: 100, useNativeDriver: true,
             }),
             Animated.timing(widthTranstion, {
                 toValue: 1, duration: alertDuration, useNativeDriver: true,
             }),
             Animated.timing(transtion0to1, {
-                toValue: 0, duration: alertDuration, useNativeDriver: true,
+                toValue: 0, duration: 100, useNativeDriver: true,
             }),
         ]).start(() => {
             widthTranstion.setValue(0);

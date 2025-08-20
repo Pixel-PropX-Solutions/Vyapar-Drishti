@@ -307,7 +307,7 @@ export interface CreateInvoiceWithGSTData {
     order_number: string;
     order_due_date: string;
     hsn_code: string;
-    gst_rate: string;
+    gst_rate: number;
     gst_amount: number;
   }>
 }

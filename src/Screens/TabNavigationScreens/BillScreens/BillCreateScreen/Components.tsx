@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { View } from 'react-native';
+import { Animated, Pressable, ScrollView, View } from 'react-native';
 import AnimateButton from '../../../../Components/Ui/Button/AnimateButton';
 import navigator from '../../../../Navigation/NavigationService';
 import { useTheme } from '../../../../Contexts/ThemeProvider';
@@ -22,7 +22,9 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { StackParamsList } from '../../../../Navigation/StackNavigation';
 import { createInvoice, createInvoiceWithGST, getInvoiceCounter } from '../../../../Services/invoice';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
-import { ProductInfoUpdateModal, ProductSelectorModal, CustomerSelectorModal, BillNoEditorModal } from './Modals';
+import { ProductInfoUpdateModal, ProductSelectorModal, CustomerSelectorModal, BillNoEditorModal, AdditionDetailModal } from './Modals';
+import useBinaryAnimateValue from '../../../../Hooks/useBinaryAnimateValue';
+import { useProduct } from './Hooks';
 
 export function Header() {
 
@@ -258,6 +260,24 @@ export function ProductSelector() {
 }
 
 
+export function AdditionalDetailSelector() {
+
+    const [isModalVisible, setModalVisible] = useState<boolean>(false);
+
+    return (<>
+        <SectionRowWithIcon
+            icon={<FeatherIcon name="file" size={20} />}
+            label={'Additional Details'}
+            text={'Tap to add due date, status and more'}
+            hasArrow={true}
+            arrowIcon={<FeatherIcon name="chevron-right" size={20} />}
+            onPress={() => { setModalVisible(true); }}
+        />
+
+        <AdditionDetailModal visible={isModalVisible} setVisible={setModalVisible} />
+    </>);
+}
+
 
 export function ProductListing() {
 
@@ -288,7 +308,7 @@ export function ProductListing() {
             </ShowWhen>}
 
             data={products}
-            keyExtractor={(item, index) => `${item.id}-${index}`}
+            keyExtractor={(item, index) => `${item.item_id}-${index}`}
             renderItem={({ item, index }) => (
                 <SectionRow
                     style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12, position: 'relative' }}
@@ -299,7 +319,7 @@ export function ProductListing() {
                 >
                     <View>
                         <TextTheme style={{ fontWeight: '700', fontSize: 16 }}>
-                            {sliceString(item.name, 34)}
+                            {sliceString(item.item, 34)}
                         </TextTheme>
                     </View>
 
@@ -317,7 +337,7 @@ export function ProductListing() {
                                 Unit Price
                             </TextTheme>
                             <TextTheme isPrimary={false} style={{ fontSize: 14, fontWeight: '500' }}>
-                                {formatNumberForUI(item.price)} {currency}
+                                {formatNumberForUI(item.rate)} {currency}
                             </TextTheme>
                         </View>
                         <View>
@@ -325,7 +345,7 @@ export function ProductListing() {
                                 Sub Total
                             </TextTheme>
                             <TextTheme style={{ fontSize: 14, fontWeight: '700', color: '#4CAF50' }}>
-                                {formatNumberForUI(item.price * item.quantity)} {currency}
+                                {formatNumberForUI(item.amount)} {currency}
                             </TextTheme>
                         </View>
                     </View>
@@ -333,12 +353,9 @@ export function ProductListing() {
                     <View style={{ position: 'absolute', top: -6, right: -6 }} >
                         <AnimateButton
                             style={{ backgroundColor: 'rgb(250,50,100)', borderRadius: 8, paddingInline: 12, flexDirection: 'row', gap: 12, alignItems: 'center', height: 32 }}
-                            onPress={() => setProducts(pro => {
-                                let temp = [...pro];
-                                let index = pro.findIndex(e => e.id === item.id);
-                                if (index >= 0) { temp.splice(index, 1); }
-                                return temp;
-                            })}
+                            onPress={() => {
+                                setProducts((prev) => prev.filter((_, i) => i !== index));
+                            }}
                         >
                             <FeatherIcon name="trash-2" size={16} color="white" />
                         </AnimateButton>
@@ -393,14 +410,14 @@ export function AmountBox(): React.JSX.Element {
                     party_name_id: customer?.id ?? '',
                     items: products.map(pro => ({
                         vouchar_id: '',
-                        item_id: pro.id,
+                        item_id: pro.item_id,
                         quantity: pro.quantity,
-                        rate: pro.price,
-                        item: pro.name,
-                        amount: roundToDecimal(pro.price * pro.quantity, 2),
-                        gst_rate: pro.gstRate,
-                        gst_amount: roundToDecimal((Number(pro.gstRate) * pro.quantity * pro.price / 100), 2),
-                        hsn_code: pro.hsnCode,
+                        rate: pro.rate,
+                        item: pro.item,
+                        amount: pro.amount,
+                        gst_rate: pro.tax_rate,
+                        gst_amount: pro.tax_amount,
+                        hsn_code: pro.hsn_code,
                         additional_amount: 0,
                         discount_amount: 0,
                         godown: '',
@@ -444,12 +461,12 @@ export function AmountBox(): React.JSX.Element {
                     party_name: customer?.name ?? '',
                     party_name_id: customer?.id ?? '',
                     items: products.map(pro => ({
-                        item_id: pro.id,
+                        item_id: pro.item_id,
                         quantity: pro.quantity,
-                        rate: pro.price,
+                        rate: pro.rate,
                         vouchar_id: '',
-                        item: pro.name,
-                        amount: roundToDecimal(pro.price * pro.quantity, 2),
+                        item: pro.item,
+                        amount: pro.amount,
                     })),
                     accounting: [
                         { amount: billType === 'Sales' ? roundToDecimal(-totalValue, 2) : roundToDecimal(totalValue, 2), ledger: customer?.name ?? '', ledger_id: customer?.id ?? '', vouchar_id: '' },
@@ -475,7 +492,7 @@ export function AmountBox(): React.JSX.Element {
     }
 
     return (
-        <ShowWhen when={Math.floor(progress) === 1} >
+        <ShowWhen when={Math.floor(progress) === 1 || true} >
             <BackgroundThemeView
                 style={{ padding: 20, borderTopLeftRadius: 24, borderTopRightRadius: 24, shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.1, shadowRadius: 12, elevation: 10, gap: 12, borderColor: 'gray', borderWidth: 2, borderBottomWidth: 0 }}
             >
@@ -503,7 +520,9 @@ export function AmountBox(): React.JSX.Element {
                             Total Items
                         </TextTheme>
                     </View>
-                </SectionRow>
+                </SectionRow>   
+
+                <AllAmountsInfo/>      
 
                 <NormalButton
                     text="Create Bill"
@@ -519,4 +538,61 @@ export function AmountBox(): React.JSX.Element {
             <LoadingModal visible={isCreating} />
         </ShowWhen>
     );
+}
+
+
+
+function AllAmountsInfo() {
+
+    const animate0to1 = useBinaryAnimateValue({value: 0, duration: 500, useNativeDriver: false});
+
+    return (
+        <BackgroundThemeView isPrimary={false} style={{padding: 8, borderRadius: 12}}>
+            <Pressable 
+                onPress={() => {animate0to1.valueRef.current ? animate0to1.animateTo0() : animate0to1.animateTo1()}} 
+                style={{flexDirection: 'row', alignItems: 'center', gap: 12, justifyContent: 'space-between'}} 
+            >
+                <TextTheme fontSize={14} fontWeight={600} style={{paddingLeft: 4}} >All Amounts Info</TextTheme>
+
+                <View 
+                    style={{flexDirection: 'row', alignItems: 'center', gap: 2}} 
+                >
+                    <TextTheme fontSize={14} fontWeight={600} style={{paddingLeft: 4}} >
+                        {animate0to1.valueState ? 'Hide' : 'Show'}
+                    </TextTheme>
+                    
+                    <Animated.View style={{
+                        transform: [{rotate: animate0to1.value.interpolate({
+                            inputRange: [0, 1], outputRange: ['0deg', '180deg']
+                        })}],
+                    }} >
+                        <FeatherIcon name='chevron-down' size={14} />
+                    </Animated.View>
+                </View>
+            </Pressable>
+
+            <ScrollView
+                contentContainerStyle={{
+                    width: '100%', gap: 4, maxHeight: 160, 
+                    marginTop: animate0to1.valueState || animate0to1.isAnimationRuning.state ? 12 : 0
+                }}
+            >  
+                {
+                    [
+                        ['Sub Total', '10,000 INR'],
+                        ['Total Tax', '1,000 INR'],
+                        ['Discount', '100 INR'],
+                        ['Grand Total', '11,100 INR']
+                    ].map(([field, val]) => (
+                        <Animated.View key={field} style={{opacity: animate0to1.value, display: animate0to1.valueState || animate0to1.isAnimationRuning.state ? 'flex' : 'none'}} >
+                            <BackgroundThemeView isPrimary={true} style={{padding: 8, borderRadius: 8, flexDirection: 'row', justifyContent: 'space-between', gap: 12}} >
+                                <TextTheme isPrimary={false} fontWeight={600} >{field}</TextTheme>
+                                <TextTheme fontWeight={600} >{val}</TextTheme>
+                            </BackgroundThemeView>
+                        </Animated.View>
+                    ))
+                }
+            </ScrollView>
+        </BackgroundThemeView>
+    )
 }
