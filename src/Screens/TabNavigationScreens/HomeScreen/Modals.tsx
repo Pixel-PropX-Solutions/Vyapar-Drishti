@@ -2,17 +2,15 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 import BottomModal from '../../../Components/Modal/BottomModal';
 import TextTheme from '../../../Components/Ui/Text/TextTheme';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SectionRowWithIcon } from '../../../Components/Layouts/View/SectionView';
 import LogoImage from '../../../Components/Image/LogoImage';
 import { useAppDispatch, useCompanyStore, useUserStore } from '../../../Store/ReduxStore';
 import { setIsCompanyFetching } from '../../../Store/Reducers/companyReducer';
 import { getCurrentUser, switchCompany } from '../../../Services/user';
 import { createCompany, getAllCompanies, getCompany } from '../../../Services/company';
-import { useTheme } from '../../../Contexts/ThemeProvider';
 import { useAlert } from '../../../Components/Ui/Alert/AlertProvider';
 import { arrayToFormData, getDefaultAprilFirst } from '../../../Utils/functionTools';
-import { InputField } from '../../../Components/Ui/TextInput/InputField';
 import FeatherIcon from '../../../Components/Icon/FeatherIcon';
 import AnimateButton from '../../../Components/Ui/Button/AnimateButton';
 import BackgroundThemeView from '../../../Components/Layouts/View/BackgroundThemeView';
@@ -23,9 +21,9 @@ import { SelectField } from '../../../Components/Ui/TextInput/SelectField';
 import { CountrySelectorModal } from '../../../Components/Modal/CountrySelectorModal';
 import { StateSelectorModal } from '../../../Components/Modal/StateSelectorModal';
 import CollapsabeMenu from '../../../Components/Other/CollapsabeMenu';
-import NormalButton from '../../../Components/Ui/Button/NormalButton';
 import AuthStore from '../../../Store/AuthStore';
 import { setCurrentCompanyId } from '../../../Store/Reducers/userReducer';
+import LabelTextInput from '../../../Components/Ui/TextInput/LabelTextInput';
 
 
 type Props = {
@@ -37,7 +35,7 @@ export function CompanySwitchModal({ visible, setVisible }: Props) {
 
     const dispatch = useAppDispatch();
     const { companies, isCompanyFetching } = useCompanyStore();
-    const { current_company_id, user, } = useUserStore();
+    const { current_company_id, user } = useUserStore();
     const currentCompanyId = current_company_id || AuthStore.getString('current_company_id') || user?.user_settings?.current_company_id || '';
 
     const [isCreateModalVisible, setCreateModalVisible] = useState(false);
@@ -94,7 +92,7 @@ export function CompanySwitchModal({ visible, setVisible }: Props) {
                                         });
                                 }}
                             />
-                        )
+                        );
                     })
                 }
 
@@ -116,16 +114,13 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
 
     const dispatch = useAppDispatch();
 
-    const { primaryColor, primaryBackgroundColor } = useTheme();
     const { setAlert } = useAlert();
     const { companies, isCompaniesFetching, loading } = useCompanyStore();
 
-    const [activeSection, setActiveSection] = useState<'basic' | 'address' | 'financial' | 'banking'>('basic');
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-    const [currentStep, setCurrentStep] = useState<number>(0);
     const phone = useRef<PhoneNumber>({ code: '', number: '' });
     const [isCountryModalVisible, setCountryModalVisible] = useState<boolean>(false);
-    const [isBankDetailsVisible, setBankDetailsVisible] = useState<boolean>(false);
+    const [expandedSection, setExpandedSection] = useState<string | 'basic' | 'address' | 'financial' | 'banking'>('basic');
     const [isStateModalVisible, setStateModalVisible] = useState<boolean>(false);
 
     const [data, setData] = useState({
@@ -144,8 +139,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
         code: phone.current.code,
         email: '',
         image: '',
-        gstin: '',
-        pan_number: '',
+        tin: '',
         website: '',
         account_number: '',
         account_holder: '',
@@ -155,7 +149,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
         qr_code_url: '',
     });
 
-    const resetData = useCallback(() => {
+    const resetData = () => {
         setData({
             user_id: '',
             name: '',
@@ -172,8 +166,7 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
             code: '',
             email: '',
             image: '',
-            gstin: '',
-            pan_number: '',
+            tin: '',
             website: '',
             account_number: '',
             account_holder: '',
@@ -182,18 +175,16 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
             bank_branch: '',
             qr_code_url: '',
         });
-        setActiveSection('basic');
-        setCurrentStep(0);
-    }, []);
+    };
 
 
     useEffect(() => {
         if (visible) {
             resetData();
-            // setValidationErrors({}); // Only reset errors when modal opens
-            setActiveSection('basic');
+            setExpandedSection('basic');
+            setValidationErrors({});
         }
-    }, [visible, resetData]);
+    }, [visible]);
 
     const handleChange = useCallback((field: string, value: string | boolean | number) => {
         setData((prevState) => ({
@@ -212,93 +203,65 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
 
     const validateForm = useCallback(() => {
         const errors: Record<string, string> = {};
-        switch (activeSection) {
-            case 'basic':
-                if (!data.name.trim()) {
-                    errors.name = 'Company name is required';
-                }
-
-                if (data.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-                    errors.email = 'Please enter a valid email address';
-                }
-
-                if (data.number && !/^\d{10}$/.test(data.number)) {
-                    errors.number = 'Phone number must be 10 digits';
-                }
-                if (data.website && !/^https?:\/\//.test(data.website)) {
-                    errors.website = 'Website URL must start with http:// or https://';
-                }
-                setValidationErrors(errors);
-                return Object.keys(errors).length === 0;
-            case 'address':
-                if (!data.state.trim()) {
-                    errors.state = 'State is required';
-                }
-
-                if (!data.country.trim()) {
-                    errors.country = 'Country is required';
-                }
-                if (data.pinCode && !/^\d{6}$/.test(data.pinCode)) {
-                    errors.pinCode = 'PIN code must be 6 digits';
-                }
-                setValidationErrors(errors);
-                return Object.keys(errors).length === 0;
-            case 'financial':
-                if (data.gstin && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(data.gstin)) {
-                    errors.gstin = 'Please enter a valid GSTIN';
-                }
-
-                if (data.pan_number && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(data.pan_number)) {
-                    errors.pan_number = 'Please enter a valid PAN number';
-                }
-                setValidationErrors(errors);
-                return Object.keys(errors).length === 0;
-            case 'banking':
-                if (data.bank_ifsc && !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(data.bank_ifsc)) {
-                    errors.bank_ifsc = 'Please enter a valid IFSC code';
-                }
-                setValidationErrors(errors);
-                return Object.keys(errors).length === 0;
-            default:
-                return false;
+        if (data.tin && !isValidTin(data.tin)) {
+            errors.tin = 'Please enter a valid TIN';
         }
-    }, [activeSection, data.bank_ifsc, data.country, data.email, data.gstin, data.name, data.number, data.pan_number, data.pinCode, data.state, data.website]);
 
-    const getSectionProgress = useCallback(() => {
-        const sections = {
-            basic: ['name', 'email'],
-            address: ['state', 'country'],
-            financial: [],
-            banking: [],
-        };
-
-        const progress: Record<string, number> = {};
-
-        Object.entries(sections).forEach(([section, fields]) => {
-            const filledFields = fields.filter(field => data[field as keyof typeof data]?.toString().trim());
-            progress[section] = (filledFields.length / fields.length) * 100;
-        });
-
-        return progress;
-    }, [data]);
-
-    useEffect(() => {
-        if (Object.keys(validationErrors).length > 0) {
-            // You can show an alert here if needed, or handle error display elsewhere
+        if (!data.name.trim()) {
+            errors.name = 'Company name is required';
         }
-    }, [setAlert, validationErrors]);
 
+        if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+            errors.email = 'Please enter a valid email address';
+        }
+
+        if (data.number && !/^\d{10}$/.test(data.number)) {
+            errors.number = 'Phone number must be 10 digits';
+        }
+        if (data.website && !/^https?:\/\//.test(data.website)) {
+            errors.website = 'Website URL must start with http:// or https://';
+        }
+        if (!data.state.trim()) {
+            errors.state = 'State is required';
+        }
+
+        if (!data.country.trim()) {
+            errors.country = 'Country is required';
+        }
+        if (data.pinCode && !/^\d{6}$/.test(data.pinCode)) {
+            errors.pinCode = 'PIN code must be 6 digits';
+        }
+        if (data.bank_ifsc && !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(data.bank_ifsc)) {
+            errors.bank_ifsc = 'Please enter a valid IFSC code';
+        }
+        setValidationErrors(errors);
+        return Object.keys(errors).length === 0;
+    }, [data.bank_ifsc, data.country, data.email, data.name, data.number, data.pinCode, data.state, data.tin, data.website]);
+
+    const isValidTin = (tin: string) => {
+        if (!tin) { return true; } // Allow empty TIN
+        return /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(tin);
+    };
+
+    const isCreateCompany: boolean = data.name.trim() !== '' && data.state.trim() !== '' && data.country.trim() !== '';
 
     const handleClose = () => {
         setValidationErrors({});
-        setActiveSection('basic');
-        setCurrentStep(0);
         setVisible(false);
+        setExpandedSection('basic');
         resetData();
     };
 
 
     async function onPress() {
+        if (!isCreateCompany) {
+            setAlert({
+                type: 'error',
+                message: 'Please fill in all required fields in the Basic Information section',
+                id: 'company-create-modal',
+            });
+            return;
+        }
         const isValid = validateForm();
         if (!isValid) {
             const currentErrors = Object.keys(validationErrors);
@@ -345,348 +308,331 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
     }
 
 
-    const renderSectionButton = (section: 'basic' | 'address' | 'financial' | 'banking', title: string) => {
-        const progress = getSectionProgress()[section];
-        const isActive = activeSection === section;
-
-        return (
-            <View style={[styles.sectionButton, {
-                backgroundColor: isActive ? 'rgb(2, 2, 2)' : 'rgb(85, 85, 85)',
-                borderColor: isActive ? primaryColor : '#e0e0e0',
-
-            }]}>
-                <Text style={[styles.sectionButtonText, {
-                    color: isActive ? 'white' : 'rgb(196, 196, 196)',
-                }]}>
-                    {title}
-                </Text>
-                <View style={styles.progressBar}>
-                    <View style={[styles.progressFill, {
-                        width: `${progress}%`,
-                        backgroundColor: isActive ? '#fff' : primaryColor,
-                    }]} />
-                </View>
-            </View>
-        );
-    };
-
     const renderBasicSection = () => (
-        <View style={styles.section}>
-            <TextTheme style={styles.sectionTitle}>Basic Information</TextTheme>
+        <CollapsabeMenu
+            header="Basic Information"
+            expanded={expandedSection === 'basic'}
+            setExpanded={() => setExpandedSection(expandedSection === 'basic' ? '' : 'basic')}
+        >
+            <View style={styles.section}>
+                <LabelTextInput
+                    label="TIN"
+                    placeholder="Enter TIN / GSTIN"
+                    keyboardType="default"
+                    value={data.tin}
+                    checkInputText={isValidTin}
+                    message="Enter a valid TIN / GSTIN"
+                    onChangeText={text => {
+                        handleChange('tin', text);
+                    }}
+                    useTrim={false}
+                    autoFocus={true}
+                    isRequired={false}
+                    capitalize="characters"
+                    borderWidth={1}
+                />
 
-            <InputField
-                icon={<FeatherIcon name="user" size={20} />}
-                placeholder="Company Name *"
-                autoFocus={true}
-                field="name"
-                capitalize="words"
-                handleChange={handleChange}
-                error={validationErrors.name}
-            />
+                <LabelTextInput
+                    label="Business Name"
+                    placeholder="Enter Business Name"
+                    keyboardType="default"
+                    value={data.name}
+                    message="Enter a valid Business Name"
+                    onChangeText={val => { handleChange('name', val); }}
+                    useTrim={true}
+                    isRequired={true}
+                    capitalize="words"
+                    borderWidth={1}
+                />
+                <SelectField
+                    icon={<FeatherIcon name="globe" size={20} />}
+                    placeholder="Select Country *"
+                    value={data.country}
+                    onPress={() => setCountryModalVisible(true)}
+                    containerStyle={{ flex: 1 }}
+                    error={validationErrors.country}
+                />
 
-            <InputField
-                icon={<FeatherIcon name="at-sign" size={20} />}
-                placeholder="Company Email"
-                field="email"
-                keyboardType="email-address"
-                handleChange={handleChange}
-                error={validationErrors.email}
-            />
+                <SelectField
+                    icon={<FeatherIcon name="flag" size={20} />}
+                    placeholder="Select State *"
+                    value={data.state}
+                    onPress={() => setStateModalVisible(true)}
+                    // containerStyle={{ flex: 1 }}
+                    error={validationErrors.state}
+                />
 
-            <View style={{ marginBottom: 16 }}>
-                <PhoneNoInputField
-                    phoneNumber={{ code: data.code, number: data.number }}
-                    placeholder="Phone Number"
-                    onChangePhoneNumber={(phoneNo) => {
-                        phone.current = phoneNo;
-                        setData((prev) => ({
-                            ...prev,
-                            code: phoneNo.code,
-                            number: phoneNo.number,
-                        }));
-                    }} />
             </View>
-
-            <InputField
-                icon={<FeatherIcon name="globe" size={20} />}
-                placeholder="Website URL"
-                field="website"
-                handleChange={handleChange}
-                error={validationErrors.website}
+            <CountrySelectorModal
+                visible={isCountryModalVisible}
+                country={data.country}
+                field="country"
+                setCountry={handleChange}
+                setVisible={setCountryModalVisible}
             />
-        </View>
+            <StateSelectorModal
+                visible={isStateModalVisible}
+                country={data.country}
+                field="state"
+                state={data.state}
+                setState={handleChange}
+                setVisible={setStateModalVisible}
+            />
+        </CollapsabeMenu>
     );
 
     const renderAddressSection = () => (
-        <View style={styles.section}>
-            <TextTheme style={styles.sectionTitle}>Address Information</TextTheme>
+        <CollapsabeMenu
+            header="Additional Information"
+            expanded={expandedSection === 'address'}
+            setExpanded={() => setExpandedSection(expandedSection === 'address' ? '' : 'address')}
+        >
+            <View style={styles.section}>
+                <LabelTextInput
+                    label="Contact Person Name"
+                    placeholder="Enter Contact Person Name"
+                    keyboardType="default"
+                    value={data.mailing_name}
+                    message="Enter a valid Contact Person Name"
+                    onChangeText={val => { handleChange('mailing_name', val); }}
+                    useTrim={true}
+                    autoFocus={true}
+                    isRequired={false}
+                    capitalize="words"
+                    borderWidth={1}
+                />
 
-            <InputField
-                icon={<FeatherIcon name="type" size={20} />}
-                placeholder="Contact Person Name"
-                field="mailing_name"
-                capitalize="words"
-                handleChange={handleChange}
-                error={validationErrors.mailing_name}
-            />
-            <InputField
-                icon={<FeatherIcon name="map-pin" size={20} />}
-                placeholder="Company Address Line 1"
-                field="address_1"
-                capitalize="words"
-                handleChange={handleChange}
-                error={validationErrors.address_1}
-            />
+                <LabelTextInput
+                    label="Business Address Line 1 "
+                    placeholder="Enter Business Address Line 1"
+                    keyboardType="default"
+                    value={data.address_1}
+                    message="Enter a valid Business Address Line 1"
+                    onChangeText={val => { handleChange('address_1', val); }}
+                    useTrim={true}
+                    isRequired={false}
+                    capitalize="words"
+                    borderWidth={1}
+                />
 
-            <InputField
-                icon={<FeatherIcon name="map-pin" size={20} />}
-                placeholder="Company Address Line 2"
-                field="address_2"
-                capitalize="words"
-                handleChange={handleChange}
-                error={validationErrors.address_2}
-            />
+                <LabelTextInput
+                    label="Business Address Line 2 "
+                    placeholder="Enter Business Address Line 2"
+                    keyboardType="default"
+                    value={data.address_2}
+                    message="Enter a valid Business Address Line 2"
+                    onChangeText={val => { handleChange('address_2', val); }}
+                    useTrim={true}
+                    isRequired={false}
+                    capitalize="words"
+                    borderWidth={1}
+                />
 
-            <SelectField
-                icon={<FeatherIcon name="globe" size={20} />}
-                placeholder="Select Country *"
-                value={data.country}
-                onPress={() => setCountryModalVisible(true)}
-                containerStyle={{ flex: 1, marginBottom: 16 }}
-                error={validationErrors.country}
-            />
+                <LabelTextInput
+                    label="Pin Code"
+                    placeholder="Enter Pin Code"
+                    keyboardType="default"
+                    value={data.pinCode}
+                    message="Enter a valid Pin Code"
+                    onChangeText={val => { handleChange('pinCode', val); }}
+                    useTrim={true}
+                    isRequired={false}
+                    capitalize="words"
+                    borderWidth={1}
+                />
 
-            <View style={{ flexDirection: 'row', gap: 12 }}>
-                <View style={{ width: '60%' }}>
-                    <SelectField
-                        icon={<FeatherIcon name="flag" size={20} />}
-                        placeholder="Select State *"
-                        value={data.state}
-                        onPress={() => setStateModalVisible(true)}
-                        // containerStyle={{ flex: 1 }}
-                        error={validationErrors.state}
-                    />
-                </View>
+                <LabelTextInput
+                    label="Business Email "
+                    placeholder="Enter Business Email"
+                    keyboardType="email-address"
+                    value={data.email}
+                    message="Enter a valid Business Email"
+                    onChangeText={val => { handleChange('email', val); }}
+                    useTrim={true}
+                    isRequired={false}
+                    capitalize="none"
+                    borderWidth={1}
+                />
+
 
                 <View style={{ flex: 1 }}>
-                    <InputField
-                        icon={<FeatherIcon name="navigation" size={20} />}
-                        placeholder="PIN Code"
-                        field="pinCode"
-                        handleChange={handleChange}
-                        error={validationErrors.pinCode}
-                        keyboardType="numeric"
-                    />
-
+                    <PhoneNoInputField
+                        phoneNumber={{ code: data.code, number: data.number }}
+                        placeholder="Phone Number"
+                        onChangePhoneNumber={(phoneNo) => {
+                            phone.current = phoneNo;
+                            setData((prev) => ({
+                                ...prev,
+                                code: phoneNo.code,
+                                number: phoneNo.number,
+                            }));
+                        }} />
                 </View>
+
+                <LabelTextInput
+                    label="Website URL"
+                    placeholder="Enter Website URL"
+                    keyboardType="url"
+                    value={data.website}
+                    message="Enter a valid Website URL"
+                    onChangeText={val => { handleChange('website', val); }}
+                    useTrim={true}
+                    isRequired={false}
+                    capitalize="none"
+                    borderWidth={1}
+                />
             </View>
-            <CountrySelectorModal visible={isCountryModalVisible} country={data.country} field="country" setCountry={handleChange} setVisible={setCountryModalVisible} />
-            <StateSelectorModal visible={isStateModalVisible} country={data.country} field="state" state={data.state} setState={handleChange} setVisible={setStateModalVisible} />
-        </View>
+        </CollapsabeMenu>
     );
 
     const renderFinancialSection = () => (
-        <View style={styles.section}>
-            <TextTheme style={styles.sectionTitle}>Financial Information</TextTheme>
+        <CollapsabeMenu
+            header="Financial Information"
+            expanded={expandedSection === 'financial'}
+            setExpanded={() => setExpandedSection(expandedSection === 'financial' ? '' : 'financial')}
+        >
+            <View style={styles.section}>
 
-            <InputField
-                icon={<FeatherIcon name="file-text" size={20} />}
-                placeholder="GSTIN"
-                field="gstin"
-                capitalize="characters"
-                handleChange={handleChange}
-                error={validationErrors.gstin}
-            />
+                <AnimateButton style={{
+                    padding: 8,
+                    flex: 1,
+                    flexDirection: 'row',
+                    borderWidth: 1,
+                    borderColor: 'black',
+                    borderRadius: 12,
+                    gap: 12,
+                    alignItems: 'center',
+                }}>
+                    <BackgroundThemeView
+                        style={{
+                            width: 40,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: 10,
+                        }}
+                    >
+                        <FeatherIcon name="calendar" size={16} />
+                    </BackgroundThemeView>
 
-            {/* <InputField
-                icon={<FeatherIcon name="credit-card" size={20} />}
-                placeholder="PAN Number"
-                field="pan_number"
-                capitalize="characters"
-                handleChange={handleChange}
-                error={validationErrors.pan_number}
-            /> */}
+                    <View style={{ flex: 1 }}>
+                        <TextTheme style={{ fontSize: 14, fontWeight: '700', marginBottom: 2 }}>
+                            Financial Year Start Date
+                        </TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 13, fontWeight: '500' }}>
+                            {data.financial_year_start.toLocaleDateString('en-IN', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                            })}
+                        </TextTheme>
+                    </View>
+                </AnimateButton>
 
-            <AnimateButton style={{
-                padding: 8,
-                flex: 1,
-                flexDirection: 'row',
-                borderWidth: 1,
-                borderColor: 'black',
-                borderRadius: 12,
-                gap: 12,
-                alignItems: 'center',
-            }}>
-                <BackgroundThemeView
-                    style={{
-                        width: 40,
-                        height: 40,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderRadius: 10,
-                    }}
-                >
-                    <FeatherIcon name="calendar" size={16} />
-                </BackgroundThemeView>
+                <AnimateButton style={{
+                    padding: 8,
+                    flex: 1,
+                    flexDirection: 'row',
+                    borderWidth: 1,
+                    borderColor: 'black',
+                    borderRadius: 12,
+                    gap: 12,
+                    alignItems: 'center',
+                }}>
+                    <BackgroundThemeView
+                        style={{
+                            width: 40,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: 10,
+                        }}
+                    >
+                        <FeatherIcon name="calendar" size={16} />
+                    </BackgroundThemeView>
 
-                <View style={{ flex: 1 }}>
-                    <TextTheme style={{ fontSize: 14, fontWeight: '700', marginBottom: 2 }}>
-                        Financial Year Start Date
-                    </TextTheme>
-                    <TextTheme isPrimary={false} style={{ fontSize: 13, fontWeight: '500' }}>
-                        {data.financial_year_start.toLocaleDateString('en-IN', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                        })}
-                    </TextTheme>
-                </View>
-            </AnimateButton>
-
-            <AnimateButton style={{
-                marginTop: 16,
-                padding: 8,
-                flex: 1,
-                flexDirection: 'row',
-                borderWidth: 1,
-                borderColor: 'black',
-                borderRadius: 12,
-                gap: 12,
-                alignItems: 'center',
-            }}>
-                <BackgroundThemeView
-                    style={{
-                        width: 40,
-                        height: 40,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderRadius: 10,
-                    }}
-                >
-                    <FeatherIcon name="calendar" size={16} />
-                </BackgroundThemeView>
-
-                <View style={{ flex: 1 }}>
-                    <TextTheme style={{ fontSize: 14, fontWeight: '700', marginBottom: 2 }}>
-                        Books Begin From
-                    </TextTheme>
-                    <TextTheme isPrimary={false} style={{ fontSize: 13, fontWeight: '500' }}>
-                        {data.books_begin_from.toLocaleDateString('en-IN', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                        })}
-                    </TextTheme>
-                </View>
-            </AnimateButton>
-        </View>
+                    <View style={{ flex: 1 }}>
+                        <TextTheme style={{ fontSize: 14, fontWeight: '700', marginBottom: 2 }}>
+                            Books Begin From
+                        </TextTheme>
+                        <TextTheme isPrimary={false} style={{ fontSize: 13, fontWeight: '500' }}>
+                            {data.books_begin_from.toLocaleDateString('en-IN', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                            })}
+                        </TextTheme>
+                    </View>
+                </AnimateButton>
+            </View>
+        </CollapsabeMenu>
     );
 
     const renderBankingSection = () => (
-        <View style={styles.section}>
-            <CollapsabeMenu
-                header="Banking Information"
-                expanded={isBankDetailsVisible}
-                setExpanded={setBankDetailsVisible}
-                icon={<NormalButton
-                    text={isBankDetailsVisible ? 'Hide Details' : 'Add Details'}
-                    onPress={() => setBankDetailsVisible((prev) => !prev)}
-                />}
-
-
-            >
-                <InputField
-                    icon={<FeatherIcon name="credit-card" size={20} />}
-                    placeholder="Account Number"
-                    field="account_number"
-                    handleChange={handleChange}
-                    error={validationErrors.account_number}
-                    keyboardType="numeric"
+        <CollapsabeMenu
+            header="Banking Information"
+            expanded={expandedSection === 'banking'}
+            setExpanded={() => setExpandedSection(expandedSection === 'banking' ? '' : 'banking')}
+        >
+            <View style={styles.section}>
+                <LabelTextInput
+                    label="Account Number"
+                    placeholder="Enter Account Number"
+                    keyboardType="default"
+                    value={data.account_number}
+                    message="Enter a valid Account Number"
+                    onChangeText={val => { handleChange('account_number', val); }}
+                    useTrim={true}
+                    autoFocus={true}
+                    isRequired={false}
+                    capitalize="characters"
+                    borderWidth={1}
                 />
 
-                {/* <InputField
-                    icon={<FeatherIcon name="user" size={20} />}
-                    placeholder="Account Holder Name"
-                    field="account_holder"
+                <LabelTextInput
+                    label="Bank Name"
+                    placeholder="Enter Bank Name"
+                    keyboardType="default"
+                    value={data.bank_name}
+                    message="Enter a valid Bank Name"
+                    onChangeText={val => { handleChange('bank_name', val); }}
+                    useTrim={true}
+                    isRequired={false}
                     capitalize="characters"
-                    handleChange={handleChange}
-                    error={validationErrors.account_holder}
-                /> */}
-
-                <InputField
-                    icon={<FeatherIcon name="home" size={20} />}
-                    placeholder="Bank Name"
-                    capitalize="characters"
-                    field="bank_name"
-                    handleChange={handleChange}
-                    error={validationErrors.bank_name}
+                    borderWidth={1}
                 />
-                <InputField
-                    icon={<FeatherIcon name="git-branch" size={20} />}
-                    placeholder="Bank Branch"
+
+                <LabelTextInput
+                    label="Bank Branch"
+                    placeholder="Enter Bank Branch"
+                    keyboardType="default"
+                    value={data.bank_branch}
+                    message="Enter a valid Bank Branch"
+                    onChangeText={val => { handleChange('bank_branch', val); }}
+                    useTrim={true}
+                    isRequired={false}
                     capitalize="words"
-                    field="bank_branch"
-                    handleChange={handleChange}
-                    error={validationErrors.bank_branch}
-                />
-                <InputField
-                    icon={<FeatherIcon name="hash" size={20} />}
-                    placeholder="IFSC Code"
-                    capitalize="characters"
-                    field="bank_ifsc"
-                    handleChange={handleChange}
-                    error={validationErrors.bank_ifsc}
+                    borderWidth={1}
                 />
 
-                {/* <InputField
-                icon={<FeatherIcon name="image" size={20} />}
-                placeholder="QR Code URL"
-                field="qr_code_url"
-                handleChange={handleChange}
-                error={validationErrors.qr_code_url}
-            /> */}
-            </CollapsabeMenu>
-        </View>
+
+                <LabelTextInput
+                    label="IFSC Code"
+                    placeholder="Enter IFSC Code"
+                    keyboardType="default"
+                    value={data.bank_ifsc}
+                    message="Enter a valid IFSC Code"
+                    onChangeText={val => { handleChange('bank_ifsc', val); }}
+                    useTrim={true}
+                    isRequired={false}
+                    capitalize="characters"
+                    borderWidth={1}
+                />
+
+            </View>
+        </CollapsabeMenu>
     );
 
-    const renderCurrentSection = () => {
-        switch (activeSection) {
-            case 'basic':
-                return renderBasicSection();
-            case 'address':
-                return renderAddressSection();
-            case 'financial':
-                return renderFinancialSection();
-            case 'banking':
-                return renderBankingSection();
-            default:
-                return renderBasicSection();
-        }
-    };
-
-    const handleNext = () => {
-        const isValid = validateForm();
-        if (!isValid) {
-            return;
-        } else if (currentStep < steps.length - 1) {
-            setCurrentStep(currentStep + 1);
-            setActiveSection(steps[currentStep + 1].title as 'basic' | 'address' | 'financial' | 'banking');
-        }
-    };
-
-    const handlePrevious = () => {
-        if (currentStep > 0) {
-            setCurrentStep(currentStep - 1);
-            setActiveSection(steps[currentStep - 1].title as 'basic' | 'address' | 'financial' | 'banking');
-        }
-    };
-
-    const steps = [
-        { title: 'basic' },
-        { title: 'address' },
-        { title: 'financial' },
-        { title: 'banking' },
-    ];
 
     return (
         <BottomModal
@@ -697,43 +643,20 @@ export function CompanyCreateModal({ visible, setVisible, setSecondaryVisible }:
             onClose={() => resetData()}
             style={styles.modal}
             actionButtons={[
-                ...(currentStep > 0 ? [{ title: 'Previous', backgroundColor: 'gray', onPress: handlePrevious }] : []),
-                ...(currentStep < steps.length - 1 ? [{ title: 'Next', backgroundColor: 'rgb(85, 85, 85)', color: 'white', onPress: handleNext }] : []),
-                ...(currentStep === steps.length - 1 ? [{ title: 'Create Company', backgroundColor: 'rgb(50,200,150)', onPress: onPress }] : []),
+                { title: 'Create Company', backgroundColor: isCreateCompany ? 'rgb(50,200,150)' : 'rgb(200,200,200)', onPress: onPress },
             ]}
         >
             <TextTheme style={styles.modalTitle}>Create Company</TextTheme>
 
-            {/* Section Navigation */}
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={styles.sectionNavigation}
-            >
-                <View style={styles.sectionButtons}>
-                    {[
-                        { key: 'basic', title: 'Basic' },
-                        { key: 'address', title: 'Address' },
-                        { key: 'financial', title: 'Financial' },
-                        { key: 'banking', title: 'Banking' },
-                    ].map(({ key, title }) => (
-                        <View
-                            key={key}
-                            style={styles.sectionButtonContainer}
-                        // onTouchEnd={() => setActiveSection(key as any)}
-                        >
-                            {renderSectionButton(key as any, title)}
-                        </View>
-                    ))}
-                </View>
-            </ScrollView>
-
             {/* Form Content */}
             <ScrollView
                 showsVerticalScrollIndicator={false}
-                keyboardShouldPersistTaps='always'
+                keyboardShouldPersistTaps="always"
             >
-                {renderCurrentSection()}
+                {renderBasicSection()}
+                {renderAddressSection()}
+                {renderFinancialSection()}
+                {renderBankingSection()}
             </ScrollView>
 
             <View style={styles.bottomSpacing} />
@@ -789,6 +712,7 @@ const styles = StyleSheet.create({
         borderRadius: 1,
     },
     section: {
+        gap: 12,
         paddingBottom: 0,
     },
     sectionTitle: {

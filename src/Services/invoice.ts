@@ -1,5 +1,5 @@
 import userApi from '../Api/userApi';
-import { CreateInvoiceData, CreateInvoiceWithGSTData, GetAllVouchars, PageMeta } from '../Utils/types';
+import { CreateInvoiceData, CreateInvoiceWithTAXData, GetAllVouchars, PageMeta } from '../Utils/types';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 
@@ -27,14 +27,15 @@ export const createInvoice = createAsyncThunk(
     }
 );
 
-export const createInvoiceWithGST = createAsyncThunk(
-    'create/invoice/gst',
+export const createInvoiceWithTAX = createAsyncThunk(
+    'create/invoice/tax',
     async (
-        data: CreateInvoiceWithGSTData,
+        data: CreateInvoiceWithTAXData,
         { rejectWithValue }
     ) => {
         try {
-            const createRes = await userApi.post('/invoices/create/vouchar/gst', data);
+            const createRes = await userApi.post('/invoices/create/vouchar/tax', data);
+            console.log('createInvoiceWithTAX response', createRes);
 
             if (createRes.data.success === true) {
                 return;
@@ -200,8 +201,8 @@ export const deleteInvoice = createAsyncThunk(
 );
 
 
-export const deleteGSTInvoice = createAsyncThunk(
-    'delete/gst/invoice',
+export const deleteTAXInvoice = createAsyncThunk(
+    'delete/tax/invoice',
     async (
         {
             vouchar_id,
@@ -214,7 +215,7 @@ export const deleteGSTInvoice = createAsyncThunk(
     ) => {
         try {
             const response = await userApi.delete(
-                `/invoices/gst/delete/${vouchar_id}?company_id=${company_id}`
+                `/invoices/tax/delete/${vouchar_id}?company_id=${company_id}`
             );
 
             if (response.data.success === true) {
@@ -260,8 +261,8 @@ export const printInvoices = createAsyncThunk(
 );
 
 
-export const printGSTInvoices = createAsyncThunk(
-    'print/gst/invoices',
+export const printTAXInvoices = createAsyncThunk(
+    'print/tax/invoices',
     async (
         {
             vouchar_id,
@@ -276,9 +277,9 @@ export const printGSTInvoices = createAsyncThunk(
     ) => {
         try {
             const response = await userApi.get(
-                `/invoices/print/vouchar/gst?vouchar_id=${vouchar_id}&company_id=${company_id}`
+                `/invoices/print/vouchar/tax?vouchar_id=${vouchar_id}&company_id=${company_id}`
             );
-            console.log('printGSTInvoices response', response.data);
+            console.log('printTAXInvoices response', response.data);
 
             if (response.data.success === true) {
                 return response.data.data;

@@ -59,6 +59,10 @@ export default function LoginScreen(): React.JSX.Element {
                     });
                     return navigator.reset('tab-navigation');
                 }
+                return setAlert({
+                    type: 'error',
+                    message: res?.message || 'Login failed. Please try again.',
+                });
             })
             .catch((err) => {
                 return setAlert({

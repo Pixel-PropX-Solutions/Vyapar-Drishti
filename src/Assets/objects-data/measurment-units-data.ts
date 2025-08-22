@@ -51,4 +51,5 @@ export const MeasurmentUnitsData: MeasurmentUnitType[] = [
     { 'id': '47', 'unit_name': 'UNT-UNITS', 'value': 'UNT', 'symbol': 'UNT', 'si_representation': 'integer' },
     { 'id': '48', 'unit_name': 'YARDS', 'value': 'YDS', 'symbol': 'YDS', 'si_representation': 'decimal' },
     { 'id': '49', 'unit_name': 'MILLIGRAMS', 'value': 'MGS', 'symbol': 'MGS', 'si_representation': 'decimal' },
+    { 'id': '50', 'unit_name': 'NOGs', 'value': 'NOG', 'symbol': 'NOG', 'si_representation': 'integer' },
 ];

@@ -51,17 +51,19 @@ type SectionRowProps = {
     style?: ViewStyle,
     isLabelPrimary?: boolean,
     gap?: number
+    paddingVertical?: number
+    paddingHorizontal?: number
 }
 
-export function SectionRow({ isPrimary = false, backgroundColor, onPress, children, label = '', style, isLabelPrimary = false, gap = 12 }: SectionRowProps): React.JSX.Element {
+export function SectionRow({ isPrimary = false, backgroundColor, onPress, children, label = '', style, isLabelPrimary = false, gap = 12, paddingVertical = 12, paddingHorizontal = 12 }: SectionRowProps): React.JSX.Element {
 
     const { secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
-    if (!backgroundColor) {backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;}
+    if (!backgroundColor) { backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor; }
 
 
     return (
         <AnimateButton
-            style={{ padding: 12, borderRadius: 12, backgroundColor, width: '100%', gap }}
+            style={{ paddingHorizontal, paddingVertical, borderRadius: 12, backgroundColor, width: '100%', gap }}
             onPress={onPress}
             bubbleScale={30}
         >
@@ -89,7 +91,7 @@ type SectionArrowRow = {
 export function SectionArrowRow({ isPrimary = false, backgroundColor, onPress, text, icon, arrowSize = 24, textColor }: SectionArrowRow): React.JSX.Element {
 
     const { secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
-    if (!backgroundColor) {backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;}
+    if (!backgroundColor) { backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor; }
 
     return <AnimateButton
         style={{ padding: 20, borderRadius: 16, backgroundColor, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
@@ -129,8 +131,8 @@ type SectionRowWithIcon = {
 export function SectionRowWithIcon({ isPrimary = false, onPress, label, text, icon, hasArrow = false, backgroundColor = '', color, children, iconContainerColor = '', arrowIcon }: SectionRowWithIcon): React.JSX.Element {
     const { secondaryBackgroundColor, primaryBackgroundColor } = useTheme();
 
-    if (backgroundColor === '') {backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;}
-    if (iconContainerColor === '') {iconContainerColor = isPrimary ? secondaryBackgroundColor : primaryBackgroundColor;}
+    if (backgroundColor === '') { backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor; }
+    if (iconContainerColor === '') { iconContainerColor = isPrimary ? secondaryBackgroundColor : primaryBackgroundColor; }
 
 
     return (
@@ -145,8 +147,8 @@ export function SectionRowWithIcon({ isPrimary = false, onPress, label, text, ic
                 </View>
 
                 <View style={{ flex: 1 }} >
-                    <TextTheme color={color} numberOfLines={1} fontSize={14} fontWeight={800} >{label}</TextTheme>
-                    <TextTheme color={color} isPrimary={false} fontSize={12} numberOfLines={2} fontWeight={700}>{text}</TextTheme>
+                    <TextTheme color={color} numberOfLines={1} fontSize={13} fontWeight={800} >{label}</TextTheme>
+                    <TextTheme color={color} isPrimary={false} fontSize={11} numberOfLines={2} fontWeight={600}>{text}</TextTheme>
                 </View>
             </View>
 

@@ -14,10 +14,12 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { useAppStorage } from '../Contexts/AppStorageProvider';
 import MaterialIcon from '../Components/Icon/MaterialIcon';
 import { useAppDispatch, useUserStore } from '../Store/ReduxStore';
-import { deleteAccount, deleteCompany, logout, switchCompany } from '../Services/user';
+import { deleteAccount, deleteCompany, getCurrentUser, logout } from '../Services/user';
 import { ItemSelectorModal } from '../Components/Modal/Selectors/ItemSelectorModal';
 import DeleteModal from '../Components/Modal/DeleteModal';
 import { useAlert } from '../Components/Ui/Alert/AlertProvider';
+import LoadingModal from '../Components/Modal/LoadingModal';
+import { getAllCompanies } from '../Services/company';
 
 export default function SettingScreen(): React.JSX.Element {
 
@@ -29,6 +31,7 @@ export default function SettingScreen(): React.JSX.Element {
     const dispatch = useAppDispatch();
     const [isCurrencyModalVisible, setCurrencyModalVisible] = useState<boolean>(false);
     const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+    const [isLoading, setLoading] = useState<boolean>(false);
     const [deleteMessage, setDeleteMessage] = useState<string>('');
     const [deletePasskey, setDeletePasskey] = useState<string>('');
     const [isBillPrefixModalVisible, setBillPrefixModalVisible] = useState<boolean>(false);
@@ -187,6 +190,7 @@ export default function SettingScreen(): React.JSX.Element {
                 message={deleteMessage}
                 passkey={deletePasskey}
                 handleDelete={() => {
+                    setLoading(true);
                     if (deletePasskey === user?.name?.first?.toUpperCase()) {
                         dispatch(deleteAccount()).then(() => {
                             setAlert({
@@ -196,34 +200,51 @@ export default function SettingScreen(): React.JSX.Element {
                             setDeleteModalVisible(false);
                             AuthStore.clearAll();
                             navigator.reset('signup-screen');
+                            setLoading(false);
                         });
                     } else {
                         dispatch(deleteCompany(current_company_id ?? '')).then((result) => {
                             if (result.meta.requestStatus === 'fulfilled') {
-                                if (result.payload?.company_id) {
-                                    dispatch(switchCompany(result.payload.company_id));
-                                }
                                 setAlert({
                                     message: 'Company deleted successfully.',
                                     type: 'success',
                                 });
-                                AuthStore.set('current_company_id', result.payload?.current_company_id ?? null);
-                                AuthStore.set('accessToken', result.payload?.accessToken ?? null);
-                                navigator.reset('landing-screen');
+                                // Only set if value exists, otherwise delete the key
+                                if (result.payload?.current_company_id) {
+                                    AuthStore.set('current_company_id', result.payload.current_company_id);
+                                } else {
+                                    AuthStore.delete('current_company_id');
+                                }
+                                if (result.payload?.accessToken) {
+                                    AuthStore.set('accessToken', result.payload.accessToken);
+                                } else {
+                                    AuthStore.delete('accessToken');
+                                }
+                                if (result.payload?.refreshToken) {
+                                    AuthStore.set('refreshToken', result.payload.refreshToken);
+                                } else {
+                                    AuthStore.delete('refreshToken');
+                                }
+                                dispatch(getCurrentUser());
+                                dispatch(getAllCompanies());
+                                navigator.reset('tab-navigation');
                                 setDeleteModalVisible(false);
-                            } else {
-                                setDeleteModalVisible(false);
+                                setLoading(false);
                             }
                         }).catch((err) => {
+                            console.error('Error deleting company:', err);
+                            setDeleteModalVisible(false);
+                            setLoading(false);
                             setAlert({
                                 message: 'Failed to delete company. Please try again later.',
                                 type: 'error',
                             });
-                            setDeleteModalVisible(false);
-                            console.error('Error deleting company:', err);
                         });
                     }
                 }}
+            />
+            <LoadingModal
+                visible={isLoading}
             />
         </View>
     );

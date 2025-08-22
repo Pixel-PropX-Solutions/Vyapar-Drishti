@@ -16,13 +16,13 @@ import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import { GetCustomerInvoices } from '../../../../Utils/types';
 import EmptyListView from '../../../../Components/Layouts/View/EmptyListView';
 import usePDFHandler from '../../../../Hooks/usePDFHandler';
-import { printGSTInvoices, printInvoices } from '../../../../Services/invoice';
+import { printTAXInvoices, printInvoices } from '../../../../Services/invoice';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
 import { StatsCard } from '../../../../Components/Ui/Card/StatsCard';
 import { useCustomerContext } from './Context';
-import { formatLocalDate } from '../../../../Utils/functionTools';
+import { formatLocalDate, formatNumberForUI, getMonthByIndex } from '../../../../Utils/functionTools';
 
-
+type Date = { month: number, year: number }
 export function ProfileSection() {
     const { customer, isAllCustomerFetching } = useCustomerStore();
     const [GREEN, ORANGE, RED, YELLOW, BLUE] = ['50,200,150', '200,150,50', '250,50,50', '200,150,50', '50,150,200'];
@@ -30,7 +30,9 @@ export function ProfileSection() {
     const { id: customer_id } = router.params;
     const dispatch = useAppDispatch();
     const { filters } = useCustomerContext();
-    const {secondaryBackgroundColor} = useTheme()
+    const date: Date = { month: new Date(filters.startDate ?? '').getMonth(), year: new Date(filters.startDate ?? '').getFullYear() };
+
+    const { secondaryBackgroundColor } = useTheme()
 
     useEffect(() => {
         if (customer_id) {
@@ -70,10 +72,10 @@ export function ProfileSection() {
                 </View>
             </View>
             <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'space-between' }} >
-                <StatsCard rgb={(customer?.opening_balance ?? 0) < 0 ? RED : GREEN} label="Opening" value={Math.abs(customer?.opening_balance ?? 0).toString()} />
-                <StatsCard rgb={RED} label="Debit" value={Math.abs(customer?.total_debit ?? 0).toString()} />
-                <StatsCard rgb={GREEN} label="Credit" value={Math.abs(customer?.total_credit ?? 0).toString()} />
-                <StatsCard rgb={(customer?.total_amount ?? 0) < 0 ? RED : GREEN} label="Closing" value={Math.abs(customer?.total_amount ?? 0).toString()} />
+                <StatsCard rgb={(customer?.opening_balance ?? 0) < 0 ? RED : GREEN} label="Opening (All)" value={formatNumberForUI(Math.abs(customer?.opening_balance ?? 0))} />
+                <StatsCard rgb={RED} label={`Debit (${getMonthByIndex(date.month)})`} value={formatNumberForUI(Math.abs(customer?.total_debit ?? 0))} />
+                <StatsCard rgb={GREEN} label={`Credit (${getMonthByIndex(date.month)})`} value={formatNumberForUI(Math.abs(customer?.total_credit ?? 0))} />
+                <StatsCard rgb={(customer?.total_amount ?? 0) < 0 ? RED : GREEN} label="Closing (All)" value={formatNumberForUI(Math.abs(customer?.total_amount ?? 0))} />
             </View>
         </View>
     );
@@ -120,14 +122,13 @@ export function InvoiceListing() {
     const router = useRoute<RouteProp<StackParamsList, 'customer-view-screen'>>();
     const { id: customer_id } = router.params;
     const dispatch = useAppDispatch();
-    const { filters, handleFilter } = useCustomerContext();
-    console.log('filters', filters);
+    const { filters } = useCustomerContext();
     const { user, current_company_id } = useUserStore();
     const { customerInvoicesPageMeta, customerInvoices, isAllCustomerInvoicesFetching } = useCustomerStore();
     const currentCompnayDetails = user?.company.find((c: any) => c._id === current_company_id);
 
     const [debouncedQuery, setDebouncedQuery] = useState<string>(filters.searchQuery);
-    const gst_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_gst;
+    const tax_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_tax;
 
     const { init, isGenerating, setIsGenerating, PDFViewModal, handleShare } = usePDFHandler();
 
@@ -140,7 +141,7 @@ export function InvoiceListing() {
         try {
             setIsGenerating(true);
 
-            const res = await dispatch((gst_enable ? printGSTInvoices : printInvoices)({
+            const res = await dispatch((tax_enable ? printTAXInvoices : printInvoices)({
                 vouchar_id: invoice.vouchar_id,
                 company_id: current_company_id || '',
             }));

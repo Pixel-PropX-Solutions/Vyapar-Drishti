@@ -2,7 +2,7 @@ import { createNavigationContainerRef, StackActions } from '@react-navigation/na
 import type { StackParamsList } from './StackNavigation';
 
 const navigation = createNavigationContainerRef<StackParamsList>();
-export {navigation as NavigationRef}
+export { navigation as NavigationRef }
 
 
 export function navigate<RouteName extends keyof StackParamsList>(
@@ -17,15 +17,15 @@ export function navigate<RouteName extends keyof StackParamsList>(
 
 
 const navigator = {
-  navigate, 
+  navigate,
 
-  goBack: function() {
+  goBack: function () {
     if (navigation.isReady() && navigation.canGoBack()) {
       navigation.goBack();
     }
   },
-  
-  reset: function(name: keyof StackParamsList, params?: any) {
+
+  reset: function (name: keyof StackParamsList, params?: any) {
     if (navigation.isReady()) {
       navigation.reset({
         index: 0,
@@ -34,23 +34,23 @@ const navigator = {
     }
   },
 
-  replace: function (name: keyof StackParamsList, params?: any){
-    if(navigation.isReady()){
+  replace: function (name: keyof StackParamsList, params?: any) {
+    if (navigation.isReady()) {
       navigation.current?.dispatch(StackActions.replace(name, params))
     }
   },
 
-  currentRouteName: function() {
+  currentRouteName: function () {
     return navigation.isReady() ? navigation.getCurrentRoute()?.name : null;
   },
 
-  getParams: function<RouteName extends keyof StackParamsList>(name: RouteName): StackParamsList[RouteName] | undefined {
+  getParams: function <RouteName extends keyof StackParamsList>(name: RouteName): StackParamsList[RouteName] | undefined {
     if (navigation.isReady()) {
       const route = navigation.getState().routes.find(route => route.name === name);
       return route ? (route.params as StackParamsList[RouteName]) : undefined;
     }
     return undefined;
   }
-} 
+}
 
 export default navigator

@@ -27,12 +27,12 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
     const dispatch = useAppDispatch();
     const { customerInfo:customer } = useCustomerStore();
     const currentCompanyDetails = user?.company?.find((company: any) => company._id === current_company_id);
-    const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
+    const tax_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_tax;
     const [loading, setLoading] = useState<boolean>(false);
 
     const ledger_details = useRef({
         ledger_name: '',
-        gstin: '',
+        tin: '',
         email: '',
         phone: { code: '', number: '' },
     });
@@ -65,7 +65,7 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
     useEffect(() => {
         if (customer) {
             setLedgerDetails('ledger_name', customer.ledger_name ?? '');
-            setLedgerDetails('gstin', customer.gstin ?? '');
+            setLedgerDetails('tin', customer.tin ?? '');
             setLedgerDetails('email', customer.email ?? '');
             setLedgerDetails('phone', customer.phone ?? '');
         }
@@ -86,15 +86,15 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
                 </TextTheme>
 
                 <View style={{ gap: 24 }} >
-                    {gst_enable && <LabelTextInput
-                        label="GSTIN Number"
+                    {tax_enable && <LabelTextInput
+                        label="TIN Number"
                         placeholder="24XXXXXXXXXX"
                         icon={<MaterialIcon name="account-balance" size={16} />}
-                        onChangeText={(val) => { setLedgerDetails('gstin', val); }}
-                        value={ledger_details.current.gstin}
+                        onChangeText={(val) => { setLedgerDetails('tin', val); }}
+                        value={ledger_details.current.tin}
                         useTrim={true}
                         isRequired={true}
-                        infoMessage="15 digit GSTIN number"
+                        infoMessage="15 digit TIN number"
                         capitalize="characters"
                     />}
                     <LabelTextInput
@@ -394,11 +394,11 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
 
 // export function TaxInfoUpdateModal({ visible, setVisible }: Props): React.JSX.Element {
 
-//     const gstinNo = useRef<string>('');
+//     const tinNo = useRef<string>('');
 //     const panNo = useRef<string>('');
 
 //     function handleUpdate() {
-//         console.log({ gstinNo, panNo });
+//         console.log({ tinNo, panNo });
 //     }
 
 //     return (
@@ -417,24 +417,16 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
 
 //                 <View style={{ gap: 24 }} >
 //                     <LabelTextInput
-//                         label="GSTIN Number"
+//                         label="TIN Number"
 //                         placeholder="24XXXXXXXXXX"
 //                         icon={<FeatherIcon name="user" size={16} />}
-//                         onChangeText={(val) => { gstinNo.current = val; }}
+//                         onChangeText={(val) => { tinNo.current = val; }}
 //                         useTrim={true}
 //                         isRequired={true}
-//                         infoMessage="15 digit GSTIN number"
+//                         infoMessage="15 digit TIN number"
 //                     />
 
-//                     <LabelTextInput
-//                         label="Pan Number"
-//                         placeholder="AbC4242D"
-//                         icon={<FeatherIcon name="map-pin" size={16} />}
-//                         onChangeText={(val) => { panNo.current = val; }}
-//                         useTrim={true}
-//                         isRequired={true}
-//                         infoMessage="10 digit PAN number"
-//                     />
+
 //                 </View>
 
 //                 <View style={{ minHeight: 40 }} />

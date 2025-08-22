@@ -24,8 +24,7 @@ export default function MeasurementUnitsOpation({ onSelect, label, style, reande
     const [selected, setSelected] = useState<MeasurmentUnitType>(undefined);
 
     useEffect(() => {
-        if (selected?.id && onSelect)
-            {onSelect(selected);}
+        if (selected?.id && onSelect) { onSelect(selected); }
     }, [selected]);
 
     return (
@@ -33,7 +32,7 @@ export default function MeasurementUnitsOpation({ onSelect, label, style, reande
             onPress={() => { setModalVisible(true); }}
             style={
                 reanderCustomButton ? style : {
-                    borderWidth: 1, borderRadius: 12, paddingInline: 12, flexDirection: 'row', alignItems: 'center', gap: 16, borderColor: error ? 'red' : primaryColor, paddingBlock: 20, ...style,
+                    borderWidth: 1, borderRadius: 12, paddingInline: 12, flexDirection: 'row', alignItems: 'center', gap: 16, borderColor: error ? 'red' : primaryColor, paddingBlock: 12, ...style,
                 }
             }
         >

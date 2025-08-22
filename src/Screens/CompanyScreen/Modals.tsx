@@ -47,7 +47,7 @@ export function CompanyInfoUpdateModal({ visible, setVisible }: Props): React.JS
 
         const data = arrayToFormData(Object.entries({
             ...company,
-            phone: '', name, website, code, number, pan_number: company?.pan,
+            phone: '', name, website, code, number,
         }));
 
         await dispatch(updateCompany({ data, id: company?._id }));
@@ -114,7 +114,7 @@ export function CompanyContactUpdateModal({ visible, setVisible }: Props): React
 
         const data = arrayToFormData(Object.entries({
             ...company,
-            phone: '', email, ...phoneNumber.current, pan_number: company?.pan, mailing_name: mailingName,
+            phone: '', email, ...phoneNumber.current, mailing_name: mailingName,
         }));
 
         await dispatch(updateCompany({ data, id: company?._id }));
@@ -196,7 +196,7 @@ export function CompanyAddressUpdateModal({ visible, setVisible }: Props): React
 
         const data = arrayToFormData(Object.entries({
             ...company,
-            phone: '', number, code, pan_number: company?.pan,
+            phone: '', number, code,
             country: address_details.current.country,
             state: address_details.current.state,
             address_1: address_details.current.address_1,
@@ -275,7 +275,7 @@ export function CompanyAddressUpdateModal({ visible, setVisible }: Props): React
 
 export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.Element {
 
-    const { company, loading } = useCompanyStore();
+    const { company} = useCompanyStore();
     const dispatch = useAppDispatch();
     const bank_details = useRef({
         account_holder: '',
@@ -409,11 +409,11 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
 
 export function TaxInfoUpdateModal({ visible, setVisible }: Props): React.JSX.Element {
 
-    const gstinNo = useRef<string>('');
+    const tinNo = useRef<string>('');
     // const panNo = useRef<string>('');
 
     function handleUpdate() {
-        console.log({ gstinNo });
+        console.log({ tinNo });
     }
 
     return (
@@ -432,24 +432,15 @@ export function TaxInfoUpdateModal({ visible, setVisible }: Props): React.JSX.El
 
                 <View style={{ gap: 24 }} >
                     <LabelTextInput
-                        label="GSTIN Number"
+                        label="TIN Number"
                         placeholder="24XXXXXXXXXX"
                         icon={<FeatherIcon name="user" size={16} />}
-                        onChangeText={(val) => { gstinNo.current = val; }}
+                        onChangeText={(val) => { tinNo.current = val; }}
                         useTrim={true}
                         isRequired={true}
-                        infoMessage="15 digit GSTIN number"
+                        infoMessage="15 digit TIN number"
                     />
 
-                    {/* <LabelTextInput
-                        label="Pan Number"
-                        placeholder="AbC4242D"
-                        icon={<FeatherIcon name="map-pin" size={16} />}
-                        onChangeText={(val) => { panNo.current = val; }}
-                        useTrim={true}
-                        isRequired={true}
-                        infoMessage="10 digit PAN number"
-                    /> */}
                 </View>
 
                 <View style={{ minHeight: 40 }} />

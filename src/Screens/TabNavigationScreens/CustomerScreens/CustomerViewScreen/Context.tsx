@@ -16,7 +16,7 @@ type Filters = {
 
 type ContextType = {
     date: Date, setDate: Dispatch<SetStateAction<Date>>,
-    isGstEnable: boolean,
+    isTaxEnable: boolean,
     filters: Filters, handleFilter: <Key extends keyof Filters>(key: Key, val: Filters[Key]) => void
 }
 
@@ -25,7 +25,7 @@ const fn = () => { };
 const defaultFiltersValue: Filters = { sortBy: '', useAscOrder: false, filterState: 'All-States', type: 'Customers', startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(), endDate: new Date().toISOString(), invoiceType: 'all', searchQuery: ""}
 const Context = createContext<ContextType>({
     date: { year: 0, month: 0 }, setDate: fn,
-    isGstEnable: false,
+    isTaxEnable: false,
     filters: defaultFiltersValue, handleFilter: fn,
 });
 
@@ -34,7 +34,7 @@ export default function CustomerContextProvider({ children }: { children: ReactN
 
     const { user, current_company_id } = useUserStore();
     const currentCompnayDetails = user?.company.find((c: any) => c._id === current_company_id);
-    const gst_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_gst;
+    const tax_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_tax;
 
 
     const [date, setDate] = useState<Date>({ year: new Date().getFullYear(), month: new Date().getMonth() });
@@ -48,7 +48,7 @@ export default function CustomerContextProvider({ children }: { children: ReactN
 
     const states = {
         date, setDate,
-        isGstEnable: gst_enable,
+        isTaxEnable: tax_enable,
         filters, handleFilter,
     };
 

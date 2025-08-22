@@ -36,10 +36,10 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
     const { setAlert } = useAlert();
 
     const { loading, customerType } = useCustomerStore();
-    const { user, current_company_id } = useUserStore();
     const dispatch = useAppDispatch();
+    const { user, current_company_id } = useUserStore();
     const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
-    const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
+    const tax_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_tax;
     const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
     const [currentStep, setCurrentStep] = useState<number>(0);
     const [bankExpanded, setBankExpanded] = useState<boolean>(false);
@@ -67,7 +67,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
         bank_ifsc: string;
         bank_branch: string;
         account_holder: string;
-        gstin: string;
+        tin: string;
     };
     const data = useRef<DataType>({
         name: '',
@@ -88,7 +88,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
         bank_ifsc: '',
         bank_branch: '',
         account_holder: '',
-        gstin: '',
+        tin: '',
     });
 
 
@@ -105,9 +105,9 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                 showMailingDetails: true,
                 showBankDetails: true,
                 isBankOptional: true,
-                isGSTINOptional: true,
+                isTINOptional: true,
                 isMailingAddressOptional: false,
-                showGSTIN: true,
+                showTIN: true,
                 requiredFields: [
                     'name',
                     'mailing_state',
@@ -123,21 +123,21 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                 showMailingDetails: true,
                 showBankDetails: true,
                 isBankOptional: true,
-                isGSTINOptional: gst_enable ? false : true,
+                isTINOptional: tax_enable ? false : true,
                 isMailingAddressOptional: false,
-                showGSTIN: true,
+                showTIN: true,
                 requiredFields: [
                     'name',
                     'mailing_state',
                     'parent',
                     'mailing_country',
-                    ...(gst_enable ? ['gstin'] : []),
+                    ...(tax_enable ? ['tin'] : []),
                 ],
             };
         }
-    }, [gst_enable, customerType?._id, customerType?.accounting_group_name]);
+    }, [tax_enable, customerType?._id, customerType?.accounting_group_name]);
 
-    const { showBankDetails, showGSTIN, showMailingDetails, isBankOptional, isGSTINOptional, isMailingAddressOptional } = getVisibleFields();
+    const { showBankDetails, showTIN, showMailingDetails, isBankOptional, isTINOptional, isMailingAddressOptional } = getVisibleFields();
 
     useEffect(() => {
         // Reset form when modal visibility changes
@@ -160,7 +160,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
             bank_ifsc: '',
             bank_branch: '',
             account_holder: '',
-            gstin: '',
+            tin: '',
         };
 
     }, [customerType?._id, customerType?.accounting_group_name, user?.user_settings?.current_company_id, visible]);
@@ -169,12 +169,12 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
         const errors: Record<string, string> = {};
         switch (currentStep) {
             case 0:
-                if (showGSTIN && !isGSTINOptional && !data.current.gstin.trim()) {
-                    errors.gstin = 'GSTIN is required';
+                if (showTIN && !isTINOptional && !data.current.tin.trim()) {
+                    errors.tin = 'TIN is required';
                 }
 
-                if (showGSTIN && data.current.gstin && !isGSTINOptional && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][A-Z0-9][Z][0-9A-Z]$/.test(data.current.gstin)) {
-                    errors.gstin = 'Please enter a valid GSTIN';
+                if (showTIN && data.current.tin && !isTINOptional && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][A-Z0-9][Z][0-9A-Z]$/.test(data.current.tin)) {
+                    errors.tin = 'Please enter a valid TIN';
                 }
 
                 if (!data.current.name.trim()) {
@@ -234,7 +234,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
             default:
                 return false;
         }
-    }, [currentStep, isBankOptional, isGSTINOptional, isMailingAddressOptional, showBankDetails, showGSTIN, showMailingDetails]);
+    }, [currentStep, isBankOptional, isTINOptional, isMailingAddressOptional, showBankDetails, showTIN, showMailingDetails]);
 
     // Remove setData, update handleInputChange to use data.current
     const handleInputChange = useCallback((field: string, value: string | number | boolean) => {
@@ -306,7 +306,7 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
             bank_ifsc: '',
             bank_branch: '',
             account_holder: '',
-            gstin: '',
+            tin: '',
         };
         dispatch(setCustomerType(null));
         setValidationErrors({});
@@ -362,16 +362,16 @@ export default function CreateCustomerModal({ visible, setVisible, setPrimaryVis
                             </View>
                         </ShowWhen> */}
 
-                        {/* GSTIN */}
-                        {gst_enable && <ShowWhen when={showGSTIN}>
+                        {/* TIN */}
+                        {tax_enable && <ShowWhen when={showTIN}>
                             <InputField
                                 icon={<FeatherIcon name="file-text" size={20} color={primaryColor} />}
-                                field="gstin"
-                                placeholder={`GSTIN ${isGSTINOptional ? '(Optional)' : '*'}`}
+                                field="tin"
+                                placeholder={`TIN ${isTINOptional ? '(Optional)' : '*'}`}
                                 capitalize="characters"
                                 handleChange={handleInputChange}
-                                error={validationErrors.gstin}
-                                value={data.current.gstin}
+                                error={validationErrors.tin}
+                                value={data.current.tin}
                                 secondaryButton={true}
                                 secondaryButtonAction={() => { }}
                             />

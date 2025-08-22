@@ -83,7 +83,7 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                         <EditButton onPress={() => { setInfoUpdateModalVisible(true); }} />
                     }
                 >
-                    <InfoRow label="GSTIN Number" value={customer?.gstin || 'Not Set'} />
+                    <InfoRow label="TIN Number" value={customer?.tin || 'Not Set'} />
                     <InfoRow label="Billing Name" value={customer?.ledger_name || 'Not Set'} />
                     <InfoRow label="Email" value={customer?.email || 'Not Set'} />
                     <InfoRow label="Contact" value={(customer?.phone?.code && customer?.phone?.number) ? `${customer?.phone?.code} ${customer?.phone?.number}` : 'Not Set'} />

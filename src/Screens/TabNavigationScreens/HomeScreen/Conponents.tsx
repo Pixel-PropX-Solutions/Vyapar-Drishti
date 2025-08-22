@@ -210,7 +210,7 @@ export function QuickAccessSection(): React.JSX.Element {
                         icon={<FeatherIcon name="share-2" size={16} />}
                         onPress={() => {
                             Share.share({
-                                message: `Check out Vyapar Drishti - A free GST billing app for small businesses. Download now from ${BASE_WEB_URL} or ${BASE_APP_URL}`,
+                                message: `Check out Vyapar Drishti - A free TAX billing app for small businesses. Download now from ${BASE_WEB_URL} or ${BASE_APP_URL}`,
                                 title: 'Vyapar Drishti',
                                 url: BASE_APP_URL,
                             });

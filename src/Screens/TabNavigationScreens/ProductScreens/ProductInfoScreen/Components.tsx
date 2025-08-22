@@ -32,12 +32,14 @@ export function HeroSection(): React.JSX.Element {
                     </> :
                         <>
                             <FeatherIcon name="package" size={32} />
-                            <TextTheme fontWeight={900} fontSize={16} style={{ flexWrap: 'wrap', maxWidth: 200 }} >
-                                {product?.stock_item_name}
-                            </TextTheme>
-                            <TextTheme isPrimary={false} fontWeight={500} fontSize={12}>
-                                {product?.gst_hsn_code}
-                            </TextTheme>
+                            <View style={{ flexDirection: 'column', gap: 4 }} >
+                                <TextTheme fontWeight={900} fontSize={16} style={{ flexWrap: 'wrap', maxWidth: 200 }} >
+                                    {product?.stock_item_name}
+                                </TextTheme>
+                                <TextTheme isPrimary={false} fontWeight={500} fontSize={12}>
+                                    {product?.hsn_code}
+                                </TextTheme>
+                            </View>
                         </>
                     }
                 </View>
@@ -50,7 +52,7 @@ export function HeroSection(): React.JSX.Element {
                         </>}
                     >
                         <TextTheme fontWeight={900} fontSize={20}>
-                            {currency} {formatNumberForUI(((item?.purchase_value ?? 0) - (item?.sales_value ?? 0)), 10)}
+                            {currency} {formatNumberForUI(((item?.purchase_value ?? 0) - (item?.sales_value ?? 0)))}
                         </TextTheme>
                         <TextTheme isPrimary={false} fontWeight={900} fontSize={12}>Current Stock Value</TextTheme>
                     </ShowWhen>
@@ -92,7 +94,7 @@ export function SalePurchaseCards() {
                     <TextTheme fontSize={14} fontWeight={800} style={{ marginBottom: 4 }} >PURCHASES</TextTheme>
 
                     <TextTheme isPrimary={false} fontSize={16} fontWeight={800} style={{ marginBottom: 12 }} >
-                        {currency} {loading ? '0.00' : formatNumberForUI(item?.purchase_value ?? 0, 8)}
+                        {currency} {loading ? '0.00' : formatNumberForUI(item?.purchase_value ?? 0)}
                     </TextTheme>
 
                     <View style={{ marginTop: 12 }} >
@@ -114,14 +116,14 @@ export function SalePurchaseCards() {
                     <TextTheme fontSize={14} fontWeight={800} style={{ marginBottom: 4 }} >SELLS</TextTheme>
 
                     <TextTheme isPrimary={false} fontSize={16} fontWeight={800} style={{ marginBottom: 12 }} >
-                        {currency} {loading ? '0.00' : formatNumberForUI(item?.sales_value ?? 0, 8)}
+                        {currency} {loading ? '0.00' : formatNumberForUI(item?.sales_value ?? 0)}
                     </TextTheme>
 
                     <View style={{ marginTop: 12 }} >
                         <View style={{ flexDirection: 'row', gap: 4 }} >
                             <FeatherIcon name="trending-up" size={16} />
                             <TextTheme fontSize={16} fontWeight={800}>
-                                {formatNumberForUI(item?.sales_qty ?? 0, 8, 0)}
+                                {formatNumberForUI(item?.sales_qty ?? 0)}
                             </TextTheme>
                         </View>
                         <TextTheme isPrimary={false} fontSize={12} >Sell Invoice</TextTheme>
@@ -158,7 +160,7 @@ export function InfoSection() {
             {/* <SectionRow style={{ justifyContent: 'space-between' }} >
                 <TextTheme style={{ fontSize: 16, fontWeight: 900 }} >HSN Code</TextTheme>
                 <TextTheme isPrimary={false} style={{ fontSize: 16, fontWeight: 900 }} >
-                    {loading ? 'fetching..' : product?.gst_hsn_code ?? 'Not Set'}
+                    {loading ? 'fetching..' : product?.hsn_code ?? 'Not Set'}
                 </TextTheme>
             </SectionRow> */}
 
@@ -253,7 +255,7 @@ export function DangerSection() {
             <DeleteModal
                 visible={isModalVisible} setVisible={setModalVisible}
                 handleDelete={handleDelete}
-                passkey={product?.gst_hsn_code ?? 'delete'}
+                passkey={product?.hsn_code ?? 'delete'}
                 message="Once you delete the product then no way to go back."
             />
         </SectionView>

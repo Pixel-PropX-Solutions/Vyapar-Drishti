@@ -1,29 +1,25 @@
 // Sort type definitions
 
 
+
 export type SortField =
-  | 'name'
-  | 'shop_name'
-  | 'city'
-  | 'state'
-  | 'created_at'
+  | "name"
+  | "state"
+  | "created_at"
   | 'product_name'
-  | 'category'
-  | 'available_quantity'
-  | 'available_product_price'
-  | 'company_name';
+  | "category"
+  | "company_name";
+
+export type InventorySortField =
+  | "created_at"
+  | 'stock_item_name'
+  | 'last_restock_date'
+  | "current_stock";
 
 export type ProductSortField =
   | 'stock_item_name'
-  | 'selling_price'
-  | 'purchase_price'
   | 'category'
   | 'created_at'
-  | 'updated_at'
-  | 'opening_quantity'
-  | 'opening_purchase_price'
-  | 'show_active_stock'
-  | 'gst_hsn_code'
   | 'unit'
   | 'hsn_code';
 
@@ -34,22 +30,35 @@ export type CategorySortField =
   | 'parent'
   | 'updated_at';
 
+export type GroupSortField =
+  | "inventory_group_name"
+  | 'description'
+  | 'created_at'
+  | 'parent'
+  | "updated_at";
+
 export type CustomerSortField =
   | 'name'
   | 'company_name'
-  // | 'credit_limit'
-  // | 'balance_type'
   | 'city'
   | 'state'
   | 'created_at';
 
+export type InvoicesSortField =
+  | "date"
+  | 'voucher_type'
+  | 'party_name'
+  | 'voucher_number'
+  | "created_at";
 
 export type SortOrder = 'asc' | 'desc';
 
 export interface Units {
   id: string;
-  label: string;
+  unit_name: string;
   value: string;
+  symbol: string;
+  si_representation: 'decimal' | 'integer';
 }
 
 export interface UserSignUp {
@@ -81,12 +90,6 @@ export interface UploadData {
   width: number;
 }
 
-export interface Name {
-  first_name: string;
-  middle_name: string;
-  last_name: string;
-}
-
 export interface PhoneNumber {
   code: string;
   number: string;
@@ -105,14 +108,6 @@ export interface GetCustomerInvoices {
   reference_number: string,
   place_of_supply: string,
   customer: string
-}
-
-export interface Address {
-  street_address: string;
-  street_address_line_2: string;
-  city: string;
-  state: string;
-  zip_code: string;
 }
 
 export interface GetGroup {
@@ -160,7 +155,7 @@ export interface GetUserLedgers {
   image?: string | File | null,
   mailing_state: string,
   alias?: string,
-  gstin?: string;
+  tin?: string;
   created_at: string,
   updated_at: string,
 }
@@ -189,9 +184,8 @@ export interface GetCustomerInfo {
     code: string | null,
     number: string | null
   },
-  gstin: string | null,
-  gst_registration_type: string | null,
-  gst_supply_type: string | null,
+  tin: string | null,
+  tax_registration_type: string | null,
   account_holder: string | null,
   account_number: string | null,
   bank_ifsc: string | null,
@@ -208,7 +202,7 @@ export interface GetCustomerProfile {
   parent: string,
   phone: PhoneNumber,
   email: string,
-  gstin: string,
+  tin: string,
   opening_balance: number,
   total_amount: number,
   total_debit: number,
@@ -250,6 +244,15 @@ export interface CreateInvoiceData {
   status: string,
   due_date: string,
 
+  paid_amount: number,
+  total: number,
+  discount: number,
+  total_amount: number,
+  // total_tax: number,
+  additional_charge: number,
+  roundoff: number,
+  grand_total: number,
+
   accounting: Array<{
     vouchar_id: string,
     ledger: string,
@@ -261,14 +264,70 @@ export interface CreateInvoiceData {
     item: string;
     item_id: string;
     quantity: number;
+    unit: string;
+    // hsn_code: string;
     rate: number;
     amount: number;
+    discount_amount: number;
+    // tax_rate: number;
+    // tax_amount: number;
+    total_amount: number;
+    godown: string;
+    godown_id: string;
   }>
 }
 
+export interface UpdateInvoice {
+  vouchar_id: string,
+  user_id: string,
+  company_id: string,
+  date: string,
+  voucher_type: string,
+  voucher_type_id: string,
+  voucher_number: string,
+  party_name: string,
+  party_name_id: string,
+  narration: string,
+  reference_number: string,
+  reference_date: string,
+  place_of_supply: string,
 
+  vehicle_number: string,
+  mode_of_transport: string,
+  status: string,
+  due_date: string,
+  paid_amount: number,
+  total: number,
+  discount: number,
+  total_amount: number,
+  // total_tax: number,
+  additional_charge: number,
+  roundoff: number,
+  grand_total: number,
 
-export interface CreateInvoiceWithGSTData {
+  accounting: Array<{
+    entry_id: string,
+    vouchar_id: string,
+    ledger: string,
+    ledger_id: string,
+    amount: number
+  }>,
+  items: Array<{
+    entry_id: string,
+    vouchar_id: string,
+    item: string,
+    item_id: string,
+    quantity: number,
+    rate: number,
+    amount: number,
+    discount_amount: number,
+    total_amount: number,
+    godown: string,
+    godown_id: string,
+  }>
+}
+
+export interface CreateInvoiceWithTAXData {
   company_id: string,
   date: string,
   voucher_type: string,
@@ -286,6 +345,15 @@ export interface CreateInvoiceWithGSTData {
   status: string,
   due_date: string,
 
+  paid_amount: number,
+  total: number,
+  discount: number,
+  total_amount: number,
+  total_tax: number,
+  additional_charge: number,
+  roundoff: number,
+  grand_total: number,
+
 
   accounting: Array<{
     vouchar_id: string,
@@ -298,17 +366,67 @@ export interface CreateInvoiceWithGSTData {
     item: string;
     item_id: string;
     quantity: number;
+    hsn_code: string;
     rate: number;
     amount: number;
-    additional_amount: number;
     discount_amount: number;
+    tax_rate: number;
+    tax_amount: number;
+    total_amount: number;
     godown: string;
     godown_id: string;
-    order_number: string;
-    order_due_date: string;
+  }>
+}
+export interface UpdateTAXInvoice {
+  vouchar_id: string,
+  user_id: string,
+  company_id: string,
+  date: string,
+  voucher_type: string,
+  voucher_type_id: string,
+  voucher_number: string,
+  party_name: string,
+  party_name_id: string,
+  narration: string,
+  reference_number: string,
+  reference_date: string,
+  place_of_supply: string,
+
+  vehicle_number: string,
+  mode_of_transport: string,
+  status: string,
+  due_date: string,
+  paid_amount: number,
+  total: number,
+  discount: number,
+  total_amount: number,
+  total_tax: number,
+  additional_charge: number,
+  roundoff: number,
+  grand_total: number,
+
+  accounting: Array<{
+    entry_id: string,
+    vouchar_id: string,
+    ledger: string,
+    ledger_id: string,
+    amount: number
+  }>,
+  items: Array<{
+    entry_id: string,
+    vouchar_id: string;
+    item: string;
+    item_id: string;
+    quantity: number;
     hsn_code: string;
-    gst_rate: number;
-    gst_amount: number;
+    rate: number;
+    amount: number;
+    discount_amount: number;
+    tax_rate: number;
+    tax_amount: number;
+    total_amount: number;
+    godown: string;
+    godown_id: string;
   }>
 }
 
@@ -331,10 +449,14 @@ export interface GetInvoiceData {
   mode_of_transport: string,
   status: string,
   due_date: string,
-  is_invoice: number,
-  is_accounting_voucher: number,
-  is_inventory_voucher: number,
-  is_order_voucher: number,
+  paid_amount: number,
+  total: number,
+  total_amount: number,
+  discount: number,
+  total_tax: number,
+  additional_charge: number,
+  roundoff: number,
+  grand_total: number,
   created_at: string,
   updated_at: string,
   party_details: {
@@ -349,9 +471,8 @@ export interface GetInvoiceData {
     updated_at: string,
     email: string,
     phone: PhoneNumber,
-    gst_registration_type: string,
-    gst_supply_type: string,
-    gstin: string,
+    tax_registration_type: string,
+    tin: string,
     image: string | File | null,
     is_deleted: boolean,
     is_deemed_positive: boolean,
@@ -376,17 +497,16 @@ export interface GetInvoiceData {
       item: string,
       item_id: string,
       quantity: number,
+      unit: string,
+      hsn_code: string,
       rate: number,
       amount: number,
-      additional_amount: number,
       discount_amount: number,
+      tax_rate: number,
+      tax_amount: number,
+      total_amount: number,
       godown: string,
       godown_id: string,
-      order_number: string | null,
-      order_due_date: string | null,
-      hsn_code?: string,
-      gst?: string,
-      gst_amount?: string,
       created_at: string,
       updated_at: string
     }
@@ -452,8 +572,7 @@ export interface GetCompany {
   financial_year_start: string,
   books_begin_from: string,
   image: string,
-  gstin: string,
-  pan: string,
+  tin: string,
   is_selected: boolean,
   website: string,
   account_holder: string,
@@ -481,12 +600,15 @@ export interface SetCompany {
   code?: string;
   email?: string,
   image?: File | string | null,
-  gstin?: string,
-  pan_number?: string,
+  tin?: string,
   website?: string,
+  account_number?: string,
+  account_holder?: string,
+  bank_ifsc?: string,
+  bank_name?: string,
+  bank_branch?: string,
+  qr_code_url?: File | string | null,
 }
-
-
 
 
 export interface ProductCreate {
@@ -500,7 +622,6 @@ export interface ProductCreate {
   unit?: string;
   hsn_code?: string;
   purchase_price?: number;
-  barcode?: string;
   category?: string;
   image?: string;
   description?: string;
@@ -517,23 +638,23 @@ export interface FormCreateProduct {
   stock_item_name: string;
   company_id: string;
   unit: string;
-  _unit: string;
+  unit_id: string;
   is_deleted: boolean;
   alias_name?: string;
   category?: string;
-  _category?: string;
+  category_id?: string;
   group?: string;
-  _group?: string;
+  group_id?: string;
   image?: File | string;
   description?: string;
 
   opening_balance?: number;
   opening_rate?: number;
   opening_value?: number;
-  gst_nature_of_goods?: string;
-  gst_hsn_code?: string;
-  gst_taxability?: string;
-  gst_percentage?: string;
+  nature_of_goods?: string;
+  hsn_code?: string;
+  taxability?: string;
+  tax_rate?: string;
 
   low_stock_alert?: number;
 }
@@ -557,9 +678,9 @@ export interface ProductUpdate {
   opening_balance?: number;
   opening_rate?: number;
   opening_value?: number;
-  gst_nature_of_goods?: string;
-  gst_hsn_code?: string;
-  gst_taxability?: string;
+  nature_of_goods?: string;
+  hsn_code?: string;
+  taxability?: string;
 
   low_stock_alert?: number | string;
 }
@@ -573,7 +694,7 @@ export interface GetProduct {
   alias_name: string
   image?: string;
   description?: string;
-  gst_hsn_code?: string;
+  hsn_code?: string;
   low_stock_alert?: number;
   category?: string;
   group?: string;
@@ -589,8 +710,8 @@ export interface GetProduct {
   opening_balance?: number;
   opening_rate?: number;
   opening_value?: number;
-  gst_nature_of_goods?: string;
-  gst_taxability?: string;
+  nature_of_goods?: string;
+  taxability?: string;
   created_at?: string;
   updated_at?: string;
 
@@ -614,9 +735,9 @@ export interface GetItem {
   _group: string;
   image: File | string | null;
   description: string;
-  gst_nature_of_goods: string;
-  gst_hsn_code: string;
-  gst_taxability: string;
+  nature_of_goods: string;
+  hsn_code: string;
+  taxability: string;
   low_stock_alert: number;
   created_at: string;
   updated_at: string;
@@ -640,9 +761,9 @@ export interface GetInventoryGroups {
   description: string;
   is_deleted: boolean;
   parent: string;
-  gst_nature_of_goods: string;
-  gst_hsn_code: string;
-  gst_taxability: string;
+  nature_of_goods: string;
+  hsn_code: string;
+  taxability: string;
   created_at: string;
   updated_at: string;
 }
@@ -670,6 +791,7 @@ export interface GetAllVouchars {
   party_name: string;
   created_at: string;
   amount: number,
+  paid_amount: number,
   is_deemed_positive: boolean
 }
 
@@ -710,8 +832,6 @@ export interface GetAllInvoiceGroups {
   company_id: string | null;
   parent: string;
   numbering_method: string;
-  // is_deemedpositive: boolean;
-  // affects_stock: boolean;
 }
 
 export interface CategoryCreate {

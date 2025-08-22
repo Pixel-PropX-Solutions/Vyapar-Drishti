@@ -97,7 +97,7 @@ export function getMonthByIndex(index: number): string {
     return months[Math.abs(index) % 12];
 }
 
-export function roundToDecimal(num: number, decimalPlaces: number=2): number {
+export function roundToDecimal(num: number, decimalPlaces: number = 2): number {
     // Rounds a number to a specified number of decimal places.
     const res = Number(num.toFixed(decimalPlaces));
     return res;
@@ -182,21 +182,21 @@ export function isValidMobileNumber(num: string): boolean {
 
 
 export function compareDates(date1: [number, number, number], date2?: [number, number, number]): -1 | 0 | 1 {
-    if(!date2) {
+    if (!date2) {
         const time = new Date();
         date2 = [time.getDate(), time.getMonth(), time.getFullYear()];
     }
 
     const [d1, m1, y1] = date1, [d2, m2, y2] = date2;
 
-    if(y1 < y2) return -1;
-    if(y1 > y2) return 1;
+    if (y1 < y2) return -1;
+    if (y1 > y2) return 1;
 
-    if(m1 < m2) return -1;
-    if(m1 > m2) return 1;
+    if (m1 < m2) return -1;
+    if (m1 > m2) return 1;
 
-    if(d1 < d2) return -1;
-    if(d1 > d2) return 1;
+    if (d1 < d2) return -1;
+    if (d1 > d2) return 1;
 
     return 0;
 }

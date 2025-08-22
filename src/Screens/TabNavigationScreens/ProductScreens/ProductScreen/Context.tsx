@@ -1,4 +1,4 @@
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from 'react';
+import { createContext,  ReactNode, useContext, useState } from 'react';
 import { useUserStore } from '../../../../Store/ReduxStore';
 
 type Filters = {
@@ -11,7 +11,7 @@ type Filters = {
 }
 
 type ContextType = {
-    isGstEnable: boolean,
+    isTaxEnable: boolean,
     filters: Filters, handleFilter: <Key extends keyof Filters>(key: Key, val: Filters[Key]) => void,
     resetFilters: () => void,
 }
@@ -19,7 +19,7 @@ type ContextType = {
 
 const fn = () => { };
 const Context = createContext<ContextType>({
-    isGstEnable: false,
+    isTaxEnable: false,
     filters: { sortBy: 'created_at', useAscOrder: false, status: 'all', searchQuery: '', category: 'All', group: 'All' }, handleFilter: fn,
     resetFilters: fn,
 });
@@ -29,7 +29,7 @@ export default function ProductContextProvider({ children }: { children: ReactNo
 
     const { user } = useUserStore();
     const currentCompnayDetails = user?.company.find((c: any) => c._id === user?.user_settings?.current_company_id);
-    const gst_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_gst;
+    const tax_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_tax;
 
 
     const [filters, setFilters] = useState<Filters>({ sortBy: 'created_at', useAscOrder: false, status: 'all', searchQuery: '', category: 'All', group: 'All' });
@@ -45,7 +45,7 @@ export default function ProductContextProvider({ children }: { children: ReactNo
     }
 
     const states = {
-        isGstEnable: gst_enable,
+        isTaxEnable: tax_enable,
         filters, handleFilter, resetFilters,
     };
 

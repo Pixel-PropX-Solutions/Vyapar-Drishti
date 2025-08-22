@@ -67,7 +67,7 @@ export default function LandingScreen(): React.JSX.Element {
                         </TextTheme>
 
                         <TextTheme fontWeight={900} style={{ textAlign: 'center' }} isPrimary={false} >
-                            Simplify Your GST Billing and Complete GST invoice management with automatic tax calculations.
+                            Simplify Your TAX Billing and Complete TAX invoice management with automatic tax calculations.
                         </TextTheme>
                     </View>
 

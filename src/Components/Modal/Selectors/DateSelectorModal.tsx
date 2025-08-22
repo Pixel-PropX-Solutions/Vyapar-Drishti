@@ -1,14 +1,14 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
-import { Modal, ModalProps, Pressable, View } from "react-native";
-import BackgroundThemeView from "../../Layouts/View/BackgroundThemeView";
-import TextTheme from "../../Ui/Text/TextTheme";
-import AnimateButton from "../../Ui/Button/AnimateButton";
-import NormalButton from "../../Ui/Button/NormalButton";
-import FeatherIcon from "../../Icon/FeatherIcon";
-import { useTheme } from "../../../Contexts/ThemeProvider";
-import { ItemSelectorModal } from "./ItemSelectorModal";
-import ScaleAnimationView from "../../Ui/Animation/ScaleAnimationView";
-import { compareDates } from "../../../Utils/functionTools";
+/* eslint-disable react-native/no-inline-styles */
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { Modal, ModalProps, Pressable, View } from 'react-native';
+import BackgroundThemeView from '../../Layouts/View/BackgroundThemeView';
+import TextTheme from '../../Ui/Text/TextTheme';
+import AnimateButton from '../../Ui/Button/AnimateButton';
+import NormalButton from '../../Ui/Button/NormalButton';
+import FeatherIcon from '../../Icon/FeatherIcon';
+import { useTheme } from '../../../Contexts/ThemeProvider';
+import { ItemSelectorModal } from './ItemSelectorModal';
+import { compareDates } from '../../../Utils/functionTools';
 
 type Props = ModalProps & {
     visible: boolean,
@@ -20,9 +20,9 @@ type Props = ModalProps & {
     selectFutureData?: boolean
 }
 
-const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-export default function DateSelectorModal({ visible, setVisible, onClose, closeOnBack = true, onSelect, value, selectFutureData=false, ...props }: Props): React.JSX.Element {
+export default function DateSelectorModal({ visible, setVisible, onClose, closeOnBack = true, onSelect, value, selectFutureData = false, ...props }: Props): React.JSX.Element {
 
     const { primaryColor } = useTheme();
 
@@ -34,37 +34,37 @@ export default function DateSelectorModal({ visible, setVisible, onClose, closeO
 
     function incrementMonth(by: number) {
         const nextMonth = (month + by + 12) % 12;
-        if(!selectFutureData && compareDates([date, nextMonth, year]) === 1) return;
+        if (!selectFutureData && compareDates([date, nextMonth, year]) === 1) {return;}
         setMonth(nextMonth);
-        
-        if (0 <= month + by && month + by <= 11) return;
-        
+
+        if (month + by >= 0 && month + by <= 11) {return;}
+
         const nextYear = year + Math.floor((month + by) / 12);
-        if(!selectFutureData && compareDates([date, nextMonth, nextYear]) === 1) return;
-        setYear(nextYear)
+        if (!selectFutureData && compareDates([date, nextMonth, nextYear]) === 1) {return;}
+        setYear(nextYear);
     }
 
     useEffect(() => {
-        if (visible) return;
+        if (visible) {return;}
 
         setDate(value?.date ?? new Date().getDate());
         setMonth(value?.month ?? new Date().getMonth());
         setYear(value?.year ?? new Date().getFullYear());
 
-    }, [visible])
+    }, [visible]);
 
     return (
         <Modal
             {...props}
             visible={visible}
-            onRequestClose={() => { setVisible(closeOnBack); if (onClose) onClose(); }}
+            onRequestClose={() => { setVisible(closeOnBack); if (onClose) {onClose();} }}
             animationType="fade"
             backdropColor={'rgba(0,0,0,0.5)'}
         >
             <View style={{ width: '100%', height: '100%', padding: 20, alignItems: 'center', justifyContent: 'center' }} >
-                <AnimateButton style={{ flex: 1, width: '100%' }} onPress={() => { setVisible(!closeOnBack) }} />
+                <AnimateButton style={{ flex: 1, width: '100%' }} onPress={() => { setVisible(!closeOnBack); }} />
 
-                <BackgroundThemeView isPrimary={false} style={{padding: 12, borderRadius: 10, width: '100%', gap: 12}} >
+                <BackgroundThemeView isPrimary={false} style={{ padding: 12, borderRadius: 10, width: '100%', gap: 12 }} >
 
                     <TextTheme>Select Date</TextTheme>
 
@@ -72,37 +72,37 @@ export default function DateSelectorModal({ visible, setVisible, onClose, closeO
                         {monthNames[month]} {date}, {year}
                     </TextTheme>
 
-                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingInline: 10, height: 40, borderRadius: 40, borderWidth: 2, borderColor: primaryColor}} >
-                        <AnimateButton style={{borderRadius: 20, padding: 4}} onPress={() => {incrementMonth(-1)}}>
+                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingInline: 10, height: 40, borderRadius: 40, borderWidth: 2, borderColor: primaryColor }} >
+                        <AnimateButton style={{ borderRadius: 20, padding: 4 }} onPress={() => { incrementMonth(-1); }}>
                             <FeatherIcon name="chevron-left" size={20} />
                         </AnimateButton>
-            
-                        <Pressable onPress={() => {setYearModalVisible(true)}} >
+
+                        <Pressable onPress={() => { setYearModalVisible(true); }} >
                             <TextTheme fontSize={16} fontWeight={900} >{monthNames[month]}, {year}</TextTheme>
                         </Pressable>
-                        
-                        <AnimateButton style={{borderRadius: 20, padding: 4}} onPress={() => {incrementMonth(1)}}>
+
+                        <AnimateButton style={{ borderRadius: 20, padding: 4 }} onPress={() => { incrementMonth(1); }}>
                             <FeatherIcon name="chevron-right" size={20} />
                         </AnimateButton>
                     </View>
 
-                    <DisplayCalender date={date} month={month} year={year} onSelect={(date) => setDate(date)} selectFutureData={selectFutureData}  />
+                    <DisplayCalender date={date} month={month} year={year} onSelect={(date) => setDate(date)} selectFutureData={selectFutureData} />
 
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 12}} >
-                        <NormalButton 
-                            isPrimary={false} text="Cancel" 
-                            onPress={() => {setVisible(false)}}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 12 }} >
+                        <NormalButton
+                            isPrimary={false} text="Cancel"
+                            onPress={() => { setVisible(false); }}
                         />
-                        <NormalButton 
-                            text="Select" 
+                        <NormalButton
+                            text="Select"
                             onPress={() => {
-                                onSelect({year, month, date}); setVisible(false)
-                            }}    
+                                onSelect({ year, month, date }); setVisible(false);
+                            }}
                         />
                     </View>
                 </BackgroundThemeView>
 
-                <AnimateButton style={{ flex: 1, width: '100%' }} onPress={() => { setVisible(!closeOnBack) }} />
+                <AnimateButton style={{ flex: 1, width: '100%' }} onPress={() => { setVisible(!closeOnBack); }} />
             </View>
 
             <YearSelectorModal
@@ -113,7 +113,7 @@ export default function DateSelectorModal({ visible, setVisible, onClose, closeO
                 selectFutureData={selectFutureData}
             />
         </Modal>
-    )
+    );
 }
 
 
@@ -134,12 +134,12 @@ function DisplayCalender({ date, month, year, onSelect, selectFutureData }: Disp
         let currentDay = 1;
         let week: number[] = [];
 
-        for (let i = 0; i < 7; i++) week.push(i < firstDay ? 0 : currentDay++);
+        for (let i = 0; i < 7; i++) {week.push(i < firstDay ? 0 : currentDay++);}
         calendar.push(week);
 
         while (currentDay <= totalDays) {
             week = [];
-            for (let i = 0; i < 7; i++) week.push(currentDay <= totalDays ? currentDay++ : 0);
+            for (let i = 0; i < 7; i++) {week.push(currentDay <= totalDays ? currentDay++ : 0);}
             calendar.push(week);
         }
 
@@ -153,12 +153,12 @@ function DisplayCalender({ date, month, year, onSelect, selectFutureData }: Disp
     const [selected, setSelected] = useState<number>(date ?? currentDate);
 
     function handleSelect(date: number) {
-        if(!selectFutureData && compareDates([date, month, year]) === 1) return;
+        if (!selectFutureData && compareDates([date, month, year]) === 1) {return;}
 
         if (date !== 0) {
             setSelected(date);
 
-            if (onSelect) onSelect(date);
+            if (onSelect) {onSelect(date);}
         }
     }
 
@@ -204,7 +204,7 @@ function DisplayCalender({ date, month, year, onSelect, selectFutureData }: Disp
                 ))
             }
         </View>
-    )
+    );
 }
 
 type Year = { year: number, month: number }
@@ -228,18 +228,18 @@ function YearSelectorModal({ visible, setVisible, year, setYear, month, setMonth
         for (let year of years) {
             for (let month = 11; month >= 0; month--) {
                 if (selectFutureData || currentMonth >= month || currentYear > year)
-                    data.push({ year, month })
+                    {data.push({ year, month });}
             }
         }
         return data;
-    }, [])
+    }, []);
 
     return (
         <ItemSelectorModal
             allItems={data}
             isItemSelected={!!year}
             visible={visible} setVisible={setVisible}
-            onSelect={item => { setYear(item.year); setMonth(item.month) }}
+            onSelect={item => { setYear(item.year); setMonth(item.month); }}
             keyExtractor={item => (item.year * 100 + item.month).toString()}
             SelectedItemContent={
                 <TextTheme fontWeight={600} color="white" >{monthNames[month]} {date}, {year}</TextTheme>
@@ -261,5 +261,5 @@ function YearSelectorModal({ visible, setVisible, year, setYear, month, setMonth
             )}
             title="Select Year"
         />
-    )
+    );
 }

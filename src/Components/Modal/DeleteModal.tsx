@@ -54,6 +54,8 @@ export default function DeleteModal({ visible, setVisible, message, passkey, han
 
                 <NoralTextInput
                     placeholder={passkey}
+                    capitalize="characters"
+                    autoFocus={true}
                     style={{ fontSize: 18, fontWeight: 900, flex: 1 }}
                     onChangeText={setText}
                 />

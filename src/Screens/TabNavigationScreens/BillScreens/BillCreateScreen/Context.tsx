@@ -2,11 +2,8 @@ import { createContext, Dispatch, SetStateAction, useContext, useEffect, useStat
 
 
 export type Product = {
-    // vouchar_id: string,
     item: string, item_id: string, unit: string, hsn_code: string, quantity: number, rate: number, amount: number, discount_amount: number, tax_rate: number, tax_amount: number, total_amount: number
 }
-
-const productDefaultValue: Product = {item: '', item_id: '', unit: '', hsn_code: '', quantity: 0, rate: 0, amount: 0, discount_amount: 0, tax_rate: 0, tax_amount: 0, total_amount: 0}
 
 type Customer = {
     id: string,
@@ -16,21 +13,23 @@ type Customer = {
 
 type AdditionalDetails = {
     dueDate: string,
-    payAmount: string,
+    payAmount: number,
     transportMode: string,
     vechicleNumber: string,
     note: string
+    additional_charge: number,
 }
 
 type HandleAdditionalDetails = <Field extends keyof AdditionalDetails>(field: Field, val: AdditionalDetails[Field]) => void;
 
 const additionalDetailsDefaultValue: AdditionalDetails = {
-    dueDate: '',
-    payAmount: '',
+    dueDate: (new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)).toLocaleDateString(),
+    payAmount: 0,
     transportMode: '',
     vechicleNumber: '',
-    note: ''
-}
+    additional_charge: 0,
+    note: '',
+};
 
 type ContextType = {
     products: Product[],
@@ -39,7 +38,13 @@ type ContextType = {
     customer: Customer | null,
     setCustomer: Dispatch<SetStateAction<Customer | null>>,
 
-    totalValue: number,
+    total: number,
+    discount: number,
+    total_amount: number,
+    total_tax: number,
+
+    roundoff: number,
+    grandTotal: number,
 
     billNo: string,
     setBillNo: Dispatch<SetStateAction<string>>,
@@ -50,7 +55,7 @@ type ContextType = {
     additionalDetails: AdditionalDetails,
     handleAdditionalDetails: HandleAdditionalDetails
 
-    progress: number,    
+    progress: number,
 
     resetAllStates: () => void
 }
@@ -61,13 +66,18 @@ const fn = () => { };
 const Context = createContext<ContextType>({
     products: [], setProducts: fn,
     customer: null, setCustomer: fn,
-    totalValue: 0,
+    total: 0,
+    discount: 0,
+    total_amount: 0,
+    total_tax: 0,
+    roundoff: 0,
+    grandTotal: 0,
     billNo: '', setBillNo: fn,
     createOn: '', setCreateOn: fn,
     resetAllStates: fn,
     progress: 0,
     additionalDetails: additionalDetailsDefaultValue,
-    handleAdditionalDetails: fn
+    handleAdditionalDetails: fn,
 });
 
 
@@ -76,7 +86,12 @@ export default function BillContextProvider({ children }: { children: React.Reac
 
     const [products, setProducts] = useState<Product[]>([]);
     const [customer, setCustomer] = useState<Customer | null>(null);
-    const [totalValue, setTotalValue] = useState<number>(0);
+    const [total, setTotal] = useState<number>(0);
+    const [discount, setDiscount] = useState<number>(0);
+    const [total_amount, setTotalAmount] = useState<number>(0);
+    const [total_tax, setTotalTax] = useState<number>(0);
+    const [roundoff, setRoundoff] = useState<number>(0);
+    const [grandTotal, setGrandTotal] = useState<number>(0);
     const [billNo, setBillNo] = useState<string>('INV-000');
     const [createOn, setCreateOn] = useState<string>(new Date().toLocaleDateString());
     const [progress, setProgress] = useState<number>(0);
@@ -84,31 +99,48 @@ export default function BillContextProvider({ children }: { children: React.Reac
 
     const handleAdditionalDetails: HandleAdditionalDetails = (field, val) => {
         setAdditionalDetails(pre => ({
-            ...pre, [field]: val
+            ...pre, [field]: val,
         }));
-    }
+    };
 
     function resetAllStates(): void {
         setProducts([]); setCreateOn(new Date().toLocaleDateString());
-        setCustomer(null); setTotalValue(0);
-        setAdditionalDetails(additionalDetailsDefaultValue)
+        setCustomer(null); setTotal(0);
+        setDiscount(0); setTotalAmount(0);
+        setTotalTax(0);
+        setRoundoff(0); setGrandTotal(0);
+        setAdditionalDetails(additionalDetailsDefaultValue);
     }
 
     const states = {
         products, setProducts,
         customer, setCustomer,
-        totalValue,
+        total, setTotal,
+        discount, setDiscount,
+        total_amount, setTotalAmount,
+        total_tax, setTotalTax,
+        roundoff, setRoundoff,
+        grandTotal, setGrandTotal,
         billNo, setBillNo,
         createOn, setCreateOn,
         resetAllStates,
-        progress,
-
-        additionalDetails, handleAdditionalDetails
+        progress, setProgress,
+        additionalDetails, handleAdditionalDetails,
     };
 
     useEffect(() => {
-        setTotalValue(() => products.reduce((acc, pro) => acc + pro.total_amount, 0));
-    }, [products]);
+        const total1 = products.reduce((acc, pro) => acc + pro.amount, 0);
+        const discount1 = products.reduce((acc, pro) => acc + pro.discount_amount, 0);
+        const total_tax1 = products.reduce((acc, pro) => acc + pro.tax_amount, 0);
+        const total_amount1 = products.reduce((acc, pro) => acc + pro.total_amount, 0);
+        const roundOff1 = Math.round(total_amount1 + additionalDetails.additional_charge) - (total_amount1 + additionalDetails.additional_charge);
+        setTotal(() => total1);
+        setTotalAmount(() => total_amount1);
+        setDiscount(() => discount1);
+        setTotalTax(() => total_tax1);
+        setRoundoff(() => roundOff1);
+        setGrandTotal(() => total_amount1 + additionalDetails.additional_charge + roundOff1);
+    }, [products, additionalDetails.additional_charge]);
 
     useEffect(() => {
         let time = new Date();

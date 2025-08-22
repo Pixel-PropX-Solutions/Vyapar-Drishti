@@ -22,7 +22,7 @@ export default function CompanyScreen(): React.JSX.Element {
     const { company } = useCompanyStore();
     const { user, current_company_id } = useUserStore();
     const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
-    const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
+    const tax_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_tax;
 
     const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
     const [isInfoUpdateModalVisible, setInfoUdpateModalVisible] = useState<boolean>(false);
@@ -47,19 +47,19 @@ export default function CompanyScreen(): React.JSX.Element {
                     <LogoImage size={100} borderRadius={100} imageSrc={company?.image} />
                     <TextTheme fontSize={22} fontWeight={"bold"}>{company?.name}</TextTheme>
                     <TextTheme isPrimary={false} fontSize={16}>{company?.email}</TextTheme>
-                    {gst_enable && <TextTheme isPrimary={false} fontSize={12}>GST {company?.gstin}</TextTheme>}
+                    {tax_enable && <TextTheme isPrimary={false} fontSize={12}>TAX {company?.tin}</TextTheme>}
                 </View>
 
-                {gst_enable && <SectionView
+                {tax_enable && <SectionView
                     style={{ gap: 8 }} label="Tax Information"
                     labelContainerChildren={
                         <EditButton onPress={() => { setTaxInfoModalVisible(true); }} />
                     }
                 >
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme fontSize={16} fontWeight={900}>GSTIN Number</TextTheme>
+                        <TextTheme fontSize={16} fontWeight={900}>TIN Number</TextTheme>
                         <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
-                            {company?.gstin}
+                            {company?.tin}
                         </TextTheme>
                     </SectionRow>
                 </SectionView>}
@@ -187,16 +187,16 @@ export default function CompanyScreen(): React.JSX.Element {
                     </SectionRow>
                 </SectionView>
 
-                {!gst_enable && <SectionView
+                {!tax_enable && <SectionView
                     style={{ gap: 8 }} label="Tax Information"
                     labelContainerChildren={
                         <EditButton onPress={() => { setTaxInfoModalVisible(true); }} />
                     }
                 >
                     <SectionRow style={{ justifyContent: 'space-between' }} >
-                        <TextTheme fontSize={16} fontWeight={900}>GSTIN Number</TextTheme>
+                        <TextTheme fontSize={16} fontWeight={900}>TIN Number</TextTheme>
                         <TextTheme isPrimary={false} fontSize={16} fontWeight={900}>
-                            {company?.gstin}
+                            {company?.tin}
                         </TextTheme>
                     </SectionRow>
                 </SectionView>}

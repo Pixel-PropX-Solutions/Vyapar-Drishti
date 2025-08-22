@@ -27,48 +27,95 @@ type Props = TextInputProps & {
     autoFocus?: boolean,
     valueRefreshDipendency?: any[],
     isNeedValueRefresh?: () => boolean
+    type?: 'string' | 'integer' | 'decimal' | `decimal-${number}`
+    borderWidth?: number,
 }
 
-export default function LabelTextInput({ label, icon, containerStyle, onChangeText, focusColor = 'rgb(50, 150, 250)', messageTextColor = 'rgb(200,50,50)', checkInputText, message, value = '', useTrim = true, infoMessage = '', capitalize = 'none', infoIconSize = 20, infoMessageWidth, isRequired = false, postChild, autoFocus, valueRefreshDipendency, isNeedValueRefresh, ...props }: Props): React.JSX.Element {
+export default function LabelTextInput({ label, icon, containerStyle, onChangeText, focusColor = 'rgb(50, 150, 250)', messageTextColor = 'rgb(200,50,50)', checkInputText, message, value = '', useTrim = true, infoMessage = '', capitalize = 'none', infoIconSize = 20, infoMessageWidth, isRequired = false, postChild, autoFocus, valueRefreshDipendency, isNeedValueRefresh, type = 'string', borderWidth = 2, ...props }: Props): React.JSX.Element {
 
     const { primaryColor: color, primaryBackgroundColor: backgroundColor } = useTheme();
 
-    const input = useRef<TextInput>(null)
+    const input = useRef<TextInput>(null);
     const [isFocus, setFocus] = useState<boolean>(false);
     const [inputText, setInputText] = useState<string>(value);
     const [isInputTextValid, setInputTextValid] = useState<boolean>(true);
 
+    function handleIntiger(text: string) {
+        if (text.length > 0 && text[0] === '0') { return; }
+
+        if ('0123456789'.includes(text.at(-1) ?? '')) {
+            setInputText(text);
+            if (useTrim) { text = text.trim(); }
+            if (onChangeText) { onChangeText(text); }
+            if (checkInputText) { setInputTextValid(checkInputText(text)); }
+            if (!text) { setInputTextValid(true); }
+        }
+    }
+
+    function handleDecimal(text: string) {
+        if ('0123456789'.includes(text.at(-1) ?? '')) {
+            const temp = type.split('-');
+            const floatPart = text.split('.')[1] ?? '';
+            if (floatPart.length > parseInt(temp[1] ?? '6')) {
+                setInputText(
+                    parseFloat(text)
+                        .toFixed(parseInt(temp[1] ?? '6'))
+                );
+                if (useTrim) { text = text.trim(); }
+                if (onChangeText) { onChangeText(text); }
+                if (checkInputText) { setInputTextValid(checkInputText(text)); }
+                if (!text) { setInputTextValid(true); }
+            } else {
+                setInputText(text);
+                if (useTrim) { text = text.trim(); }
+                if (onChangeText) { onChangeText(text); }
+                if (checkInputText) { setInputTextValid(checkInputText(text)); }
+                if (!text) { setInputTextValid(true); }
+            }
+        } else if (text.at(-1) === '.' && !text.slice(0, text.length - 1).includes('.')) {
+            setInputText(text);
+            if (useTrim) { text = text.trim(); }
+            if (onChangeText) { onChangeText(text); }
+            if (checkInputText) { setInputTextValid(checkInputText(text)); }
+            if (!text) { setInputTextValid(true); }
+        }
+    }
+
     function handleOnChangeText(text: string): void {
-        setInputText(text);
-        if (useTrim) { text = text.trim(); }
-        if (onChangeText) { onChangeText(text); }
-        if (checkInputText) { setInputTextValid(checkInputText(text)); }
-        if (!text) { setInputTextValid(true); }
+        if (type === 'integer') { handleIntiger(text); }
+        else if (type.startsWith('decimal')) { handleDecimal(text); }
+        else {
+            setInputText(text);
+            if (useTrim) { text = text.trim(); }
+            if (onChangeText) { onChangeText(text); }
+            if (checkInputText) { setInputTextValid(checkInputText(text)); }
+            if (!text) { setInputTextValid(true); }
+        }
     }
 
     useEffect(() => {
-        if(isNeedValueRefresh && isNeedValueRefresh()) {
+        if (isNeedValueRefresh && isNeedValueRefresh()) {
             setInputText(value);
-        } else  {
+        } else {
             setInputText(value);
         }
-    }, [...(valueRefreshDipendency ?? [])])
+    }, [...(valueRefreshDipendency ?? [])]);
 
     useEffect(() => {
-        if(!autoFocus) return;
+        if (!autoFocus) { return; }
 
         const timeout = setTimeout(() => {
             input.current?.focus();
         }, 350);
 
         return () => clearTimeout(timeout);
-    }, [])
+    }, []);
 
     return (
         <View style={containerStyle} >
             <View
                 style={{
-                    borderWidth: 2, paddingInline: 12, borderRadius: 12, position: 'relative',
+                    borderWidth, paddingInline: 12, borderRadius: 12, position: 'relative',
                     borderColor: isInputTextValid ? isFocus ? focusColor : color : messageTextColor,
                     flexDirection: 'row', alignItems: 'center', gap: 8,
                 }}
@@ -99,7 +146,7 @@ export default function LabelTextInput({ label, icon, containerStyle, onChangeTe
                         color, paddingTop: 14, flex: 1,
                     }}
                 />
-                
+
                 {postChild ? postChild : null}
 
                 <ShowWhen when={!!infoMessage} >

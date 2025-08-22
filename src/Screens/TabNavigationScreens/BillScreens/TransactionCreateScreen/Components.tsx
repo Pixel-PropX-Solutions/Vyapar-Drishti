@@ -235,9 +235,9 @@ export function AccountSelector() {
 }
 
 export function AmountSection() {
-    const {amount, setAmount} = useTransactionContext()
-    const {currency} = useAppStorage()
-    
+    const { amount, setAmount } = useTransactionContext();
+    const { currency } = useAppStorage();
+
     const router = useRoute<RouteProp<StackParamsList, 'create-transaction-screen'>>();
     const { type } = router.params;
 
@@ -246,30 +246,30 @@ export function AmountSection() {
 
     return (<>
         <SectionRowWithIcon
-            icon={<MaterialDesignIcon name={type === 'Receipt' ? "cash-plus" : 'cash-minus'} size={24} />}
-            label={amount ? `${amount} ${currency}` : type === 'Receipt' ? 'Received Amount' : "Pay Amount"}
-            text={amount ? type === 'Receipt' ? "amount received" : 'amount pay' : 'Tab to enter amount'}
+            icon={<MaterialDesignIcon name={type === 'Receipt' ? 'cash-plus' : 'cash-minus'} size={24} />}
+            label={amount ? `${amount} ${currency}` : type === 'Receipt' ? 'Received Amount' : 'Pay Amount'}
+            text={amount ? type === 'Receipt' ? 'amount received' : 'amount pay' : 'Tab to enter amount'}
             backgroundColor={amount ? 'rgba(60,180,120, 0.5)' : ''}
             hasArrow={true}
             arrowIcon={<FeatherIcon name="chevron-right" size={20} />}
             onPress={() => { setModalVisible(true); }}
         />
 
-        <AutoFocusInputModal 
-            visible={isModalVisible} setVisible={setModalVisible} 
-            label='Add Amount'
-            placeholder='0.00'
-            keyboardType='number-pad'
+        <AutoFocusInputModal
+            visible={isModalVisible} setVisible={setModalVisible}
+            label="Add Amount"
+            placeholder="0.00"
+            keyboardType="number-pad"
             onSet={setAmount}
 
             inputValueFilters={(cur, old) => {
                 const char = cur.at(-1) ?? '';
 
-                if (cur.length > 1 && cur[0] === '0' && cur[1] === '0') return old;
-                if(!'0123456789.'.includes(char)) return old;
-                if(char === '.' && cur.slice(0, -1).includes('.')) return old;
+                if (cur.length > 1 && cur[0] === '0' && cur[1] === '0') {return old;}
+                if (!'0123456789.'.includes(char)) {return old;}
+                if (char === '.' && cur.slice(0, -1).includes('.')) {return old;}
 
-                if(cur.length > 1 && cur[0] === '0' && !cur.includes('.')) return cur.slice(1);
+                if (cur.length > 1 && cur[0] === '0' && !cur.includes('.')) {return cur.slice(1);}
                 return cur;
             }}
 
@@ -301,11 +301,11 @@ export function DescriptionSection() {
             </BackgroundThemeView>
         </AnimateButton>
 
-        <AutoFocusInputModal 
-            visible={isModalVisible} 
+        <AutoFocusInputModal
+            visible={isModalVisible}
             setVisible={setModalVisible}
-            label='Add Note'
-            placeholder='Type note that you want to attach' 
+            label="Add Note"
+            placeholder="Type note that you want to attach"
             multiline={true}
             numberOfLines={5}
             onSet={setNote}
@@ -327,7 +327,6 @@ export function AmountBox() {
     const { user, current_company_id } = useUserStore();
     const currentCompanyDetails = user.company.find((c: any) => c._id === current_company_id);
 
-    const [isModalVisible, setModalVisible] = useState<boolean>(false);
     const [isCreating, setCreating] = useState<boolean>(false);
 
     async function handleTransactionCreation() {
@@ -350,6 +349,13 @@ export function AmountBox() {
                 vehicle_number: '',
                 party_name: customer?.name ?? '',
                 party_name_id: customer?.id ?? '',
+                paid_amount: Number(totalValue),
+                total: Number(totalValue),
+                total_amount: Number(totalValue),
+                discount: 0,
+                additional_charge: 0,
+                roundoff: 0,
+                grand_total: Number(totalValue),
                 items: [],
                 accounting: [
                     { amount: billType === 'Payment' ? -totalValue : totalValue, ledger: customer?.name ?? '', ledger_id: customer?.id ?? '', vouchar_id: '' },
@@ -384,7 +390,7 @@ export function AmountBox() {
                     </TextTheme>
 
                     <TextTheme fontWeight={900} fontSize={20}>
-                        {formatNumberForUI(Number(amount || '0'), 10)} {currency}
+                        {formatNumberForUI(Number(amount || '0'))} {currency}
                     </TextTheme>
                 </SectionRow>
 

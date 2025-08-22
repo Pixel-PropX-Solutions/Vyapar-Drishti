@@ -15,7 +15,7 @@ import EmptyListView from '../../../../Components/Layouts/View/EmptyListView';
 import BillCard, { BillLoadingCard } from '../../../../Components/Ui/Card/BillCard';
 import ShowWhen from '../../../../Components/Other/ShowWhen';
 import { useAppDispatch, useInvoiceStore, useUserStore } from '../../../../Store/ReduxStore';
-import { printGSTInvoices, printInvoices, viewAllInvoices } from '../../../../Services/invoice';
+import { printTAXInvoices, printInvoices, viewAllInvoices } from '../../../../Services/invoice';
 import navigator from '../../../../Navigation/NavigationService';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
 import RoundedPlusButton from '../../../../Components/Ui/Button/RoundedPlusButton';
@@ -152,7 +152,8 @@ export function BillListing() {
     const { invoices, isInvoiceFeaching, pageMeta } = useInvoiceStore();
     const { filters } = useBillContext();
     const currentCompnayDetails = user?.company.find((c: any) => c._id === current_company_id);
-    const gst_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_gst;
+    console.log('currentCompnayDetails', currentCompnayDetails);
+    const tax_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_tax;
 
     const { init, isGenerating, setIsGenerating, PDFViewModal, handleShare } = usePDFHandler();
 
@@ -178,8 +179,7 @@ export function BillListing() {
 
         try {
             setIsGenerating(true);
-
-            const res = await dispatch((gst_enable ? printGSTInvoices : printInvoices)({
+            const res = await dispatch((tax_enable ? printTAXInvoices : printInvoices)({
                 vouchar_id: invoice._id,
                 company_id: current_company_id || '',
             }));
@@ -237,7 +237,7 @@ export function BillListing() {
                     customerName={item.party_name}
                     createOn={item.date}
                     totalAmount={item.amount}
-                    payAmount={item.amount}
+                    payAmount={item.paid_amount}
                     onPrint={() => { handleInvoice(item, () => { setPDFModalVisible(true); }); }}
                     onShare={() => { handleInvoice(item, handleShare); }}
                     onPress={() => { navigator.navigate('bill-info-screen', { id: item._id }); }}

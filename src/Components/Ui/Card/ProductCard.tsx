@@ -52,7 +52,7 @@ export default function ProductCard({ item, isPrimary = true, onPress }: Product
                             <View style={{ flexDirection: 'row', gap: 14 }} >
                                 <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
                                     <TextTheme color={rgb} fontSize={10} >Profit</TextTheme>
-                                    <TextTheme color={rgb} fontSize={10} >{formatNumberForUI(mp, 10, 2)}%</TextTheme>
+                                    <TextTheme color={rgb} fontSize={10} >{formatNumberForUI(mp, 4, 2)}%</TextTheme>
 
                                     <ShowWhen when={mp !== 0} >
                                         <FeatherIcon color={rgb} name={`trending-${mp < 0 ? 'down' : 'up'}`} size={10} />

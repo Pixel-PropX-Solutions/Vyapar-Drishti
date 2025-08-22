@@ -29,7 +29,7 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
 
     const info = useRef({
         stock_item_name: '',
-        // gst_hsn_code: '',
+        // hsn_code: '',
         low_stock_alert: '',
         unit: '',
         unit_id: '',
@@ -43,7 +43,7 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
     function handleUpdate() {
         const dataToSend = {
             stock_item_name: info.current.stock_item_name,
-            // gst_hsn_code: info.current.gst_hsn_code,
+            // hsn_code: info.current.hsn_code,
             low_stock_alert: Number(info.current.low_stock_alert),
             unit: info.current.unit,
             unit_id: info.current.unit_id,
@@ -63,7 +63,7 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
     useEffect(() => {
         if (product) {
             setInfo('stock_item_name', product.stock_item_name ?? '');
-            // setInfo('gst_hsn_code', product.gst_hsn_code ?? '');
+            // setInfo('hsn_code', product.hsn_code ?? '');
             setInfo('low_stock_alert', product.low_stock_alert !== undefined ? String(product.low_stock_alert) : '');
             setInfo('unit', product.unit ?? '');
             setInfo('unit_id', product.unit_id ?? '');
@@ -103,7 +103,7 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
                         autoCapitalize="none"
                         useTrim={true}
                         onChangeText={(val) => { setInfo('hsnCode', val); }}
-                        infoMessage="HSN Code is used for tax calculation. It is mandatory for GST registered businesses."
+                        infoMessage="HSN Code is used for tax calculation. It is mandatory for TAX registered businesses."
                     /> */}
 
                     <LabelTextInput

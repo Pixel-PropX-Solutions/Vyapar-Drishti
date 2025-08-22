@@ -63,7 +63,7 @@ export default function CustomerScreen(): React.JSX.Element {
                     title="Customers"
                     onPressNotification={() => { navigator.navigate('notification-screen'); }}
                     searchButtonOpations={{
-                        onQueryChange: setSearchQuery
+                        onQueryChange: setSearchQuery,
                     }}
                 />
 

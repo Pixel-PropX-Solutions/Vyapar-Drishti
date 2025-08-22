@@ -35,13 +35,12 @@ userApi.interceptors.request.use((config) => {
 
 userApi.interceptors.response.use(
   (response: AxiosResponse): AxiosResponse => {
-    const { accessToken, refreshToken } = response.data || {};
 
-    if (accessToken && refreshToken) {
-      const decoded: any = jwtDecode(accessToken);
+    if (response.data.accessToken && response.data.refreshToken) {
+      AuthStore.set('accessToken', response.data.accessToken);
+      AuthStore.set('refreshToken', response.data.refreshToken);
+      const decoded: any = jwtDecode(response.data.accessToken);
       const current_company_id = decoded.current_company_id;
-      AuthStore.set('accessToken', accessToken);
-      AuthStore.set('refreshToken', refreshToken);
       AuthStore.set('current_company_id', current_company_id);
     }
 
@@ -67,8 +66,8 @@ userApi.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = AuthStore.getString('refreshToken');
-        if (!refreshToken) { throw new Error('Refresh token not found.'); }
+        // const refreshToken = AuthStore.getString('refreshToken');
+        // if (!refreshToken) { throw new Error('Refresh token not found.'); }
 
         console.log('Attempting token refresh');
 
@@ -76,10 +75,10 @@ userApi.interceptors.response.use(
           `${BASE_URL}/auth/refresh`,
           {},
           {
-            headers: {
-              Cookie: `refresh_token=${refreshToken}`,
-              Authorization: `Bearer ${refreshToken}`,
-            },
+            // headers: {
+            //   Cookie: `refresh_token=${refreshToken}`,
+            //   Authorization: `Bearer ${refreshToken}`,
+            // },
             withCredentials: true,
           }
         );
@@ -92,6 +91,7 @@ userApi.interceptors.response.use(
         const current_company_id = decoded.current_company_id;
         AuthStore.set('current_company_id', current_company_id);
 
+        userApi.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
         originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
         originalRequest.headers.Cookie = `access_token=${data.accessToken}; refresh_token=${data.refreshToken}`;
 

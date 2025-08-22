@@ -16,15 +16,15 @@ import NormalButton from '../../../../Components/Ui/Button/NormalButton';
 import { formatNumberForUI, roundToDecimal, sliceString } from '../../../../Utils/functionTools';
 import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
 import BackgroundThemeView from '../../../../Components/Layouts/View/BackgroundThemeView';
-import { CreateInvoiceData, CreateInvoiceWithGSTData } from '../../../../Utils/types';
-import { useAppDispatch, useCompanyStore, useUserStore } from '../../../../Store/ReduxStore';
+import { CreateInvoiceData, CreateInvoiceWithTAXData } from '../../../../Utils/types';
+import { useAppDispatch, useUserStore } from '../../../../Store/ReduxStore';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { StackParamsList } from '../../../../Navigation/StackNavigation';
-import { createInvoice, createInvoiceWithGST, getInvoiceCounter } from '../../../../Services/invoice';
+import { createInvoice, createInvoiceWithTAX, getInvoiceCounter } from '../../../../Services/invoice';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
 import { ProductInfoUpdateModal, ProductSelectorModal, CustomerSelectorModal, BillNoEditorModal, AdditionDetailModal } from './Modals';
 import useBinaryAnimateValue from '../../../../Hooks/useBinaryAnimateValue';
-import { useProduct } from './Hooks';
+import { useAlert } from '../../../../Components/Ui/Alert/AlertProvider';
 
 export function Header() {
 
@@ -141,10 +141,10 @@ export function BillNoSelector() {
                 </BackgroundThemeView>
 
                 <View style={{ flex: 1 }}  >
-                    <TextTheme style={{ fontSize: 14, fontWeight: '700', marginBottom: 2 }}>
+                    <TextTheme fontSize={13} fontWeight={700}>
                         Bill No
                     </TextTheme>
-                    <TextTheme isPrimary={false} style={{ fontSize: 13, fontWeight: '500' }}>
+                    <TextTheme isPrimary={false} fontSize={12} fontWeight={500}>
                         {billNo || 'Auto-generated'}
                     </TextTheme>
                 </View>
@@ -189,10 +189,10 @@ export function DateSelector() {
             </BackgroundThemeView>
 
             <View style={{ flex: 1 }}>
-                <TextTheme style={{ fontSize: 14, fontWeight: '900', marginBottom: 2 }}>
+                <TextTheme fontSize={13} fontWeight={700}>
                     Date
                 </TextTheme>
-                <TextTheme isPrimary={false} style={{ fontSize: 13, fontWeight: '500' }}>
+                <TextTheme isPrimary={false} fontSize={12} fontWeight={500}>
                     {createOn}
                 </TextTheme>
             </View>
@@ -207,7 +207,7 @@ export function DateSelector() {
             })()}
 
             onSelect={({ year, month, date }) => {
-                setCreateOn(`${date}/${(month + 1).toString().padStart(2, '0')}/${year}`);
+                setCreateOn(`${date.toString().padStart(2, '0')}/${(month + 1).toString().padStart(2, '0')}/${year}`);
             }}
         />
     </>);
@@ -283,6 +283,10 @@ export function ProductListing() {
 
     const { currency } = useAppStorage();
     const { products, setProducts } = useBillContext();
+    const { user, current_company_id } = useUserStore();
+    const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
+    const tax_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_tax;
+
 
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
     const [isUpdateModalVisible, setUpdateModalVisible] = useState<boolean>(false);
@@ -295,7 +299,7 @@ export function ProductListing() {
             ListEmptyComponent={<EmptyListView title="No Items Added" text="Add items for the bill" />}
 
             ListHeaderComponent={<ShowWhen when={products.length !== 0}>
-                <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 4 }} >Items</TextTheme>
+                <TextTheme fontSize={16} fontWeight={800} style={{ marginBottom: 0 }} >Items</TextTheme>
             </ShowWhen>}
 
             ListFooterComponent={<ShowWhen when={products.length !== 0} >
@@ -311,41 +315,72 @@ export function ProductListing() {
             keyExtractor={(item, index) => `${item.item_id}-${index}`}
             renderItem={({ item, index }) => (
                 <SectionRow
-                    style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12, position: 'relative' }}
+                    style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 0, position: 'relative' }}
                     onPress={() => {
                         setUpdateModalVisible(true);
                         setProductIndex(index);
                     }}
                 >
                     <View>
-                        <TextTheme style={{ fontWeight: '700', fontSize: 16 }}>
-                            {sliceString(item.item, 34)}
+                        <TextTheme fontSize={15} fontWeight={700}>
+                            {sliceString(item.item, 30)}
+                        </TextTheme>
+                        <TextTheme fontSize={12} fontWeight={500}>
+                            {item.hsn_code} ({item.unit})
                         </TextTheme>
                     </View>
 
-                    <View style={{ alignItems: 'flex-end', flexDirection: 'row', gap: 28 }} >
-                        <View style={{ marginRight: 24 }}>
-                            <TextTheme style={{ fontSize: 12, fontWeight: '600', marginBottom: 2 }}>
-                                Quantity
+                    <View style={{ alignItems: 'flex-end', flexDirection: 'row', gap: 8 }} >
+                        <View >
+                            <TextTheme fontSize={12} fontWeight={600} style={{ marginBottom: 1 }}>
+                                QTY
                             </TextTheme>
                             <TextTheme isPrimary={false} style={{ fontSize: 14, fontWeight: '500' }}>
-                                {item.quantity} {item.unit}
+                                {item.quantity}
                             </TextTheme>
                         </View>
-                        <View style={{ marginRight: 24 }}>
-                            <TextTheme style={{ fontSize: 12, fontWeight: '600', marginBottom: 2 }}>
-                                Unit Price
+                        <TextTheme fontWeight={900} fontSize={16} >
+                            *
+                        </TextTheme>
+                        <View >
+                            <TextTheme fontSize={12} fontWeight={600} style={{ marginBottom: 1 }}>
+                                Rate
                             </TextTheme>
                             <TextTheme isPrimary={false} style={{ fontSize: 14, fontWeight: '500' }}>
-                                {formatNumberForUI(item.rate)} {currency}
+                                {formatNumberForUI(item.rate)}
                             </TextTheme>
                         </View>
+                        <TextTheme fontWeight={900} fontSize={16} >
+                            -
+                        </TextTheme>
+                        <View >
+                            <TextTheme fontSize={12} fontWeight={600} style={{ marginBottom: 1 }}>
+                                Disc.
+                            </TextTheme>
+                            <TextTheme isPrimary={false} style={{ fontSize: 14, fontWeight: '500' }}>
+                                {formatNumberForUI(item.discount_amount)}
+                            </TextTheme>
+                        </View>
+                        {tax_enable && <TextTheme fontWeight={900} fontSize={16} >
+                            +
+                        </TextTheme>}
+                        {tax_enable && <View >
+                            <TextTheme fontSize={12} fontWeight={600} style={{ marginBottom: 1 }}>
+                                Taxes
+                            </TextTheme>
+                            <TextTheme isPrimary={false} style={{ fontSize: 14, fontWeight: '500' }}>
+                                {formatNumberForUI(item.tax_amount)}
+                            </TextTheme>
+                        </View>}
+                        <TextTheme fontWeight={900} fontSize={16} >
+                            =
+                        </TextTheme>
                         <View>
-                            <TextTheme style={{ fontSize: 12, fontWeight: '600', marginBottom: 2 }}>
-                                Sub Total
+                            <TextTheme fontSize={12} fontWeight={600} style={{ marginBottom: 1 }}>
+                                Total
                             </TextTheme>
-                            <TextTheme style={{ fontSize: 14, fontWeight: '700', color: '#4CAF50' }}>
-                                {formatNumberForUI(item.amount)} {currency}
+                            <TextTheme fontWeight={700} fontSize={14} style={{ color: '#4CAF50' }}>
+                                {formatNumberForUI(item.total_amount)} {currency}
                             </TextTheme>
                         </View>
                     </View>
@@ -376,64 +411,105 @@ export function AmountBox(): React.JSX.Element {
 
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
     const { type: billType, id: billId } = router.params;
+    const { setAlert } = useAlert();
 
     const dispatch = useAppDispatch();
     const { currency } = useAppStorage();
     const { user, current_company_id } = useUserStore();
     const currentCompanyDetails = user.company.find((c: any) => c._id === current_company_id);
-    const gst_enabble: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
-    const { totalValue, products, progress, createOn, billNo, customer, resetAllStates } = useBillContext();
+    const tax_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_tax;
+    const { total, total_amount, total_tax, discount, roundoff, grandTotal, additionalDetails, products, progress, createOn, billNo, customer, resetAllStates } = useBillContext();
 
     const [isCreating, setCreating] = useState<boolean>(false);
 
     async function handleInvoice() {
+        if (isCreating) return; // Prevent multiple submissions
+        if (products.length === 0) {
+            setAlert({
+                type: 'warning',
+                message: 'Please add at least one product to create the bill.',
+            });
+            console.warn('No products added');
+            return; // Prevent submission if no products are added
+        }
+        if (!createOn) {
+            setAlert({
+                type: 'warning',
+                message: 'Please select a date to create the bill.',
+            });
+            console.warn('Create date is not set');
+            return; // Prevent submission if create date is not set
+        }
+        if (!customer) {
+            setAlert({
+                type: 'warning',
+                message: 'Please select a customer to create the bill.',
+            });
+            console.warn('Customer is not selected');
+            return; // Prevent submission if customer is not selected
+        }
+        if (!billNo) {
+            setAlert({
+                type: 'warning',
+                message: 'Please enter a bill number to create the bill.',
+            });
+            console.warn('Bill number is not set');
+            return; // Prevent submission if bill number is not set
+        }
+
 
         setCreating(true);
 
         try {
-            if (gst_enabble) {
-                let dataToSend: CreateInvoiceWithGSTData = {
+            if (tax_enable) {
+                let dataToSend: CreateInvoiceWithTAXData = {
                     company_id: current_company_id ?? '',
                     date: createOn.split('/').reverse().join('-'),
                     voucher_number: billNo,
                     voucher_type: billType,
                     voucher_type_id: billId,
-                    reference_date: '',
-                    narration: '',
-                    place_of_supply: '',
-                    reference_number: '',
-                    due_date: '',
-                    mode_of_transport: '',
-                    status: '',
-                    vehicle_number: '',
                     party_name: customer?.name ?? '',
                     party_name_id: customer?.id ?? '',
+                    reference_date: '',
+                    place_of_supply: '',
+                    reference_number: '',
+                    due_date: additionalDetails.dueDate.split('/').reverse().join('-'),
+                    mode_of_transport: additionalDetails.transportMode,
+                    vehicle_number: additionalDetails.vechicleNumber,
+                    narration: additionalDetails.note,
+                    status: additionalDetails.payAmount === grandTotal ? 'Paid' : additionalDetails.payAmount === 0 ? 'Unpaid' : 'Partially Paid',
+                    paid_amount: roundToDecimal(Number(additionalDetails.payAmount), 2),
+                    total: roundToDecimal(total, 2),
+                    total_amount: roundToDecimal(total_amount, 2),
+                    discount: roundToDecimal(discount, 2),
+                    total_tax: roundToDecimal(total_tax, 2),
+                    additional_charge: roundToDecimal(additionalDetails.additional_charge, 2),
+                    roundoff: roundToDecimal(roundoff, 2),
+                    grand_total: roundToDecimal(grandTotal, 2),
                     items: products.map(pro => ({
                         vouchar_id: '',
-                        item_id: pro.item_id,
-                        quantity: pro.quantity,
-                        rate: pro.rate,
                         item: pro.item,
-                        amount: pro.amount,
-                        gst_rate: pro.tax_rate,
-                        gst_amount: pro.tax_amount,
+                        item_id: pro.item_id,
                         hsn_code: pro.hsn_code,
-                        additional_amount: 0,
-                        discount_amount: 0,
+                        quantity: pro.quantity,
+                        rate: roundToDecimal(pro.rate, 2),
+                        amount: roundToDecimal(pro.amount, 2),
+                        discount_amount: roundToDecimal(pro.discount_amount, 2),
+                        tax_rate: pro.tax_rate,
+                        tax_amount: roundToDecimal(pro.tax_amount, 2),
+                        total_amount: roundToDecimal(pro.total_amount, 2),
                         godown: '',
                         godown_id: '',
-                        order_number: '',
-                        order_due_date: '',
                     })),
                     accounting: [
-                        { amount: billType === 'Sales' ? roundToDecimal(-totalValue, 2) : roundToDecimal(totalValue, 2), ledger: customer?.name ?? '', ledger_id: customer?.id ?? '', vouchar_id: '' },
-                        { amount: billType === 'Sales' ? roundToDecimal(totalValue, 2) : roundToDecimal(-totalValue, 2), ledger: billType, ledger_id: billId ?? '', vouchar_id: '' },
+                        { amount: billType === 'Sales' ? roundToDecimal(-grandTotal, 2) : roundToDecimal(grandTotal, 2), ledger: customer?.name ?? '', ledger_id: customer?.id ?? '', vouchar_id: '' },
+                        { amount: billType === 'Sales' ? roundToDecimal(grandTotal, 2) : roundToDecimal(-grandTotal, 2), ledger: billType, ledger_id: billId ?? '', vouchar_id: '' },
                     ],
                 };
 
                 console.log('Data to send:', dataToSend);
 
-                dispatch(createInvoiceWithGST(dataToSend)).then(() => {
+                dispatch(createInvoiceWithTAX(dataToSend)).then(() => {
                     resetAllStates();
                     navigator.goBack();
                     setCreating(false);
@@ -450,27 +526,42 @@ export function AmountBox(): React.JSX.Element {
                     voucher_number: billNo,
                     voucher_type: billType,
                     voucher_type_id: billId,
-                    reference_date: '',
-                    narration: '',
-                    place_of_supply: '',
-                    reference_number: '',
-                    due_date: '',
-                    mode_of_transport: '',
-                    status: '',
-                    vehicle_number: '',
                     party_name: customer?.name ?? '',
                     party_name_id: customer?.id ?? '',
+                    reference_date: '',
+                    place_of_supply: '',
+                    reference_number: '',
+                    due_date: additionalDetails.dueDate.split('/').reverse().join('-'),
+                    mode_of_transport: additionalDetails.transportMode,
+                    vehicle_number: additionalDetails.vechicleNumber,
+                    narration: additionalDetails.note,
+                    status: additionalDetails.payAmount === grandTotal ? 'Paid' : additionalDetails.payAmount === 0 ? 'Unpaid' : 'Partially Paid',
+                    paid_amount: roundToDecimal(Number(additionalDetails.payAmount), 2),
+                    total: roundToDecimal(total, 2),
+                    total_amount: roundToDecimal(total_amount, 2),
+                    discount: roundToDecimal(discount, 2),
+                    additional_charge: roundToDecimal(additionalDetails.additional_charge, 2),
+                    roundoff: roundToDecimal(roundoff, 2),
+                    grand_total: roundToDecimal(grandTotal, 2),
                     items: products.map(pro => ({
-                        item_id: pro.item_id,
-                        quantity: pro.quantity,
-                        rate: pro.rate,
-                        vouchar_id: '',
                         item: pro.item,
-                        amount: pro.amount,
+                        item_id: pro.item_id,
+                        hsn_code: pro.hsn_code,
+                        unit: pro.unit,
+                        quantity: pro.quantity,
+                        rate: roundToDecimal(pro.rate, 2),
+                        amount: roundToDecimal(pro.amount, 2),
+                        discount_amount: roundToDecimal(pro.discount_amount, 2),
+                        // tax_rate: pro.tax_rate,
+                        // tax_amount: pro.tax_amount,
+                        total_amount: roundToDecimal(pro.total_amount, 2),
+                        vouchar_id: '',
+                        godown: '',
+                        godown_id: '',
                     })),
                     accounting: [
-                        { amount: billType === 'Sales' ? roundToDecimal(-totalValue, 2) : roundToDecimal(totalValue, 2), ledger: customer?.name ?? '', ledger_id: customer?.id ?? '', vouchar_id: '' },
-                        { amount: billType === 'Sales' ? roundToDecimal(totalValue, 2) : roundToDecimal(-totalValue, 2), ledger: billType, ledger_id: billId ?? '', vouchar_id: '' },
+                        { amount: billType === 'Sales' ? roundToDecimal(-grandTotal, 2) : roundToDecimal(grandTotal, 2), ledger: customer?.name ?? '', ledger_id: customer?.id ?? '', vouchar_id: '' },
+                        { amount: billType === 'Sales' ? roundToDecimal(grandTotal, 2) : roundToDecimal(-grandTotal, 2), ledger: billType, ledger_id: billId ?? '', vouchar_id: '' },
                     ],
                 };
 
@@ -503,26 +594,36 @@ export function AmountBox(): React.JSX.Element {
                             Total Bill
                         </TextTheme>
 
-                        <TextTheme fontWeight={900} fontSize={20}>
-                            {formatNumberForUI(totalValue, 10)} {currency}
+                        <TextTheme fontWeight={900} fontSize={18}>
+                            {formatNumberForUI(grandTotal)} {currency}
+                        </TextTheme>
+                    </View>
+
+                    <View>
+                        <TextTheme fontSize={12} fontWeight={900}>
+                            Paid Amount
+                        </TextTheme>
+
+                        <TextTheme fontWeight={900} fontSize={18}>
+                            {formatNumberForUI(additionalDetails.payAmount)} {currency}
                         </TextTheme>
                     </View>
 
                     <View style={{ alignItems: 'flex-end' }} >
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
-                            <TextTheme fontWeight={900} fontSize={20}>
+                            <TextTheme fontWeight={900} fontSize={18}>
                                 {products.length}
                             </TextTheme>
-                            <FeatherIcon name="package" size={20} />
+                            <FeatherIcon name="package" size={18} />
                         </View>
 
                         <TextTheme fontSize={12} fontWeight={900}>
                             Total Items
                         </TextTheme>
                     </View>
-                </SectionRow>   
+                </SectionRow>
 
-                <AllAmountsInfo/>      
+                <AllAmountsInfo />
 
                 <NormalButton
                     text="Create Bill"
@@ -543,49 +644,64 @@ export function AmountBox(): React.JSX.Element {
 
 
 function AllAmountsInfo() {
+    const { user, current_company_id } = useUserStore();
+    const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
+    const tax_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_tax;
 
-    const animate0to1 = useBinaryAnimateValue({value: 0, duration: 500, useNativeDriver: false});
+    const animate0to1 = useBinaryAnimateValue({ value: 0, duration: 500, useNativeDriver: false });
+    const { total, total_tax, discount, roundoff, grandTotal, additionalDetails } = useBillContext();
+    const totals = tax_enable ? [
+        ['Sub Total', formatNumberForUI(total)],
+        ['Total Discount', formatNumberForUI(discount)],
+        ['Total Tax', formatNumberForUI(total_tax)],
+        ['Additional Charge', formatNumberForUI(additionalDetails.additional_charge)],
+        ['Round Off', formatNumberForUI(roundoff)],
+        ['Grand Total', formatNumberForUI(grandTotal)],
+    ] : [
+        ['Sub Total', formatNumberForUI(total)],
+        ['Total Discount', formatNumberForUI(discount)],
+        ['Additional Charge', formatNumberForUI(additionalDetails.additional_charge)],
+        ['Round Off', formatNumberForUI(roundoff)],
+        ['Grand Total', formatNumberForUI(grandTotal)],
+    ];
 
     return (
-        <BackgroundThemeView isPrimary={false} style={{padding: 8, borderRadius: 12}}>
-            <Pressable 
-                onPress={() => {animate0to1.valueRef.current ? animate0to1.animateTo0() : animate0to1.animateTo1()}} 
-                style={{flexDirection: 'row', alignItems: 'center', gap: 12, justifyContent: 'space-between'}} 
+        <BackgroundThemeView isPrimary={false} style={{ padding: 8, borderRadius: 12 }}>
+            <Pressable
+                onPress={() => { animate0to1.valueRef.current ? animate0to1.animateTo0() : animate0to1.animateTo1(); }}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 12, justifyContent: 'space-between' }}
             >
-                <TextTheme fontSize={14} fontWeight={600} style={{paddingLeft: 4}} >All Amounts Info</TextTheme>
+                <TextTheme fontSize={14} fontWeight={600} style={{ paddingLeft: 4 }} >All Amounts Info</TextTheme>
 
-                <View 
-                    style={{flexDirection: 'row', alignItems: 'center', gap: 2}} 
+                <View
+                    style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}
                 >
-                    <TextTheme fontSize={14} fontWeight={600} style={{paddingLeft: 4}} >
+                    <TextTheme fontSize={14} fontWeight={600} style={{ paddingLeft: 4 }} >
                         {animate0to1.valueState ? 'Hide' : 'Show'}
                     </TextTheme>
-                    
+
                     <Animated.View style={{
-                        transform: [{rotate: animate0to1.value.interpolate({
-                            inputRange: [0, 1], outputRange: ['0deg', '180deg']
-                        })}],
+                        transform: [{
+                            rotate: animate0to1.value.interpolate({
+                                inputRange: [0, 1], outputRange: ['0deg', '180deg'],
+                            }),
+                        }],
                     }} >
-                        <FeatherIcon name='chevron-down' size={14} />
+                        <FeatherIcon name="chevron-down" size={14} />
                     </Animated.View>
                 </View>
             </Pressable>
 
             <ScrollView
                 contentContainerStyle={{
-                    width: '100%', gap: 4, maxHeight: 160, 
-                    marginTop: animate0to1.valueState || animate0to1.isAnimationRuning.state ? 12 : 0
+                    width: '100%', gap: 4, maxHeight: 320,
+                    marginTop: animate0to1.valueState || animate0to1.isAnimationRuning.state ? 12 : 0,
                 }}
-            >  
+            >
                 {
-                    [
-                        ['Sub Total', '10,000 INR'],
-                        ['Total Tax', '1,000 INR'],
-                        ['Discount', '100 INR'],
-                        ['Grand Total', '11,100 INR']
-                    ].map(([field, val]) => (
-                        <Animated.View key={field} style={{opacity: animate0to1.value, display: animate0to1.valueState || animate0to1.isAnimationRuning.state ? 'flex' : 'none'}} >
-                            <BackgroundThemeView isPrimary={true} style={{padding: 8, borderRadius: 8, flexDirection: 'row', justifyContent: 'space-between', gap: 12}} >
+                    totals.map(([field, val]) => (
+                        <Animated.View key={field} style={{ opacity: animate0to1.value, display: animate0to1.valueState || animate0to1.isAnimationRuning.state ? 'flex' : 'none' }} >
+                            <BackgroundThemeView isPrimary={true} style={{ padding: 8, borderRadius: 8, flexDirection: 'row', justifyContent: 'space-between', gap: 12 }} >
                                 <TextTheme isPrimary={false} fontWeight={600} >{field}</TextTheme>
                                 <TextTheme fontWeight={600} >{val}</TextTheme>
                             </BackgroundThemeView>
@@ -594,5 +710,5 @@ function AllAmountsInfo() {
                 }
             </ScrollView>
         </BackgroundThemeView>
-    )
+    );
 }

@@ -17,7 +17,7 @@ const FilterDefaultValue: Filters = { searchQuery:'', sortBy: '', useAscOrder: f
 
 type ContextType = {
     date: Date, setDate: Dispatch<SetStateAction<Date>>,
-    isGstEnable: boolean,
+    isTaxEnable: boolean,
     filters: Filters, handleFilter: <Key extends keyof Filters>(key: Key, val: Filters[Key]) => void
 }
 
@@ -25,7 +25,7 @@ type ContextType = {
 const fn = () => { };
 const Context = createContext<ContextType>({
     date: { year: 0, month: 0 }, setDate: fn,
-    isGstEnable: false,
+    isTaxEnable: false,
     filters: FilterDefaultValue, handleFilter: fn,
 });
 
@@ -34,7 +34,7 @@ export default function BillContextProvider({ children }: { children: ReactNode 
 
     const { user, current_company_id } = useUserStore();
     const currentCompnayDetails = user?.company.find((c: any) => c._id === current_company_id);
-    const gst_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_gst;
+    const tax_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_tax;
 
 
     const [date, setDate] = useState<Date>({ year: new Date().getFullYear(), month: new Date().getMonth() });
@@ -48,7 +48,7 @@ export default function BillContextProvider({ children }: { children: ReactNode 
 
     const states = {
         date, setDate,
-        isGstEnable: gst_enable,
+        isTaxEnable: tax_enable,
         filters, handleFilter,
     };
 

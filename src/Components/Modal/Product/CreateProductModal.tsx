@@ -14,7 +14,8 @@ import CollapsabeMenu from '../../Other/CollapsabeMenu';
 import { InputField } from '../../Ui/TextInput/InputField';
 import { SelectField } from '../../Ui/TextInput/SelectField';
 import MeasurementUnitsOpation from '../../Ui/Option/MeasurmentUnits';
-// import Popover from '../../Other/Popover';
+import { SectionRow } from '../../Layouts/View/SectionView';
+import { roundToDecimal } from '../../../Utils/functionTools';
 
 type Props = {
     visible: boolean,
@@ -31,10 +32,10 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
     const { user, current_company_id } = useUserStore();
     const { loading, pageMeta } = useProductStore();
     const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
-    const gst_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_gst;
+    const tax_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_tax;
     const [basicInfoExpanded, setBasicInfoExpanded] = useState<boolean>(true);
     const [additionalInfoExpanded, setAdditionalInfoExpanded] = useState<boolean>(false);
-    const [gstInfoExpanded, setGstInfoExpanded] = useState<boolean>(gst_enable ? true : false);
+    const [taxInfoExpanded, setTaxInfoExpanded] = useState<boolean>(tax_enable ? true : false);
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
     const [isTaxabilityModalVisible, setTaxabilityModalVisible] = useState<boolean>(false);
     const [isGoodsNatureModalVisible, setGoodsNatureModalVisible] = useState<boolean>(false);
@@ -57,10 +58,10 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
         opening_balance: 0,
         opening_rate: 0,
         opening_value: 0,
-        gst_nature_of_goods: '',
-        gst_hsn_code: '',
-        gst_taxability: '',
-        gst_percentage: '',
+        nature_of_goods: '',
+        hsn_code: '',
+        taxability: '',
+        tax_rate: '',
         low_stock_alert: 0,
     });
 
@@ -68,7 +69,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
         { label: 'Taxable', value: 'taxable' },
         { label: 'Exempt', value: 'exempt' },
         { label: 'Nil Rated', value: 'nil_rated' },
-        { label: 'Non-GST', value: 'non_gst' },
+        { label: 'Non-TAX', value: 'non_tax' },
     ];
 
     const goodsNatureOptions = [
@@ -77,22 +78,16 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
     ];
 
     const handleChange = useCallback((field: string, value: string | boolean | number) => {
-        setData((prevState) => ({
-            ...prevState,
-            [field]: value,
-        }));
-
-        if (field === 'opening_rate' && value === 'opening_balance') {
-            setData((prevState) => ({
-                ...prevState,
-                opening_value: prevState.opening_balance * prevState.opening_rate,
-            }));
-        } else if (field === 'opening_balance' && value === 'opening_rate') {
-            setData((prevState) => ({
-                ...prevState,
-                opening_value: prevState.opening_balance * prevState.opening_rate,
-            }));
-        }
+        setData((prevState) => {
+            let newState = { ...prevState, [field]: value };
+            // Automatically update opening_value if opening_rate or opening_balance changes
+            if (field === 'opening_rate' || field === 'opening_balance') {
+                const opening_rate = field === 'opening_rate' ? Number(value) : Number(newState.opening_rate);
+                const opening_balance = field === 'opening_balance' ? Number(value) : Number(newState.opening_balance);
+                newState.opening_value = opening_rate * opening_balance;
+            }
+            return newState;
+        });
 
         if (validationErrors[field]) {
             setValidationErrors(prev => ({ ...prev, [field]: '' }));
@@ -110,8 +105,8 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
             errors.unit = 'Unit is required';
         }
 
-        if (gst_enable && !data.gst_hsn_code.trim()) {
-            errors.gst_hsn_code = 'HSN/SAC code is required';
+        if (tax_enable && !data.hsn_code.trim()) {
+            errors.hsn_code = 'HSN/SAC code is required';
         }
 
         if (data.opening_balance < 0) {
@@ -126,13 +121,18 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
             errors.low_stock_alert = 'Low stock alert cannot be negative';
         }
 
-        if (data.gst_percentage && (parseFloat(data.gst_percentage) < 0 || parseFloat(data.gst_percentage) > 100)) {
-            errors.gst_percentage = 'GST percentage must be between 0 and 100';
+        if (tax_enable && data.taxability === 'taxable' && (data.tax_rate === '' || isNaN(Number(data.tax_rate)))) {
+            errors.tax_rate = 'TAX percentage is required for taxable products';
+        }
+
+        if (tax_enable && data.tax_rate && (parseFloat(data.tax_rate) < 0 || parseFloat(data.tax_rate) > 100)) {
+            errors.tax_rate = 'TAX percentage must be between 0 and 100';
         }
 
         setValidationErrors(errors);
         return Object.keys(errors).length === 0;
-    }, [data, gst_enable]);
+    }, [data, tax_enable]);
+
 
     async function handleCreate() {
         if (!validateForm()) {
@@ -146,6 +146,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
 
         let productData = new FormData();
         Object.entries(data).forEach(([key, value]) => productData.append(key, value.toString()));
+        productData.append('opening_value', roundToDecimal(data.opening_rate * data.opening_balance, 2));
 
         let { payload: res } = await dispatch(createProduct({ productData }));
         console.log('after feaching: ', res);
@@ -170,10 +171,10 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                 opening_balance: 0,
                 opening_rate: 0,
                 opening_value: 0,
-                gst_nature_of_goods: '',
-                gst_hsn_code: '',
-                gst_taxability: '',
-                gst_percentage: '',
+                nature_of_goods: '',
+                hsn_code: '',
+                taxability: '',
+                tax_rate: '',
                 low_stock_alert: 0,
             });
         } else {
@@ -207,10 +208,10 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                     opening_balance: 0,
                     opening_rate: 0,
                     opening_value: 0,
-                    gst_nature_of_goods: '',
-                    gst_hsn_code: '',
-                    gst_taxability: '',
-                    gst_percentage: '',
+                    nature_of_goods: '',
+                    hsn_code: '',
+                    taxability: '',
+                    tax_rate: '',
                     low_stock_alert: 0,
                 });
                 setValidationErrors({});
@@ -273,8 +274,8 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
 
                 </CollapsabeMenu>
 
-                {/* GST Information */}
-                {!gst_enable && (<View style={{
+                {/* TAX Information */}
+                {tax_enable && (<View style={{
                     borderRadius: 30,
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -282,37 +283,38 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                     marginTop: 10,
                 }}>
                     <CollapsabeMenu
-                        expanded={gstInfoExpanded}
-                        setExpanded={setGstInfoExpanded}
-                        header="GST Information"
+                        expanded={taxInfoExpanded}
+                        setExpanded={setTaxInfoExpanded}
+                        header="TAX Information"
                     >
                         <View>
                             <InputField
                                 icon={<FeatherIcon name="hash" size={20} color={primaryColor} />}
                                 placeholder="HSN/SAC Code"
-                                field="gst_hsn_code"
+                                field="hsn_code"
+                                capitalize='characters'
                                 handleChange={handleChange}
                             />
 
-                            {data.gst_hsn_code && <>
+                            {data.hsn_code && <>
                                 <SelectField
                                     icon={<FeatherIcon name="shield" size={20} color={primaryColor} />}
                                     placeholder="Nature of Goods/Services"
-                                    value={goodsNatureOptions.find(option => option.value === data.gst_nature_of_goods)?.label || ''}
+                                    value={goodsNatureOptions.find(option => option.value === data.nature_of_goods)?.label || ''}
                                     onPress={() => setGoodsNatureModalVisible(true)}
                                 />
 
                                 <SelectField
                                     icon={<FeatherIcon name="percent" size={20} color={primaryColor} />}
-                                    placeholder="GST Taxability"
-                                    value={taxabilityOptions.find(option => option.value === data.gst_taxability)?.label || ''}
+                                    placeholder="Taxability"
+                                    value={taxabilityOptions.find(option => option.value === data.taxability)?.label || ''}
                                     onPress={() => setTaxabilityModalVisible(true)}
                                 />
 
-                                {data.gst_taxability === 'taxable' && (<InputField
+                                {data.taxability === 'taxable' && (<InputField
                                     icon={<FeatherIcon name="percent" size={20} color={primaryColor} />}
-                                    placeholder="GST Percentage"
-                                    field="gst_percentage"
+                                    placeholder="TAX Percentage"
+                                    field="tax_rate"
                                     keyboardType="numeric"
                                     handleChange={handleChange}
                                 />)}
@@ -360,37 +362,34 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                     />
 
                 </CollapsabeMenu>
-                    <CollapsabeMenu
-                        expanded={isOpeningStockVisible}
-                        setExpanded={setOpeningStockVisible}
-                        header="Opening Stock Information"
-                    >
-                        <InputField
-                            icon={<FeatherIcon name="package" size={20} color={primaryColor} />}
-                            placeholder="Opening Quantity"
-                            field="opening_balance"
-                            keyboardType="number-pad"
-                            handleChange={handleChange}
-                            info="Set the initial stock quantity. Default is 0."
-                        />
-                        <InputField
-                            icon={<FeatherIcon name="tag" size={20} color={primaryColor} />}
-                            placeholder="Opening Rate"
-                            field="opening_rate"
-                            keyboardType="number-pad"
-                            handleChange={handleChange}
-                            info="Set the initial rate per unit. Default is 0."
-                        />
-                        <InputField
-                            icon={<FeatherIcon name="archive" size={20} color={primaryColor} />}
-                            placeholder="Opening Value"
-                            field="opening_value"
-                            keyboardType="number-pad"
-                            handleChange={handleChange}
-                            info="Set the initial value of stock. Default is 0."
-                        />
-                    </CollapsabeMenu>
-                
+                <CollapsabeMenu
+                    expanded={isOpeningStockVisible}
+                    setExpanded={setOpeningStockVisible}
+                    header="Opening Stock Information"
+                >
+                    <InputField
+                        icon={<FeatherIcon name="package" size={20} color={primaryColor} />}
+                        placeholder="Opening Quantity"
+                        field="opening_balance"
+                        keyboardType="number-pad"
+                        handleChange={handleChange}
+                        info="Set the initial stock quantity. Default is 0."
+                    />
+                    <InputField
+                        icon={<FeatherIcon name="tag" size={20} color={primaryColor} />}
+                        placeholder="Opening Rate"
+                        field="opening_rate"
+                        keyboardType="number-pad"
+                        handleChange={handleChange}
+                        info="Set the initial rate per unit. Default is 0."
+                    />
+                    <SectionRow>
+                        <TextTheme fontSize={14} fontWeight={600} >
+                            Opening Value: {data.opening_value.toFixed(2)}
+                        </TextTheme>
+                    </SectionRow>
+                </CollapsabeMenu>
+
             </ScrollView>
 
 
@@ -401,9 +400,9 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                 style={{ paddingHorizontal: 20 }}
             >
                 <View style={{ alignItems: 'center', marginBottom: 20 }}>
-                    <TextTheme fontWeight={900} fontSize={18}>GST Taxability</TextTheme>
+                    <TextTheme fontWeight={900} fontSize={18}>Taxability</TextTheme>
                     <TextTheme fontSize={14} style={{ opacity: 0.7, marginTop: 4 }}>
-                        Select GST taxability type
+                        Select taxability type
                     </TextTheme>
                 </View>
 
@@ -417,15 +416,15 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                                 padding: 16,
                                 borderWidth: 2,
                                 borderRadius: 12,
-                                borderColor: option.value === data.gst_taxability ? primaryColor : secondaryBackgroundColor,
-                                backgroundColor: option.value === data.gst_taxability ? primaryColor : 'transparent',
+                                borderColor: option.value === data.taxability ? primaryColor : secondaryBackgroundColor,
+                                backgroundColor: option.value === data.taxability ? primaryColor : 'transparent',
                             }}
                             onPress={() => {
-                                handleChange('gst_taxability', option.value);
+                                handleChange('taxability', option.value);
                                 setTaxabilityModalVisible(false);
                             }}
                         >
-                            <TextTheme fontWeight={600} fontSize={16} color={option.value === data.gst_taxability ? '#fff' : undefined}>
+                            <TextTheme fontWeight={600} fontSize={16} color={option.value === data.taxability ? '#fff' : undefined}>
                                 {option.label}
                             </TextTheme>
                         </AnimateButton>
@@ -456,15 +455,15 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                                 padding: 16,
                                 borderWidth: 2,
                                 borderRadius: 12,
-                                borderColor: option.value === data.gst_nature_of_goods ? primaryColor : secondaryBackgroundColor,
-                                backgroundColor: option.value === data.gst_nature_of_goods ? primaryColor : 'transparent',
+                                borderColor: option.value === data.nature_of_goods ? primaryColor : secondaryBackgroundColor,
+                                backgroundColor: option.value === data.nature_of_goods ? primaryColor : 'transparent',
                             }}
                             onPress={() => {
-                                handleChange('gst_nature_of_goods', option.value);
+                                handleChange('nature_of_goods', option.value);
                                 setGoodsNatureModalVisible(false);
                             }}
                         >
-                            <TextTheme fontWeight={600} fontSize={16} color={option.value === data.gst_nature_of_goods ? '#fff' : undefined}>
+                            <TextTheme fontWeight={600} fontSize={16} color={option.value === data.nature_of_goods ? '#fff' : undefined}>
                                 {option.label}
                             </TextTheme>
                         </AnimateButton>

@@ -36,7 +36,7 @@ export const SelectField = ({
                     borderColor: error ? '#ff4444' : primaryColor,
                     borderRadius: 12,
                     paddingHorizontal: 12,
-                    paddingVertical: 12,
+                    paddingVertical: 6,
                     backgroundColor: error ? 'transparent' : primaryBackgroundColor,
                 }}
             >
@@ -44,7 +44,7 @@ export const SelectField = ({
                 <TextTheme fontSize={16} fontWeight={500} color={value ? undefined : '#999'} style={{
                     padding: 5,
                     flex: 1,
-                    marginLeft: 12
+                    marginLeft: 12,
                 }}>
                     {value || placeholder}
                 </TextTheme>

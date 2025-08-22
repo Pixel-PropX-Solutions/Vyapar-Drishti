@@ -15,7 +15,7 @@ export default function BillCreateScreen() {
 
                 <ScrollView
                     style={{ paddingInline: 20, paddingBlock: 10 }}
-                    contentContainerStyle={{ gap: 24 }}
+                    contentContainerStyle={{ gap: 16 }}
                     keyboardShouldPersistTaps="always"
                 >
                     <View style={{ gap: 16 }} >
@@ -31,12 +31,13 @@ export default function BillCreateScreen() {
                         </View>
 
                         <CustomerSelector />
+
                         <ProductSelector />
-                        <AdditionalDetailSelector/>
+                        <AdditionalDetailSelector />
                     </View>
 
                     <ProductListing />
-                    <View style={{ minHeight: 40 }} />
+                    <View style={{ minHeight: 20 }} />
                 </ScrollView>
 
                 <AmountBox />
