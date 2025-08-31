@@ -2,9 +2,8 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useAppDispatch, useCompanyStore, useCustomerStore } from '../../../../Store/ReduxStore';
 import { useTransactionContext } from './Context';
-import { GetUserLedgers } from '../../../../Utils/types';
-import { viewAllCustomer } from '../../../../Services/customer';
-import { setCustomers } from '../../../../Store/Reducers/customerReducer';
+import { CustomersList } from '../../../../Utils/types';
+import { viewAllCustomerWithType } from '../../../../Services/customer';
 import { ItemSelectorModal } from '../../../../Components/Modal/Selectors/ItemSelectorModal';
 import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
 import { View } from 'react-native';
@@ -24,34 +23,32 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
 
     const { company } = useCompanyStore();
     const { setCustomer, customer } = useTransactionContext();
-    const { customers, isAllCustomerFetching, pageMeta } = useCustomerStore();
+    const { isAllCustomerFetching, customersList } = useCustomerStore();
 
     const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
     const [isCustomerTypeSelectorModalOpen, setCustomerTypeSelectorModalOpen] = useState<boolean>(false);
-
+    // const [filterCustomers, setFilterCustomers] = useState<CustomersList[]>([]);
     const dispatch = useAppDispatch();
 
     function handleProductFetching() {
         if (isAllCustomerFetching) { return; }
-        if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
-        dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1 }));
+        dispatch(viewAllCustomerWithType({ company_id: company?._id ?? '', customerType: 'Customers' }));
     }
 
     useEffect(() => {
         if (visible && !isCreateCustomerModalOpen) {
-            dispatch(setCustomers([]));
-            dispatch(viewAllCustomer({ company_id: company?._id ?? '', type: 'Customers', pageNumber: 1 }));
+            dispatch(viewAllCustomerWithType({ company_id: company?._id ?? '', customerType: 'Customers' }));
         }
-    }, [isCreateCustomerModalOpen, visible]);
+    }, [company?._id, isCreateCustomerModalOpen, visible]);
 
     return (<>
-        <ItemSelectorModal<GetUserLedgers>
+        <ItemSelectorModal<CustomersList>
             visible={visible}
             setVisible={setVisible}
             title="Select Customer"
             keyExtractor={item => item._id}
             isItemSelected={!!customer?.id}
-            allItems={customers}
+            allItems={customersList}
 
             actionButtons={[
                 {
@@ -73,17 +70,17 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
                 <View style={{ flex: 1 }} >
                     <TextTheme>{item.ledger_name}</TextTheme>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
-                        <TextTheme isPrimary={false} >{item.phone?.code} {item.phone?.number}</TextTheme>
-                        <TextTheme isPrimary={false} >{item.parent}</TextTheme>
+                        <TextTheme isPrimary={false}>{item.phone?.code} {item.phone?.number}</TextTheme>
+                        <TextTheme isPrimary={false}>{item.parent}</TextTheme>
                     </View>
                 </View>
             )}
 
             filter={(item, val) =>
-                item.phone?.number.startsWith(val) ||
-                item.phone?.number.endsWith(val) ||
+                item.phone?.number.includes(val.toLowerCase()) ||
+                item.phone?.number.includes(val.toLowerCase()) ||
                 item.ledger_name.toLowerCase().split(' ').some(word => (
-                    word.startsWith(val)
+                    word.includes(val.toLowerCase())
                 ))
             }
 
@@ -104,7 +101,6 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
             whenFetchingComponent={<CustomerLoadingView />}
 
         />
-
         <CustomerTypeSelectorModal
             visible={isCustomerTypeSelectorModalOpen} setVisible={setCustomerTypeSelectorModalOpen}
             setSecondaryVisible={setCreateCustomerModalOpen}
@@ -121,35 +117,33 @@ export function AccountSelectorModal({ visible, setVisible }: Props) {
 
     const { company } = useCompanyStore();
     const { account, setAccount } = useTransactionContext();
-    const { customers, isAllCustomerFetching, pageMeta } = useCustomerStore();
+    const { customersList, isAllCustomerFetching, pageMeta } = useCustomerStore();
 
     const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
-    // const [isCustomerTypeSelectorModalOpen, setCustomerTypeSelectorModalOpen] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
 
     function handleProductFetching() {
         if (isAllCustomerFetching) { return; }
         if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
-        dispatch(viewAllCustomer({ company_id: company?._id ?? '', pageNumber: pageMeta.page + 1, type: 'Accounts' }));
+        dispatch(viewAllCustomerWithType({ company_id: company?._id ?? '', customerType: 'Accounts' }));
     }
 
     useEffect(() => {
         if (visible && !isCreateCustomerModalOpen) {
-            dispatch(setCustomers([]));
-            dispatch(viewAllCustomer({ company_id: company?._id ?? '', type: 'Accounts', pageNumber: 1 }));
+            dispatch(viewAllCustomerWithType({ company_id: company?._id ?? '', customerType: 'Accounts' }));
         }
     }, [isCreateCustomerModalOpen, visible]);
 
 
     return (<>
-        <ItemSelectorModal<GetUserLedgers>
+        <ItemSelectorModal<CustomersList>
             visible={visible}
             setVisible={setVisible}
             title="Select Account"
             keyExtractor={item => item._id}
             isItemSelected={!!account?.id}
-            allItems={customers}
+            allItems={customersList}
 
             // actionButtons={[
             //     {

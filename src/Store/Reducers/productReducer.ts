@@ -2,23 +2,24 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AuthStates } from '../../Utils/enums';
 import {
   deleteProduct,
-  // sellProduct,
   updateProduct,
   createProduct,
   viewAllProducts,
   viewProduct,
   getProduct,
+  getProductTimeline,
+  updateProductDetails,
   // viewProductsWithId,
 } from '../../Services/product';
-import { PageMeta, GetProduct, ProductCreate, UploadData, ProductUpdate, GetItem } from '../../utils/types';
+import { PageMeta, GetProduct, ProductCreate, UploadData, ProductUpdate } from '../../utils/types';
 
 interface ProductState {
   authState: AuthStates;
   productData: ProductCreate | null;
   product: ProductUpdate | null;
-  item: GetItem | null;
+  item: any | null;
+  timeline: any | null;
   uploadData: UploadData | null;
-  // productsListing: Array<ProductListing> | null;
   productsData: Array<GetProduct> | null;
   loading: boolean;
   deletionModal: boolean;
@@ -45,6 +46,7 @@ const initialState: ProductState = {
   productData: null,
   product: null,
   item: null,
+  timeline: null,
   uploadData: null,
   loading: false,
   isProductsFetching: false,
@@ -109,6 +111,19 @@ const productSlice = createSlice({
         state.loading = false;
       })
 
+      .addCase(getProductTimeline.pending, (state) => {
+        state.error = null;
+        state.loading = true;
+      })
+      .addCase(getProductTimeline.fulfilled, (state, action: PayloadAction<any>) => {
+        state.timeline = action.payload.timeline;
+        state.loading = false;
+      })
+      .addCase(getProductTimeline.rejected, (state, action) => {
+        state.error = action.payload as string;
+        state.loading = false;
+      })
+
       .addCase(getProduct.pending, (state) => {
         state.error = null;
         state.item = null;
@@ -161,6 +176,18 @@ const productSlice = createSlice({
         state.loading = false;
       })
       .addCase(updateProduct.rejected, (state, action) => {
+        state.error = action.payload as string;
+        state.loading = false;
+      })
+
+      .addCase(updateProductDetails.pending, (state) => {
+        state.error = null;
+        state.loading = true;
+      })
+      .addCase(updateProductDetails.fulfilled, (state, _action: PayloadAction<any>) => {
+        state.loading = false;
+      })
+      .addCase(updateProductDetails.rejected, (state, action) => {
         state.error = action.payload as string;
         state.loading = false;
       })

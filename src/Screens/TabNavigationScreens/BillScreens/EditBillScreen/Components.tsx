@@ -16,11 +16,11 @@ import NormalButton from '../../../../Components/Ui/Button/NormalButton';
 import { formatNumberForUI, roundToDecimal, sliceString } from '../../../../Utils/functionTools';
 import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
 import BackgroundThemeView from '../../../../Components/Layouts/View/BackgroundThemeView';
-import { CreateInvoiceData, CreateInvoiceWithTAXData } from '../../../../Utils/types';
-import { useAppDispatch, useUserStore } from '../../../../Store/ReduxStore';
+import { CreateInvoiceData, CreateInvoiceWithTAXData, UpdateInvoice, UpdateTAXInvoice } from '../../../../Utils/types';
+import { useAppDispatch, useInvoiceStore, useUserStore } from '../../../../Store/ReduxStore';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { StackParamsList } from '../../../../Navigation/StackNavigation';
-import { createInvoice, createInvoiceWithTAX, getInvoiceCounter } from '../../../../Services/invoice';
+import { createInvoice, createInvoiceWithTAX, updateInvoice, updateTaxInvoice } from '../../../../Services/invoice';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
 import { ProductInfoUpdateModal, ProductSelectorModal, CustomerSelectorModal, BillNoEditorModal, AdditionDetailModal } from './Modals';
 import useBinaryAnimateValue from '../../../../Hooks/useBinaryAnimateValue';
@@ -28,7 +28,7 @@ import { useAlert } from '../../../../Components/Ui/Alert/AlertProvider';
 
 export function Header() {
 
-    const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
+    const router = useRoute<RouteProp<StackParamsList, 'edit-bill-screen'>>();
     const { type: billType } = router.params;
 
     const { secondaryBackgroundColor } = useTheme();
@@ -55,7 +55,7 @@ export function Header() {
                 gap: 8,
             }} >
                 <FeatherIcon name="file-text" size={14} />
-                <TextTheme style={{ fontSize: 14, fontWeight: 700 }} >{billType}</TextTheme>
+                <TextTheme style={{ fontSize: 14, fontWeight: 700 }} >Edit {billType}</TextTheme>
             </View>
         </View>
     );
@@ -101,27 +101,11 @@ export function ProgressBar(): React.JSX.Element {
 
 export function BillNoSelector() {
 
-    const { billNo, setBillNo } = useBillContext();
-    const dispatch = useAppDispatch();
+    const { billNo } = useBillContext();
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
     const { type: billType } = router.params;
-    const { current_company_id } = useUserStore();
     const { secondaryBackgroundColor } = useTheme();
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
-
-    useEffect(() => {
-        dispatch(getInvoiceCounter({
-            company_id: current_company_id || '',
-            voucher_type: billType,
-        })).then((response) => {
-            if (response.meta.requestStatus === 'fulfilled') {
-                setBillNo(response.payload.current_number);
-            }
-        }).catch((error) => {
-            console.error('Error fetching customers:', error);
-            // toast.error(error || "An unexpected error occurred. Please try again later.");
-        });
-    }, [dispatch, current_company_id, billType]);
 
     return (
         <>
@@ -244,6 +228,7 @@ export function ProductSelector() {
 
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
+
     return (<>
         <SectionRowWithIcon
             icon={<FeatherIcon name="package" size={20} />}
@@ -291,6 +276,7 @@ export function ProductListing() {
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
     const [isUpdateModalVisible, setUpdateModalVisible] = useState<boolean>(false);
     const [productIndex, setProductIndex] = useState<number>(-1);
+
 
     return (<>
         <FlatList
@@ -412,6 +398,7 @@ export function AmountBox(): React.JSX.Element {
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
     const { type: billType, id: billId } = router.params;
     const { setAlert } = useAlert();
+    const { invoiceData } = useInvoiceStore();
 
     const dispatch = useAppDispatch();
     const { currency } = useAppStorage();
@@ -427,7 +414,7 @@ export function AmountBox(): React.JSX.Element {
         if (products.length === 0) {
             setAlert({
                 type: 'warning',
-                message: 'Please add at least one product to create the bill.',
+                message: 'Please add at least one product to update the bill.',
             });
             console.warn('No products added');
             return; // Prevent submission if no products are added
@@ -435,7 +422,7 @@ export function AmountBox(): React.JSX.Element {
         if (!createOn) {
             setAlert({
                 type: 'warning',
-                message: 'Please select a date to create the bill.',
+                message: 'Please select a date to update the bill.',
             });
             console.warn('Create date is not set');
             return; // Prevent submission if create date is not set
@@ -443,7 +430,7 @@ export function AmountBox(): React.JSX.Element {
         if (!customer) {
             setAlert({
                 type: 'warning',
-                message: 'Please select a customer to create the bill.',
+                message: 'Please select a customer to update the bill.',
             });
             console.warn('Customer is not selected');
             return; // Prevent submission if customer is not selected
@@ -451,7 +438,7 @@ export function AmountBox(): React.JSX.Element {
         if (!billNo) {
             setAlert({
                 type: 'warning',
-                message: 'Please enter a bill number to create the bill.',
+                message: 'Please enter a bill number to update the bill.',
             });
             console.warn('Bill number is not set');
             return; // Prevent submission if bill number is not set
@@ -462,7 +449,9 @@ export function AmountBox(): React.JSX.Element {
 
         try {
             if (tax_enable) {
-                let dataToSend: CreateInvoiceWithTAXData = {
+                let dataToSend: UpdateTAXInvoice = {
+                    vouchar_id: invoiceData?._id ?? '',
+                    user_id: user?._id ?? '',
                     company_id: current_company_id ?? '',
                     date: createOn.split('/').reverse().join('-'),
                     voucher_number: billNo,
@@ -487,7 +476,8 @@ export function AmountBox(): React.JSX.Element {
                     roundoff: roundToDecimal(roundoff, 2),
                     grand_total: roundToDecimal(grandTotal, 2),
                     items: products.map(pro => ({
-                        vouchar_id: '',
+                        entry_id: pro.entry_id ?? '',
+                        vouchar_id: invoiceData?._id ?? '',
                         item: pro.item,
                         item_id: pro.item_id,
                         hsn_code: pro.hsn_code,
@@ -502,26 +492,40 @@ export function AmountBox(): React.JSX.Element {
                         godown_id: '',
                     })),
                     accounting: [
-                        { amount: billType === 'Sales' ? roundToDecimal(-grandTotal, 2) : roundToDecimal(grandTotal, 2), ledger: customer?.name ?? '', ledger_id: customer?.id ?? '', vouchar_id: '' },
-                        { amount: billType === 'Sales' ? roundToDecimal(grandTotal, 2) : roundToDecimal(-grandTotal, 2), ledger: billType, ledger_id: billId ?? '', vouchar_id: '' },
+                        {
+                            entry_id: customer.entry_id,
+                            amount: billType === 'Sales' ? roundToDecimal(-grandTotal, 2) : roundToDecimal(grandTotal, 2),
+                            ledger: customer?.name ?? '',
+                            ledger_id: customer?.id ?? '',
+                            vouchar_id: invoiceData?._id ?? '',
+                        },
+                        {
+                            entry_id: invoiceData?.accounting_entries.find(entry => entry.ledger === billType)?._id ?? '',
+                            amount: billType === 'Sales' ? roundToDecimal(grandTotal, 2) : roundToDecimal(-grandTotal, 2),
+                            ledger: billType,
+                            ledger_id: invoiceData?.accounting_entries.find(entry => entry.ledger === billType)?.ledger_id ?? '',
+                            vouchar_id: invoiceData?._id ?? '',
+                        },
                     ],
                 };
 
                 console.log('Data to send:', dataToSend);
 
-                dispatch(createInvoiceWithTAX(dataToSend)).then(() => {
+                dispatch(updateTaxInvoice(dataToSend)).then(() => {
                     resetAllStates();
                     navigator.goBack();
                     setCreating(false);
                 }).catch((error) => {
                     resetAllStates();
-                    console.error('Error creating invoice:', error);
+                    console.error('Error updating invoice:', error);
                     setCreating(false);
                 });
             }
             else {
-                let dataToSend: CreateInvoiceData = {
+                let dataToSend: UpdateInvoice = {
+                    vouchar_id: invoiceData?._id ?? '',
                     company_id: current_company_id ?? '',
+                    user_id: user?._id ?? '',
                     date: createOn.split('/').reverse().join('-'),
                     voucher_number: billNo,
                     voucher_type: billType,
@@ -542,8 +546,10 @@ export function AmountBox(): React.JSX.Element {
                     discount: roundToDecimal(discount, 2),
                     additional_charge: roundToDecimal(additionalDetails.additional_charge, 2),
                     roundoff: roundToDecimal(roundoff, 2),
+                    total_tax: 0,
                     grand_total: roundToDecimal(grandTotal, 2),
                     items: products.map(pro => ({
+                        entry_id: pro.entry_id,
                         item: pro.item,
                         item_id: pro.item_id,
                         hsn_code: pro.hsn_code,
@@ -555,30 +561,42 @@ export function AmountBox(): React.JSX.Element {
                         // tax_rate: pro.tax_rate,
                         // tax_amount: pro.tax_amount,
                         total_amount: roundToDecimal(pro.total_amount, 2),
-                        vouchar_id: '',
+                        vouchar_id: invoiceData?._id ?? '',
                         godown: '',
                         godown_id: '',
                     })),
                     accounting: [
-                        { amount: billType === 'Sales' ? roundToDecimal(-grandTotal, 2) : roundToDecimal(grandTotal, 2), ledger: customer?.name ?? '', ledger_id: customer?.id ?? '', vouchar_id: '' },
-                        { amount: billType === 'Sales' ? roundToDecimal(grandTotal, 2) : roundToDecimal(-grandTotal, 2), ledger: billType, ledger_id: billId ?? '', vouchar_id: '' },
+                        {
+                            entry_id: customer.entry_id ?? '',
+                            amount: billType === 'Sales' ? roundToDecimal(-grandTotal, 2) : roundToDecimal(grandTotal, 2),
+                            ledger: customer?.name ?? '',
+                            ledger_id: customer?.id ?? '',
+                            vouchar_id: invoiceData?._id ?? '',
+                        },
+                        {
+                            entry_id: invoiceData?.accounting_entries.find(entry => entry.ledger === billType)?._id ?? '',
+                            amount: billType === 'Sales' ? roundToDecimal(grandTotal, 2) : roundToDecimal(-grandTotal, 2),
+                            ledger: billType,
+                            ledger_id: billId ?? '',
+                            vouchar_id: invoiceData?._id ?? '',
+                        },
                     ],
                 };
 
-                dispatch(createInvoice(dataToSend)).then(() => {
+                dispatch(updateInvoice(dataToSend)).then(() => {
                     resetAllStates();
                     navigator.goBack();
                     setCreating(false);
                 }).catch((error) => {
                     resetAllStates();
-                    console.error('Error creating invoice:', error);
+                    console.error('Error updating invoice:', error);
                     setCreating(false);
                 });
             }
 
         } catch (error) {
             setCreating(false);
-            console.error('Error creating invoice:', error);
+            console.error('Error updating invoice:', error);
         }
     }
 
@@ -626,12 +644,12 @@ export function AmountBox(): React.JSX.Element {
                 <AllAmountsInfo />
 
                 <NormalButton
-                    text="Create Bill"
+                    text="Update Bill"
                     isPrimary={true}
                     color="white"
                     backgroundColor="rgb(50,200,150)"
                     isLoading={isCreating}
-                    onLoadingText="Creating..."
+                    onLoadingText="Updating..."
                     onPress={handleInvoice}
                 />
             </BackgroundThemeView>

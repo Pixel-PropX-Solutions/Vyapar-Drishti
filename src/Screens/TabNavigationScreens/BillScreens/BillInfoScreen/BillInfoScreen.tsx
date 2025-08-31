@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { ScrollView, View } from 'react-native';
+import { Animated, Pressable, ScrollView, View } from 'react-native';
 import EntityInfoHeader from '../../../../Components/Layouts/Header/EntityInfoHeader';
 import TextTheme from '../../../../Components/Ui/Text/TextTheme';
 import SectionView, { SectionRow } from '../../../../Components/Layouts/View/SectionView';
@@ -14,17 +14,17 @@ import { useCallback, useState } from 'react';
 import { formatDate, formatNumberForUI, roundToDecimal } from '../../../../Utils/functionTools';
 import usePDFHandler from '../../../../Hooks/usePDFHandler';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
-import { GetAllVouchars } from '../../../../Utils/types';
 import navigator from '../../../../Navigation/NavigationService';
 import { useAlert } from '../../../../Components/Ui/Alert/AlertProvider';
 import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
+import useBinaryAnimateValue from '../../../../Hooks/useBinaryAnimateValue';
 
 export default function BillInfoScreen(): React.JSX.Element {
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
     const { id: invoiceId } = router.params;
     const dispatch = useAppDispatch();
     const { currency } = useAppStorage();
-
+    const animate0to1 = useBinaryAnimateValue({ value: 0, duration: 500, useNativeDriver: false });
     const { setAlert } = useAlert();
     const { user, current_company_id } = useUserStore();
     const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
@@ -32,8 +32,6 @@ export default function BillInfoScreen(): React.JSX.Element {
     const { invoiceData } = useInvoiceStore();
 
     const [isPDFModalVisible, setPDFModalVisible] = useState<boolean>(false);
-
-
     const { init, isGenerating, setIsGenerating, PDFViewModal, handleShare } = usePDFHandler();
 
     async function handleInvoice(invoice: any, callback: () => void) {
@@ -109,13 +107,27 @@ export default function BillInfoScreen(): React.JSX.Element {
         );
     }
 
+    const totals = tax_enable ? [
+        ['Sub Total', formatNumberForUI(invoiceData.total)],
+        ['Total Discount', formatNumberForUI(invoiceData.discount)],
+        ['Total Tax', formatNumberForUI(invoiceData.total_tax)],
+        ['Additional Charge', formatNumberForUI(invoiceData.additional_charge)],
+        ['Round Off', formatNumberForUI(invoiceData.roundoff)],
+        ['Grand Total', formatNumberForUI(invoiceData.grand_total)],
+    ] : [
+        ['Sub Total', formatNumberForUI(invoiceData.total)],
+        ['Total Discount', formatNumberForUI(invoiceData.discount)],
+        ['Additional Charge', formatNumberForUI(invoiceData.additional_charge)],
+        ['Round Off', formatNumberForUI(invoiceData.roundoff)],
+        ['Grand Total', formatNumberForUI(invoiceData.grand_total)],
+    ];
 
     return (
         <View style={{ gap: 12, height: '100%' }} >
             <View style={{ flex: 1, marginTop: 12 }} >
                 <EntityInfoHeader
                     onPressDelete={() => { handleDeleteInvoice(invoiceData._id); }}
-                    onPressEdit={() => { }}
+                    onPressEdit={() => { navigator.navigate('edit-bill-screen', { id: invoiceData._id, type: invoiceData.voucher_type }); }}
                     invoiceNumber={invoiceData.voucher_number}
                 />
 
@@ -246,41 +258,91 @@ export default function BillInfoScreen(): React.JSX.Element {
             </View>
 
             <BackgroundThemeView isPrimary={false} style={{ padding: 12, borderRadius: 20, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, borderWidth: 2, gap: 4 }} >
+                <BackgroundThemeView style={{ borderRadius: 8, borderWidth: 1, backgroundColor: '#f0f0f0', borderColor: '#d0d0d0' }}>
+                    <SectionRow backgroundColor="transparent" style={{ justifyContent: 'space-between' }} >
+                        <View>
+                            <TextTheme fontSize={12} fontWeight={900}>
+                                Total Bill
+                            </TextTheme>
 
-                <SectionRow paddingVertical={8} isPrimary={true} style={{ justifyContent: 'space-between' }} >
-                    <TextTheme fontSize={12} fontWeight={700}>Sub Total</TextTheme>
-                    <TextTheme fontWeight={700} fontSize={12}>{formatNumberForUI(invoiceData.total)} {currency}</TextTheme>
-                </SectionRow>
+                            <TextTheme fontWeight={900} fontSize={18}>
+                                {formatNumberForUI(invoiceData.grand_total)} {currency}
+                            </TextTheme>
+                        </View>
 
-                <SectionRow paddingVertical={8} isPrimary={true} style={{ justifyContent: 'space-between' }} >
-                    <TextTheme fontSize={12} fontWeight={700}>Total Discount</TextTheme>
-                    <TextTheme fontWeight={700} fontSize={12}>{formatNumberForUI(invoiceData.discount)} {currency}</TextTheme>
-                </SectionRow>
+                        <View>
+                            <TextTheme fontSize={12} fontWeight={900}>
+                                Paid Amount
+                            </TextTheme>
 
-                <SectionRow paddingVertical={8} isPrimary={true} style={{ justifyContent: 'space-between' }} >
-                    <TextTheme fontSize={12} fontWeight={700}>Total</TextTheme>
-                    <TextTheme fontWeight={700} fontSize={12}>{formatNumberForUI(invoiceData.total_amount)} {currency}</TextTheme>
-                </SectionRow>
+                            <TextTheme fontWeight={900} fontSize={18}>
+                                {formatNumberForUI(invoiceData.paid_amount)} {currency}
+                            </TextTheme>
+                        </View>
 
-                {tax_enable && <SectionRow paddingVertical={8} isPrimary={true} style={{ justifyContent: 'space-between' }} >
-                    <TextTheme fontSize={12} fontWeight={700}>Total Tax</TextTheme>
-                    <TextTheme fontWeight={700} fontSize={12}>{formatNumberForUI(invoiceData.total_tax)} {currency}</TextTheme>
-                </SectionRow>}
+                        <View style={{ alignItems: 'flex-end' }} >
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} >
+                                <TextTheme fontWeight={900} fontSize={18}>
+                                    {invoiceData.inventory.length}
+                                </TextTheme>
+                                <FeatherIcon name="package" size={18} />
+                            </View>
 
-                <SectionRow paddingVertical={8} isPrimary={true} style={{ justifyContent: 'space-between' }} >
-                    <TextTheme fontSize={12} fontWeight={700}>Additional Charges</TextTheme>
-                    <TextTheme fontWeight={700} fontSize={12}>{formatNumberForUI(invoiceData.additional_charge)} {currency}</TextTheme>
-                </SectionRow>
+                            <TextTheme fontSize={12} fontWeight={900}>
+                                Total Items
+                            </TextTheme>
+                        </View>
+                    </SectionRow>
+                </BackgroundThemeView>
 
-                <SectionRow paddingVertical={8} isPrimary={true} style={{ justifyContent: 'space-between' }} >
-                    <TextTheme fontSize={12} fontWeight={700}>Round off</TextTheme>
-                    <TextTheme fontWeight={700} fontSize={12}>{roundToDecimal(invoiceData.roundoff, 2)} {currency}</TextTheme>
-                </SectionRow>
-                <SectionRow paddingVertical={8} isPrimary={true} style={{ justifyContent: 'space-between' }} >
-                    <TextTheme fontSize={16} fontWeight={900}>Grand Total</TextTheme>
-                    <TextTheme fontWeight={900} fontSize={16}>{formatNumberForUI(invoiceData.grand_total)} {currency}</TextTheme>
-                </SectionRow>
+                <BackgroundThemeView style={{ borderRadius: 8, borderWidth: 1, padding: 10, backgroundColor: '#f0f0f0', borderColor: '#d0d0d0' }}>
+                    <Pressable
+                        onPress={() => { animate0to1.valueRef.current ? animate0to1.animateTo0() : animate0to1.animateTo1(); }}
+                        style={{
+                            flexDirection: 'row', alignItems: 'center', gap: 12,
+                            justifyContent: 'space-between',
+                        }}
+                    >
+                        <TextTheme fontSize={14} fontWeight={600} style={{ paddingLeft: 4 }} >All Amounts Info</TextTheme>
 
+                        <View
+                            style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}
+                        >
+                            <TextTheme fontSize={14} fontWeight={600} style={{ paddingLeft: 4 }} >
+                                {animate0to1.valueState ? 'Hide' : 'Show'}
+                            </TextTheme>
+
+                            <Animated.View style={{
+                                transform: [{
+                                    rotate: animate0to1.value.interpolate({
+                                        inputRange: [0, 1], outputRange: ['0deg', '180deg'],
+                                    }),
+                                }],
+                            }} >
+                                <FeatherIcon name="chevron-down" size={14} />
+                            </Animated.View>
+                        </View>
+                    </Pressable>
+                </BackgroundThemeView>
+
+
+                <ScrollView
+                    contentContainerStyle={{
+                        width: '100%', gap: 4, maxHeight: 320,
+                        marginTop: animate0to1.valueState || animate0to1.isAnimationRuning.state ? 12 : 0,
+                    }}
+                >
+                    {
+                        totals.map(([field, val]) => (
+                            <Animated.View key={field} style={{ opacity: animate0to1.value, display: animate0to1.valueState || animate0to1.isAnimationRuning.state ? 'flex' : 'none' }} >
+                                <BackgroundThemeView isPrimary={true} style={{ padding: 8, borderRadius: 8, flexDirection: 'row', justifyContent: 'space-between', gap: 12 }} >
+                                    <TextTheme isPrimary={false} fontWeight={600} >{field}</TextTheme>
+                                    <TextTheme fontWeight={600} >{val}</TextTheme>
+                                </BackgroundThemeView>
+                            </Animated.View>
+                        ))
+                    }
+                </ScrollView>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 8 }} >
                     <View style={{ flex: 1 }} >
                         <NormalButton

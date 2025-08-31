@@ -73,8 +73,8 @@ export const viewAllCustomerWithType = createAsyncThunk(
             console.log('viewAllCustomerWithType response', response);
 
             if (response.data.success === true) {
-                const ledgersWithType = response.data.data;
-                return ledgersWithType;
+                const customersList = response.data.data;
+                return {customersList};
             } else { return rejectWithValue('Login Failed: No access token recieved.'); }
         } catch (error: any) {
             return rejectWithValue(

@@ -1,5 +1,5 @@
 import userApi from '../Api/userApi';
-import { GetProduct, PageMeta, StockOutState } from '../utils/types';
+import { GetProduct } from '../utils/types';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const createProduct = createAsyncThunk(
@@ -25,26 +25,6 @@ export const createProduct = createAsyncThunk(
       return rejectWithValue(
         error.response?.data?.message ||
         'Upload or creation failed: Invalid input or server error.'
-      );
-    }
-  }
-);
-
-
-export const sellProduct = createAsyncThunk(
-  'sell/product',
-  async (data: Array<StockOutState>, { rejectWithValue }) => {
-    try {
-      const response = await userApi.post('/sales/create/mulitple_sales', data);
-      // console.log("sellProduct response", response);
-
-      if (response.data.success === true) {
-        return;
-      } else { return rejectWithValue('Login Failed: No access token recieved.'); }
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message ||
-        'Login failed: Invalid credentials or server error.'
       );
     }
   }
@@ -93,7 +73,9 @@ export const viewAllProducts = createAsyncThunk(
   } | any> => {
     try {
       const response = await userApi.get(
-        `product/view/all/stock/items?company_id=${company_id}${searchQuery === '' ? '' : '&search=' + searchQuery}${group === 'All' ? '' : '&group=' + group}${category === 'All' ? '' : '&category=' + category}&page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder === 'asc' ? '1' : '-1'
+        `product/view/all/stock/items?company_id=${company_id}${searchQuery === '' ? '' : '&search=' + searchQuery}
+        ${group === 'All' ? '' : '&group=' + group}${category === 'All' ? '' : '&category=' + category}
+        &page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder === 'asc' ? '1' : '-1'
         }`
       );
       console.log('viewAllProduct response', response.data);
@@ -151,7 +133,7 @@ export const viewProductsWithId = createAsyncThunk(
   async (company_id: string, { rejectWithValue }) => {
     try {
       const response = await userApi.get(`product/view/products/with_id?company_id=${company_id}`);
-      // console.log("view Product response", response.data);
+      console.log('view Product with ID response', response.data);
 
       if (response.data.success === true) {
         const itemsList = response.data.data;
@@ -228,6 +210,25 @@ export const deleteProduct = createAsyncThunk(
         error.response?.data?.message ||
         'Login failed: Invalid credentials or server error.'
       );
+    }
+  }
+);
+
+
+export const getProductTimeline = createAsyncThunk(
+  'view/product/timeline',
+  async ({ product_id, company_id }: { product_id: string, company_id: string }, { rejectWithValue }) => {
+    try {
+      const response = await userApi.get(`product/get/timeline/${product_id}?company_id=${company_id}`);
+
+      console.log('Get Product Timeline API Response', response);
+
+      if (response.data.success === true) {
+        const timeline = response.data.data[0];
+        return { timeline };
+      } else { return rejectWithValue('Login Failed: No access token recieved.'); }
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message);
     }
   }
 );

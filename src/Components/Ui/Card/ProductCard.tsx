@@ -67,7 +67,7 @@ export default function ProductCard({ item, isPrimary = true, onPress }: Product
                     </BackgroundThemeView>
 
                     <View style={{ alignItems: 'flex-end' }} >
-                        <TextTheme fontSize={14}>{item.sales_value} {currency}</TextTheme>
+                        <TextTheme fontSize={14}>{item.avg_sales_rate} {currency}</TextTheme>
                     </View>
                 </BackgroundThemeView>
             </AnimateButton>

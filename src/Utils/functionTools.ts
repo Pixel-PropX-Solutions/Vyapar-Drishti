@@ -76,6 +76,11 @@ export const capitalize = (str: string, by: 'word' | 'sentence' = 'sentence'): s
 
 
 export function formatNumberForUI(num: number, minLen = 4, toFix = 2): string {
+    if (num === undefined || num === null || isNaN(Number(num))) {
+        return '0.00'; // Prevents crash on undefined/null/NaN
+    }
+    if (toFix === undefined || toFix === null || isNaN(Number(toFix))) { toFix = 2; } // Ensure toFix is non-negative
+    if (minLen === undefined || minLen === null || isNaN(Number(minLen))) { minLen = 4; } // Ensure minLen is non-negative
     const absNum = Math.abs(num);
 
     let sign: string = num < 0 ? '-' : '';
@@ -97,7 +102,10 @@ export function getMonthByIndex(index: number): string {
     return months[Math.abs(index) % 12];
 }
 
-export function roundToDecimal(num: number, decimalPlaces: number = 2): number {
+export function roundToDecimal(num: number, decimalPlaces?: number): number {
+    if (decimalPlaces === undefined || decimalPlaces === null || isNaN(Number(decimalPlaces))) {
+        decimalPlaces = 2;
+    }
     // Rounds a number to a specified number of decimal places.
     const res = Number(num.toFixed(decimalPlaces));
     return res;
@@ -129,9 +137,9 @@ export const formatDate = (dateString: string): string => {
 
 
 export function arrayToFormData(arr: [key: string, val: string | boolean][]): FormData {
-    const form = new FormData;
+    const form = new FormData();
     for (let [key, val] of arr) {
-        let value = typeof val === 'boolean' ? val ? 'true' : 'false' : val || ''
+        let value = typeof val === 'boolean' ? val ? 'true' : 'false' : val || '';
         form.append(key, value ?? '');
     }
     return form;
@@ -142,14 +150,14 @@ export function isVersionLower(current: string, target: string) {
     const cur = current.split('.').map(Number);
     const tgt = target.split('.').map(Number);
     for (let i = 0; i < tgt.length; i++) {
-        if ((cur[i] ?? 0) < (tgt[i] ?? 0)) return true;
-        if ((cur[i] ?? 0) > (tgt[i] ?? 0)) return false;
+        if ((cur[i] ?? 0) < (tgt[i] ?? 0)) { return true; }
+        if ((cur[i] ?? 0) > (tgt[i] ?? 0)) { return false; }
     }
     return false;
 }
 
 export const getInitials = (name: string): string => {
-    if (!name) return '';
+    if (!name) { return ''; }
     return name
         .split(' ')
         .map(word => word.charAt(0))
@@ -160,7 +168,7 @@ export const getInitials = (name: string): string => {
 
 export const getFormattedName = (name: string): string => {
     // Returns the name in sentences case where the first letter of each word is capitalized.
-    if (!name) return '';
+    if (!name) { return ''; }
     return name
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -174,8 +182,7 @@ export function isValidEmail(email: string): boolean {
 
 export function isValidMobileNumber(num: string): boolean {
     for (let char of num) {
-        if (!'0123456789'.includes(char))
-            return false;
+        if (!'0123456789'.includes(char)) { return false; }
     }
     return true;
 }
@@ -189,14 +196,14 @@ export function compareDates(date1: [number, number, number], date2?: [number, n
 
     const [d1, m1, y1] = date1, [d2, m2, y2] = date2;
 
-    if (y1 < y2) return -1;
-    if (y1 > y2) return 1;
+    if (y1 < y2) { return -1; }
+    if (y1 > y2) { return 1; }
 
-    if (m1 < m2) return -1;
-    if (m1 > m2) return 1;
+    if (m1 < m2) { return -1; }
+    if (m1 > m2) { return 1; }
 
-    if (d1 < d2) return -1;
-    if (d1 > d2) return 1;
+    if (d1 < d2) { return -1; }
+    if (d1 > d2) { return 1; }
 
     return 0;
 }

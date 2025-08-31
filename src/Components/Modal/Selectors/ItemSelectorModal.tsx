@@ -84,6 +84,7 @@ export function ItemSelectorModal<item>({ visible, setVisible, onSelect, allItem
                 <NoralTextInput
                     placeholder="Search"
                     style={{ flex: 1 }}
+                    autoFocus={true}
                     onChangeText={handleDataFilter}
                 />
             </View>

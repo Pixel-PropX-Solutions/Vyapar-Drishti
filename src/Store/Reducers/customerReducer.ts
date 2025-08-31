@@ -1,4 +1,4 @@
-import { updateCustomer, getCustomer, createCustomer, deleteCustomer, restoreCustomer, viewAllCustomer, viewAllCustomers, getCustomerInvoices, getCustomerInfo } from '../../Services/customer';
+import { updateCustomer, getCustomer, createCustomer, deleteCustomer, restoreCustomer, viewAllCustomer, getCustomerInvoices, getCustomerInfo, viewAllCustomerWithType } from '../../Services/customer';
 import { PageMeta, GetUserLedgers, CustomersList, AccountingGroups, GetCustomerInvoices, GetCustomerProfile, GetCustomerInfo } from '../../utils/types';
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 
@@ -104,15 +104,15 @@ const customerSlice: Slice<CustomerState> = createSlice({
                 state.isAllCustomerFetching = false;
             })
 
-            .addCase(viewAllCustomers.pending, (state) => {
+            .addCase(viewAllCustomerWithType.pending, (state) => {
                 state.error = null;
                 state.loading = true;
             })
-            .addCase(viewAllCustomers.fulfilled, (state, action: PayloadAction<any>) => {
+            .addCase(viewAllCustomerWithType.fulfilled, (state, action: PayloadAction<any>) => {
                 state.customersList = action.payload.customersList;
                 state.loading = false;
             })
-            .addCase(viewAllCustomers.rejected, (state, action) => {
+            .addCase(viewAllCustomerWithType.rejected, (state, action) => {
                 state.error = action.payload as string;
                 state.loading = false;
             })

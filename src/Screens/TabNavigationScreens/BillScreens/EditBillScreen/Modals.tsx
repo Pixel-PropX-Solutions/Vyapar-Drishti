@@ -8,7 +8,7 @@ import { Alert, ScrollView, View } from 'react-native';
 import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
 import MaterialIcon from '../../../../Components/Icon/MaterialIcon';
 import AnimateButton from '../../../../Components/Ui/Button/AnimateButton';
-import { useAppDispatch, useCustomerStore, useUserStore } from '../../../../Store/ReduxStore';
+import { useAppDispatch, useCustomerStore, useInvoiceStore, useUserStore } from '../../../../Store/ReduxStore';
 import { CustomersList } from '../../../../Utils/types';
 import { viewAllCustomerWithType } from '../../../../Services/customer';
 import { ItemSelectorModal } from '../../../../Components/Modal/Selectors/ItemSelectorModal';
@@ -167,7 +167,7 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
     const { current_company_id } = useUserStore();
     const { setCustomer, customer } = useBillContext();
     const { isAllCustomerFetching, customersList } = useCustomerStore();
-    console.log("Customers list in Bill create", customersList);
+    // console.log("Customers list in Bill create", customersList);
 
     const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
     const [isCustomerTypeSelectorModalOpen, setCustomerTypeSelectorModalOpen] = useState<boolean>(false);
@@ -488,6 +488,7 @@ export function AdditionDetailModal({ visible, setVisible }: Props): React.JSX.E
     const [isAdditionalChargesModalVisible, setAdditionalChargesModalVisible] = useState(false);
     const [isTransportModeModalVisible, setTransportModeModalVisible] = useState(false);
     const [isNoteModalVisible, setNoteModalVisible] = useState(false);
+
 
     return (
         <BottomModal

@@ -277,6 +277,7 @@ export interface CreateInvoiceData {
   }>
 }
 
+
 export interface UpdateInvoice {
   vouchar_id: string,
   user_id: string,
@@ -300,7 +301,7 @@ export interface UpdateInvoice {
   total: number,
   discount: number,
   total_amount: number,
-  // total_tax: number,
+  total_tax: number,
   additional_charge: number,
   roundoff: number,
   grand_total: number,
@@ -326,6 +327,7 @@ export interface UpdateInvoice {
     godown_id: string,
   }>
 }
+
 
 export interface CreateInvoiceWithTAXData {
   company_id: string,
@@ -377,6 +379,8 @@ export interface CreateInvoiceWithTAXData {
     godown_id: string;
   }>
 }
+
+
 export interface UpdateTAXInvoice {
   vouchar_id: string,
   user_id: string,
@@ -429,6 +433,8 @@ export interface UpdateTAXInvoice {
     godown_id: string;
   }>
 }
+
+
 
 export interface GetInvoiceData {
   _id: string,
@@ -681,8 +687,9 @@ export interface ProductUpdate {
   nature_of_goods?: string;
   hsn_code?: string;
   taxability?: string;
+  tax_rate?: number;
 
-  low_stock_alert?: number | string;
+  low_stock_alert?: number ;
 }
 
 export interface GetProduct {

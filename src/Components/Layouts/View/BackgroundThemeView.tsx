@@ -9,17 +9,17 @@ type Props = {
     useInvertTheme?: boolean
 }
 
-export default function BackgroundThemeView({children, style,isPrimary=true, backgroundColor, useInvertTheme=false}: Props): React.JSX.Element {
-    
-    const {primaryColor, secondaryColor, primaryBackgroundColor, secondaryBackgroundColor} = useTheme()
-    
-    if(!backgroundColor) {
-        if(useInvertTheme){
+export default function BackgroundThemeView({ children, style, isPrimary = true, backgroundColor, useInvertTheme = false }: Props): React.JSX.Element {
+
+    const { primaryColor, secondaryColor, primaryBackgroundColor, secondaryBackgroundColor } = useTheme()
+
+    if (!backgroundColor) {
+        if (useInvertTheme) {
             backgroundColor = isPrimary ? primaryColor : secondaryColor;
         } else {
             backgroundColor = isPrimary ? primaryBackgroundColor : secondaryBackgroundColor;
         }
     }
 
-    return <View style={[style, {backgroundColor}]}>{children}</View>
+    return <View style={[style, { backgroundColor }]}>{children}</View>
 }

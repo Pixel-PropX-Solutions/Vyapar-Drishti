@@ -1,5 +1,5 @@
 import userApi from '../Api/userApi';
-import { CreateInvoiceData, CreateInvoiceWithTAXData, GetAllVouchars, PageMeta } from '../Utils/types';
+import { CreateInvoiceData, CreateInvoiceWithTAXData, GetAllVouchars, PageMeta, UpdateInvoice, UpdateTAXInvoice } from '../Utils/types';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 
@@ -174,6 +174,51 @@ export const viewInvoice = createAsyncThunk(
     }
 );
 
+export const updateInvoice = createAsyncThunk(
+    'update/invoice/vouchar',
+    async (
+        data: UpdateInvoice,
+        { rejectWithValue }
+    ) => {
+        try {
+
+            const updateRes = await userApi.put(`/invoices/update/vouchar/${data.vouchar_id}`, data);
+
+            if (updateRes.data.success === true) {
+                return;
+            } else {
+                return rejectWithValue('Invoice update failed');
+            }
+        } catch (error: any) {
+            return rejectWithValue(error?.response?.data?.message);
+        }
+    }
+);
+
+
+export const updateTaxInvoice = createAsyncThunk(
+    'update/invoice/tax/vouchar',
+    async (
+        data: UpdateTAXInvoice,
+        { rejectWithValue }
+    ) => {
+        try {
+
+            console.log('updateTaxInvoice:', data);
+            const updateRes = await userApi.put(`/invoices/update/vouchar/tax/${data.vouchar_id}`, data);
+            console.log('Response from updateTaxInvoice:', updateRes);
+
+            if (updateRes.data.success === true) {
+                return;
+            } else {
+                return rejectWithValue('Invoice update failed');
+            }
+        } catch (error: any) {
+            return rejectWithValue(error?.response?.data?.message);
+        }
+    }
+);
+
 export const deleteInvoice = createAsyncThunk(
     'delete/invoice',
     async (
@@ -193,7 +238,7 @@ export const deleteInvoice = createAsyncThunk(
 
             if (response.data.success === true) {
                 return;
-            } else {return rejectWithValue('Login Failed: No access token recieved.');}
+            } else { return rejectWithValue('Login Failed: No access token recieved.'); }
         } catch (error: any) {
             return rejectWithValue(error?.response?.data?.message);
         }
@@ -220,7 +265,7 @@ export const deleteTAXInvoice = createAsyncThunk(
 
             if (response.data.success === true) {
                 return;
-            } else {return rejectWithValue('Login Failed: No access token recieved.');}
+            } else { return rejectWithValue('Login Failed: No access token recieved.'); }
         } catch (error: any) {
             return rejectWithValue(error?.response?.data?.message);
         }

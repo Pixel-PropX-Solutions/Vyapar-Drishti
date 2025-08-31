@@ -7,8 +7,9 @@ import { AdditionalDetailSelector, AmountBox, BillNoSelector, CustomerSelector, 
 import { useRef } from 'react';
 import type { ScrollView as RNScrollView } from 'react-native';
 
-export default function BillCreateScreen() {
+export default function BillEditScreen() {
     const scrollViewRef = useRef<RNScrollView>(null);
+
     return (
         <BillContextProvider>
             <View style={{ justifyContent: 'space-between', width: '100%', height: '100%' }} >

@@ -20,6 +20,7 @@ import AppUpdateScreen from '../Screens/AppUpdateScreen';
 import ForgotPasswordScreen from '../Screens/ForgotPasswordScreen';
 import TransitionCreateScreen from '../Screens/TabNavigationScreens/BillScreens/TransactionCreateScreen/Screen';
 import CustomerViewScreen from '../Screens/TabNavigationScreens/CustomerScreens/CustomerViewScreen/Screen';
+import BillEditScreen from '../Screens/TabNavigationScreens/BillScreens/EditBillScreen/Screen';
 
 export type StackParamsList = {
     'splash-screen': undefined,
@@ -35,6 +36,7 @@ export type StackParamsList = {
     'product-info-screen': { productId: string }
 
     'create-bill-screen': { type: string, id: string }
+    'edit-bill-screen': { type: string, id: string }
     'create-transaction-screen': { type: string, id: string }
     'bill-info-screen': { id: string },
 
@@ -108,6 +110,10 @@ export default function StackNavigation(): React.JSX.Element {
 
                 <Stack.Screen name="create-bill-screen"
                     component={withSafeView(BillCreateScreen)}
+                />
+
+                <Stack.Screen name="edit-bill-screen"
+                    component={withSafeView(BillEditScreen)}
                 />
 
                 <Stack.Screen name="bill-info-screen"
