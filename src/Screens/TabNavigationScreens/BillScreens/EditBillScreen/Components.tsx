@@ -253,7 +253,7 @@ export function AdditionalDetailSelector() {
         <SectionRowWithIcon
             icon={<FeatherIcon name="file" size={20} />}
             label={'Additional Details'}
-            text={'Tap to add due date, status and more'}
+            text={'Tap to add due date, payment_mode and more'}
             hasArrow={true}
             arrowIcon={<FeatherIcon name="chevron-right" size={20} />}
             onPress={() => { setModalVisible(true); }}
@@ -466,7 +466,7 @@ export function AmountBox(): React.JSX.Element {
                     mode_of_transport: additionalDetails.transportMode,
                     vehicle_number: additionalDetails.vechicleNumber,
                     narration: additionalDetails.note,
-                    status: additionalDetails.payAmount === grandTotal ? 'Paid' : additionalDetails.payAmount === 0 ? 'Unpaid' : 'Partially Paid',
+                    payment_mode: '',
                     paid_amount: roundToDecimal(Number(additionalDetails.payAmount), 2),
                     total: roundToDecimal(total, 2),
                     total_amount: roundToDecimal(total_amount, 2),
@@ -539,7 +539,7 @@ export function AmountBox(): React.JSX.Element {
                     mode_of_transport: additionalDetails.transportMode,
                     vehicle_number: additionalDetails.vechicleNumber,
                     narration: additionalDetails.note,
-                    status: additionalDetails.payAmount === grandTotal ? 'Paid' : additionalDetails.payAmount === 0 ? 'Unpaid' : 'Partially Paid',
+                    payment_mode: '',
                     paid_amount: roundToDecimal(Number(additionalDetails.payAmount), 2),
                     total: roundToDecimal(total, 2),
                     total_amount: roundToDecimal(total_amount, 2),

@@ -241,7 +241,7 @@ export interface CreateInvoiceData {
 
   vehicle_number: string,
   mode_of_transport: string,
-  status: string,
+  payment_mode: string,
   due_date: string,
 
   paid_amount: number,
@@ -295,7 +295,7 @@ export interface UpdateInvoice {
 
   vehicle_number: string,
   mode_of_transport: string,
-  status: string,
+  payment_mode: string,
   due_date: string,
   paid_amount: number,
   total: number,
@@ -344,7 +344,7 @@ export interface CreateInvoiceWithTAXData {
 
   vehicle_number: string,
   mode_of_transport: string,
-  status: string,
+  payment_mode: string,
   due_date: string,
 
   paid_amount: number,
@@ -398,7 +398,7 @@ export interface UpdateTAXInvoice {
 
   vehicle_number: string,
   mode_of_transport: string,
-  status: string,
+  payment_mode: string,
   due_date: string,
   paid_amount: number,
   total: number,
@@ -453,7 +453,7 @@ export interface GetInvoiceData {
   reference_number: string,
   place_of_supply: string,
   mode_of_transport: string,
-  status: string,
+  payment_mode: string,
   due_date: string,
   paid_amount: number,
   total: number,

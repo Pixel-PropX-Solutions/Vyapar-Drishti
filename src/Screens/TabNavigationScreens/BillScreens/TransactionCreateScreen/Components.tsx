@@ -345,7 +345,7 @@ export function AmountBox() {
                 reference_number: '',
                 due_date: '',
                 mode_of_transport: '',
-                status: 'Paid',
+                payment_mode: '',
                 vehicle_number: '',
                 party_name: customer?.name ?? '',
                 party_name_id: customer?.id ?? '',
