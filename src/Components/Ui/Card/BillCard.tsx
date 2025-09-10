@@ -64,31 +64,29 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                             </View>
 
                             <View style={{ flexDirection: 'row', gap: 8 }} >
-                                <ShowWhen when={false} >
-                                    <BackgroundThemeView
-                                        isPrimary={!isPrimary}
-                                        backgroundColor={`rgb(${rgb})`}
-                                        style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingLeft: 8, borderRadius: 40, paddingBlock: 6, paddingRight: 12 }}
+                                <BackgroundThemeView
+                                    isPrimary={!isPrimary}
+                                    backgroundColor={`rgb(${rgb})`}
+                                    style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingLeft: 8, borderRadius: 40, paddingBlock: 6, paddingRight: 12 }}
 
-                                    >
-                                        <FeatherIcon color="white" name={status === 'paid' ? 'check-circle' : 'clock'} size={16} />
-                                        <TextTheme color="white" fontSize={14} fontWeight={900}>
-                                            {status.charAt(0).toUpperCase() + status.slice(1)}
-                                        </TextTheme>
-                                    </BackgroundThemeView>
-                                </ShowWhen>
+                                >
+                                    <FeatherIcon color="white" name={status === 'paid' ? 'check-circle' : 'clock'} size={16} />
+                                    <TextTheme color="white" fontSize={14} fontWeight={900}>
+                                        {status.charAt(0).toUpperCase() + status.slice(1)}
+                                    </TextTheme>
+                                </BackgroundThemeView>
 
-                                {['sales', 'purchase'].includes(type.toLowerCase()) && <AnimateButton onPress={onPrint} style={{ borderRadius: 50 }} >
+                                <AnimateButton onPress={onPrint} style={{ borderRadius: 50 }} >
                                     <BackgroundThemeView isPrimary={!isPrimary} style={{ alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 32 }}  >
                                         <FeatherIcon name="printer" size={16} />
                                     </BackgroundThemeView>
-                                </AnimateButton>}
+                                </AnimateButton>
 
-                                {['sales', 'purchase'].includes(type.toLowerCase()) && <AnimateButton onPress={onShare} style={{ borderRadius: 50 }} >
+                                <AnimateButton onPress={onShare} style={{ borderRadius: 50 }} >
                                     <BackgroundThemeView isPrimary={!isPrimary} style={{ alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 32 }}  >
                                         <FeatherIcon name="share-2" size={16} />
                                     </BackgroundThemeView>
-                                </AnimateButton>}
+                                </AnimateButton>
 
                             </View>
                         </View>

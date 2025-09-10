@@ -19,7 +19,7 @@ export default function HomeScreen(): React.JSX.Element {
                         'https://img.freepik.com/premium-vector/business-growth-with-up-arrows-smartphone-screen-financial-company-statistic-stock-market_618588-1463.jpg',
                         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTh_PTMmYik5DqmisNXaoulQPwizliKLIdJEkT0WDOKGyHy_kMlgBs50rm4GVkB3-TwIDU&usqp=CAU',
                         // 'https://img.lovepik.com/background/20211022/medium/lovepik-small-fresh-pink-banner-taobao-poster-background-image_605643104.jpg',
-                    ]} 
+                    ]}
                 />
 
                 {/* <MonthlyInfoSection /> */}

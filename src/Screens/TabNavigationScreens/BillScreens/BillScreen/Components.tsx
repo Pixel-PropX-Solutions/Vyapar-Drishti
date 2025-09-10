@@ -15,15 +15,15 @@ import EmptyListView from '../../../../Components/Layouts/View/EmptyListView';
 import BillCard, { BillLoadingCard } from '../../../../Components/Ui/Card/BillCard';
 import ShowWhen from '../../../../Components/Other/ShowWhen';
 import { useAppDispatch, useInvoiceStore, useUserStore } from '../../../../Store/ReduxStore';
-import { printTAXInvoices, printInvoices, viewAllInvoices } from '../../../../Services/invoice';
+import { getTAXInvoicesPDF, getInvoicesPDF, getPaymentPDF, getRecieptPDF, viewAllInvoices } from '../../../../Services/invoice';
 import navigator from '../../../../Navigation/NavigationService';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
 import RoundedPlusButton from '../../../../Components/Ui/Button/RoundedPlusButton';
 import { GetAllVouchars } from '../../../../Utils/types';
-import usePDFHandler from '../../../../Hooks/usePDFHandler';
 import { useFocusEffect } from '@react-navigation/native';
 import { setInvoice } from '../../../../Store/Reducers/invoiceReducer';
-
+import { useAlert } from '../../../../Components/Ui/Alert/AlertProvider';
+import usePDFHandler from '../../../../Hooks/usePDFHandler';
 
 
 export function Header(): React.JSX.Element {
@@ -151,8 +151,8 @@ export function BillListing() {
     const { user, current_company_id } = useUserStore();
     const { invoices, isInvoiceFeaching, pageMeta } = useInvoiceStore();
     const { filters } = useBillContext();
+    const { setAlert } = useAlert();
     const currentCompnayDetails = user?.company.find((c: any) => c._id === current_company_id);
-    console.log('currentCompnayDetails', currentCompnayDetails);
     const tax_enable: boolean = currentCompnayDetails?.company_settings?.features?.enable_tax;
 
     const { init, isGenerating, setIsGenerating, PDFViewModal, handleShare } = usePDFHandler();
@@ -174,26 +174,62 @@ export function BillListing() {
     }
 
     async function handleInvoice(invoice: GetAllVouchars, callback: () => void) {
-
-        if (!['Sales', 'Purchase'].includes(invoice.voucher_type)) { return; }
-
         try {
             setIsGenerating(true);
-            const res = await dispatch((tax_enable ? printTAXInvoices : printInvoices)({
-                vouchar_id: invoice._id,
-                company_id: current_company_id || '',
-            }));
+            const res = await dispatch(
+                (invoice.voucher_type === 'Payment' ? getPaymentPDF :
+                    invoice.voucher_type === 'Receipt' ? getRecieptPDF :
+                        tax_enable ? getTAXInvoicesPDF : getInvoicesPDF)({
+                            vouchar_id: invoice._id,
+                            company_id: current_company_id || '',
+                        }));
 
-            if (res.meta.requestStatus !== 'fulfilled') {
+            if ((invoice.voucher_type === 'Payment' ? getPaymentPDF :
+                invoice.voucher_type === 'Receipt' ? getRecieptPDF :
+                    tax_enable ? getTAXInvoicesPDF : getInvoicesPDF).fulfilled.match(res)) {
+
+                const { filePath } = res.payload as {
+                    filePath: string;
+                    rawBase64: string;
+                };
+
+                if (!filePath) {
+                    console.error('No filePath returned from PDF API');
+                    setAlert({
+                        type: 'error',
+                        message: 'Failed to generate PDF. Please try again later.',
+                        duration: 1000,
+                    });
+                    return;
+                }
+                init(
+                    {
+                        filePath: filePath,
+                        entityNumber: invoice.voucher_number,
+                        customer: invoice.party_name,
+                        fileName: `${invoice.voucher_number}-vyapar-drishti`,
+                        cardTitle: invoice.voucher_type === 'Payment' ? 'View or Share Payment' :
+                            invoice.voucher_type === 'Receipt' ? 'View or Share Receipt' : 'View or Share Invoice',
+                    },
+                    callback
+                );
+            }
+            else {
                 console.error('Failed to print invoice:', res.payload);
+                setAlert({
+                    type: 'error',
+                    message: (res.payload as any) || 'Failed to generate PDF. Please try again later.',
+                    duration: 1000,
+                });
                 return;
             }
-
-            const { paginated_data, download_data } = res.payload as { paginated_data: Array<{ html: string, page_number: number }>, download_data: string };
-
-            init({ html: paginated_data.map(item => item.html), downloadHtml: download_data, pdfName: invoice.voucher_number, title: invoice.voucher_number }, callback);
         } catch (e) {
             console.error('Error printing invoice:', e);
+            setAlert({
+                type: 'error',
+                message: 'An unexpected error occurred. Please try again later.',
+                duration: 1000,
+            });
         } finally {
             setIsGenerating(false);
         }
@@ -239,7 +275,7 @@ export function BillListing() {
                     totalAmount={item.amount}
                     payAmount={item.paid_amount}
                     onPrint={() => { handleInvoice(item, () => { setPDFModalVisible(true); }); }}
-                    onShare={() => { handleInvoice(item, handleShare); }}
+                    onShare={() => { handleInvoice(item, () => { handleShare(); }); }}
                     onPress={() => { navigator.navigate('bill-info-screen', { id: item._id }); }}
                 />
             )}

@@ -9,7 +9,7 @@ import NormalButton from '../../../../Components/Ui/Button/NormalButton';
 import { StackParamsList } from '../../../../Navigation/StackNavigation';
 import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import { useAppDispatch, useInvoiceStore, useUserStore } from '../../../../Store/ReduxStore';
-import { deleteTAXInvoice, deleteInvoice, printTAXInvoices, printInvoices, viewInvoice } from '../../../../Services/invoice';
+import { deleteTAXInvoice, deleteInvoice, getTAXInvoicesPDF, getInvoicesPDF, getPaymentPDF, getRecieptPDF, viewInvoice } from '../../../../Services/invoice';
 import { useCallback, useState } from 'react';
 import { formatDate, formatNumberForUI, roundToDecimal } from '../../../../Utils/functionTools';
 import usePDFHandler from '../../../../Hooks/usePDFHandler';
@@ -41,21 +41,59 @@ export default function BillInfoScreen(): React.JSX.Element {
         try {
             setIsGenerating(true);
 
-            const res = await dispatch((tax_enable ? printTAXInvoices : printInvoices)({
-                vouchar_id: invoice._id,
-                company_id: current_company_id || '',
-            }));
+            const res = await dispatch((invoice.voucher_type === 'Payment' ? getPaymentPDF :
+                invoice.voucher_type === 'Receipt' ? getRecieptPDF :
+                    tax_enable ? getTAXInvoicesPDF : getInvoicesPDF)({
+                        vouchar_id: invoice._id,
+                        company_id: current_company_id || '',
+                    }));
 
-            if (res.meta.requestStatus !== 'fulfilled') {
+            if ((invoice.voucher_type === 'Payment' ? getPaymentPDF :
+                invoice.voucher_type === 'Receipt' ? getRecieptPDF :
+                    tax_enable ? getTAXInvoicesPDF : getInvoicesPDF).fulfilled.match(res)) {
+
+                const { filePath } = res.payload as {
+                    filePath: string;
+                    rawBase64: string;
+                };
+
+                if (!filePath) {
+                    console.error('No filePath returned from PDF API');
+                    setAlert({
+                        type: 'error',
+                        message: 'Failed to generate PDF. Please try again later.',
+                        duration: 1000,
+                    });
+                    return;
+                }
+                init(
+                    {
+                        filePath: filePath,
+                        entityNumber: invoice.voucher_number,
+                        customer: invoice.party_name,
+                        fileName: `${invoice.voucher_number}-vyapar-drishti`,
+                        cardTitle: invoice.voucher_type === 'Payment' ? 'View or Share Payment' :
+                            invoice.voucher_type === 'Receipt' ? 'View or Share Receipt' : 'View or Share Invoice',
+                    },
+                    callback
+                );
+            }
+            else {
                 console.error('Failed to print invoice:', res.payload);
+                setAlert({
+                    type: 'error',
+                    message: (res.payload as any) || 'Failed to generate PDF. Please try again later.',
+                    duration: 1000,
+                });
                 return;
             }
-
-            const { paginated_data, download_data } = res.payload as { paginated_data: Array<{ html: string, page_number: number }>, download_data: string };
-
-            init({ html: paginated_data.map(item => item.html), downloadHtml: download_data, pdfName: invoice.voucher_number, title: invoice.voucher_number }, callback);
         } catch (e) {
             console.error('Error printing invoice:', e);
+            setAlert({
+                type: 'error',
+                message: 'An unexpected error occurred. Please try again later.',
+                duration: 1000,
+            });
         } finally {
             setIsGenerating(false);
         }

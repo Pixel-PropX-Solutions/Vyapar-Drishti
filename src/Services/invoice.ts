@@ -1,7 +1,9 @@
 import userApi from '../Api/userApi';
 import { CreateInvoiceData, CreateInvoiceWithTAXData, GetAllVouchars, PageMeta, UpdateInvoice, UpdateTAXInvoice } from '../Utils/types';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-
+import RNFetchBlob from 'react-native-blob-util';
+// import RNFS from 'react-native-fs';
+import { Buffer } from 'buffer';
 
 export const createInvoice = createAsyncThunk(
     'create/invoice',
@@ -273,8 +275,8 @@ export const deleteTAXInvoice = createAsyncThunk(
 );
 
 
-export const printInvoices = createAsyncThunk(
-    'print/invoices',
+export const getInvoicesPDF = createAsyncThunk(
+    'get/invoices/pdf',
     async (
         {
             vouchar_id,
@@ -289,25 +291,41 @@ export const printInvoices = createAsyncThunk(
     ) => {
         try {
             const response = await userApi.get(
-                `/invoices/print/vouchar?vouchar_id=${vouchar_id}&company_id=${company_id}`
+                `/invoices/print/vouchar?vouchar_id=${vouchar_id}&company_id=${company_id}`,
+                {
+                    responseType: 'arraybuffer',
+                }
             );
-            console.log('printInvoices response', response.data);
+            console.log('Response Get Invoice PDF API', response);
 
-            if (response.data.success === true) {
-                return response.data.data;
-            } else { return rejectWithValue('Login Failed: No access token recieved.'); }
+            if (response.status === 200) {
+                // Convert blob → base64
+                const rawBase64 = Buffer.from(response.data).toString('base64');
+                // write file to cache
+                const filePath = `${RNFetchBlob.fs.dirs.CacheDir}/invoice-vyapar-drishti.pdf`;
+                await RNFetchBlob.fs.writeFile(filePath, rawBase64, 'base64');
+
+                return {
+                    rawBase64: rawBase64,
+                    filePath: filePath,
+                };
+
+            } else {
+                return rejectWithValue('Internal Server Error.');
+            }
         } catch (error: any) {
+            console.error('Failed to fetch PDF:', error);
             return rejectWithValue(
                 error.response?.data?.message ||
-                'Login failed: Invalid credentials or server error.'
+                'Failed to get the PDF something went wrong. Please try again later.'
             );
         }
     }
 );
 
 
-export const printTAXInvoices = createAsyncThunk(
-    'print/tax/invoices',
+export const getTAXInvoicesPDF = createAsyncThunk(
+    'get/tax/invoices/pdf',
     async (
         {
             vouchar_id,
@@ -322,24 +340,38 @@ export const printTAXInvoices = createAsyncThunk(
     ) => {
         try {
             const response = await userApi.get(
-                `/invoices/print/vouchar/tax?vouchar_id=${vouchar_id}&company_id=${company_id}`
+                `/invoices/print/vouchar/tax?vouchar_id=${vouchar_id}&company_id=${company_id}`,
+                { responseType: 'arraybuffer' }
             );
-            console.log('printTAXInvoices response', response.data);
+            console.log('Response Get Tax Invoice PDF API', response);
 
-            if (response.data.success === true) {
-                return response.data.data;
-            } else { return rejectWithValue('Login Failed: No access token recieved.'); }
+            if (response.status === 200) {
+                // Convert blob → base64
+                const rawBase64 = Buffer.from(response.data).toString('base64');
+                // write file to cache
+                const filePath = `${RNFetchBlob.fs.dirs.CacheDir}/invoice-vyapar-drishti.pdf`;
+                await RNFetchBlob.fs.writeFile(filePath, rawBase64, 'base64');
+
+                return {
+                    rawBase64: rawBase64,
+                    filePath: filePath,
+                };
+
+            } else {
+                return rejectWithValue('Internal Server Error.');
+            }
         } catch (error: any) {
+            console.error('Failed to fetch PDF:', error);
             return rejectWithValue(
                 error.response?.data?.message ||
-                'Login failed: Invalid credentials or server error.'
+                'Failed to get the PDF something went wrong. Please try again later.'
             );
         }
     }
 );
 
-export const printRecieptInvoices = createAsyncThunk(
-    'print/receipt/invoices',
+export const getRecieptPDF = createAsyncThunk(
+    'get/receipt/pdf',
     async (
         {
             vouchar_id,
@@ -354,26 +386,39 @@ export const printRecieptInvoices = createAsyncThunk(
     ) => {
         try {
             const response = await userApi.get(
-                `/invoices/print/vouchar/receipt?vouchar_id=${vouchar_id}&company_id=${company_id}`
+                `/invoices/print/vouchar/receipt?vouchar_id=${vouchar_id}&company_id=${company_id}`,
+                { responseType: 'arraybuffer' }
             );
-            console.log('printInvoices response', response.data);
+            console.log('Response Get Receipt Invoice PDF API', response);
 
-            if (response.data.success === true) {
-                const invoceHtml = response.data.data;
-                return { invoceHtml };
-            } else { return rejectWithValue('Login Failed: No access token recieved.'); }
+            if (response.status === 200) {
+                // Convert blob → base64
+                const rawBase64 = Buffer.from(response.data).toString('base64');
+                // write file to cache
+                const filePath = `${RNFetchBlob.fs.dirs.CacheDir}/receipt-vyapar-drishti.pdf`;
+                await RNFetchBlob.fs.writeFile(filePath, rawBase64, 'base64');
+
+                return {
+                    rawBase64: rawBase64,
+                    filePath: filePath,
+                };
+
+            } else {
+                return rejectWithValue('Internal Server Error.');
+            }
         } catch (error: any) {
+            console.error('Failed to fetch PDF:', error);
             return rejectWithValue(
                 error.response?.data?.message ||
-                'Login failed: Invalid credentials or server error.'
+                'Failed to get the PDF something went wrong. Please try again later.'
             );
         }
     }
 );
 
 
-export const printPaymentInvoices = createAsyncThunk(
-    'print/payment/invoices',
+export const getPaymentPDF = createAsyncThunk(
+    'get/payment/pdf',
     async (
         {
             vouchar_id,
@@ -388,18 +433,31 @@ export const printPaymentInvoices = createAsyncThunk(
     ) => {
         try {
             const response = await userApi.get(
-                `/invoices/print/vouchar/payment?vouchar_id=${vouchar_id}&company_id=${company_id}`
+                `/invoices/print/vouchar/payment?vouchar_id=${vouchar_id}&company_id=${company_id}`,
+                { responseType: 'arraybuffer' }
             );
-            console.log('printInvoices response', response.data);
+            console.log('Response Get Payment Invoice PDF API', response);
 
-            if (response.data.success === true) {
-                const invoceHtml = response.data.data;
-                return { invoceHtml };
-            } else { return rejectWithValue('Login Failed: No access token recieved.'); }
+            if (response.status === 200) {
+                // Convert blob → base64
+                const rawBase64 = Buffer.from(response.data).toString('base64');
+                // write file to cache
+                const filePath = `${RNFetchBlob.fs.dirs.CacheDir}/invoice-payment-drishti.pdf`;
+                await RNFetchBlob.fs.writeFile(filePath, rawBase64, 'base64');
+
+                return {
+                    rawBase64: rawBase64,
+                    filePath: filePath,
+                };
+
+            } else {
+                return rejectWithValue('Internal Server Error.');
+            }
         } catch (error: any) {
+            console.error('Failed to fetch PDF:', error);
             return rejectWithValue(
                 error.response?.data?.message ||
-                'Login failed: Invalid credentials or server error.'
+                'Failed to get the PDF something went wrong. Please try again later.'
             );
         }
     }

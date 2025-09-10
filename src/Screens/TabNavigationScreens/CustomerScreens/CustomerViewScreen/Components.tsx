@@ -16,11 +16,12 @@ import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import { GetCustomerInvoices } from '../../../../Utils/types';
 import EmptyListView from '../../../../Components/Layouts/View/EmptyListView';
 import usePDFHandler from '../../../../Hooks/usePDFHandler';
-import { printTAXInvoices, printInvoices } from '../../../../Services/invoice';
+import { getTAXInvoicesPDF, getInvoicesPDF, getPaymentPDF, getRecieptPDF } from '../../../../Services/invoice';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
 import { StatsCard } from '../../../../Components/Ui/Card/StatsCard';
 import { useCustomerContext } from './Context';
 import { formatLocalDate, formatNumberForUI, getMonthByIndex } from '../../../../Utils/functionTools';
+import { useAlert } from '../../../../Components/Ui/Alert/AlertProvider';
 
 type Date = { month: number, year: number }
 export function ProfileSection() {
@@ -122,6 +123,7 @@ export function InvoiceListing() {
     const router = useRoute<RouteProp<StackParamsList, 'customer-view-screen'>>();
     const { id: customer_id } = router.params;
     const dispatch = useAppDispatch();
+    const { setAlert } = useAlert();
     const { filters } = useCustomerContext();
     const { user, current_company_id } = useUserStore();
     const { customerInvoicesPageMeta, customerInvoices, isAllCustomerInvoicesFetching } = useCustomerStore();
@@ -136,26 +138,62 @@ export function InvoiceListing() {
 
     async function handleInvoice(invoice: GetCustomerInvoices, callback: () => void) {
 
-        if (!['Sales', 'Purchase'].includes(invoice.voucher_type)) { return; }
-
         try {
             setIsGenerating(true);
 
-            const res = await dispatch((tax_enable ? printTAXInvoices : printInvoices)({
-                vouchar_id: invoice.vouchar_id,
-                company_id: current_company_id || '',
-            }));
+            const res = await dispatch((invoice.voucher_type === 'Payment' ? getPaymentPDF :
+                invoice.voucher_type === 'Receipt' ? getRecieptPDF :
+                    tax_enable ? getTAXInvoicesPDF : getInvoicesPDF)({
+                        vouchar_id: invoice.vouchar_id,
+                        company_id: current_company_id || '',
+                    }));
 
-            if (res.meta.requestStatus !== 'fulfilled') {
+            if ((invoice.voucher_type === 'Payment' ? getPaymentPDF :
+                invoice.voucher_type === 'Receipt' ? getRecieptPDF :
+                    tax_enable ? getTAXInvoicesPDF : getInvoicesPDF).fulfilled.match(res)) {
+
+                const { filePath } = res.payload as {
+                    filePath: string;
+                    rawBase64: string;
+                };
+
+                if (!filePath) {
+                    console.error('No filePath returned from PDF API');
+                    setAlert({
+                        type: 'error',
+                        message: 'Failed to generate PDF. Please try again later.',
+                        duration: 1000,
+                    });
+                    return;
+                }
+                init(
+                    {
+                        filePath: filePath,
+                        entityNumber: invoice.voucher_number,
+                        customer: invoice.customer,
+                        fileName: `${invoice.voucher_number}-vyapar-drishti`,
+                        cardTitle: invoice.voucher_type === 'Payment' ? 'View or Share Payment' :
+                            invoice.voucher_type === 'Receipt' ? 'View or Share Receipt' : 'View or Share Invoice',
+                    },
+                    callback
+                );
+            }
+            else {
                 console.error('Failed to print invoice:', res.payload);
+                setAlert({
+                    type: 'error',
+                    message: (res.payload as any) || 'Failed to generate PDF. Please try again later.',
+                    duration: 1000,
+                });
                 return;
             }
-
-            const { paginated_data, download_data } = res.payload as { paginated_data: Array<{ html: string, page_number: number }>, download_data: string };
-
-            init({ html: paginated_data.map(item => item.html), downloadHtml: download_data, pdfName: invoice.voucher_number, title: invoice.voucher_number }, callback);
         } catch (e) {
             console.error('Error printing invoice:', e);
+            setAlert({
+                type: 'error',
+                message: 'An unexpected error occurred. Please try again later.',
+                duration: 1000,
+            });
         } finally {
             setIsGenerating(false);
         }
@@ -197,7 +235,7 @@ export function InvoiceListing() {
                 start_date: formatLocalDate(new Date(filters.startDate ?? '')),
                 end_date: formatLocalDate(new Date(filters.endDate ?? '')),
             }));
-        }, [current_company_id, customer_id, debouncedQuery, filters.endDate, filters.invoiceType, filters.sortBy, filters.startDate, filters.useAscOrder])
+        }, [current_company_id, customer_id, debouncedQuery, dispatch, filters.endDate, filters.invoiceType, filters.sortBy, filters.startDate, filters.useAscOrder])
     );
 
     // Debounce logic: delay setting the debouncedQuery
