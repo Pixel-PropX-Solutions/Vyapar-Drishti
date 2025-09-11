@@ -18,7 +18,7 @@ import { getCompany } from '../../Services/company';
 
 export default function CompanyScreen(): React.JSX.Element {
 
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
     const { company } = useCompanyStore();
     const { user, current_company_id } = useUserStore();
     const currentCompanyDetails = user?.company?.find((c: any) => c._id === current_company_id);
@@ -33,9 +33,9 @@ export default function CompanyScreen(): React.JSX.Element {
 
     useFocusEffect(
         useCallback(() => {
-            dispatch(getCompany())
+            dispatch(getCompany());
         }, [])
-    )
+    );
 
     return (
         <View style={{ width: '100%', height: '100%' }}>
@@ -45,7 +45,7 @@ export default function CompanyScreen(): React.JSX.Element {
 
                 <View style={{ alignItems: 'center', padding: 16, width: '100%' }}>
                     <LogoImage size={100} borderRadius={100} imageSrc={company?.image} />
-                    <TextTheme fontSize={22} fontWeight={"bold"}>{company?.name}</TextTheme>
+                    <TextTheme fontSize={22} fontWeight={'bold'}>{company?.name}</TextTheme>
                     <TextTheme isPrimary={false} fontSize={16}>{company?.email}</TextTheme>
                     {tax_enable && <TextTheme isPrimary={false} fontSize={12}>TAX {company?.tin}</TextTheme>}
                 </View>

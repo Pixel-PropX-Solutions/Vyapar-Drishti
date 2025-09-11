@@ -1,5 +1,5 @@
 import userApi from '../Api/userApi';
-import { CreateInvoiceData, CreateInvoiceWithTAXData, GetAllVouchars, PageMeta, UpdateInvoice, UpdateTAXInvoice } from '../Utils/types';
+import { CreateInvoiceData, CreateInvoiceWithTAXData, GetAllVouchars, PageMeta, TimelineData, TimeLinePageMeta, UpdateInvoice, UpdateTAXInvoice } from '../Utils/types';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import RNFetchBlob from 'react-native-blob-util';
 // import RNFS from 'react-native-fs';
@@ -128,7 +128,7 @@ export const viewAllInvoices = createAsyncThunk(
     ): Promise<{ invoices: GetAllVouchars[], pageMeta: PageMeta } | any> => {
         try {
             const response = await userApi.get(
-                `invoices/view/all/vouchar?company_id=${company_id}${searchQuery !== '' ? '&search=' + searchQuery : ''}${type !== 'All' ? '&type=' + type : ''}${start_date !== '' ? '&start_date=' + start_date : ''}${end_date !== '' ? '&end_date=' + end_date : ''}&page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder}`
+                `invoices/view/all/vouchar?company_id=${company_id}${searchQuery !== '' ? '&search=' + searchQuery : ''}${type !== 'all' ? '&type=' + type : ''}${start_date !== '' ? '&start_date=' + start_date : ''}${end_date !== '' ? '&end_date=' + end_date : ''}&page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder}`
             );
             console.log('viewAllInvoices response', response.data);
 
@@ -463,6 +463,51 @@ export const getPaymentPDF = createAsyncThunk(
     }
 );
 
+
+
+export const getTimeline = createAsyncThunk(
+    'view/timeline',
+    async (
+        {
+            search,
+            category = 'all',
+            company_id,
+            page_no,
+            limit,
+            startDate,
+            endDate,
+            sortField,
+            sortOrder,
+        }: {
+            search: string;
+            company_id: string;
+            startDate: string;
+            endDate: string;
+            category?: string;
+            page_no: number;
+            limit: number;
+            sortField: string;
+            sortOrder: string;
+        },
+        { rejectWithValue }
+    ): Promise<{ timelineData: TimelineData[], timelinePageMeta: TimeLinePageMeta } | any> => {
+        try {
+            const response = await userApi.get(
+                `/invoices/get/timeline?${company_id ? `company_id=${company_id}&` : ''}${search ? `search=${search}&` : ''}${category !== 'all' ? `category=${category}&` : ''}${startDate ? `start_date=${startDate}&` : ''}${endDate ? `end_date=${endDate}&` : ''}page_no=${page_no}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder === 'asc' ? '1' : '-1'}`
+            );
+
+            console.log('View getTimeline response', response);
+
+            if (response.data.success === true) {
+                const timelineData = response.data.data.docs;
+                const timelinePageMeta = response.data.data.meta;
+                return { timelineData, timelinePageMeta };
+            } else { return rejectWithValue('Login Failed: No access token recieved.'); }
+        } catch (error: any) {
+            return rejectWithValue(error?.response?.data?.message);
+        }
+    }
+);
 
 export const uploadBill = createAsyncThunk(
     'upload/bill',

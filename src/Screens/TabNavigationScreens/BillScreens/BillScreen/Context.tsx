@@ -7,13 +7,13 @@ type Filters = {
     sortBy: string,
     useAscOrder: boolean,
     status: 'all' | 'paid' | 'pending',
-    billType: 'all' | 'Sales' | 'Purchase' | 'Invoices' | 'Transactions' | 'Payment' | 'Receipt' | 'More',
+    billType: 'all' | 'Sales' | 'Purchase' | 'Payment' | 'Receipt',
     searchQuery: string,
     startDate?: string,
     endDate?: string,
 }
 
-const FilterDefaultValue: Filters = { searchQuery:'', sortBy: '', useAscOrder: false, status: 'all', billType: 'Invoices', startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(), endDate: new Date().toISOString() };
+const FilterDefaultValue: Filters = { searchQuery: '', sortBy: 'date', useAscOrder: false, status: 'all', billType: 'all', startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(), endDate: new Date().toISOString() };
 
 type ContextType = {
     date: Date, setDate: Dispatch<SetStateAction<Date>>,

@@ -21,6 +21,7 @@ import ForgotPasswordScreen from '../Screens/ForgotPasswordScreen';
 import TransitionCreateScreen from '../Screens/TabNavigationScreens/BillScreens/TransactionCreateScreen/Screen';
 import CustomerViewScreen from '../Screens/TabNavigationScreens/CustomerScreens/CustomerViewScreen/Screen';
 import BillEditScreen from '../Screens/TabNavigationScreens/BillScreens/EditBillScreen/Screen';
+import TimelineScreen from '../Screens/TimelineScreen/Screen';
 
 export type StackParamsList = {
     'splash-screen': undefined,
@@ -42,7 +43,7 @@ export type StackParamsList = {
 
     'customer-info-screen': { id: string },
     'customer-view-screen': { id: string },
-
+    'timeline-screen': undefined
     'inventory-screen': undefined
 
     'app-update-screen': undefined
@@ -99,7 +100,10 @@ export default function StackNavigation(): React.JSX.Element {
                 <Stack.Screen name="company-profile-screen"
                     component={withSafeView(CompanyScreen)}
                 />
-
+                <Stack.Screen name="timeline-screen"
+                    options={{ animation: 'scale_from_center' }}
+                    component={TimelineScreen}
+                />
                 <Stack.Screen name="product-info-screen"
                     component={withSafeView(ProductInfoScreen)}
                 />

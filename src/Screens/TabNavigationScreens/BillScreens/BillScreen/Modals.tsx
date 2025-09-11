@@ -165,10 +165,10 @@ export function FilterModal({ visible, setVisible }: Props) {
             <TextTheme fontSize={20} fontWeight={900}>Bills Filters</TextTheme>
             <SectionView label="Type" style={{ flexDirection: 'row', gap: 12, alignItems: 'center', flexWrap: 'wrap' }} >
                 {
-                    ['Invoices', 'Sales', 'Purchase', 'Transactions', 'Payment', 'Receipt'].map(item => (
+                    ['all', 'Sales', 'Purchase', 'Payment', 'Receipt'].map(item => (
                         <AnimateButton key={item}
                             onPress={() => {
-                                handleFilter('billType', item as 'Invoices' | 'Sales' | 'Purchase' | 'Transactions' | 'Payment' | 'Receipt');
+                                handleFilter('billType', item as 'all' | 'Sales' | 'Purchase' | 'Payment' | 'Receipt');
                                 setVisible(false);
                             }}
                             bubbleColor={item === filters.billType ? primaryBackgroundColor : primaryColor}
@@ -183,27 +183,27 @@ export function FilterModal({ visible, setVisible }: Props) {
                                 useInvertTheme={item === filters.billType}
                                 fontSize={12}
                                 fontWeight={900}
-                            >{item}</TextTheme>
+                            >{item === 'all' ? 'All' : item}</TextTheme>
                         </AnimateButton>
                     ))
                 }
             </SectionView>
 
-            {/* <SectionView label="Sort by" style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }} >
+            <SectionView label="Sort by" style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }} >
                 {
-                    ['Default', 'Date', 'Amount', 'Type'].map(item => (
+                    ['Date', 'Amount', 'Type'].map(item => (
                         <AnimateButton key={item}
-                            onPress={() => handleFilter('sortBy', item)}
-                            bubbleColor={item === filters.sortBy ? primaryBackgroundColor : primaryColor}
+                            onPress={() => { handleFilter('sortBy', item.toLowerCase()); setVisible(false); }}
+                            bubbleColor={item.toLowerCase() === filters.sortBy ? primaryBackgroundColor : primaryColor}
 
                             style={{
                                 alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 32,
-                                backgroundColor: item === filters.sortBy ? primaryColor : primaryBackgroundColor,
+                                backgroundColor: item.toLowerCase() === filters.sortBy ? primaryColor : primaryBackgroundColor,
                             }}
                         >
                             <TextTheme
-                                isPrimary={item === filters.sortBy}
-                                useInvertTheme={item === filters.sortBy}
+                                isPrimary={item.toLowerCase() === filters.sortBy}
+                                useInvertTheme={item.toLowerCase() === filters.sortBy}
                                 fontSize={12}
                                 fontWeight={900}
                             >{item}</TextTheme>
@@ -212,7 +212,7 @@ export function FilterModal({ visible, setVisible }: Props) {
                 }
             </SectionView>
 
-            <SectionView label="Status" style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }} >
+            {/* <SectionView label="Status" style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }} >
                 {
                     ['All', 'Pending', 'Paid'].map(item => (
                         <AnimateButton key={item}

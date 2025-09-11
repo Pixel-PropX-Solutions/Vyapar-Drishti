@@ -76,12 +76,14 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
                 </View>
             )}
 
-            filter={(item, val) =>
-                item.phone?.number.includes(val.toLowerCase()) ||
-                item.phone?.number.includes(val.toLowerCase()) ||
-                item.ledger_name.toLowerCase().split(' ').some(word => (
-                    word.includes(val.toLowerCase())
-                ))
+            filter={(item, val) => {
+                const normalizedInput = val.replace(/\s+/g, '').toLowerCase();
+                return item.phone?.number.includes(normalizedInput) ||
+                    item.ledger_name.replace(/\s+/g, '').toLowerCase().includes(normalizedInput) ||
+                    item.ledger_name.toLowerCase().split(' ').some(word => (
+                        word.startsWith(normalizedInput)
+                    ));
+            }
             }
 
             onSelect={item => {

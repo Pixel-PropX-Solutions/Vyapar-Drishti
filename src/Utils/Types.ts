@@ -435,6 +435,38 @@ export interface UpdateTAXInvoice {
 }
 
 
+export interface TimelineData {
+  _id: string,
+  item_id: string,
+  item: string,
+  unit: string,
+  inwards_qty: number,
+  inwards_val: number,
+  outwards_qty: number,
+  outwards_val: number,
+  opening_qty: number,
+  opening_val: number,
+  closing_qty: number,
+  closing_val: number,
+  opening_rate: number,
+  inwards_rate: number,
+  outwards_rate: number,
+  closing_rate: number,
+  gross_profit: number,
+  profit_percent: number
+}
+
+export interface TimeLinePageMeta {
+  page: number,
+  limit: number,
+  total: number,
+  opening_val: number,
+  inwards_val: number,
+  outwards_val: number,
+  closing_val: number,
+  gross_profit: number,
+  profit_percent: number
+}
 
 export interface GetInvoiceData {
   _id: string,
@@ -689,7 +721,7 @@ export interface ProductUpdate {
   taxability?: string;
   tax_rate?: number;
 
-  low_stock_alert?: number ;
+  low_stock_alert?: number;
 }
 
 export interface GetProduct {

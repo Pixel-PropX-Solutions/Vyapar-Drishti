@@ -228,13 +228,14 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
                 </View>
             )}
 
-            filter={(item, val) =>
-                item.phone?.number.includes(val.toLowerCase()) ||
-                item.phone?.number.includes(val.toLowerCase()) ||
-                item.ledger_name.toLowerCase().split(' ').some(word => (
-                    word.includes(val.toLowerCase())
-                ))
-            }
+            filter={(item, val) => {
+                const normalizedInput = val.replace(/\s+/g, '').toLowerCase();
+                return item.phone?.number.includes(normalizedInput) ||
+                    item.ledger_name.replace(/\s+/g, '').toLowerCase().includes(normalizedInput) ||
+                    item.ledger_name.toLowerCase().split(' ').some(word => (
+                        word.startsWith(normalizedInput)
+                    ));
+            }}
 
             onSelect={item => {
                 setVisible(false);
@@ -337,10 +338,16 @@ export function ProductSelectorModal({ visible, setVisible }: Props): React.JSX.
                 keyExtractor={(item) => item.id}
                 isItemSelected={false}
 
-                filter={(item, val) => (
-                    item.name.toLowerCase().replaceAll(' ', '').includes(val.replaceAll(' ', '')) ||
-                    item.hsn_code.toLowerCase().replaceAll(' ', '').includes(val.replaceAll(' ', ''))
-                )}
+                filter={(item, val) => {
+                    const normalizedInput = val.replace(/\s+/g, '').toLowerCase();
+                    return (
+                        item.name.replace(/\s+/g, '').toLowerCase().includes(normalizedInput) ||
+                        item.hsn_code.replace(/\s+/g, '').toLowerCase().includes(normalizedInput) ||
+                        item.name.toLowerCase().split(' ').some(word => (
+                            word.startsWith(normalizedInput)
+                        ))
+                    );
+                }}
 
                 actionButtons={[{
                     key: 'create-product',

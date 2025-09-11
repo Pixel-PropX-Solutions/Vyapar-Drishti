@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AuthStates } from '../../Utils/enums';
-import { GetAllVouchars, GetInvoiceData, PageMeta } from '../../Utils/types';
-import { createInvoice, getAllInvoiceGroups, viewAllInvoices, viewInvoice } from '../../Services/invoice';
+import { GetAllVouchars, GetInvoiceData, PageMeta, TimelineData, TimeLinePageMeta } from '../../Utils/types';
+import { createInvoice, getAllInvoiceGroups, getTimeline, viewAllInvoices, viewInvoice } from '../../Services/invoice';
 
 interface InvoiceState {
     authState: AuthStates;
@@ -15,6 +15,9 @@ interface InvoiceState {
         _id: string;
         name: string;
     }>;
+    timelineData: Array<TimelineData> | [];
+    timelinePageMeta: TimeLinePageMeta;
+    isTimelineFetching: boolean;
 }
 
 const initialState: InvoiceState = {
@@ -31,6 +34,19 @@ const initialState: InvoiceState = {
     error: null,
     isInvoiceFeaching: false,
     invoiceGroups: [],
+    timelineData: [],
+    isTimelineFetching: false,
+    timelinePageMeta: {
+        page: 0,
+        limit: 0,
+        total: 0,
+        opening_val: 0,
+        inwards_val: 0,
+        outwards_val: 0,
+        closing_val: 0,
+        gross_profit: 0,
+        profit_percent: 0,
+    },
 };
 
 const invoiceSlice = createSlice({
@@ -38,8 +54,8 @@ const invoiceSlice = createSlice({
     initialState,
     reducers: {
         setInvoice(state, { payload }) {
-            state.invoices = payload
-        }
+            state.invoices = payload;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -60,6 +76,24 @@ const invoiceSlice = createSlice({
             .addCase(viewAllInvoices.rejected, (state, action) => {
                 state.error = action.payload as string;
                 state.isInvoiceFeaching = false;
+            })
+
+            .addCase(getTimeline.pending, (state) => {
+                state.error = null;
+                state.isTimelineFetching = true;
+            })
+            .addCase(getTimeline.fulfilled, (state, { payload }: { payload: { timelineData: TimelineData[], timelinePageMeta: TimeLinePageMeta } | any }) => {
+                state.timelinePageMeta = payload.timelinePageMeta;
+                state.isTimelineFetching = false;
+                if (payload.timelinePageMeta.page === 1) {
+                    state.timelineData = payload.timelineData;
+                } else {
+                    state.timelineData = [...(state.timelineData ?? []), ...(payload.timelineData ?? [])];
+                }
+            })
+            .addCase(getTimeline.rejected, (state, action) => {
+                state.error = action.payload as string;
+                state.isTimelineFetching = false;
             })
 
             .addCase(viewInvoice.pending, (state) => {
@@ -106,4 +140,4 @@ const invoiceSlice = createSlice({
 const invoiceReducer = invoiceSlice.reducer;
 export default invoiceReducer;
 
-export const { setInvoice } = invoiceSlice.actions
+export const { setInvoice } = invoiceSlice.actions;

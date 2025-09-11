@@ -196,6 +196,13 @@ export function QuickAccessSection(): React.JSX.Element {
                     />
                 </View>
 
+                <QuickAccessBox
+                    label="Timeline"
+                    text="View Timeline"
+                    icon={<MaterialDesignIcon name="cash-minus" size={24} />}
+                    onPress={() => { navigator.navigate('timeline-screen'); }}
+                />
+
                 <View style={{ flexDirection: 'row', gap: 12 }}>
                     <QuickAccessBox
                         label="Rate us"

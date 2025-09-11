@@ -47,6 +47,24 @@ export function Header(): React.JSX.Element {
     );
 }
 
+
+const billTypes = [{
+    label: 'All',
+    value: 'all',
+}, {
+    label: 'Sales',
+    value: 'Sales',
+}, {
+    label: 'Purchase',
+    value: 'Purchase',
+}, {
+    label: 'Receipt',
+    value: 'Receipt',
+}, {
+    label: 'Payment',
+    value: 'Payment',
+}];
+
 export function BillTypeFilter(): React.JSX.Element {
 
 
@@ -56,45 +74,41 @@ export function BillTypeFilter(): React.JSX.Element {
 
     return (
         <>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingInline: 20 }} >
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <View style={{ paddingInline: 20, gap: 4, width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
+                <View style={{ gap: 4, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }} >
+                    <TextTheme isPrimary={true} fontSize={14} fontWeight={900} color={primaryColor}>
+                        Type
+                    </TextTheme>
 
-                    {
-                        ['Invoices', 'Transactions', 'More'].map(type => (
-                            <AnimateButton key={type}
-                                onPress={() => {
-                                    if (type === 'More') {
-                                        setFilterModalVisible(true);
-                                        return;
-                                    } else {
-                                        handleFilter('billType', type as 'all' | 'Sales' | 'Purchase' | 'Transactions' | 'Payment' | 'Receipt' | 'More');
-                                    }
-                                }}
+                    <AnimateButton
+                        onPress={() => {
+                            setFilterModalVisible(true);
+                            return;
+                        }}
 
-                                bubbleColor={type === filters.billType ? primaryBackgroundColor : primaryColor}
+                        bubbleColor={primaryBackgroundColor}
 
-                                style={{
-                                    alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 28,
-                                    backgroundColor: type === filters.billType ? primaryColor : primaryBackgroundColor,
-                                }}
-                            >
-                                <TextTheme
-                                    isPrimary={type === filters.billType}
-                                    useInvertTheme={type === filters.billType}
-                                    fontSize={12}
-                                    fontWeight={900}
-                                >
-                                    {type === 'More' ? <FeatherIcon name="more-horizontal" size={16} /> : type}
-                                </TextTheme>
-                            </AnimateButton>
-                        ))
-                    }
+                        style={{
+                            alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: primaryColor, paddingInline: 14, borderRadius: 40, height: 28,
+                            backgroundColor: primaryColor,
+                        }}
+                    >
+                        <TextTheme
+                            isPrimary={true}
+                            useInvertTheme={true}
+                            fontSize={12}
+                            fontWeight={900}
+                        >
+                            {billTypes.find(item => item.value === filters.billType)?.label || 'All'}
+                        </TextTheme>
+                    </AnimateButton>
+
                 </View>
-
                 <AnimateButton
                     style={{ height: 28, flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 40, paddingInline: 14 }}
                     onPress={() => { handleFilter('useAscOrder', !filters.useAscOrder); }}
                 >
+                    <TextTheme fontSize={12}>{filters.sortBy.charAt(0).toUpperCase() + filters.sortBy.slice(1)}</TextTheme>
                     <FeatherIcon
                         name={filters.useAscOrder ? 'arrow-up' : 'arrow-down'}
                         size={16}
@@ -163,13 +177,13 @@ export function BillListing() {
     function handleInvoiceFetching() {
         if (isInvoiceFeaching) { return; }
         if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
-        dispatch(viewAllInvoices({ company_id: current_company_id ?? '', pageNumber: pageMeta.page + 1, type: filters.billType, sortOrder: filters.useAscOrder ? '1' : '-1', start_date: formatLocalDate(new Date(filters.startDate ?? '')), end_date: formatLocalDate(new Date(filters.endDate ?? '')) }));
+        dispatch(viewAllInvoices({ company_id: current_company_id ?? '', pageNumber: pageMeta.page + 1, type: filters.billType, sortField: filters.sortBy, sortOrder: filters.useAscOrder ? '1' : '-1', start_date: formatLocalDate(new Date(filters.startDate ?? '')), end_date: formatLocalDate(new Date(filters.endDate ?? '')) }));
     }
 
     function handleRefresh() {
         if (refreshing) { return; }
         setRefreshing(true);
-        dispatch(viewAllInvoices({ company_id: current_company_id ?? '', pageNumber: 1, type: filters.billType, sortOrder: filters.useAscOrder ? '1' : '-1', start_date: formatLocalDate(new Date(filters.startDate ?? '')), end_date: formatLocalDate(new Date(filters.endDate ?? '')) }))
+        dispatch(viewAllInvoices({ company_id: current_company_id ?? '', pageNumber: 1, type: filters.billType, sortField: filters.sortBy, sortOrder: filters.useAscOrder ? '1' : '-1', start_date: formatLocalDate(new Date(filters.startDate ?? '')), end_date: formatLocalDate(new Date(filters.endDate ?? '')) }))
             .finally(() => setRefreshing(false));
     }
 
@@ -239,10 +253,10 @@ export function BillListing() {
         useCallback(() => {
             dispatch(setInvoice([]));
             dispatch(viewAllInvoices({
-                company_id: current_company_id ?? '', pageNumber: 1, type: filters.billType, sortOrder: filters.useAscOrder ? '1' : '-1', searchQuery: filters.searchQuery,
+                company_id: current_company_id ?? '', pageNumber: 1, type: filters.billType, sortOrder: filters.useAscOrder ? '1' : '-1', searchQuery: filters.searchQuery, sortField: filters.sortBy,
                 start_date: formatLocalDate(new Date(filters.startDate ?? '')), end_date: formatLocalDate(new Date(filters.endDate ?? '')),
             }));
-        }, [current_company_id, filters.billType, filters.useAscOrder, filters.startDate, filters.endDate, filters.searchQuery])
+        }, [current_company_id, filters.billType, filters.sortBy, filters.useAscOrder, filters.startDate, filters.endDate, filters.searchQuery])
     );
 
     return (<>
