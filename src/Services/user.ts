@@ -180,7 +180,7 @@ export const deleteCompany = createAsyncThunk(
 export const updateUserSettings = createAsyncThunk(
   'update/user/settings',
   async (
-    { id, data }: { id: string; data: Record<string, unknown> },
+    { id, data }: { id: string; data: Record<string, any>; },
     { rejectWithValue }
   ) => {
     try {

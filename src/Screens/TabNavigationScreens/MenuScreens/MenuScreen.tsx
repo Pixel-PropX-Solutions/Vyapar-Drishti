@@ -10,7 +10,7 @@ import FeatherIcon from '../../../Components/Icon/FeatherIcon';
 import MaterialIcon from '../../../Components/Icon/MaterialIcon';
 import TextTheme from '../../../Components/Ui/Text/TextTheme';
 import navigator from '../../../Navigation/NavigationService';
-import { deleteAccount, deleteCompany, getCurrentUser, logout, switchCompany } from '../../../Services/user';
+import { deleteAccount, deleteCompany, getCurrentUser, logout, switchCompany, updateUserSettings } from '../../../Services/user';
 import AuthStore from '../../../Store/AuthStore';
 import { ItemSelectorModal } from '../../../Components/Modal/Selectors/ItemSelectorModal';
 import BottomModal from '../../../Components/Modal/BottomModal';
@@ -46,7 +46,15 @@ export default function MenuScreen(): React.JSX.Element {
                         label="Theme"
                         icon={<FeatherIcon name={theme === 'dark' ? 'moon' : 'sun'} size={20} />}
                         text={`Click for turn on ${theme === 'dark' ? 'light' : 'dark'} mode.`}
-                        onPress={() => setTheme((pre) => pre === 'light' ? 'dark' : 'light')}
+                        onPress={() => {
+                            setLoading(true);
+                            dispatch(updateUserSettings({ id: user?.user_settings?._id ?? '', data: { ui_preferences: { theme: theme === 'dark' ? 'light' : 'dark' } } })).then(() => {
+                                setTheme((pre) => pre === 'light' ? 'dark' : 'light');
+                                setLoading(false);
+                            }).catch(() => {
+                                setLoading(false);
+                            });
+                        }}
                     />
 
                     <SectionRowWithIcon

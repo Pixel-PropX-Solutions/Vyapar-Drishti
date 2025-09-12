@@ -14,7 +14,7 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { useAppStorage } from '../Contexts/AppStorageProvider';
 import MaterialIcon from '../Components/Icon/MaterialIcon';
 import { useAppDispatch, useUserStore } from '../Store/ReduxStore';
-import { deleteAccount, deleteCompany, getCurrentUser, logout } from '../Services/user';
+import { deleteAccount, deleteCompany, getCurrentUser, logout, updateUserSettings } from '../Services/user';
 import { ItemSelectorModal } from '../Components/Modal/Selectors/ItemSelectorModal';
 import DeleteModal from '../Components/Modal/DeleteModal';
 import { useAlert } from '../Components/Ui/Alert/AlertProvider';
@@ -47,7 +47,15 @@ export default function SettingScreen(): React.JSX.Element {
                         label="Theme"
                         icon={<FeatherIcon name={theme === 'dark' ? 'moon' : 'sun'} size={20} />}
                         text={`Click for turn on ${theme === 'dark' ? 'light' : 'dark'} mode.`}
-                        onPress={() => setTheme((pre) => pre === 'light' ? 'dark' : 'light')}
+                        onPress={() => {
+                            setLoading(true);
+                            dispatch(updateUserSettings({ id: user?.user_settings?._id ?? '', data: { ui_preferences: { theme: theme === 'dark' ? 'light' : 'dark' } } })).then(() => {
+                                setTheme((pre) => pre === 'light' ? 'dark' : 'light');
+                                setLoading(false);
+                            }).catch(() => {
+                                setLoading(false);
+                            });
+                        }}
                     />
 
                     <SectionRowWithIcon

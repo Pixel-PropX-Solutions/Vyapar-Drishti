@@ -1,10 +1,17 @@
+import { Appearance } from 'react-native';
 import { MMKV } from 'react-native-mmkv';
 
 const ThemeStore = new MMKV({ id: 'theme-storage' });
 
 export function useThemeStore() {
     return {
-        getTheme: () => ThemeStore.getString('theme') === 'dark' ? 'dark' : 'light',
+        getTheme: () => {
+            const storedTheme = ThemeStore.getString('theme');
+            if (storedTheme === 'dark' || storedTheme === 'light') {
+                return storedTheme;
+            }
+            return Appearance.getColorScheme() === 'dark' ? 'dark' : 'light';
+        },
         setTheme: (theme: 'light' | 'dark') => ThemeStore.set('theme', theme),
 
         getPrimaryColor: () => ThemeStore.getString('primaryColor') || '#000000',

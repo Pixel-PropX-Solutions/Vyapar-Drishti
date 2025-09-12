@@ -9,9 +9,10 @@ type Props = ViewProps & {
     isPrimary?: boolean,
     style?: ViewStyle,
     spinnerWeight?: number
+    color?: string
 }
 
-export default function Loader({ width = 20, duration = 1000, isPrimary = false, style, spinnerWeight = 2 }: Props): React.JSX.Element {
+export default function Loader({ width = 20, duration = 1000, isPrimary = false, style, spinnerWeight = 2, color = '' }: Props): React.JSX.Element {
 
     const { primaryColor, secondaryColor } = useTheme();
 
@@ -39,7 +40,7 @@ export default function Loader({ width = 20, duration = 1000, isPrimary = false,
         <Animated.View style={[{
             width: width, aspectRatio: 1, borderRadius: 40, borderWidth: spinnerWeight,
             borderBottomColor: 'transparent', borderLeftColor: 'transparent', borderRightColor: 'transparent',
-            borderTopColor: isPrimary ? primaryColor : secondaryColor,
+            borderTopColor: !color ? isPrimary ? primaryColor : secondaryColor : color,
             transform: [{
                 rotate: animate0to1.interpolate({
                     inputRange: [0, 1], outputRange: ['0deg', '360deg'],

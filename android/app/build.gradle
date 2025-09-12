@@ -82,8 +82,8 @@ android {
         applicationId "com.pixelprophet.vyapardrishti"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 11
-        versionName "2.6"
+        versionCode 12
+        versionName "3.0"
     }
     signingConfigs {
         release {

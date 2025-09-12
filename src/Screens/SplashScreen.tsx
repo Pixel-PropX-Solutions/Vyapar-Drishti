@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import LogoImage from '../Components/Image/LogoImage';
 import { View } from 'react-native';
 import navigator from '../Navigation/NavigationService';
@@ -10,15 +10,22 @@ import Loader from '../Components/Ui/Loader';
 import { useAppDispatch } from '../Store/ReduxStore';
 import { getAppVersion } from '../Services/user';
 import { getVersion } from 'react-native-device-info';
+import TextTheme from '../Components/Ui/Text/TextTheme';
 
 
 export default function SplashScreen(): React.JSX.Element {
 
     const { navigate } = useAuthentication();
     const dispatch = useAppDispatch();
+    const [showSlowMessage, setShowSlowMessage] = useState(false);
 
     useFocusEffect(
         useCallback(() => {
+            // Timer for showing slow message
+            const msgTimer = setTimeout(() => {
+                setShowSlowMessage(true);
+            }, 3000); // show after 3s (adjust as needed)
+
             const timeout = setTimeout(() => {
                 dispatch(getAppVersion())
                     .then((res) => {
@@ -30,16 +37,29 @@ export default function SplashScreen(): React.JSX.Element {
                     })
                     .catch(() => {
                         navigate();
+                    })
+                    .finally(() => {
+                        clearTimeout(msgTimer); // cancel slow message if API finishes
+                        setShowSlowMessage(false);
                     });
             }, 1000);
-            return () => clearTimeout(timeout);
-        }, [])
+
+            return () => {
+                clearTimeout(timeout);
+                clearTimeout(msgTimer);
+            };
+        }, [dispatch, navigate])
     );
 
     return (
         <View style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, backgroundColor: 'white' }} >
             <LogoImage size={200} />
-            <Loader />
+            <Loader color="black" />
+            {showSlowMessage && (
+                <TextTheme color="black" style={{ marginTop: 16 }}>
+                    Taking longer than usual. Please wait...
+                </TextTheme>
+            )}
         </View>
     );
 }

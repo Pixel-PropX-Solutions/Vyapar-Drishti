@@ -270,7 +270,7 @@ export function BillListing() {
 
             ListEmptyComponent={
                 <ShowWhen when={!isInvoiceFeaching} otherwise={<BillLoadingCard />} >
-                    <EmptyListView title={`No ${filters.billType} records found.`} text={`Try adjusting your filters or create a new ${filters.billType}.`} />
+                    <EmptyListView title={`No ${filters.billType === 'all' ? 'bills' : filters.billType} records found.`} text={`Try adjusting your filters or create a new ${filters.billType === 'all' ? 'bill' : filters.billType}.`} />
                 </ShowWhen>
             }
 

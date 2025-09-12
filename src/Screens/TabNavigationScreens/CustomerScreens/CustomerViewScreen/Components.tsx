@@ -258,8 +258,8 @@ export function InvoiceListing() {
                     isAllCustomerInvoicesFetching ?
                         <BillLoadingCard /> :
                         <EmptyListView
-                            title="No invoices found for this period."
-                            text="Try adjusting your filters or adding a new invoice." />
+                            title="No bills found for this period."
+                            text="Try adjusting your filters or adding a new bill for this customer." />
                 }
                 contentContainerStyle={{ marginTop: 12, width: '100%', gap: 20 }}
                 data={customerInvoices}
