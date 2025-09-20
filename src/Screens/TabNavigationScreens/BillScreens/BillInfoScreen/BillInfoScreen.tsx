@@ -146,18 +146,18 @@ export default function BillInfoScreen(): React.JSX.Element {
     }
 
     const totals = tax_enable ? [
-        ['Sub Total', formatNumberForUI(invoiceData.total)],
-        ['Total Discount', formatNumberForUI(invoiceData.discount)],
-        ['Total Tax', formatNumberForUI(invoiceData.total_tax)],
-        ['Additional Charge', formatNumberForUI(invoiceData.additional_charge)],
-        ['Round Off', formatNumberForUI(invoiceData.roundoff)],
-        ['Grand Total', formatNumberForUI(invoiceData.grand_total)],
+        ['Sub Total', (invoiceData.total).toLocaleString(undefined, { minimumFractionDigits: 2 })],
+        ['Total Discount', (invoiceData.discount).toLocaleString(undefined, { minimumFractionDigits: 2 })],
+        ['Total Tax', (invoiceData.total_tax).toLocaleString(undefined, { minimumFractionDigits: 2 })],
+        ['Additional Charge', (invoiceData.additional_charge).toLocaleString(undefined, { minimumFractionDigits: 2 })],
+        ['Round Off', (invoiceData.roundoff).toLocaleString(undefined, { minimumFractionDigits: 2 })],
+        ['Grand Total', (invoiceData.grand_total).toLocaleString(undefined, { minimumFractionDigits: 2 })],
     ] : [
-        ['Sub Total', formatNumberForUI(invoiceData.total)],
-        ['Total Discount', formatNumberForUI(invoiceData.discount)],
-        ['Additional Charge', formatNumberForUI(invoiceData.additional_charge)],
-        ['Round Off', formatNumberForUI(invoiceData.roundoff)],
-        ['Grand Total', formatNumberForUI(invoiceData.grand_total)],
+        ['Sub Total', (invoiceData.total).toLocaleString(undefined, { minimumFractionDigits: 2 })],
+        ['Total Discount', (invoiceData.discount).toLocaleString(undefined, { minimumFractionDigits: 2 })],
+        ['Additional Charge', (invoiceData.additional_charge).toLocaleString(undefined, { minimumFractionDigits: 2 })],
+        ['Round Off', (invoiceData.roundoff).toLocaleString(undefined, { minimumFractionDigits: 2 })],
+        ['Grand Total', (invoiceData.grand_total).toLocaleString(undefined, { minimumFractionDigits: 2 })],
     ];
 
     return (

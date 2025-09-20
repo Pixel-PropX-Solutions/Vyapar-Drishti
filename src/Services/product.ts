@@ -73,10 +73,7 @@ export const viewAllProducts = createAsyncThunk(
   } | any> => {
     try {
       const response = await userApi.get(
-        `product/view/all/stock/items?company_id=${company_id}${searchQuery === '' ? '' : '&search=' + searchQuery}
-        ${group === 'All' ? '' : '&group=' + group}${category === 'All' ? '' : '&category=' + category}
-        &page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder === 'asc' ? '1' : '-1'
-        }`
+        `product/view/all/stock/items?company_id=${company_id}${searchQuery === '' ? '' : '&search=' + searchQuery}${group === 'All' ? '' : '&group=' + group}${category === 'All' ? '' : '&category=' + category}&page_no=${pageNumber}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder === 'asc' ? '1' : '-1'}`
       );
       console.log('viewAllProduct response', response.data);
 

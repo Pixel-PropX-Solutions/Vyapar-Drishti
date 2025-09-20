@@ -31,7 +31,7 @@ function CustomerViewScreenContent() {
                 />
                 <InvoiceListing />
 
-                <View style={{ minHeight: 40 }} />
+                <View style={{ minHeight: 10 }} />
             </BackgroundThemeView>
         </View>
     );

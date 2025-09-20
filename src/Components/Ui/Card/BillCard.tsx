@@ -58,13 +58,13 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                             <View>
                                 <TextTheme isPrimary={isPrimary} fontSize={14} fontWeight={800}>
-                                    {sliceString(customerName, (status === 'pending' || type.toLowerCase() === 'sales') ? 20 : 30)}
+                                    {sliceString(customerName, (status === 'pending' || ['Sales', 'Purchase'].includes(type)) ? 20 : 30)}
                                 </TextTheme>
                                 <TextTheme isPrimary={false} fontSize={12} fontWeight={800}>{type}</TextTheme>
                             </View>
 
                             <View style={{ flexDirection: 'row', gap: 8 }} >
-                                <BackgroundThemeView
+                                {['Sales', 'Purchase'].includes(type) && <BackgroundThemeView
                                     isPrimary={!isPrimary}
                                     backgroundColor={`rgb(${rgb})`}
                                     style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingLeft: 8, borderRadius: 40, paddingBlock: 6, paddingRight: 12 }}
@@ -74,7 +74,7 @@ export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, bil
                                     <TextTheme color="white" fontSize={14} fontWeight={900}>
                                         {status.charAt(0).toUpperCase() + status.slice(1)}
                                     </TextTheme>
-                                </BackgroundThemeView>
+                                </BackgroundThemeView>}
 
                                 <AnimateButton onPress={onPrint} style={{ borderRadius: 50 }} >
                                     <BackgroundThemeView isPrimary={!isPrimary} style={{ alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 32 }}  >

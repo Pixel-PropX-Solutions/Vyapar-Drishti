@@ -493,7 +493,7 @@ export const getTimeline = createAsyncThunk(
     ): Promise<{ timelineData: TimelineData[], timelinePageMeta: TimeLinePageMeta } | any> => {
         try {
             const response = await userApi.get(
-                `/invoices/get/timeline?${company_id ? `company_id=${company_id}&` : ''}${search ? `search=${search}&` : ''}${category !== 'all' ? `category=${category}&` : ''}${startDate ? `start_date=${startDate}&` : ''}${endDate ? `end_date=${endDate}&` : ''}page_no=${page_no}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder === 'asc' ? '1' : '-1'}`
+                `/invoices/get/timeline?${company_id ? 'company_id=' + company_id : ''}${search ? '&search=' + search : ''}${category !== 'all' ? '&category=' + category : ''}${startDate ? '&start_date=' + startDate : ''}${endDate ? '&end_date=' + endDate : ''}page_no=${page_no}&limit=${limit}&sortField=${sortField}&sortOrder=${sortOrder === 'asc' ? '1' : '-1'}`
             );
 
             console.log('View getTimeline response', response);

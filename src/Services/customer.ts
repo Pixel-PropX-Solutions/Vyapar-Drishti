@@ -192,7 +192,7 @@ export const getCustomerInvoices = createAsyncThunk(
         customer_id,
         pageNumber = 1,
         type = 'all',
-        limit = 10,
+        limit = 10000,
         sortField = 'date',
         sortOrder = 'asc',
         start_date = '',

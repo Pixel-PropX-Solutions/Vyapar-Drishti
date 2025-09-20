@@ -5,6 +5,7 @@ import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 interface CustomerState {
     customers: Array<GetUserLedgers>;
     isAllCustomerFetching: boolean;
+    isCustomerFetching: boolean;
     isAllCustomerInvoicesFetching: boolean;
     customer: GetCustomerProfile | null;
     customerInfo: GetCustomerInfo | null;
@@ -21,6 +22,7 @@ const initialState: CustomerState = {
     customers: [],
     customerInfo: null,
     isAllCustomerFetching: false,
+    isCustomerFetching: false,
     isAllCustomerInvoicesFetching: false,
     customersList: [],
     customerInvoices: [],
