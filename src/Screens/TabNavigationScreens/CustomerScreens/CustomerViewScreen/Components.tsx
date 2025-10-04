@@ -502,7 +502,7 @@ export function InvoiceListing() {
                 borderWidth: 1,
                 borderColor: primaryColor,
                 borderRadius: 4,
-                width: 370,
+                width: '100%',
                 overflow: 'hidden',
             }}>
                 <TableHeader primaryColor={primaryColor} />
@@ -537,7 +537,7 @@ export function InvoiceListing() {
                 borderWidth: 1,
                 borderColor: primaryColor,
                 borderRadius: 4,
-                width: 370,
+                  width: '100%',
                 overflow: 'hidden',
                 flexDirection: 'row',
             }}>

@@ -207,3 +207,9 @@ export function compareDates(date1: [number, number, number], date2?: [number, n
 
     return 0;
 }
+
+
+export const getTodaydDateString = () => {
+    let time = new Date();
+    return `${time.getDate().toString().padStart(2, '0')}/${(time.getMonth() + 1).toString().padStart(2, '0')}/${time.getFullYear()}`;
+};

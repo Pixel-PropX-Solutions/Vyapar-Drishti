@@ -27,7 +27,6 @@ export default function ProductInfoScreen(): React.JSX.Element {
 
     return (
         <View style={{ width: '100%', height: '100%' }} >
-            <SafeAreaFromTop />
             <View style={{ paddingHorizontal: 20, paddingTop: 8, gap: 36, marginBottom: 8 }} >
                 <Header />
             </View>

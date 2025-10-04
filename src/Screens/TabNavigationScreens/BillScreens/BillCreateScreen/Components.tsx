@@ -203,6 +203,7 @@ export function DateSelector() {
 
             value={(() => {
                 const [date, month, year] = createOn.split('/').map(Number);
+                console.log('Split', createOn.split('/'));
                 return { date, month: month - 1, year };
             })()}
 

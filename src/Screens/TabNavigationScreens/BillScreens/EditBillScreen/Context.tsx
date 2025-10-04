@@ -1,5 +1,6 @@
 import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
 import { useInvoiceStore } from '../../../../Store/ReduxStore';
+import { getTodaydDateString } from '../../../../Utils/functionTools';
 
 
 export type Product = {
@@ -106,7 +107,7 @@ export default function BillContextProvider({ children }: { children: React.Reac
     const [roundoff, setRoundoff] = useState<number>(0);
     const [grandTotal, setGrandTotal] = useState<number>(0);
     const [billNo, setBillNo] = useState<string>('INV-000');
-    const [createOn, setCreateOn] = useState<string>(new Date().toLocaleDateString());
+    const [createOn, setCreateOn] = useState<string>(getTodaydDateString());
     const [progress, setProgress] = useState<number>(0);
     const [additionalDetails, setAdditionalDetails] = useState<AdditionalDetails>(additionalDetailsDefaultValue);
 
@@ -117,7 +118,7 @@ export default function BillContextProvider({ children }: { children: React.Reac
     };
 
     function resetAllStates(): void {
-        setProducts([]); setCreateOn(new Date().toLocaleDateString());
+        setProducts([]); setCreateOn(getTodaydDateString());
         setCustomer(null); setTotal(0);
         setDiscount(0); setTotalAmount(0);
         setTotalTax(0);
@@ -155,11 +156,6 @@ export default function BillContextProvider({ children }: { children: React.Reac
         setGrandTotal(() => total_amount1 + additionalDetails.additional_charge + roundOff1);
     }, [products, additionalDetails.additional_charge]);
 
-    useEffect(() => {
-        let time = new Date();
-        setBillNo('');
-        setCreateOn(`${time.getDate()}/${(time.getMonth() + 1).toString().padStart(2, '0')}/${time.getFullYear()}`);
-    }, []);
 
     useEffect(() => {
         let pro = 0;

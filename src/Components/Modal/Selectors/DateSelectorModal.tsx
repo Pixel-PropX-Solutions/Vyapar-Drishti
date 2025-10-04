@@ -45,13 +45,10 @@ export default function DateSelectorModal({ visible, setVisible, onClose, closeO
     }
 
     useEffect(() => {
-        if (visible) {return;}
-
         setDate(value?.date ?? new Date().getDate());
         setMonth(value?.month ?? new Date().getMonth());
         setYear(value?.year ?? new Date().getFullYear());
-
-    }, [visible]);
+    }, [value]);
 
     return (
         <Modal
@@ -69,7 +66,7 @@ export default function DateSelectorModal({ visible, setVisible, onClose, closeO
                     <TextTheme>Select Date</TextTheme>
 
                     <TextTheme fontSize={28} fontWeight={900} >
-                        {monthNames[month]} {date}, {year}
+                         {date} {monthNames[month]}, {year}
                     </TextTheme>
 
                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingInline: 10, height: 40, borderRadius: 40, borderWidth: 2, borderColor: primaryColor }} >

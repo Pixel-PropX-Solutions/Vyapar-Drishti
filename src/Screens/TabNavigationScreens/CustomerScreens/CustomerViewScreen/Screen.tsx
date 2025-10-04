@@ -5,6 +5,7 @@ import BackgroundThemeView from '../../../../Components/Layouts/View/BackgroundT
 import SafeAreaFromTop from '../../../../Components/Other/SafeAreaView/SafeAreaFromTop';
 import MonthSelector from '../../../../Components/Ui/Option/MonthSelector';
 import CustomerContextProvider, { useCustomerContext } from './Context';
+import SafeAreaFromBottom from '../../../../Components/Other/SafeAreaView/SafeAreaFromBottom';
 
 
 type Date = { month: number, year: number }
@@ -33,6 +34,8 @@ function CustomerViewScreenContent() {
 
                 <View style={{ minHeight: 10 }} />
             </BackgroundThemeView>
+            <SafeAreaFromBottom />
+
         </View>
     );
 }

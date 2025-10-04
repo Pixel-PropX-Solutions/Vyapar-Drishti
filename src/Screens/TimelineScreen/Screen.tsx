@@ -4,6 +4,7 @@ import TimelineContextProvider from './Context';
 import { DateSelector, Header, TimelineTabel } from './Components';
 import BackgroundThemeView from '../../Components/Layouts/View/BackgroundThemeView';
 import SafeAreaFromTop from '../../Components/Other/SafeAreaView/SafeAreaFromTop';
+import SafeAreaFromBottom from '../../Components/Other/SafeAreaView/SafeAreaFromBottom';
 
 export default function TimelineScreen(): React.JSX.Element {
     return (
@@ -21,6 +22,8 @@ export default function TimelineScreen(): React.JSX.Element {
                     </View>
                     <TimelineTabel />
                 </BackgroundThemeView>
+                <SafeAreaFromBottom />
+
             </BackgroundThemeView>
         </TimelineContextProvider>
     );

@@ -1,4 +1,5 @@
 import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
+import { getTodaydDateString } from '../../../../Utils/functionTools';
 
 
 type Customer = {
@@ -55,7 +56,7 @@ export default function TransactionContextProvider({ children }: { children: Rea
     const [account, setAccount] = useState<Account | null>(null);
     const [amount, setAmount] = useState<string>('');
     const [transactionNo, setTransactionNo] = useState<string>('AutoGen');
-    const [createOn, setCreateOn] = useState<string>(new Date().toLocaleDateString());
+    const [createOn, setCreateOn] = useState<string>(getTodaydDateString());
     const [note, setNote] = useState<string>('');
     const [progress, setProgress] = useState<number>(0);
 
@@ -66,8 +67,7 @@ export default function TransactionContextProvider({ children }: { children: Rea
         setAmount('');
         setTransactionNo('AutoGen');
         setNote('');
-        const time = new Date()
-        setCreateOn(`${time.getDate()}/${(time.getMonth() + 1).toString().padStart(2, '0')}/${time.getFullYear()}`);
+        setCreateOn(getTodaydDateString());
     }
 
 
@@ -94,11 +94,6 @@ export default function TransactionContextProvider({ children }: { children: Rea
 
         setProgress(progress / 5);
     }, [transactionNo, createOn, customer, amount]);
-
-    useEffect(() => {
-        const time = new Date();
-        setCreateOn(`${time.getDate()}/${(time.getMonth() + 1).toString().padStart(2, '0')}/${time.getFullYear()}`);
-    }, [])
 
 
     return (
