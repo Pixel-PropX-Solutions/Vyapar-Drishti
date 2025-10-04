@@ -246,20 +246,6 @@ export function ProfileSection() {
                     loading={isCustomerFetching}
                 />
             </View>
-
-            {/* Optional: Last Updated Indicator */}
-            {customer && !isCustomerFetching && (
-                <View style={{ alignItems: 'center', marginTop: 4 }}>
-                    <TextTheme
-                        fontSize={10}
-                        fontWeight={400}
-                        isPrimary={false}
-                        style={{ opacity: 0.6 }}
-                    >
-                        Last updated: {new Date().toLocaleTimeString()}
-                    </TextTheme>
-                </View>
-            )}
         </View>
     );
 }
