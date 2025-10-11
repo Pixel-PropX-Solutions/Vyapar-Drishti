@@ -1,7 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import { useCallback, useState } from 'react';
 import LogoImage from '../Components/Image/LogoImage';
-import { View } from 'react-native';
 import navigator from '../Navigation/NavigationService';
 import { isVersionLower } from '../Utils/functionTools';
 import useAuthentication from '../Hooks/useAuthentication';
@@ -11,6 +10,7 @@ import { useAppDispatch } from '../Store/ReduxStore';
 import { getAppVersion } from '../Services/user';
 import { getVersion } from 'react-native-device-info';
 import TextTheme from '../Components/Ui/Text/TextTheme';
+import BackgroundThemeView from '../Components/Layouts/View/BackgroundThemeView';
 
 
 export default function SplashScreen(): React.JSX.Element {
@@ -52,7 +52,7 @@ export default function SplashScreen(): React.JSX.Element {
     );
 
     return (
-        <View style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, backgroundColor: 'white' }} >
+        <BackgroundThemeView style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }} >
             <LogoImage size={200} />
             <Loader color="black" />
             {showSlowMessage && (
@@ -60,6 +60,6 @@ export default function SplashScreen(): React.JSX.Element {
                     Taking longer than usual. Please wait...
                 </TextTheme>
             )}
-        </View>
+        </BackgroundThemeView>
     );
 }
