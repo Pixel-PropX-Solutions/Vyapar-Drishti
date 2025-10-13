@@ -204,7 +204,7 @@ export interface GetCustomerProfile {
   email: string,
   tin: string,
   opening_balance: number,
-  total_amount: number,
+  closing_balance: number,
   total_debit: number,
   total_credit: number,
 }
@@ -215,6 +215,7 @@ export interface CustomersList {
   parent: string,
   alias: string,
   phone: PhoneNumber;
+  total_amount: number;
 }
 
 export interface GetAllUserGroups {

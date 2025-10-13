@@ -494,14 +494,14 @@ export function AmountBox(): React.JSX.Element {
                     accounting: [
                         {
                             entry_id: customer.entry_id,
-                            amount: billType === 'Sales' ? roundToDecimal(-grandTotal, 2) : roundToDecimal(grandTotal, 2),
+                            amount: billType === 'Sales' ? roundToDecimal(grandTotal, 2) : roundToDecimal(-grandTotal, 2),
                             ledger: customer?.name ?? '',
                             ledger_id: customer?.id ?? '',
                             vouchar_id: invoiceData?._id ?? '',
                         },
                         {
                             entry_id: invoiceData?.accounting_entries.find(entry => entry.ledger === billType)?._id ?? '',
-                            amount: billType === 'Sales' ? roundToDecimal(grandTotal, 2) : roundToDecimal(-grandTotal, 2),
+                            amount: billType === 'Sales' ? roundToDecimal(-grandTotal, 2) : roundToDecimal(grandTotal, 2),
                             ledger: billType,
                             ledger_id: invoiceData?.accounting_entries.find(entry => entry.ledger === billType)?.ledger_id ?? '',
                             vouchar_id: invoiceData?._id ?? '',

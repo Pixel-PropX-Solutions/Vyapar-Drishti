@@ -8,7 +8,7 @@ import { Alert, ScrollView, View } from 'react-native';
 import FeatherIcon from '../../../../Components/Icon/FeatherIcon';
 import MaterialIcon from '../../../../Components/Icon/MaterialIcon';
 import AnimateButton from '../../../../Components/Ui/Button/AnimateButton';
-import { useAppDispatch, useCustomerStore, useInvoiceStore, useUserStore } from '../../../../Store/ReduxStore';
+import { useAppDispatch, useCustomerStore, useUserStore } from '../../../../Store/ReduxStore';
 import { CustomersList } from '../../../../Utils/types';
 import { viewAllCustomerWithType } from '../../../../Services/customer';
 import { ItemSelectorModal } from '../../../../Components/Modal/Selectors/ItemSelectorModal';
@@ -240,6 +240,7 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
                 setVisible(false);
 
                 setCustomer(() => ({
+                    entry_id: item._id,
                     id: item._id,
                     name: item.ledger_name,
                     group: item.parent,

@@ -11,6 +11,7 @@ import TextTheme from '../../../../Components/Ui/Text/TextTheme';
 import { CustomerLoadingView } from '../../../../Components/Ui/Card/CustomerCard';
 import CustomerTypeSelectorModal from '../../../../Components/Modal/Customer/CustomerTypeSelectorModal';
 import CreateCustomerModal from '../../../../Components/Modal/Customer/CreateCustomerModal';
+import CreateAccountModal from '../../../../Components/Modal/Customer/CreateAccountModal';
 
 
 type Props = {
@@ -121,7 +122,6 @@ export function AccountSelectorModal({ visible, setVisible }: Props) {
     const { account, setAccount } = useTransactionContext();
     const { customersList, isAllCustomerFetching, pageMeta } = useCustomerStore();
 
-    const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
 
@@ -132,10 +132,10 @@ export function AccountSelectorModal({ visible, setVisible }: Props) {
     }
 
     useEffect(() => {
-        if (visible && !isCreateCustomerModalOpen) {
+        if (visible) {
             dispatch(viewAllCustomerWithType({ company_id: company?._id ?? '', customerType: 'Accounts' }));
         }
-    }, [isCreateCustomerModalOpen, visible]);
+    }, [visible]);
 
 
     return (<>
@@ -146,29 +146,21 @@ export function AccountSelectorModal({ visible, setVisible }: Props) {
             keyExtractor={item => item._id}
             isItemSelected={!!account?.id}
             allItems={customersList}
-
-            // actionButtons={[
-            //     {
-            //         key: 'create-customer',
-            //         title: 'Create New Customer',
-            //         onPress: () => setCustomerTypeSelectorModalOpen(true),
-            //         color: 'white',
-            //         backgroundColor: 'rgb(50,200,150)',
-            //         icon: <FeatherIcon name="user-plus" size={16} color="white" />,
-            //     },
-            // ]}
-
             SelectedItemContent={<View>
                 <TextTheme color="white" >{account?.name}</TextTheme>
-                {/* <TextTheme color="white" isPrimary={false} >{customer?.group}</TextTheme> */}
             </View>}
 
             renderItemContent={item => (
                 <View style={{ flex: 1 }} >
-                    <TextTheme>{item.ledger_name}</TextTheme>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
-                        <TextTheme isPrimary={false} >{item.phone?.code} {item.phone?.number}</TextTheme>
-                        <TextTheme isPrimary={false} >{item.parent}</TextTheme>
+                        <TextTheme>{item.ledger_name}</TextTheme>
+                        <TextTheme isPrimary={false}>
+                            {(Math.abs(item?.total_amount ?? 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}{item.total_amount < 0 ? ' DR' : ' CR'}
+                        </TextTheme>
+                    </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
+                        <TextTheme isPrimary={false}>{item.phone?.code} {item.phone?.number}</TextTheme>
+                        <TextTheme isPrimary={false}>{item.parent}</TextTheme>
                     </View>
                 </View>
             )}
@@ -198,14 +190,5 @@ export function AccountSelectorModal({ visible, setVisible }: Props) {
 
         />
 
-        {/* <CustomerTypeSelectorModal
-            visible={isCustomerTypeSelectorModalOpen} setVisible={setCustomerTypeSelectorModalOpen}
-            setSecondaryVisible={setCreateCustomerModalOpen}
-        />
-
-        <CreateCustomerModal
-            visible={isCreateCustomerModalOpen} setVisible={setCreateCustomerModalOpen}
-            setPrimaryVisible={setCustomerTypeSelectorModalOpen}
-        /> */}
     </>);
 }

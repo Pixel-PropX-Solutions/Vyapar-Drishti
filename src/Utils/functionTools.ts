@@ -213,3 +213,64 @@ export const getTodaydDateString = () => {
     let time = new Date();
     return `${time.getDate().toString().padStart(2, '0')}/${(time.getMonth() + 1).toString().padStart(2, '0')}/${time.getFullYear()}`;
 };
+
+type VoucherType =
+    | 'Sales'
+    | 'Purchase'
+    | 'Payment'
+    | 'Receipt'
+    | 'Contra';
+
+interface AccountingEntry {
+    vouchar_id: string;
+    ledger: string;
+    ledger_id: string;
+    amount: number;
+}
+
+interface GenerateAccountingParams {
+    type: VoucherType;
+    party: { name: string; id: string };
+    counter: { name: string; id: string };
+    amount: number;
+}
+
+/**
+ * Generates accounting entries (Debit/Credit) for a given voucher type.
+ */
+export function generateAccounting({
+    type,
+    party,
+    counter,
+    amount,
+}: GenerateAccountingParams): AccountingEntry[] {
+    let partyAmount = 0;
+    let counterAmount = 0;
+
+    switch (type) {
+        case 'Sales':
+            partyAmount = +amount;
+            counterAmount = -amount;
+            break;
+
+        case 'Purchase':
+            partyAmount = -amount;
+            counterAmount = +amount;
+            break;
+    }
+
+    return [
+        {
+            vouchar_id: '',
+            ledger: party.name,
+            ledger_id: party.id,
+            amount: partyAmount,
+        },
+        {
+            vouchar_id: '',
+            ledger: counter.name,
+            ledger_id: counter.id,
+            amount: counterAmount,
+        },
+    ];
+}

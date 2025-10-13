@@ -13,7 +13,7 @@ import { FlatList } from 'react-native';
 import EmptyListView from '../../../../Components/Layouts/View/EmptyListView';
 import ShowWhen from '../../../../Components/Other/ShowWhen';
 import NormalButton from '../../../../Components/Ui/Button/NormalButton';
-import { formatNumberForUI, roundToDecimal, sliceString } from '../../../../Utils/functionTools';
+import { formatNumberForUI, generateAccounting, roundToDecimal, sliceString } from '../../../../Utils/functionTools';
 import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
 import BackgroundThemeView from '../../../../Components/Layouts/View/BackgroundThemeView';
 import { CreateInvoiceData, CreateInvoiceWithTAXData } from '../../../../Utils/types';
@@ -502,10 +502,12 @@ export function AmountBox(): React.JSX.Element {
                         godown: '',
                         godown_id: '',
                     })),
-                    accounting: [
-                        { amount: billType === 'Sales' ? roundToDecimal(-grandTotal, 2) : roundToDecimal(grandTotal, 2), ledger: customer?.name ?? '', ledger_id: customer?.id ?? '', vouchar_id: '' },
-                        { amount: billType === 'Sales' ? roundToDecimal(grandTotal, 2) : roundToDecimal(-grandTotal, 2), ledger: billType, ledger_id: billId ?? '', vouchar_id: '' },
-                    ],
+                    accounting: generateAccounting({
+                        type: billType === 'Sales' ? 'Sales' : 'Purchase',
+                        party: { name: customer?.name ?? '', id: customer?.id ?? '' },
+                        counter: { name: billType === 'Sales' ? 'Sales' : 'Purchases', id: billId ?? '' },
+                        amount: roundToDecimal(grandTotal, 2),
+                    }),
                 };
 
                 console.log('Data to send:', dataToSend);
@@ -560,11 +562,14 @@ export function AmountBox(): React.JSX.Element {
                         godown: '',
                         godown_id: '',
                     })),
-                    accounting: [
-                        { amount: billType === 'Sales' ? roundToDecimal(-grandTotal, 2) : roundToDecimal(grandTotal, 2), ledger: customer?.name ?? '', ledger_id: customer?.id ?? '', vouchar_id: '' },
-                        { amount: billType === 'Sales' ? roundToDecimal(grandTotal, 2) : roundToDecimal(-grandTotal, 2), ledger: billType, ledger_id: billId ?? '', vouchar_id: '' },
-                    ],
+                    accounting: generateAccounting({
+                        type: billType === 'Sales' ? 'Sales' : 'Purchase',
+                        party: { name: customer?.name ?? '', id: customer?.id ?? '' },
+                        counter: { name: billType === 'Sales' ? 'Sales' : 'Purchases', id: billId ?? '' },
+                        amount: roundToDecimal(grandTotal, 2),
+                    }),
                 };
+                console.log('Data to send:', dataToSend);
 
                 dispatch(createInvoice(dataToSend)).then(() => {
                     resetAllStates();

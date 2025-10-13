@@ -167,7 +167,6 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
     const { current_company_id } = useUserStore();
     const { setCustomer, customer } = useBillContext();
     const { isAllCustomerFetching, customersList } = useCustomerStore();
-    console.log("Customers list in Bill create", customersList);
 
     const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
     const [isCustomerTypeSelectorModalOpen, setCustomerTypeSelectorModalOpen] = useState<boolean>(false);
@@ -220,7 +219,12 @@ export function CustomerSelectorModal({ visible, setVisible }: Props) {
 
             renderItemContent={item => (
                 <View style={{ flex: 1 }} >
-                    <TextTheme>{item.ledger_name}</TextTheme>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
+                        <TextTheme>{item.ledger_name}</TextTheme>
+                        <TextTheme isPrimary={false}>
+                            {(Math.abs(item?.total_amount ?? 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}{item.total_amount < 0 ? ' DR' : ' CR'}
+                        </TextTheme>
+                    </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
                         <TextTheme isPrimary={false}>{item.phone?.code} {item.phone?.number}</TextTheme>
                         <TextTheme isPrimary={false}>{item.parent}</TextTheme>

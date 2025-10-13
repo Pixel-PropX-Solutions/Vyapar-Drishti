@@ -13,13 +13,15 @@ import ShowWhen from '../../../../Components/Other/ShowWhen';
 import LoadingView from '../../../../Components/Layouts/View/LoadingView';
 import { AddressInfoUpdateModal, BankInfoUpdateModal, CustomerInfoUpdateModal } from './Modals';
 import { useAppDispatch, useCustomerStore } from '../../../../Store/ReduxStore';
-import { getCustomer, getCustomerInfo } from '../../../../Services/customer';
+import { deleteCustomer, getCustomerInfo } from '../../../../Services/customer';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
 import { useFocusEffect } from '@react-navigation/native';
+import { useAlert } from '../../../../Components/Ui/Alert/AlertProvider';
 
 export default function CustomerInfoScreen(): React.JSX.Element {
 
     const { id } = navigator.getParams('customer-info-screen') ?? {};
+    const { setAlert } = useAlert();
 
     const dispatch = useAppDispatch();
     const { customerInfo: customer, loading } = useCustomerStore();
@@ -29,11 +31,20 @@ export default function CustomerInfoScreen(): React.JSX.Element {
     const [isInfoUpdateModalVisible, setInfoUpdateModalVisible] = useState<boolean>(false);
     const [isAddressInfoUpdateModalVisible, setAddressInfoUpdateModalVisible] = useState<boolean>(false);
     const [isBankInfoUpdateModalVisible, setBankInfoUpdateModalVisible] = useState<boolean>(false);
-    // const [isTaxInfoUpdateModalVisible, setTaxInfoUpdateModalVisible] = useState<boolean>(false);
 
     async function handleDelete() {
-        setDeleteModalVisible(false);
-        navigator.goBack();
+        dispatch(deleteCustomer(id ?? '')).then((res) => {
+            if (res.meta.requestStatus === 'fulfilled') {
+                setDeleteModalVisible(false);
+                navigator.goBack();
+                navigator.goBack();
+            }
+            setDeleteModalVisible(false);
+
+        }).catch(() => {
+            setAlert({ message: `Failed to delete ${customer?.parent === 'Bank Accounts' ? 'bank account' : 'customer'}. Please try again later.`, type: 'error' });
+            setDeleteModalVisible(false);
+        });
     }
 
 
@@ -58,7 +69,7 @@ export default function CustomerInfoScreen(): React.JSX.Element {
 
                 <View style={{ gap: 16 }} >
                     <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }} >
-                        <FeatherIcon name="user" size={32} />
+                        <FeatherIcon name={customer?.parent !== 'Bank Accounts' ? 'user' : 'credit-card'} size={32} />
                         <View>
                             <ShowWhen when={true}
                                 otherwise={<>
@@ -77,54 +88,74 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                     </View>
                 </View>
 
-                <SectionView
-                    style={{ gap: 8 }} label="Customer Information"
-                    labelContainerChildren={
-                        <EditButton onPress={() => { setInfoUpdateModalVisible(true); }} />
-                    }
-                >
-                    <InfoRow label="TIN Number" value={customer?.tin || 'Not Set'} />
-                    <InfoRow label="Billing Name" value={customer?.ledger_name || 'Not Set'} />
-                    <InfoRow label="Email" value={customer?.email || 'Not Set'} />
-                    <InfoRow label="Contact" value={(customer?.phone?.code && customer?.phone?.number) ? `${customer?.phone?.code} ${customer?.phone?.number}` : 'Not Set'} />
-                </SectionView>
+                {customer?.parent !== 'Bank Accounts' && <>
+                    <SectionView
+                        style={{ gap: 8 }} label="Customer Information"
+                        labelContainerChildren={
+                            <EditButton onPress={() => { setInfoUpdateModalVisible(true); }} />
+                        }
+                    >
+                        <InfoRow label="TIN Number" value={customer?.tin || 'Not Set'} />
+                        <InfoRow label="Billing Name" value={customer?.ledger_name || 'Not Set'} />
+                        <InfoRow label="Email" value={customer?.email || 'Not Set'} />
+                        <InfoRow label="Contact" value={(customer?.phone?.code && customer?.phone?.number) ? `${customer?.phone?.code} ${customer?.phone?.number}` : 'Not Set'} />
+                    </SectionView>
 
-                <SectionView
-                    label="Address Information"
-                    style={{ gap: 8 }}
-                    labelContainerChildren={
-                        <EditButton onPress={() => { setAddressInfoUpdateModalVisible(true); }} />
-                    }
-                >
-                    <InfoRow label="Contact Person Name" value={customer?.mailing_name || 'Not Set'} />
-                    <InfoRow label="Billing Address" value={customer?.mailing_address || 'Not Set'} />
-                    <InfoRow label="State" value={customer?.mailing_state || 'Not Set'} />
-                    <InfoRow label="Country" value={customer?.mailing_country || 'Not Set'} />
-                    <InfoRow label="Postal Code" value={customer?.mailing_pincode || 'Not Set'} />
-                </SectionView>
+                    <SectionView
+                        label="Address Information"
+                        style={{ gap: 8 }}
+                        labelContainerChildren={
+                            <EditButton onPress={() => { setAddressInfoUpdateModalVisible(true); }} />
+                        }
+                    >
+                        <InfoRow label="Contact Person Name" value={customer?.mailing_name || 'Not Set'} />
+                        <InfoRow label="Billing Address" value={customer?.mailing_address || 'Not Set'} />
+                        <InfoRow label="State" value={customer?.mailing_state || 'Not Set'} />
+                        <InfoRow label="Country" value={customer?.mailing_country || 'Not Set'} />
+                        <InfoRow label="Postal Code" value={customer?.mailing_pincode || 'Not Set'} />
+                    </SectionView>
 
-                <SectionView
-                    label="Bank Details"
-                    style={{ gap: 8 }}
-                    labelContainerChildren={
-                        <EditButton onPress={() => { setBankInfoUpdateModalVisible(true); }} />
-                    }
-                >
-                    <InfoRow label="Account Holder Name" value={customer?.account_holder || 'Not Set'} />
-                    <InfoRow label="Account Number" value={customer?.account_number || 'Not Set'} />
-                    <InfoRow label="Bank Name" value={customer?.bank_name || 'Not Set'} />
-                    <InfoRow label="IFSC Code" value={customer?.bank_ifsc || 'Not Set'} />
-                    <InfoRow label="Branch Name" value={customer?.bank_branch || 'Not Set'} />
-                </SectionView>
+                    <SectionView
+                        label="Bank Details"
+                        style={{ gap: 8 }}
+                        labelContainerChildren={
+                            <EditButton onPress={() => { setBankInfoUpdateModalVisible(true); }} />
+                        }
+                    >
+                        <InfoRow label="Account Holder Name" value={customer?.account_holder || 'Not Set'} />
+                        <InfoRow label="Account Number" value={customer?.account_number || 'Not Set'} />
+                        <InfoRow label="Bank Name" value={customer?.bank_name || 'Not Set'} />
+                        <InfoRow label="IFSC Code" value={customer?.bank_ifsc || 'Not Set'} />
+                        <InfoRow label="Branch Name" value={customer?.bank_branch || 'Not Set'} />
+                    </SectionView>
+                </>
+                }
+
+                {customer?.parent === 'Bank Accounts' && <>
+                    <SectionView
+                        label="Bank Details"
+                        style={{ gap: 8 }}
+                        labelContainerChildren={
+                            <EditButton onPress={() => { setBankInfoUpdateModalVisible(true); }} />
+                        }
+                    >
+                        <InfoRow label="Account Holder Name" value={customer?.account_holder || 'Not Set'} />
+                        <InfoRow label="Account Number" value={customer?.account_number || 'Not Set'} />
+                        <InfoRow label="Bank Name" value={customer?.bank_name || 'Not Set'} />
+                        <InfoRow label="IFSC Code" value={customer?.bank_ifsc || 'Not Set'} />
+                        <InfoRow label="Branch Name" value={customer?.bank_branch || 'Not Set'} />
+                    </SectionView>
+                </>
+                }
 
 
                 <SectionView label="Danger Zone" style={{ gap: 12 }} labelColor="red" >
                     <SectionRowWithIcon
                         color="white"
                         backgroundColor="rgb(255,80,100)"
-                        label="Delete Product"
+                        label={`Delete ${customer?.parent === 'Bank Accounts' ? 'Bank Account' : 'Customer'}`}
                         icon={<FeatherIcon name={'alert-triangle'} size={20} color="red" />}
-                        text={'Once delete then on way to go back'}
+                        text={'This action cannot be undone.'}
                         onPress={() => setDeleteModalVisible(true)}
                     />
                 </SectionView>
@@ -134,8 +165,8 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                 visible={isDeleteModalVisible}
                 setVisible={setDeleteModalVisible}
                 handleDelete={handleDelete}
-                passkey={'Customer Name'}
-                message="Once you delete the customer then no way to go back."
+                passkey={customer?.parent === 'Bank Accounts' ? (customer?.account_number ?? '') : (customer?.ledger_name ?? '')}
+                message={`Are you sure you want to delete this ${customer?.parent === 'Bank Accounts' ? 'bank account' : 'customer'}? This action cannot be undone.`}
             />
 
             <CustomerInfoUpdateModal
@@ -149,10 +180,6 @@ export default function CustomerInfoScreen(): React.JSX.Element {
             <BankInfoUpdateModal
                 visible={isBankInfoUpdateModalVisible} setVisible={setBankInfoUpdateModalVisible}
             />
-
-            {/* <TaxInfoUpdateModal
-                visible={isTaxInfoUpdateModalVisible} setVisible={setTaxInfoUpdateModalVisible}
-            /> */}
 
             <LoadingModal visible={loading && isDeleteModalVisible} />
         </View>

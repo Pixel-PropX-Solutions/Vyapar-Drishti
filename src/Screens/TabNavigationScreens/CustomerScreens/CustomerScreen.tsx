@@ -21,16 +21,24 @@ import BackgroundThemeView from '../../../Components/Layouts/View/BackgroundThem
 import CreateAccountModal from '../../../Components/Modal/Customer/CreateAccountModal';
 import AuthStore from '../../../Store/AuthStore';
 import CustomerContextProvider, { useCustomerContext } from './CustomerViewScreen/Context';
+import { useTheme } from '../../../Contexts/ThemeProvider';
 
+export default function CustomerScreen() {
+    return (
+        <CustomerContextProvider>
+            <CustomerScreenDetails />
+        </CustomerContextProvider>
+    );
+}
 
-export default function CustomerScreen(): React.JSX.Element {
-
+function CustomerScreenDetails(): React.JSX.Element {
+    const { primaryColor, primaryBackgroundColor } = useTheme();
     const dispatch = useAppDispatch();
     const { customers, isAllCustomerFetching, pageMeta } = useCustomerStore();
-    const { filters } = useCustomerContext();
+    const { filters, handleFilter } = useCustomerContext();
     const { user, current_company_id } = useUserStore();
     const currentCompanyId = current_company_id || AuthStore.getString('current_company_id') || user?.user_settings?.current_company_id || '';
-    const [searchQuery, setSearchQuery] = useState<string>('')
+    const [searchQuery, setSearchQuery] = useState<string>('');
 
     const [isCreateCustomerModalOpen, setCreateCustomerModalOpen] = useState<boolean>(false);
     const [isCustomerTypeSelectorModalOpen, setCustomerTypeSelectorModalOpen] = useState<boolean>(false);
@@ -46,33 +54,31 @@ export default function CustomerScreen(): React.JSX.Element {
 
     useEffect(() => {
         if (!isCustomerTypeSelectorModalOpen) { dispatch(viewAllCustomer({ company_id: currentCompanyId, pageNumber: 1, type: filters.type, searchQuery })); }
-    }, [isCustomerTypeSelectorModalOpen]);
+    }, [currentCompanyId, filters.type, isCustomerTypeSelectorModalOpen, searchQuery]);
 
     useFocusEffect(
         useCallback(() => {
-            // if (!['Accounts', 'Customers'].includes(type)) { return; }
             dispatch(setCustomers([]));
             dispatch(viewAllCustomer({ company_id: currentCompanyId, pageNumber: 1, type: filters.type, searchQuery }));
-        }, [filters.type, searchQuery])
+        }, [currentCompanyId, filters.type, searchQuery])
     );
 
     return (
-        <CustomerContextProvider>
-            <View style={{ width: '100%', height: '100%', paddingHorizontal: 20 }} >
-                <EntityListingHeader
-                    title="Customers"
-                    onPressNotification={() => { navigator.navigate('notification-screen'); }}
-                    searchButtonOpations={{
-                        onQueryChange: setSearchQuery,
-                    }}
-                />
+        <View style={{ width: '100%', height: '100%', paddingHorizontal: 20 }} >
+            <EntityListingHeader
+                title="Customers"
+                onPressNotification={() => { navigator.navigate('notification-screen'); }}
+                searchButtonOpations={{
+                    onQueryChange: setSearchQuery,
+                }}
+            />
 
-                {/* <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
 
                 {
                     ['Customers', 'Accounts'].map(item => (
                         <AnimateButton key={item}
-                            onPress={() => { handleFilter("type", item as 'Accounts' | 'Customers'); }}
+                            onPress={() => { handleFilter('type', item as 'Accounts' | 'Customers'); }}
 
                             bubbleColor={filters.type === item ? primaryBackgroundColor : primaryColor}
 
@@ -90,70 +96,69 @@ export default function CustomerScreen(): React.JSX.Element {
                         </AnimateButton>
                     ))
                 }
-            </View> */}
-
-                <FlatList
-                    showsVerticalScrollIndicator={false}
-                    ListEmptyComponent={isAllCustomerFetching ? <CustomerLoadingView /> : <EmptyListView type="customer" />}
-                    contentContainerStyle={{ gap: 20, paddingBottom: 80, paddingTop: 12 }}
-                    data={customers}
-                    keyExtractor={(item) => item._id}
-                    renderItem={({ item }) => {
-                        return (
-                            <CustomerCard
-                                item={item}
-                                onPress={() => { navigator.navigate('customer-view-screen', { id: item._id }); }}
-                            />
-                        );
-                    }}
-
-                    ListFooterComponentStyle={{ gap: 20 }}
-                    ListFooterComponent={<ShowWhen when={isAllCustomerFetching} >
-                        {
-                            Array.from({
-                                length: Math.min(2, pageMeta.total - (customers?.length ?? 0)) + 1,
-                            },
-                                (_, i) => i
-                            ).map(item => (
-                                <CustomerLoadingView key={item} />
-                            ))
-                        }
-                    </ShowWhen>}
-
-                    onScroll={({ nativeEvent }) => {
-                        let { contentOffset, layoutMeasurement, contentSize } = nativeEvent;
-                        let contentOffsetY = contentOffset.y;
-                        let totalHeight = contentSize.height;
-                        let height = layoutMeasurement.height;
-
-                        if (totalHeight - height < contentOffsetY + 400) {
-                            handleCustomerFetching();
-                        }
-                    }}
-                />
-
-                <View style={{ position: 'absolute', right: 20, bottom: 20 }} >
-                    <ShowWhen when={filters.type === 'Accounts'}
-                        otherwise={
-                            <RoundedPlusButton size={60} iconSize={24} onPress={() => setCustomerTypeSelectorModalOpen(true)} />
-                        }
-                    >
-                        <BackgroundThemeView useInvertTheme={true} style={{ overflow: 'hidden', borderRadius: 100 }} >
-                            <AnimateButton
-                                onPress={() => { setAccountCreateModalVisible(true); }}
-                                style={{ paddingInline: 20, height: 50, alignItems: 'center', justifyContent: 'center' }}
-                            >
-                                <TextTheme useInvertTheme={true} fontSize={16} >+ Add Account</TextTheme>
-                            </AnimateButton>
-                        </BackgroundThemeView>
-                    </ShowWhen>
-                </View>
-
-
-                <CreateAccountModal visible={isAccountCreateModalVisible} setVisible={setAccountCreateModalVisible} />
-                <CustomerTypeSelectorModal visible={isCustomerTypeSelectorModalOpen} setVisible={setCustomerTypeSelectorModalOpen} setSecondaryVisible={setCreateCustomerModalOpen} />
-                <CreateCustomerModal visible={isCreateCustomerModalOpen} setVisible={setCreateCustomerModalOpen} setPrimaryVisible={setCustomerTypeSelectorModalOpen} />
             </View>
-        </CustomerContextProvider>
+
+            <FlatList
+                showsVerticalScrollIndicator={false}
+                ListEmptyComponent={isAllCustomerFetching ? <CustomerLoadingView /> : <EmptyListView type="customer" />}
+                contentContainerStyle={{ gap: 20, paddingBottom: 80, paddingTop: 12 }}
+                data={customers}
+                keyExtractor={(item) => item._id}
+                renderItem={({ item }) => {
+                    return (
+                        <CustomerCard
+                            item={item}
+                            onPress={() => { navigator.navigate('customer-view-screen', { id: item._id }); }}
+                        />
+                    );
+                }}
+
+                ListFooterComponentStyle={{ gap: 20 }}
+                ListFooterComponent={<ShowWhen when={isAllCustomerFetching} >
+                    {
+                        Array.from({
+                            length: Math.min(2, pageMeta.total - (customers?.length ?? 0)) + 1,
+                        },
+                            (_, i) => i
+                        ).map(item => (
+                            <CustomerLoadingView key={item} />
+                        ))
+                    }
+                </ShowWhen>}
+
+                onScroll={({ nativeEvent }) => {
+                    let { contentOffset, layoutMeasurement, contentSize } = nativeEvent;
+                    let contentOffsetY = contentOffset.y;
+                    let totalHeight = contentSize.height;
+                    let height = layoutMeasurement.height;
+
+                    if (totalHeight - height < contentOffsetY + 400) {
+                        handleCustomerFetching();
+                    }
+                }}
+            />
+
+            <View style={{ position: 'absolute', right: 20, bottom: 20 }} >
+                <ShowWhen when={filters.type === 'Accounts'}
+                    otherwise={
+                        <RoundedPlusButton size={60} iconSize={24} onPress={() => setCustomerTypeSelectorModalOpen(true)} />
+                    }
+                >
+                    <BackgroundThemeView useInvertTheme={true} style={{ overflow: 'hidden', borderRadius: 100 }} >
+                        <AnimateButton
+                            onPress={() => { setAccountCreateModalVisible(true); }}
+                            style={{ paddingInline: 20, height: 50, alignItems: 'center', justifyContent: 'center' }}
+                        >
+                            <TextTheme useInvertTheme={true} fontSize={16} >+ Add Bank Account</TextTheme>
+                        </AnimateButton>
+                    </BackgroundThemeView>
+                </ShowWhen>
+            </View>
+
+
+            <CreateAccountModal visible={isAccountCreateModalVisible} setVisible={setAccountCreateModalVisible} />
+            <CustomerTypeSelectorModal visible={isCustomerTypeSelectorModalOpen} setVisible={setCustomerTypeSelectorModalOpen} setSecondaryVisible={setCreateCustomerModalOpen} />
+            <CreateCustomerModal visible={isCreateCustomerModalOpen} setVisible={setCreateCustomerModalOpen} setPrimaryVisible={setCustomerTypeSelectorModalOpen} />
+        </View>
     );
 }
