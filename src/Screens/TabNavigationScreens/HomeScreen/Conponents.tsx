@@ -196,10 +196,28 @@ export function QuickAccessSection(): React.JSX.Element {
                     />
                 </View>
 
+                <View style={{ flexDirection: 'row', gap: 12 }}>
+                    <QuickAccessBox
+                        label="Contra"
+                        text="Transfer fund"
+                        icon={<MaterialDesignIcon name="shuffle" size={24} />}
+                        onPress={() => { navigator.navigate('create-contra-screen', getInvoiceGroup('Contra')); }}
+                    />
+
+                    <QuickAccessBox
+                        label="Journal"
+                        text="Make journal entry"
+                        icon={<MaterialDesignIcon name="account-convert-outline" size={24} />}
+                        onPress={() => {
+                            navigator.navigate('create-journal-screen', getInvoiceGroup('Journal'));
+                        }}
+                    />
+                </View>
+
                 <QuickAccessBox
-                    label="Timeline"
-                    text="View Timeline"
-                    icon={<MaterialDesignIcon name="cash-minus" size={24} />}
+                    label="Summary"
+                    text="View Stock Summary"
+                    icon={<FeatherIcon name="list" size={24} />}
                     onPress={() => { navigator.navigate('timeline-screen'); }}
                 />
 

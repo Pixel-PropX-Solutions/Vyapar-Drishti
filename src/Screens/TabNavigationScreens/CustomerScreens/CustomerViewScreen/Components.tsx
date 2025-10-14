@@ -102,7 +102,8 @@ const ErrorState = ({ fetchCustomerData, isRefreshing }: { fetchCustomerData: ()
 
 export function ProfileSection() {
     const { customer, isCustomerFetching, error } = useCustomerStore();
-    const [GREEN, RED] = ['50,200,150', '250,50,50'];
+    const { secondaryBackgroundColor, theme, primaryColor } = useTheme();
+    const [GREEN, RED, BLACK] = ['50,200,150', '250,50,50', theme === 'dark' ? '245,245,245' : '10,10,10'];
     const router = useRoute<RouteProp<StackParamsList, 'customer-view-screen'>>();
     const { id: customer_id } = router.params;
     const dispatch = useAppDispatch();
@@ -113,7 +114,7 @@ export function ProfileSection() {
         year: new Date(filters.startDate ?? '').getFullYear(),
     };
 
-    const { secondaryBackgroundColor, primaryColor } = useTheme();
+
 
     const fetchCustomerData = async () => {
         if (customer_id) {
@@ -222,27 +223,27 @@ export function ProfileSection() {
             {/* Stats Cards */}
             <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'space-between' }}>
                 <StatsCard
-                    rgb={(customer?.opening_balance ?? 0) < 0 ? RED : GREEN}
+                    rgb={(customer?.opening_balance ?? 0) === 0 ? BLACK : (customer?.opening_balance ?? 0) < 0 ? RED : GREEN}
                     label="Opening (All)"
                     value={customer ? formatNumberForUI(Math.abs(customer.opening_balance ?? 0)) : '0'}
                     loading={isCustomerFetching}
                 />
                 <StatsCard
-                    rgb={RED}
+                    rgb={(customer && (customer.total_debit ?? 0) === 0) ? BLACK : RED}
                     label={`Debit (${getMonthByIndex(date.month)})`}
                     value={customer ? formatNumberForUI(Math.abs(customer.total_debit ?? 0)) : '0'}
                     loading={isCustomerFetching}
                 />
                 <StatsCard
-                    rgb={GREEN}
+                    rgb={(customer && (customer.total_credit ?? 0) === 0) ? BLACK : GREEN}
                     label={`Credit (${getMonthByIndex(date.month)})`}
                     value={customer ? formatNumberForUI(Math.abs(customer.total_credit ?? 0)) : '0'}
                     loading={isCustomerFetching}
                 />
                 <StatsCard
-                    rgb={(customer?.total_amount ?? 0) < 0 ? RED : GREEN}
+                    rgb={(customer?.closing_balance ?? 0) === 0 ? BLACK : (customer?.closing_balance ?? 0) < 0 ? RED : GREEN}
                     label="Closing (All)"
-                    value={customer ? formatNumberForUI(Math.abs(customer.total_amount ?? 0)) : '0'}
+                    value={customer ? formatNumberForUI(Math.abs(customer.closing_balance ?? 0)) : '0'}
                     loading={isCustomerFetching}
                 />
             </View>
@@ -290,7 +291,7 @@ export function FilterRow(): React.JSX.Element {
 // Skeleton Loader Component for Individual Rows
 const InvoiceRowSkeleton = ({ primaryColor }: { primaryColor: string }) => (
     <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: primaryColor, opacity: 0.7 }}>
-        {[30, 60, 70, 80, 60, 70].map((width, index) => (
+        {[30, 60, 70, 70, 60, 60].map((width, index) => (
             <View
                 key={index}
                 style={{
@@ -370,7 +371,6 @@ const InvoiceRow = ({ item, index, primaryColor }: { item: any; index: number; p
         </View>
         <View style={{ width: 70, alignItems: 'center', justifyContent: 'center', paddingVertical: 4, paddingHorizontal: 4, borderRightWidth: 1, borderColor: primaryColor }}>
             <View style={{
-                backgroundColor: ['Receipt', 'Sales'].includes(item.voucher_type) ? '#e8f5e8' : '#fff4e6',
                 paddingHorizontal: 4,
                 paddingVertical: 1,
                 borderRadius: 3,
@@ -445,7 +445,6 @@ export function InvoiceListing() {
                 company_id: current_company_id || '',
                 customer_id: customer_id || '',
                 pageNumber: 1,
-                type: filters.invoiceType,
                 sortField: filters.sortBy,
                 sortOrder: filters.useAscOrder ? 'asc' : 'desc',
                 start_date: formatLocalDate(new Date(filters.startDate ?? '')),
@@ -523,7 +522,7 @@ export function InvoiceListing() {
                 borderWidth: 1,
                 borderColor: primaryColor,
                 borderRadius: 4,
-                  width: '100%',
+                width: '100%',
                 overflow: 'hidden',
                 flexDirection: 'row',
             }}>
@@ -614,10 +613,10 @@ export function InvoiceListing() {
                                     <TextTheme
                                         fontSize={12}
                                         fontWeight={700}
-                                        color={(customer?.total_amount ?? 0) < 0 ? '#d32f2f' : '#2e7d32'}
+                                        color={(customer?.closing_balance ?? 0) === 0 ? primaryColor : (customer?.closing_balance ?? 0) < 0 ? '#d32f2f' : '#2e7d32'}
                                     >
-                                        {(Math.abs(customer?.total_amount ?? 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                                        {(customer?.total_amount ?? 0) < 0 ? ' DR' : ' CR'}
+                                        {(Math.abs(customer?.closing_balance ?? 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                        {(customer?.closing_balance ?? 0) === 0 ? '' : (customer?.closing_balance ?? 0) < 0 ? ' DR' : ' CR'}
                                     </TextTheme>
                                 </View>
                             </View>

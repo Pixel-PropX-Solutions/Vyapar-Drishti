@@ -1,5 +1,5 @@
-import { updateCustomer, getCustomer, createCustomer, deleteCustomer, restoreCustomer, viewAllCustomer, getCustomerInvoices, getCustomerInfo, viewAllCustomerWithType } from '../../Services/customer';
-import { PageMeta, GetUserLedgers, CustomersList, AccountingGroups, GetCustomerInvoices, GetCustomerProfile, GetCustomerInfo } from '../../utils/types';
+import { updateCustomer, getCustomer, createCustomer, deleteCustomer, restoreCustomer, viewAllCustomer, getCustomerInvoices, getCustomerInfo, viewAllCustomerWithType, getAccountingGroups } from '../../Services/customer';
+import { PageMeta, GetUserLedgers, CustomersList, GetCustomerInvoices, GetCustomerProfile, GetCustomerInfo, DefaultAccountingGroup } from '../../utils/types';
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 
 interface CustomerState {
@@ -10,7 +10,8 @@ interface CustomerState {
     customer: GetCustomerProfile | null;
     customerInfo: GetCustomerInfo | null;
     customersList: Array<CustomersList> | [];
-    customerType: AccountingGroups | null;
+    customerType: DefaultAccountingGroup | null;
+    accountingGroups: Array<DefaultAccountingGroup> | [];
     customerInvoices: Array<GetCustomerInvoices> | [];
     loading: boolean;
     error: string | null;
@@ -25,6 +26,7 @@ const initialState: CustomerState = {
     isCustomerFetching: false,
     isAllCustomerInvoicesFetching: false,
     customersList: [],
+    accountingGroups: [],
     customerInvoices: [],
     customerType: null,
     customer: null,
@@ -48,7 +50,7 @@ const customerSlice: Slice<CustomerState> = createSlice({
     name: 'customers',
     initialState,
     reducers: {
-        setCustomerType: (state, action: PayloadAction<AccountingGroups | null>) => {
+        setCustomerType: (state, action: PayloadAction<DefaultAccountingGroup | null>) => {
             state.customerType = action.payload;
         },
         resetCustomerState: (state) => {
@@ -68,8 +70,8 @@ const customerSlice: Slice<CustomerState> = createSlice({
             };
         },
         setCustomers(state, action: PayloadAction<Array<GetUserLedgers>>) {
-            state.customers = action.payload
-        }
+            state.customers = action.payload;
+        },
     },
 
     extraReducers: (builder) => {
@@ -93,7 +95,7 @@ const customerSlice: Slice<CustomerState> = createSlice({
                 state.isAllCustomerFetching = true;
             })
             .addCase(viewAllCustomer.fulfilled, (state, action: PayloadAction<any>) => {
-                if (action.payload.pageMeta.page == 1) {
+                if (action.payload.pageMeta.page === 1) {
                     state.customers = action.payload.customers;
                 } else {
                     state.customers = [...(state.customers ?? []), ...(action.payload.customers ?? [])];
@@ -203,6 +205,23 @@ const customerSlice: Slice<CustomerState> = createSlice({
                 state.loading = false;
             })
             .addCase(restoreCustomer.rejected, (state, action) => {
+                state.error = action.payload as string;
+                state.loading = false;
+            })
+
+
+
+            .addCase(getAccountingGroups.pending, (state) => {
+                state.error = null;
+                state.loading = true;
+            })
+            .addCase(getAccountingGroups.fulfilled,
+                (state, action: PayloadAction<any>) => {
+                    state.accountingGroups = action.payload;
+                    state.loading = false;
+                }
+            )
+            .addCase(getAccountingGroups.rejected, (state, action) => {
                 state.error = action.payload as string;
                 state.loading = false;
             });

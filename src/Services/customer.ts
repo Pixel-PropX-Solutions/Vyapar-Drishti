@@ -67,14 +67,14 @@ export const viewAllCustomerWithType = createAsyncThunk(
     ) => {
         try {
             const response = await userApi.get(
-                `/ledger/view/ledgers/with/type?company_id=${company_id}&type=${customerType}`
+                `/ledger/view/ledgers/with/type?company_id=${company_id}&type=${customerType === 'All' ? '' : customerType}`
             );
 
             console.log('viewAllCustomerWithType response', response);
 
             if (response.data.success === true) {
                 const customersList = response.data.data;
-                return {customersList};
+                return { customersList };
             } else { return rejectWithValue('Login Failed: No access token recieved.'); }
         } catch (error: any) {
             return rejectWithValue(
@@ -223,7 +223,7 @@ export const deleteCustomer = createAsyncThunk(
     'delete/customer',
     async (customer_id: string, { rejectWithValue }) => {
         try {
-            const response = await userApi.delete(`/customer/delete/${customer_id}`);
+            const response = await userApi.delete(`/ledger/delete/${customer_id}`);
 
             if (response.data.success === true) {
                 return;
@@ -242,7 +242,7 @@ export const restoreCustomer = createAsyncThunk(
     'restore/customer',
     async (customer_id: string, { rejectWithValue }) => {
         try {
-            const response = await userApi.put(`/customer/restore/${customer_id}`);
+            const response = await userApi.put(`/ledger/restore/${customer_id}`);
 
             if (response.data.success === true) {
                 return;
@@ -322,6 +322,26 @@ export const updateCustomer = createAsyncThunk(
             return rejectWithValue(
                 error.response?.data?.message ||
                 'Login failed: Invalid credentials or server error.'
+            );
+        }
+    }
+);
+
+export const getAccountingGroups = createAsyncThunk(
+    'get/accounting/groups',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await userApi.get('/user/view/default/accounting/groups');
+            console.log('getAccountingGroups response', response);
+
+            if (response.data.success === true) {
+                return response.data.data;
+            }
+            else { return rejectWithValue('Failed to fetch accounting groups'); }
+        } catch (error: any) {
+            return rejectWithValue(
+                error.response?.data?.message ||
+                'Failed: Unable to fetch accounting groups'
             );
         }
     }

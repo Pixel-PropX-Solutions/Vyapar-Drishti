@@ -9,6 +9,7 @@ import FeatherIcon from '../../Icon/FeatherIcon';
 import { useTheme } from '../../../Contexts/ThemeProvider';
 import { ItemSelectorModal } from './ItemSelectorModal';
 import { compareDates } from '../../../Utils/functionTools';
+// import { useCompanyStore } from '../../../Store/ReduxStore';
 
 type Props = ModalProps & {
     visible: boolean,
@@ -25,6 +26,9 @@ const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep
 export default function DateSelectorModal({ visible, setVisible, onClose, closeOnBack = true, onSelect, value, selectFutureData = false, ...props }: Props): React.JSX.Element {
 
     const { primaryColor } = useTheme();
+    // const { company } = useCompanyStore();
+    // const today = new Date();
+    // const financial = company?.financial_year_start.split('-').map(Number) ?? [1, 4, today.getFullYear()];
 
     const [date, setDate] = useState(value?.date ?? new Date().getDate());
     const [month, setMonth] = useState(value?.month ?? new Date().getMonth());
@@ -34,13 +38,15 @@ export default function DateSelectorModal({ visible, setVisible, onClose, closeO
 
     function incrementMonth(by: number) {
         const nextMonth = (month + by + 12) % 12;
-        if (!selectFutureData && compareDates([date, nextMonth, year]) === 1) {return;}
+        // if (compareDates([date, nextMonth, year], [financial[2], financial[1]-1, financial[0]]) === -1) { return; }
+        if (!selectFutureData && compareDates([date, nextMonth, year]) === 1) { return; }
         setMonth(nextMonth);
 
-        if (month + by >= 0 && month + by <= 11) {return;}
+        if (month + by >= 0 && month + by <= 11) { return; }
 
         const nextYear = year + Math.floor((month + by) / 12);
-        if (!selectFutureData && compareDates([date, nextMonth, nextYear]) === 1) {return;}
+        // if (compareDates([date, nextMonth, nextYear], [financial[2], financial[1]-1, financial[0]]) === -1) { return; }
+        if (!selectFutureData && compareDates([date, nextMonth, nextYear]) === 1) { return; }
         setYear(nextYear);
     }
 
@@ -54,7 +60,7 @@ export default function DateSelectorModal({ visible, setVisible, onClose, closeO
         <Modal
             {...props}
             visible={visible}
-            onRequestClose={() => { setVisible(closeOnBack); if (onClose) {onClose();} }}
+            onRequestClose={() => { setVisible(closeOnBack); if (onClose) { onClose(); } }}
             animationType="fade"
             backdropColor={'rgba(0,0,0,0.5)'}
         >
@@ -66,7 +72,7 @@ export default function DateSelectorModal({ visible, setVisible, onClose, closeO
                     <TextTheme>Select Date</TextTheme>
 
                     <TextTheme fontSize={28} fontWeight={900} >
-                         {date} {monthNames[month]}, {year}
+                        {date} {monthNames[month]}, {year}
                     </TextTheme>
 
                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingInline: 10, height: 40, borderRadius: 40, borderWidth: 2, borderColor: primaryColor }} >
@@ -121,6 +127,9 @@ type DisplayCalenderProps = {
 }
 
 function DisplayCalender({ date, month, year, onSelect, selectFutureData }: DisplayCalenderProps): React.JSX.Element {
+    // const { company } = useCompanyStore();
+    // const today = new Date();
+    // const financial = company?.financial_year_start.split('-').map(Number) ?? [1, 4, today.getFullYear()];
 
     const calenderMat = useMemo(() => {
         const calendar: number[][] = [];
@@ -131,12 +140,12 @@ function DisplayCalender({ date, month, year, onSelect, selectFutureData }: Disp
         let currentDay = 1;
         let week: number[] = [];
 
-        for (let i = 0; i < 7; i++) {week.push(i < firstDay ? 0 : currentDay++);}
+        for (let i = 0; i < 7; i++) { week.push(i < firstDay ? 0 : currentDay++); }
         calendar.push(week);
 
         while (currentDay <= totalDays) {
             week = [];
-            for (let i = 0; i < 7; i++) {week.push(currentDay <= totalDays ? currentDay++ : 0);}
+            for (let i = 0; i < 7; i++) { week.push(currentDay <= totalDays ? currentDay++ : 0); }
             calendar.push(week);
         }
 
@@ -150,12 +159,14 @@ function DisplayCalender({ date, month, year, onSelect, selectFutureData }: Disp
     const [selected, setSelected] = useState<number>(date ?? currentDate);
 
     function handleSelect(date: number) {
-        if (!selectFutureData && compareDates([date, month, year]) === 1) {return;}
+
+        // if (compareDates([date, month, year], [financial[2], financial[1], financial[0]]) === -1) { return; }
+        if (!selectFutureData && compareDates([date, month, year]) === 1) { return; }
 
         if (date !== 0) {
             setSelected(date);
 
-            if (onSelect) {onSelect(date);}
+            if (onSelect) { onSelect(date); }
         }
     }
 
@@ -224,8 +235,7 @@ function YearSelectorModal({ visible, setVisible, year, setYear, month, setMonth
         let data: Year[] = [];
         for (let year of years) {
             for (let month = 11; month >= 0; month--) {
-                if (selectFutureData || currentMonth >= month || currentYear > year)
-                    {data.push({ year, month });}
+                if (selectFutureData || currentMonth >= month || currentYear > year) { data.push({ year, month }); }
             }
         }
         return data;

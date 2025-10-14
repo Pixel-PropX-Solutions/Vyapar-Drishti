@@ -11,18 +11,20 @@ import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import { useAppDispatch, useInvoiceStore, useUserStore } from '../../../../Store/ReduxStore';
 import { deleteTAXInvoice, deleteInvoice, getTAXInvoicesPDF, getInvoicesPDF, getPaymentPDF, getRecieptPDF, viewInvoice } from '../../../../Services/invoice';
 import { useCallback, useState } from 'react';
-import { formatDate, formatNumberForUI, roundToDecimal } from '../../../../Utils/functionTools';
+import { formatDate, formatNumberForUI } from '../../../../Utils/functionTools';
 import usePDFHandler from '../../../../Hooks/usePDFHandler';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
 import navigator from '../../../../Navigation/NavigationService';
 import { useAlert } from '../../../../Components/Ui/Alert/AlertProvider';
 import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
 import useBinaryAnimateValue from '../../../../Hooks/useBinaryAnimateValue';
+import { useTheme } from '../../../../Contexts/ThemeProvider';
 
 export default function BillInfoScreen(): React.JSX.Element {
     const router = useRoute<RouteProp<StackParamsList, 'create-bill-screen'>>();
     const { id: invoiceId } = router.params;
     const dispatch = useAppDispatch();
+    const { secondaryColor } = useTheme();
     const { currency } = useAppStorage();
     const animate0to1 = useBinaryAnimateValue({ value: 0, duration: 500, useNativeDriver: false });
     const { setAlert } = useAlert();
@@ -182,7 +184,7 @@ export default function BillInfoScreen(): React.JSX.Element {
 
                                 <View style={{ alignItems: 'flex-end' }}>
                                     <TextTheme fontSize={14} fontWeight={900}>{formatDate(invoiceData?.date)}</TextTheme>
-                                    <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>Create On</TextTheme>
+                                    <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>Billing Date</TextTheme>
                                 </View>
 
                             </View>
@@ -192,7 +194,7 @@ export default function BillInfoScreen(): React.JSX.Element {
                     <SectionView label="To" labelMargin={4} >
                         <SectionRow >
                             <View style={{ flex: 1, gap: 12 }} >
-                                <View >
+                                <View  >
                                     <TextTheme fontSize={14} fontWeight={900}>{invoiceData.party_name}</TextTheme>
                                     <TextTheme isPrimary={false} fontSize={10} fontWeight={900}>{invoiceData.party_details.parent}</TextTheme>
                                 </View>
@@ -291,6 +293,41 @@ export default function BillInfoScreen(): React.JSX.Element {
                                 </BackgroundThemeView>
                             ))
                         }
+                    </SectionView>
+
+                    <SectionView label="Additional Info" labelMargin={4}>
+                        <SectionRow style={{ flexDirection: 'column', width: '100%', justifyContent: 'space-between', alignItems: 'center' }} >
+                            <View style={{ width: '100%', gap: 10 }}>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: secondaryColor }}>
+                                    <TextTheme isPrimary={false} fontSize={14} fontWeight={900}>Due Date</TextTheme>
+                                    <TextTheme fontSize={14} fontWeight={900}>{formatDate(invoiceData?.due_date)}</TextTheme>
+                                </View>
+
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: secondaryColor }}>
+                                    <TextTheme isPrimary={false} fontSize={14} fontWeight={900}>Amount Paid</TextTheme>
+                                    <TextTheme fontSize={14} fontWeight={900}>{formatNumberForUI(invoiceData?.paid_amount)}</TextTheme>
+                                </View>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: secondaryColor }}>
+                                    <TextTheme isPrimary={false} fontSize={14} fontWeight={900}>Payment Mode</TextTheme>
+                                    <TextTheme fontSize={14} fontWeight={900}>{invoiceData?.payment_mode || 'No Payment Mode'}</TextTheme>
+                                </View>
+
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: secondaryColor }}>
+                                    <TextTheme isPrimary={false} fontSize={14} fontWeight={900}>Transport Mode</TextTheme>
+                                    <TextTheme fontSize={14} fontWeight={900}>{invoiceData?.mode_of_transport || 'No Transport Mode'}</TextTheme>
+                                </View>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: secondaryColor }}>
+                                    <TextTheme isPrimary={false} fontSize={14} fontWeight={900}>Vehicle Number</TextTheme>
+                                    <TextTheme fontSize={14} fontWeight={900}>{invoiceData?.vehicle_number || 'No Vehicle Number'}</TextTheme>
+                                </View>
+
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: secondaryColor }}>
+                                    <TextTheme isPrimary={false} fontSize={14} fontWeight={900}>Notes</TextTheme>
+                                    <TextTheme fontSize={14} fontWeight={900}>{invoiceData?.narration || 'No Notes Added'}</TextTheme>
+                                </View>
+
+                            </View>
+                        </SectionRow>
                     </SectionView>
                 </ScrollView>
             </View>

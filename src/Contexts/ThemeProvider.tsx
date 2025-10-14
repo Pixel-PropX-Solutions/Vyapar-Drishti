@@ -43,15 +43,15 @@ const themeColors: {
     dark: ThemeColors
 } = {
     light: {
-        primaryColor: 'black',
+        primaryColor: '#000000',
         secondaryColor: 'rgb(50,50,50)',
-        primaryBackgroundColor: 'white',
+        primaryBackgroundColor: '#FFFFFF',
         secondaryBackgroundColor: 'rgb(220,220,220)',
     },
     dark: {
-        primaryColor: 'white',
+        primaryColor: '#FFFFFF',
         secondaryColor: 'rgb(220,220,220)',
-        primaryBackgroundColor: 'black',
+        primaryBackgroundColor: '#000000',
         secondaryBackgroundColor: 'rgb(30,30,30)',
     },
 };

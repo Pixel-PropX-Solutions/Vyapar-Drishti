@@ -8,7 +8,6 @@ type Filters = {
     useAscOrder: boolean,
     filterState: 'All-States',
     type: 'Customers' | 'Accounts',
-    invoiceType: 'all' | 'Sales' | 'Purchase' | 'Payment' | 'Receipt',
     searchQuery: string
     startDate?: string,
     endDate?: string,
@@ -22,7 +21,7 @@ type ContextType = {
 
 
 const fn = () => { };
-const defaultFiltersValue: Filters = { sortBy: '', useAscOrder: false, filterState: 'All-States', type: 'Customers', startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(), endDate: new Date().toISOString(), invoiceType: 'all', searchQuery: ""}
+const defaultFiltersValue: Filters = { sortBy: '', useAscOrder: false, filterState: 'All-States', type: 'Customers', startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(), endDate: new Date().toISOString(), searchQuery: ""}
 const Context = createContext<ContextType>({
     date: { year: 0, month: 0 }, setDate: fn,
     isTaxEnable: false,

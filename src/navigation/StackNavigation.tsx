@@ -18,10 +18,12 @@ import { ComponentProps, ElementType } from 'react';
 import BillInfoScreen from '../Screens/TabNavigationScreens/BillScreens/BillInfoScreen/BillInfoScreen';
 import AppUpdateScreen from '../Screens/AppUpdateScreen';
 import ForgotPasswordScreen from '../Screens/ForgotPasswordScreen';
-import TransitionCreateScreen from '../Screens/TabNavigationScreens/BillScreens/TransactionCreateScreen/Screen';
+import TransactionCreateScreen from '../Screens/TabNavigationScreens/BillScreens/TransactionCreateScreen/Screen';
 import CustomerViewScreen from '../Screens/TabNavigationScreens/CustomerScreens/CustomerViewScreen/Screen';
 import BillEditScreen from '../Screens/TabNavigationScreens/BillScreens/EditBillScreen/Screen';
 import TimelineScreen from '../Screens/TimelineScreen/Screen';
+import JournalCreateScreen from '../Screens/TabNavigationScreens/BillScreens/JournalScreen/Screen';
+import ContraCreateScreen from '../Screens/ContraScreen/Screen';
 
 export type StackParamsList = {
     'splash-screen': undefined,
@@ -39,6 +41,8 @@ export type StackParamsList = {
     'create-bill-screen': { type: string, id: string }
     'edit-bill-screen': { type: string, id: string }
     'create-transaction-screen': { type: string, id: string }
+    'create-journal-screen': { type: string, id: string }
+    'create-contra-screen': { type: string, id: string }
     'bill-info-screen': { id: string },
 
     'customer-info-screen': { id: string },
@@ -73,7 +77,7 @@ export default function StackNavigation(): React.JSX.Element {
                     options={{ animation: 'scale_from_center' }}
                 />
 
-                <Stack.Screen name='app-update-screen' component={AppUpdateScreen}
+                <Stack.Screen name="app-update-screen" component={AppUpdateScreen}
                     options={{ animation: 'scale_from_center' }}
                 />
 
@@ -131,11 +135,21 @@ export default function StackNavigation(): React.JSX.Element {
                 />
 
                 <Stack.Screen name="create-transaction-screen"
-                    component={withSafeView(TransitionCreateScreen)}
+                    component={withSafeView(TransactionCreateScreen)}
                     options={{ animation: 'scale_from_center' }}
                 />
 
-                <Stack.Screen name='customer-view-screen'
+                <Stack.Screen name="create-journal-screen"
+                    component={withSafeView(JournalCreateScreen)}
+                    options={{ animation: 'scale_from_center' }}
+                />
+
+                <Stack.Screen name="create-contra-screen"
+                    component={withSafeView(ContraCreateScreen)}
+                    options={{ animation: 'scale_from_center' }}
+                />
+
+                <Stack.Screen name="customer-view-screen"
                     component={CustomerViewScreen}
                 />
 

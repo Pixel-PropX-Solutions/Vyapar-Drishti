@@ -25,7 +25,7 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
 
     const { user, current_company_id } = useUserStore();
     const dispatch = useAppDispatch();
-    const { customerInfo:customer } = useCustomerStore();
+    const { customerInfo: customer } = useCustomerStore();
     const currentCompanyDetails = user?.company?.find((company: any) => company._id === current_company_id);
     const tax_enable: boolean = currentCompanyDetails?.company_settings?.features?.enable_tax;
     const [loading, setLoading] = useState<boolean>(false);
@@ -139,7 +139,7 @@ export function CustomerInfoUpdateModal({ visible, setVisible }: Props): React.J
 
 export function AddressInfoUpdateModal({ visible, setVisible }: Props): React.JSX.Element {
     const { id } = navigator.getParams('customer-info-screen') ?? {};
-    const { customerInfo:customer } = useCustomerStore();
+    const { customerInfo: customer } = useCustomerStore();
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState<boolean>(false);
     const [isCountryModalVisible, setCountryModalVisible] = useState<boolean>(false);
@@ -268,7 +268,7 @@ export function AddressInfoUpdateModal({ visible, setVisible }: Props): React.JS
 
 export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.Element {
     const { id } = navigator.getParams('customer-info-screen') ?? {};
-    const { customerInfo:customer } = useCustomerStore();
+    const { customerInfo: customer } = useCustomerStore();
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -278,6 +278,7 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
         bank_name: '',
         bank_branch: '',
         bank_ifsc: '',
+        ledger_name: '',
     });
 
     const setLedgerDetails = (key: string, value: any) => {
@@ -289,6 +290,7 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
 
     function handleUpdate() {
         setLoading(true);
+        ledger_details.current.ledger_name = `${ledger_details.current.bank_name} - ${ledger_details.current.account_number}`;
         console.log({ ledger_details });
         dispatch(updateCustomerDetails({ ledger_details: ledger_details.current, id: id ?? '' })).then(() => {
             dispatch(getCustomerInfo(id ?? ''));
@@ -347,6 +349,7 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
                         onChangeText={(val) => { setLedgerDetails('account_number', val); }}
                         value={ledger_details.current.account_number}
                         useTrim={true}
+                        keyboardType="numeric"
                         capitalize="characters"
                     />
 
