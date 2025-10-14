@@ -15,6 +15,7 @@ type Customer = {
 type AdditionalDetails = {
     dueDate: string,
     payAmount: number,
+    payment_mode: string,
     transportMode: string,
     vechicleNumber: string,
     note: string
@@ -26,6 +27,7 @@ type HandleAdditionalDetails = <Field extends keyof AdditionalDetails>(field: Fi
 const additionalDetailsDefaultValue: AdditionalDetails = {
     dueDate: (new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)).toLocaleDateString(),
     payAmount: 0,
+    payment_mode: '',
     transportMode: '',
     vechicleNumber: '',
     additional_charge: 0,

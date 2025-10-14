@@ -78,7 +78,7 @@ const getAccountColor = (groupName: string): string => {
 
 
 export default function LedgerTypeSelectorModal({ visible, setVisible, setSecondaryVisible }: Props): React.JSX.Element {
-    const { primaryColor } = useTheme();
+    const { primaryColor, secondaryColor } = useTheme();
     const dispatch = useAppDispatch();
     const { accountingGroups, customerType } = useCustomerStore();
 
@@ -101,10 +101,10 @@ export default function LedgerTypeSelectorModal({ visible, setVisible, setSecond
                     marginBottom: 20,
                 }} />
                 <TextTheme fontSize={26} fontWeight={'bold'} style={{ marginBottom: 6 }}>
-                    Create New Ledger
+                    Create New Account
                 </TextTheme>
                 <TextTheme fontSize={14} style={{ opacity: 0.6, textAlign: 'center', lineHeight: 20 }}>
-                    Choose a ledger type to categorize your ledger
+                    Choose a account type to categorize your account
                 </TextTheme>
             </View>
 
@@ -115,7 +115,7 @@ export default function LedgerTypeSelectorModal({ visible, setVisible, setSecond
                 contentContainerStyle={{ paddingBottom: 10 }}
                 showsVerticalScrollIndicator={false}
             >
-                {accountingGroups.map((group) => {
+                {accountingGroups.filter((g) => ['Creditors', 'Debtors', 'Bank Accounts'].includes(g.accounting_group_name)).map((group) => {
                     const isSelected = group.accounting_group_name === customerType?.accounting_group_name;
                     const accountColor = getAccountColor(group.accounting_group_name);
 
@@ -131,15 +131,10 @@ export default function LedgerTypeSelectorModal({ visible, setVisible, setSecond
                                 paddingVertical: 14,
                                 marginBottom: 10,
                                 borderWidth: 2,
-                                borderColor: isSelected ? primaryColor : '#F0F0F0',
+                                borderColor: isSelected ? primaryColor : secondaryColor,
                                 backgroundColor: isSelected
-                                    ? `${primaryColor}12`
-                                    : '#FFFFFF',
-                                shadowColor: isSelected ? primaryColor : '#000',
-                                shadowOffset: { width: 0, height: 2 },
-                                shadowOpacity: isSelected ? 0.15 : 0.05,
-                                shadowRadius: isSelected ? 8 : 4,
-                                elevation: isSelected ? 4 : 2,
+                                    ? `${primaryColor}`
+                                    : `${primaryColor}12`,
                             }}
                             onPress={() => {
                                 dispatch(setCustomerType(group));
@@ -167,7 +162,7 @@ export default function LedgerTypeSelectorModal({ visible, setVisible, setSecond
                                 <TextTheme
                                     fontSize={16}
                                     fontWeight={600}
-                                    color={isSelected ? primaryColor : '#1A1A1A'}
+                                    color={isSelected ? primaryColor : secondaryColor}
                                     style={{ lineHeight: 22 }}
                                 >
                                     {group.accounting_group_name}
@@ -175,7 +170,7 @@ export default function LedgerTypeSelectorModal({ visible, setVisible, setSecond
                                 {group.description && (
                                     <TextTheme
                                         fontSize={13}
-                                        color={isSelected ? primaryColor : '#666666'}
+                                        color={isSelected ? primaryColor : secondaryColor}
                                         style={{ opacity: 0.8, lineHeight: 18 }}
                                         numberOfLines={2}
                                     >
@@ -189,14 +184,14 @@ export default function LedgerTypeSelectorModal({ visible, setVisible, setSecond
                                 width: 32,
                                 height: 32,
                                 borderRadius: 16,
-                                backgroundColor: isSelected ? `${primaryColor}20` : '#F5F5F5',
+                                backgroundColor: isSelected ? `${primaryColor}` : `${primaryColor}20`,
                                 alignItems: 'center',
                                 justifyContent: 'center',
                             }}>
                                 <FeatherIcon
                                     name="chevron-right"
                                     size={18}
-                                    color={isSelected ? primaryColor : '#999999'}
+                                    color={isSelected ? primaryColor : secondaryColor}
                                 />
                             </View>
                         </AnimateButton>

@@ -28,6 +28,7 @@ type Customer = {
 type AdditionalDetails = {
     dueDate: string,
     payAmount: number,
+    payment_mode: string,
     transportMode: string,
     vechicleNumber: string,
     note: string
@@ -39,6 +40,7 @@ type HandleAdditionalDetails = <Field extends keyof AdditionalDetails>(field: Fi
 const additionalDetailsDefaultValue: AdditionalDetails = {
     dueDate: (new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)).toLocaleDateString(),
     payAmount: 0,
+    payment_mode: '',
     transportMode: '',
     vechicleNumber: '',
     additional_charge: 0,
@@ -192,6 +194,7 @@ export default function BillContextProvider({ children }: { children: React.Reac
         })) ?? []);
         handleAdditionalDetails('dueDate', invoiceData?.due_date ?? '');
         handleAdditionalDetails('payAmount', invoiceData?.paid_amount ?? 0);
+        handleAdditionalDetails('payment_mode', invoiceData?.payment_mode ?? '');
         handleAdditionalDetails('transportMode', invoiceData?.mode_of_transport ?? '');
         handleAdditionalDetails('vechicleNumber', invoiceData?.vehicle_number ?? '');
         handleAdditionalDetails('additional_charge', invoiceData?.additional_charge ?? 0);
@@ -202,7 +205,7 @@ export default function BillContextProvider({ children }: { children: React.Reac
         setTotalTax(invoiceData?.total_tax ?? 0);
         setRoundoff(invoiceData?.roundoff ?? 0);
         setGrandTotal(invoiceData?.grand_total ?? 0);
-    }, [invoiceData?.accounting_entries, invoiceData?.additional_charge, invoiceData?.date, invoiceData?.discount, invoiceData?.due_date, invoiceData?.grand_total, invoiceData?.inventory, invoiceData?.mode_of_transport, invoiceData?.narration, invoiceData?.paid_amount, invoiceData?.party_details.parent, invoiceData?.party_name, invoiceData?.party_name_id, invoiceData?.roundoff, invoiceData?.total, invoiceData?.total_amount, invoiceData?.total_tax, invoiceData?.vehicle_number, invoiceData?.voucher_number]);
+    }, [invoiceData?.accounting_entries, invoiceData?.additional_charge, invoiceData?.date, invoiceData?.discount, invoiceData?.due_date, invoiceData?.grand_total, invoiceData?.inventory, invoiceData?.mode_of_transport, invoiceData?.narration, invoiceData?.paid_amount, invoiceData?.party_details.parent, invoiceData?.party_name, invoiceData?.party_name_id, invoiceData?.roundoff, invoiceData?.total, invoiceData?.total_amount, invoiceData?.total_tax, invoiceData?.vehicle_number, invoiceData?.payment_mode, invoiceData?.voucher_number]);
 
     return <Context.Provider children={children} value={states} />;
 }

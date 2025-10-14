@@ -21,6 +21,7 @@ import { useAppStorage } from '../../../../Contexts/AppStorageProvider';
 import DateSelectorModal from '../../../../Components/Modal/Selectors/DateSelectorModal';
 import { SectionRowWithIcon } from '../../../../Components/Layouts/View/SectionView';
 import { ItemSelectorModal } from '../../../../Components/Modal/Selectors/ItemSelectorModal';
+import MaterialDesignIcon from '../../../../Components/Icon/MaterialDesignIcon';
 
 export function Header() {
 
@@ -49,7 +50,7 @@ export function Header() {
                 flexDirection: 'row',
                 gap: 8,
             }} >
-                <FeatherIcon name="book" size={14} />
+                <MaterialDesignIcon name="account-convert-outline" size={14} />
                 <TextTheme fontSize={14} fontWeight={700}>{type}</TextTheme>
             </View>
         </View>
@@ -229,7 +230,7 @@ export function EntriesSection() {
             <NormalButton
                 backgroundColor="rgb(50,120,200)" color="white"
                 text=" Add Entry"
-                icon={<FeatherIcon color="white" name="package" size={16} />}
+                icon={<FeatherIcon color="white" name="plus" size={16} />}
                 onPress={addNewEntry}
             />
 
@@ -378,7 +379,7 @@ export function SaveJournal() {
                         elevation: 8,
                     }}
                 >
-                    <FeatherIcon name="plus-circle" size={20} color="white" />
+                    <MaterialDesignIcon name="account-convert-outline" size={20} color="white" />
                     <TextTheme fontSize={15} fontWeight={600} color="white">
                         {loading ? 'Saving...' : 'Save Journal Entry'}
                     </TextTheme>
@@ -492,8 +493,6 @@ function EntriesList() {
                 style={{
                     padding: 14,
                     borderRadius: 14,
-                    // borderWidth: 1,
-                    // borderColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
                     borderLeftWidth: 4,
                     borderLeftColor: entry.type === 'From' ? '#10b981' : '#ef4444',
                 }}
@@ -507,7 +506,7 @@ function EntriesList() {
                         <AnimateButton onPress={() => openLedgerModal(index)}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                                 <FeatherIcon
-                                    name="folder"
+                                    name={entry.type === 'From' ? 'user-minus' : 'user-plus'}
                                     size={16}
                                     color={entry.name ? undefined : '#94a3b8'}
                                 />
@@ -516,7 +515,7 @@ function EntriesList() {
                                     fontWeight={entry.name ? 600 : 400}
                                     isPrimary={!!entry.name}
                                 >
-                                    {entry.name || 'Select Ledger'}
+                                    {entry.name || 'Select Account'}
                                 </TextTheme>
                                 <FeatherIcon name="chevron-down" size={14} color="#94a3b8" />
                             </View>

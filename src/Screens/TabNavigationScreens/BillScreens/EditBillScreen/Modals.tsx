@@ -489,7 +489,7 @@ export function AdditionDetailModal({ visible, setVisible }: Props): React.JSX.E
     const [isAdditionalChargesModalVisible, setAdditionalChargesModalVisible] = useState(false);
     const [isTransportModeModalVisible, setTransportModeModalVisible] = useState(false);
     const [isNoteModalVisible, setNoteModalVisible] = useState(false);
-
+    const [isPaymentModeModalVisible, setPaymentModeModalVisible] = useState(false);
 
     return (
         <BottomModal
@@ -503,27 +503,13 @@ export function AdditionDetailModal({ visible, setVisible }: Props): React.JSX.E
                 contentContainerStyle={{ width: '100%', gap: 12 }}
                 keyboardShouldPersistTaps="always"
             >
-                <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center', width: '100%', position: 'relative' }} >
-                    <View style={{ flex: 1 }}>
-                        <SectionRowWithIcon
-                            label="Status"
-                            text={info.payAmount === grandTotal ? 'Paid' : info.payAmount === 0 ? 'Unpaid' : 'Partially Paid'}
-                            onPress={() => { }}
-                            icon={<FeatherIcon name="check-circle" size={16} />}
-                            backgroundColor={info.payAmount === grandTotal ? 'rgba(60, 180, 120, 0.5)' : info.payAmount === 0 ? 'rgba(200,0,0, .25)' : ''}
-                        />
-                    </View>
-
-                    <View style={{ flex: 1 }}>
-                        <SectionRowWithIcon
-                            label="Due Date"
-                            onPress={() => { setDateModalVisible(true); }}
-                            text={info.dueDate || 'Select due date'}
-                            icon={<FeatherIcon name="calendar" size={16} />}
-                            backgroundColor={info.dueDate ? 'rgba(60, 180, 120, 0.5)' : ''}
-                        />
-                    </View>
-                </View>
+                <SectionRowWithIcon
+                    label="Due Date"
+                    onPress={() => { setDateModalVisible(true); }}
+                    text={info.dueDate || 'Select due date'}
+                    icon={<FeatherIcon name="calendar" size={16} />}
+                    backgroundColor={info.dueDate ? 'rgba(60, 180, 120, 0.5)' : ''}
+                />
 
                 <SectionRowWithIcon
                     label="Pay Amount"
@@ -532,6 +518,14 @@ export function AdditionDetailModal({ visible, setVisible }: Props): React.JSX.E
                     hasArrow={true}
                     icon={<FeatherIcon name="dollar-sign" size={16} />}
                     backgroundColor={info.payAmount ? 'rgba(60, 180, 120, 0.5)' : ''}
+                />
+                <SectionRowWithIcon
+                    label="Payment Mode"
+                    text={info.payment_mode || 'Tap to select mode of payment'}
+                    onPress={() => { setPaymentModeModalVisible(true); }}
+                    icon={<FeatherIcon name="credit-card" size={16} />}
+                    backgroundColor={info.payment_mode ? 'rgba(60, 180, 120, 0.5)' : ''}
+                    hasArrow={true}
                 />
 
                 <SectionRowWithIcon
@@ -617,11 +611,9 @@ export function AdditionDetailModal({ visible, setVisible }: Props): React.JSX.E
                 onSet={(val) => { handleInfo('additional_charge', Number(val)); }}
                 inputValueFilters={(cur, old) => {
                     const char = cur.at(-1) ?? '';
-
                     if (cur.length > 1 && cur[0] === '0' && cur[1] === '0') { return old; }
                     if (!'0123456789.'.includes(char)) { return old; }
                     if (char === '.' && cur.slice(0, -1).includes('.')) { return old; }
-
                     if (cur.length > 1 && cur[0] === '0' && !cur.includes('.')) { return cur.slice(1); }
                     return cur;
                 }}
@@ -640,27 +632,36 @@ export function AdditionDetailModal({ visible, setVisible }: Props): React.JSX.E
             <ItemSelectorModal<string>
                 visible={isTransportModeModalVisible}
                 setVisible={setTransportModeModalVisible}
-
                 title="Transport Mode"
                 allItems={['By Road', 'By Rail', 'By Air', 'By Sea']}
                 onSelect={(val) => { handleInfo('transportMode', val); }}
-
                 keyExtractor={item => item}
-
                 isItemSelected={!!info.transportMode}
-
                 SelectedItemContent={
                     <TextTheme color="white" >{info.transportMode}</TextTheme>
                 }
-
-
                 renderItemContent={(item) => (
                     <TextTheme>{item}</TextTheme>
                 )}
-
                 filter={() => true}
             />
 
+            <ItemSelectorModal<string>
+                visible={isPaymentModeModalVisible}
+                setVisible={setPaymentModeModalVisible}
+                title="Payment Mode"
+                allItems={['By Cash', 'By Card', 'By UPI', 'By Net Banking']}
+                onSelect={(val) => { handleInfo('payment_mode', val); }}
+                keyExtractor={item => item}
+                isItemSelected={!!info.payment_mode}
+                SelectedItemContent={
+                    <TextTheme color="white" >{info.payment_mode}</TextTheme>
+                }
+                renderItemContent={(item) => (
+                    <TextTheme>{item}</TextTheme>
+                )}
+                filter={() => true}
+            />
             <AutoFocusInputModal
                 visible={isNoteModalVisible}
                 setVisible={setNoteModalVisible}

@@ -478,7 +478,7 @@ export function AmountBox(): React.JSX.Element {
                     mode_of_transport: additionalDetails.transportMode,
                     vehicle_number: additionalDetails.vechicleNumber,
                     narration: additionalDetails.note,
-                    payment_mode: '',
+                    payment_mode: additionalDetails.payment_mode,
                     paid_amount: roundToDecimal(Number(additionalDetails.payAmount), 2),
                     total: roundToDecimal(total, 2),
                     total_amount: roundToDecimal(total_amount, 2),

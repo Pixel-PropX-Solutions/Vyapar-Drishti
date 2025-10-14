@@ -48,7 +48,7 @@ export function Header() {
                 flexDirection: 'row',
                 gap: 8,
             }} >
-                <FeatherIcon name="book" size={14} />
+                <FeatherIcon name="shuffle" size={14} />
                 <TextTheme fontSize={14} fontWeight={700}>{type}</TextTheme>
             </View>
         </View>
@@ -173,8 +173,8 @@ export function Account1Selector() {
 
     return (<>
         <SectionRowWithIcon
-            icon={<FeatherIcon name="credit-card" size={20} />}
-            label={account1 ? account1?.name : 'From'}
+            icon={<MaterialDesignIcon name="credit-card-minus-outline" size={20} />}
+            label={account1 ? account1?.name : 'Transfer From'}
             text={account1 ? account1?.name ?? 'No Account' : 'Tab to select'}
             backgroundColor={account1 ? 'rgba(60,180,120, 0.5)' : ''}
             hasArrow={true}
@@ -193,8 +193,8 @@ export function Account2Selector() {
 
     return (<>
         <SectionRowWithIcon
-            icon={<FeatherIcon name="credit-card" size={20} />}
-            label={account2 ? account2?.name : 'To'}
+            icon={<MaterialDesignIcon name="credit-card-plus-outline" size={20} />}
+            label={account2 ? account2?.name : 'Transfer To'}
             text={account2 ? account2?.name ?? 'No Account' : 'Tab to select'}
             backgroundColor={account2 ? 'rgba(60,180,120, 0.5)' : ''}
             hasArrow={true}
@@ -210,15 +210,12 @@ export function AmountSection() {
     const { amount, setAmount } = useContraContext();
     const { currency } = useAppStorage();
 
-    const router = useRoute<RouteProp<StackParamsList, 'create-transaction-screen'>>();
-    const { type } = router.params;
-
     const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
 
     return (<>
         <SectionRowWithIcon
-            icon={<MaterialDesignIcon name={type === 'Receipt' ? 'cash-plus' : 'cash-minus'} size={24} />}
+            icon={<MaterialDesignIcon name={'shuffle'} size={24} />}
             label={amount ? `${amount} ${currency}` : 'Transferring Amount'}
             text={amount ? amount : 'Tab to enter amount'}
             backgroundColor={amount ? 'rgba(60,180,120, 0.5)' : ''}
