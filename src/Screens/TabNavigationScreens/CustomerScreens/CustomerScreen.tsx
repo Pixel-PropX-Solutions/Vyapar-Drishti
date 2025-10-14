@@ -47,20 +47,21 @@ function CustomerScreenDetails(): React.JSX.Element {
     function handleCustomerFetching() {
         if (isAllCustomerFetching) { return; }
         if (pageMeta.total <= pageMeta.page * pageMeta.limit) { return; }
-
         dispatch(viewAllCustomer({ company_id: current_company_id ?? '', pageNumber: pageMeta.page + 1, type: filters.type }));
     }
 
 
     useEffect(() => {
-        if (!isCustomerTypeSelectorModalOpen) { dispatch(viewAllCustomer({ company_id: currentCompanyId, pageNumber: 1, type: filters.type, searchQuery })); }
-    }, [currentCompanyId, filters.type, isCustomerTypeSelectorModalOpen, searchQuery]);
+        if (!isCustomerTypeSelectorModalOpen) {
+            dispatch(viewAllCustomer({ company_id: currentCompanyId, pageNumber: 1, type: filters.type, searchQuery }));
+        }
+    }, [currentCompanyId, dispatch, filters.type, isCustomerTypeSelectorModalOpen, searchQuery]);
 
     useFocusEffect(
         useCallback(() => {
             dispatch(setCustomers([]));
             dispatch(viewAllCustomer({ company_id: currentCompanyId, pageNumber: 1, type: filters.type, searchQuery }));
-        }, [currentCompanyId, filters.type, searchQuery])
+        }, [currentCompanyId, dispatch, filters.type, searchQuery])
     );
 
     return (
