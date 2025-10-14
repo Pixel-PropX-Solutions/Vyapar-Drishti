@@ -22,7 +22,7 @@ import { InfoUpdateModal } from './Modals';
 
 // Enhanced Hero Section with Image and Stock Status
 export function Header(): React.JSX.Element {
-    const { item } = useProductStore();
+    const { item, loading } = useProductStore();
     const { secondaryBackgroundColor } = useTheme();
     const dispatch = useAppDispatch();
     const { current_company_id } = useUserStore();
@@ -107,10 +107,10 @@ export function Header(): React.JSX.Element {
                     </View>
                 </View>
                 <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'space-between' }} >
-                    <StatsCard rgb={GREEN} label="Sales Rate" valueSize={13} value={item?.sales_qty > 0 ? `${formatNumberForUI(item?.avg_sale_rate || 0)}` : 'No Sale'} />
-                    <StatsCard rgb={BLUE} label="Pur. Rate" valueSize={13} value={item?.purchase_qty > 0 ? `${formatNumberForUI(item?.avg_purchase_rate || 0)}` : 'No Purc.'} />
-                    <StatsCard rgb={Number(calculateProfitMargin) > 0 ? GREEN : RED} label="Profit %" valueSize={13} value={item?.sales_qty > 0 ? `${calculateProfitMargin} %` : 'No Sale'} />
-                    <StatsCard rgb={((item?.current_stock || 0) * (item?.avg_purchase_rate || 0)) > 0 ? GREEN : RED} label="Stock Value" valueSize={13} value={formatNumberForUI(((item?.current_stock || 0) * (item?.avg_purchase_rate || 0)))} />
+                    <StatsCard loading={loading} rgb={GREEN} label="Sales Rate" valueSize={13} value={item?.sales_qty > 0 ? `${formatNumberForUI(item?.avg_sale_rate || 0)}` : 'No Sale'} />
+                    <StatsCard loading={loading} rgb={BLUE} label="Pur. Rate" valueSize={13} value={item?.purchase_qty > 0 ? `${formatNumberForUI(item?.avg_purchase_rate || 0)}` : 'No Purc.'} />
+                    <StatsCard loading={loading} rgb={Number(calculateProfitMargin) > 0 ? GREEN : RED} label="Profit %" valueSize={13} value={item?.sales_qty > 0 ? `${calculateProfitMargin} %` : 'No Sale'} />
+                    <StatsCard loading={loading} rgb={((item?.current_stock || 0) * (item?.avg_purchase_rate || 0)) > 0 ? GREEN : RED} label="Stock Value" valueSize={13} value={formatNumberForUI(((item?.current_stock || 0) * (item?.avg_purchase_rate || 0)))} />
                 </View>
             </View>
             <InfoUpdateModal

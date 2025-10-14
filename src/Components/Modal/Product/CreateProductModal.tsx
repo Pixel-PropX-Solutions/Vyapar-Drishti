@@ -265,12 +265,15 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                         error={validationErrors.stock_item_name}
                     />
 
-                    <MeasurementUnitsOpation label="Select Unit *" error={validationErrors.unit} onSelect={unit => {
-                        if (!unit?.id) { return; }
+                    <MeasurementUnitsOpation
+                        label="Select Unit *"
+                        error={validationErrors.unit}
+                        onSelect={unit => {
+                            if (!unit?.id) { return; }
 
-                        handleChange('unit', unit?.symbol);
-                        handleChange('unit_id', unit?.id);
-                    }} />
+                            handleChange('unit', unit?.symbol);
+                            handleChange('unit_id', unit?.id);
+                        }} />
 
                 </CollapsabeMenu>
 
@@ -292,7 +295,7 @@ export default function CreateProductModal({ visible, setVisible }: Props): Reac
                                 icon={<FeatherIcon name="hash" size={20} color={primaryColor} />}
                                 placeholder="HSN/SAC Code"
                                 field="hsn_code"
-                                capitalize='characters'
+                                capitalize="characters"
                                 handleChange={handleChange}
                             />
 

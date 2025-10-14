@@ -8,6 +8,7 @@ import DetailsScreen, { DangerSection, Header } from './Components';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import SafeAreaFromTop from '../../../../Components/Other/SafeAreaView/SafeAreaFromTop';
+import SafeAreaFromBottom from '../../../../Components/Other/SafeAreaView/SafeAreaFromBottom';
 
 export default function ProductInfoScreen(): React.JSX.Element {
 
@@ -27,6 +28,7 @@ export default function ProductInfoScreen(): React.JSX.Element {
 
     return (
         <View style={{ width: '100%', height: '100%' }} >
+            <SafeAreaFromTop />
             <View style={{ paddingHorizontal: 20, paddingTop: 8, gap: 36, marginBottom: 8 }} >
                 <Header />
             </View>
@@ -39,6 +41,7 @@ export default function ProductInfoScreen(): React.JSX.Element {
                 <DetailsScreen />
                 <DangerSection />
             </ScrollView>
+            <SafeAreaFromBottom />
         </View>
     );
 }

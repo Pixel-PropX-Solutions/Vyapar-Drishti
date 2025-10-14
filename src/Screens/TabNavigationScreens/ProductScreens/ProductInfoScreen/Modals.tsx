@@ -14,6 +14,7 @@ import { SelectField } from '../../../../Components/Ui/TextInput/SelectField';
 import { getProduct, updateProductDetails } from '../../../../Services/product';
 import CollapsabeMenu from '../../../../Components/Other/CollapsabeMenu';
 import { SectionRow } from '../../../../Components/Layouts/View/SectionView';
+import { MeasurmentUnitsData } from '../../../../Assets/objects-data/measurment-units-data';
 
 type Props = {
     visible: boolean,
@@ -47,6 +48,7 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
     const [isTaxabilityModalVisible, setTaxabilityModalVisible] = useState<boolean>(false);
     const [isGoodsNatureModalVisible, setGoodsNatureModalVisible] = useState<boolean>(false);
     const [isOpeningStockVisible, setOpeningStockVisible] = useState<boolean>(false);
+    const [_, forceRender] = useState(0);
 
 
     const info = useRef({
@@ -68,12 +70,21 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
         nature_of_goods: '',
         hsn_code: '',
         taxability: '',
-        tax_rate: 0,
+        tax_rate: '',
         low_stock_alert: 0,
     });
 
     const setInfo = (key: string, value: any) => {
-        info.current = { ...info.current, [key]: value };
+        if (key === 'opening_balance' || key === 'opening_rate') {
+            info.current = {
+                ...info.current,
+                [key]: value,
+                opening_value: info.current.opening_balance * info.current.opening_rate,
+            };
+        } else {
+            info.current = { ...info.current, [key]: value };
+        }
+        forceRender(x => x + 1); // trigger re-render
     };
 
     function handleUpdate() {
@@ -156,6 +167,8 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
             };
         }
     }, [product]);
+
+    console.log('Product Info Modal Rendered', info.current.opening_balance, info.current.opening_rate, info.current.opening_value);
 
     return (
         <BottomModal
@@ -350,7 +363,7 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
 
                     <SectionRow>
                         <TextTheme fontSize={14} fontWeight={600} >
-                            Opening Value: {(info.current.opening_value ?? info.current.opening_balance * info.current.opening_rate).toFixed(2)}
+                            Opening Value: {(info.current.opening_balance * info.current.opening_rate).toFixed(2)}
                         </TextTheme>
                     </SectionRow>
                 </CollapsabeMenu>
@@ -383,7 +396,7 @@ export function InfoUpdateModal({ visible, setVisible }: Props): React.JSX.Eleme
                     }}
                     style={{ maxHeight: 400 }}
                 >
-                    {units.map((unit) => (
+                    {MeasurmentUnitsData.map((unit) => (
                         <AnimateButton
                             key={unit.id}
                             style={{

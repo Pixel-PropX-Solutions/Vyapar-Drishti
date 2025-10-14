@@ -1,5 +1,5 @@
 import userApi from '../Api/userApi';
-import { GetProduct } from '../utils/types';
+import { GetProduct, ProductUpdate } from '../utils/types';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const createProduct = createAsyncThunk(
@@ -90,7 +90,9 @@ export const viewAllProducts = createAsyncThunk(
 
 export const viewProduct = createAsyncThunk(
   'view/product',
-  async ({ product_id, company_id }: { product_id: string, company_id: string }, { rejectWithValue }) => {
+  async ({ product_id, company_id }: { product_id: string, company_id: string }, { rejectWithValue }): Promise<{
+    product: ProductUpdate
+  } | any> => {
     try {
       const response = await userApi.get(`/product/get/product/${product_id}?company_id=${company_id}`);
       console.log('view Product response', response.data);
