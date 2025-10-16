@@ -223,8 +223,8 @@ export function ProfileSection() {
             {/* Stats Cards */}
             <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'space-between' }}>
                 <StatsCard
-                    rgb={(customer?.opening_balance ?? 0) === 0 ? BLACK : (customer?.opening_balance ?? 0) < 0 ? RED : GREEN}
-                    label="Opening (All)"
+                    rgb={(customer?.opening_balance ?? 0) === 0 ? BLACK : (customer?.opening_balance ?? 0) > 0 ? RED : GREEN}
+                    label={`Open (${getMonthByIndex(date.month)})`}
                     value={customer ? formatNumberForUI(Math.abs(customer.opening_balance ?? 0)) : '0'}
                     loading={isCustomerFetching}
                 />
@@ -241,8 +241,8 @@ export function ProfileSection() {
                     loading={isCustomerFetching}
                 />
                 <StatsCard
-                    rgb={(customer?.closing_balance ?? 0) === 0 ? BLACK : (customer?.closing_balance ?? 0) < 0 ? RED : GREEN}
-                    label="Closing (All)"
+                    rgb={(customer?.closing_balance ?? 0) === 0 ? BLACK : (customer?.closing_balance ?? 0) > 0 ? RED : GREEN}
+                    label={`Close (${getMonthByIndex(date.month)})`}
                     value={customer ? formatNumberForUI(Math.abs(customer.closing_balance ?? 0)) : '0'}
                     loading={isCustomerFetching}
                 />
@@ -392,7 +392,7 @@ const InvoiceRow = ({ item, index, primaryColor }: { item: any; index: number; p
         <View style={{ width: 80, alignItems: 'flex-end', justifyContent: 'center', paddingVertical: 4, paddingHorizontal: 4, borderColor: primaryColor }}>
             <TextTheme
                 fontSize={9}
-                color={item.amount < 0 ? '#d32f2f' : '#2e7d32'}
+                color={item.amount > 0 ? '#d32f2f' : '#2e7d32'}
                 fontWeight={700}
                 style={{ marginRight: 4 }}
             >
@@ -400,11 +400,11 @@ const InvoiceRow = ({ item, index, primaryColor }: { item: any; index: number; p
             </TextTheme>
             <TextTheme
                 fontSize={7}
-                color={item.amount < 0 ? '#d32f2f' : '#2e7d32'}
+                color={item.amount > 0 ? '#d32f2f' : '#2e7d32'}
                 fontWeight={500}
                 style={{ marginRight: 4 }}
             >
-                {item.amount < 0 ? 'DR' : 'CR'}
+                {item.amount > 0 ? 'DR' : 'CR'}
             </TextTheme>
         </View>
     </View>
@@ -613,10 +613,10 @@ export function InvoiceListing() {
                                     <TextTheme
                                         fontSize={12}
                                         fontWeight={700}
-                                        color={(customer?.closing_balance ?? 0) === 0 ? primaryColor : (customer?.closing_balance ?? 0) < 0 ? '#d32f2f' : '#2e7d32'}
+                                        color={(customer?.closing_balance ?? 0) === 0 ? primaryColor : (customer?.closing_balance ?? 0) > 0 ? '#d32f2f' : '#2e7d32'}
                                     >
                                         {(Math.abs(customer?.closing_balance ?? 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                                        {(customer?.closing_balance ?? 0) === 0 ? '' : (customer?.closing_balance ?? 0) < 0 ? ' DR' : ' CR'}
+                                        {(customer?.closing_balance ?? 0) === 0 ? '' : (customer?.closing_balance ?? 0) > 0 ? ' DR' : ' CR'}
                                     </TextTheme>
                                 </View>
                             </View>
