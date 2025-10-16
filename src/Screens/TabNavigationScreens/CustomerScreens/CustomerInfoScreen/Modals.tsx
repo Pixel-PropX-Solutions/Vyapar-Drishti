@@ -14,6 +14,7 @@ import navigator from '../../../../Navigation/NavigationService';
 import { SelectField } from '../../../../Components/Ui/TextInput/SelectField';
 import { CountrySelectorModal } from '../../../../Components/Modal/CountrySelectorModal';
 import { StateSelectorModal } from '../../../../Components/Modal/StateSelectorModal';
+import ShowWhen from '../../../../Components/Other/ShowWhen';
 
 type Props = {
     visible: boolean,
@@ -395,49 +396,83 @@ export function BankInfoUpdateModal({ visible, setVisible }: Props): React.JSX.E
 
 
 
-// export function TaxInfoUpdateModal({ visible, setVisible }: Props): React.JSX.Element {
+export function CashUpdateModal({ visible, setVisible }: Props): React.JSX.Element {
 
-//     const tinNo = useRef<string>('');
-//     const panNo = useRef<string>('');
+    const { id } = navigator.getParams('customer-info-screen') ?? {};
+    const { customerInfo: customer } = useCustomerStore();
+    const dispatch = useAppDispatch();
+    const [loading, setLoading] = useState<boolean>(false);
 
-//     function handleUpdate() {
-//         console.log({ tinNo, panNo });
-//     }
+    const ledger_details = useRef({
+        ledger_name: '',
+    });
 
-//     return (
-//         <BottomModal
-//             visible={visible} setVisible={setVisible}
-//             style={{ paddingHorizontal: 20 }}
-//             actionButtons={[{
-//                 title: 'Update', onPress: handleUpdate,
-//                 icon: <FeatherIcon name="save" size={20} />,
-//             }]}
-//         >
-//             <ScrollView showsVerticalScrollIndicator={false} >
-//                 <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
-//                     Update Tax Information
-//                 </TextTheme>
-
-//                 <View style={{ gap: 24 }} >
-//                     <LabelTextInput
-//                         label="TIN Number"
-//                         placeholder="24XXXXXXXXXX"
-//                         icon={<FeatherIcon name="user" size={16} />}
-//                         onChangeText={(val) => { tinNo.current = val; }}
-//                         useTrim={true}
-//                         isRequired={true}
-//                         infoMessage="15 digit TIN number"
-//                     />
+    const setLedgerDetails = (key: string, value: any) => {
+        ledger_details.current = {
+            ...ledger_details.current,
+            [key]: value,
+        };
+    };
 
 
-//                 </View>
+    function handleUpdate() {
+        setLoading(true);
+        console.log({ ledger_details });
+        dispatch(updateCustomerDetails({ ledger_details: ledger_details.current, id: id ?? '' })).then(() => {
+            dispatch(getCustomerInfo(id ?? ''));
+            setLoading(false);
+            setVisible(false);
+        }).catch((error) => {
+            dispatch(getCustomerInfo(id ?? ''));
+            console.log('Error while updating the customer details', error);
+            setLoading(false);
+        }).finally(() => {
+            dispatch(getCustomerInfo(id ?? ''));
+            setVisible(false);
+            setLoading(false);
+        });
+    }
 
-//                 <View style={{ minHeight: 40 }} />
-//             </ScrollView>
+    useEffect(() => {
+        if (customer) {
+            setLedgerDetails('ledger_name', customer.ledger_name ?? '');
 
-//             <ShowWhen when={visible} >
-//                 <LoadingModal visible={false} text="Updating Wait..." />
-//             </ShowWhen>
-//         </BottomModal>
-//     );
-// }
+        }
+    }, [customer]);
+
+    return (
+        <BottomModal
+            visible={visible} setVisible={setVisible}
+            style={{ paddingHorizontal: 20 }}
+            actionButtons={[{
+                title: 'Update', onPress: handleUpdate,
+                icon: <FeatherIcon name="save" size={20} />,
+            }]}
+        >
+            <ScrollView showsVerticalScrollIndicator={false} >
+                <TextTheme style={{ fontSize: 16, fontWeight: 800, marginBottom: 32 }}>
+                    Update Tax Information
+                </TextTheme>
+
+                <View style={{ gap: 24 }} >
+                    <LabelTextInput
+                        label="Name"
+                        placeholder="Enter name"
+                        icon={<FeatherIcon name="user" size={16} />}
+                        onChangeText={(val) => { setLedgerDetails('ledger_name', val); }}
+                        value={ledger_details.current.ledger_name}
+                        useTrim={true}
+                        isRequired={true}
+                        infoMessage="Name"
+                    />
+
+
+                </View>
+
+                <View style={{ minHeight: 40 }} />
+            </ScrollView>
+
+            <LoadingModal visible={loading} text="Updating Wait..." />
+        </BottomModal>
+    );
+}
