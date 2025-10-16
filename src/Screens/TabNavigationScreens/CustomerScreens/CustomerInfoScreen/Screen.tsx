@@ -11,7 +11,7 @@ import StackNavigationHeader from '../../../../Components/Layouts/Header/StackNa
 import DeleteModal from '../../../../Components/Modal/DeleteModal';
 import ShowWhen from '../../../../Components/Other/ShowWhen';
 import LoadingView from '../../../../Components/Layouts/View/LoadingView';
-import { AddressInfoUpdateModal, BankInfoUpdateModal, CustomerInfoUpdateModal } from './Modals';
+import { AddressInfoUpdateModal, BankInfoUpdateModal, CashUpdateModal, CustomerInfoUpdateModal } from './Modals';
 import { useAppDispatch, useCustomerStore } from '../../../../Store/ReduxStore';
 import { deleteCustomer, getCustomerInfo } from '../../../../Services/customer';
 import LoadingModal from '../../../../Components/Modal/LoadingModal';
@@ -31,6 +31,7 @@ export default function CustomerInfoScreen(): React.JSX.Element {
     const [isInfoUpdateModalVisible, setInfoUpdateModalVisible] = useState<boolean>(false);
     const [isAddressInfoUpdateModalVisible, setAddressInfoUpdateModalVisible] = useState<boolean>(false);
     const [isBankInfoUpdateModalVisible, setBankInfoUpdateModalVisible] = useState<boolean>(false);
+    const [isCashModalVisible, setCashModalVisible] = useState<boolean>(false);
 
     async function handleDelete() {
         dispatch(deleteCustomer(id ?? '')).then((res) => {
@@ -88,7 +89,7 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                     </View>
                 </View>
 
-                {customer?.parent !== 'Bank Accounts' && <>
+                {!['Bank Accounts', 'Cash-in-Hand'].includes(customer?.parent ?? '') && <>
                     <SectionView
                         style={{ gap: 8 }} label="Customer Information"
                         labelContainerChildren={
@@ -148,6 +149,19 @@ export default function CustomerInfoScreen(): React.JSX.Element {
                 </>
                 }
 
+                {customer?.parent === 'Cash-in-Hand' && <>
+                    <SectionView
+                        label="Cash Account Details"
+                        style={{ gap: 8 }}
+                        labelContainerChildren={
+                            <EditButton onPress={() => { setCashModalVisible(true); }} />
+                        }
+                    >
+                        <InfoRow label="Name" value={customer?.ledger_name || 'Not Set'} />
+                    </SectionView>
+                </>
+                }
+
 
                 <SectionView label="Danger Zone" style={{ gap: 12 }} labelColor="red" >
                     <SectionRowWithIcon
@@ -179,6 +193,10 @@ export default function CustomerInfoScreen(): React.JSX.Element {
 
             <BankInfoUpdateModal
                 visible={isBankInfoUpdateModalVisible} setVisible={setBankInfoUpdateModalVisible}
+            />
+
+            <CashUpdateModal
+                visible={isCashModalVisible} setVisible={setCashModalVisible}
             />
 
             <LoadingModal visible={loading && isDeleteModalVisible} />

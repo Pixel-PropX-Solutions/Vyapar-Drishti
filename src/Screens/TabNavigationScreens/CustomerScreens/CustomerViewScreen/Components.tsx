@@ -594,7 +594,7 @@ export function InvoiceListing() {
                                     borderColor: primaryColor,
                                 }}>
                                     <TextTheme fontSize={13} fontWeight={700}>
-                                        Closing Balance (Yearly)
+                                        Closing Balance (Monthly)
                                     </TextTheme>
                                 </View>
 

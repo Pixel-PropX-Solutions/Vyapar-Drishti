@@ -46,7 +46,7 @@ export default function BillCard({ createOn, totalAmount, payAmount = 0, billNo,
             }
         }
         return '50,150,200';
-    }, [status,totalAmount, type]);
+    }, [status, totalAmount, type]);
 
 
     const formatDate = (dateString: string) => {
@@ -83,17 +83,17 @@ export default function BillCard({ createOn, totalAmount, payAmount = 0, billNo,
                                     </TextTheme>
                                 </BackgroundThemeView>}
 
-                                <AnimateButton onPress={onPrint} style={{ borderRadius: 50 }} >
+                                {['Sales', 'Purchase', 'Receipt', 'Payment'].includes(type) && <AnimateButton onPress={onPrint} style={{ borderRadius: 50 }} >
                                     <BackgroundThemeView isPrimary={!isPrimary} style={{ alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 32 }}  >
                                         <FeatherIcon name="printer" size={16} />
                                     </BackgroundThemeView>
-                                </AnimateButton>
+                                </AnimateButton>}
 
-                                <AnimateButton onPress={onShare} style={{ borderRadius: 50 }} >
+                                {['Sales', 'Purchase', 'Receipt', 'Payment'].includes(type) && <AnimateButton onPress={onShare} style={{ borderRadius: 50 }} >
                                     <BackgroundThemeView isPrimary={!isPrimary} style={{ alignItems: 'center', justifyContent: 'center', aspectRatio: 1, width: 32 }}  >
                                         <FeatherIcon name="share-2" size={16} />
                                     </BackgroundThemeView>
-                                </AnimateButton>
+                                </AnimateButton>}
 
                             </View>
                         </View>

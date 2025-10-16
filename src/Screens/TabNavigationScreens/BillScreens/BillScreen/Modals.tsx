@@ -54,10 +54,10 @@ export function DateSelectorModal({ visible, setVisible }: Props): React.JSX.Ele
             }
 
             renderItemContent={item => (<>
-                <TextTheme isPrimary={item.year === date.year && item.month == date.month} fontSize={20} fontWeight={900}>
+                <TextTheme isPrimary={item.year === date.year && item.month === date.month} fontSize={20} fontWeight={900}>
                     {getMonthByIndex(item.month)}
                 </TextTheme>
-                <TextTheme isPrimary={item.year === date.year && item.month == date.month} fontSize={20} fontWeight={900}>
+                <TextTheme isPrimary={item.year === date.year && item.month === date.month} fontSize={20} fontWeight={900}>
                     {item.year}
                 </TextTheme>
             </>)}
@@ -96,7 +96,7 @@ export function BillTypeSelectorModal({ visible, setVisible }: Props) {
                     borderRadius: 2,
                     marginBottom: 16,
                 }} />
-                <TextTheme fontSize={24} fontWeight={"bold"}>
+                <TextTheme fontSize={24} fontWeight={'bold'}>
                     Create New Bill
                 </TextTheme>
                 <TextTheme fontSize={14} style={{ opacity: 0.7, marginTop: 4 }}>
@@ -134,7 +134,7 @@ export function BillTypeSelectorModal({ visible, setVisible }: Props) {
                         </View>
 
                         <View style={{ flex: 1 }}>
-                            <TextTheme fontSize={16} fontWeight={"bold"}>
+                            <TextTheme fontSize={16} fontWeight={'bold'}>
                                 {billType.name}
                             </TextTheme>
                             <TextTheme fontSize={12} style={{ opacity: 0.7, marginTop: 2 }}>
@@ -165,10 +165,10 @@ export function FilterModal({ visible, setVisible }: Props) {
             <TextTheme fontSize={20} fontWeight={900}>Bills Filters</TextTheme>
             <SectionView label="Type" style={{ flexDirection: 'row', gap: 12, alignItems: 'center', flexWrap: 'wrap' }} >
                 {
-                    ['all', 'Sales', 'Purchase', 'Payment', 'Receipt'].map(item => (
+                    ['all', 'Sales', 'Purchase', 'Payment', 'Receipt', 'Journal', 'Contra'].map(item => (
                         <AnimateButton key={item}
                             onPress={() => {
-                                handleFilter('billType', item as 'all' | 'Sales' | 'Purchase' | 'Payment' | 'Receipt');
+                                handleFilter('billType', item as 'all' | 'Sales' | 'Purchase' | 'Payment' | 'Receipt' | 'Journal' | 'Contra');
                                 setVisible(false);
                             }}
                             bubbleColor={item === filters.billType ? primaryBackgroundColor : primaryColor}

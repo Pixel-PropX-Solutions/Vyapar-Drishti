@@ -7,7 +7,7 @@ type Filters = {
     sortBy: string,
     useAscOrder: boolean,
     status: 'all' | 'paid' | 'pending',
-    billType: 'all' | 'Sales' | 'Purchase' | 'Payment' | 'Receipt',
+    billType: 'all' | 'Sales' | 'Purchase' | 'Payment' | 'Receipt' | 'Journal' | 'Contra',
     searchQuery: string,
     startDate?: string,
     endDate?: string,

@@ -288,7 +288,11 @@ export function BillListing() {
                     createOn={item.date}
                     totalAmount={item.amount}
                     payAmount={item.paid_amount}
-                    onPrint={() => { handleInvoice(item, () => { setPDFModalVisible(true); }); }}
+                    onPrint={() => {
+                        if (['Sales', 'Purchase', 'Receipt', 'Payment'].includes(item.voucher_type)) {
+                            handleInvoice(item, () => { setPDFModalVisible(true); });
+                        }
+                    }}
                     onShare={() => { handleInvoice(item, () => { handleShare(); }); }}
                     onPress={() => { navigator.navigate('bill-info-screen', { id: item._id }); }}
                 />
