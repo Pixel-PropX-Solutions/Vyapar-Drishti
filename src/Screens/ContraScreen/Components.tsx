@@ -300,8 +300,8 @@ export function SaveContra() {
         if (!canSave) { return; }
         setLoading(true);
         const accounting = [
-            { ledger: account1?.name || '', ledger_id: account1?.id || '', amount: -Number(amount), vouchar_id: '' },
-            { ledger: account2?.name || '', ledger_id: account2?.id || '', amount: Number(amount), vouchar_id: '' },
+            { ledger: account1?.name || '', ledger_id: account1?.id || '', amount: -Number(amount), vouchar_id: '', order_index: 0 },
+            { ledger: account2?.name || '', ledger_id: account2?.id || '', amount: Number(amount), vouchar_id: '', order_index: 1 },
         ];
 
         let dataToSend: CreateInvoiceData = {

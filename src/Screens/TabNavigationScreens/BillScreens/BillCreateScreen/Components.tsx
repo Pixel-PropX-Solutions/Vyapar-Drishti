@@ -487,7 +487,7 @@ export function AmountBox(): React.JSX.Element {
                     additional_charge: roundToDecimal(additionalDetails.additional_charge, 2),
                     roundoff: roundToDecimal(roundoff, 2),
                     grand_total: roundToDecimal(grandTotal, 2),
-                    items: products.map(pro => ({
+                    items: products.map((pro, index )=> ({
                         vouchar_id: '',
                         item: pro.item,
                         item_id: pro.item_id,
@@ -501,6 +501,7 @@ export function AmountBox(): React.JSX.Element {
                         total_amount: roundToDecimal(pro.total_amount, 2),
                         godown: '',
                         godown_id: '',
+                        order_index: index,
                     })),
                     accounting: generateAccounting({
                         type: billType === 'Sales' ? 'Sales' : 'Purchase',
@@ -546,7 +547,7 @@ export function AmountBox(): React.JSX.Element {
                     additional_charge: roundToDecimal(additionalDetails.additional_charge, 2),
                     roundoff: roundToDecimal(roundoff, 2),
                     grand_total: roundToDecimal(grandTotal, 2),
-                    items: products.map(pro => ({
+                    items: products.map((pro, index) => ({
                         item: pro.item,
                         item_id: pro.item_id,
                         hsn_code: pro.hsn_code,
@@ -561,6 +562,7 @@ export function AmountBox(): React.JSX.Element {
                         vouchar_id: '',
                         godown: '',
                         godown_id: '',
+                        order_index: index,
                     })),
                     accounting: generateAccounting({
                         type: billType === 'Sales' ? 'Sales' : 'Purchase',

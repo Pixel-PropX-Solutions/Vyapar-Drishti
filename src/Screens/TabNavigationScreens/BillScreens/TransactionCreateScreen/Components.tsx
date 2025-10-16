@@ -358,8 +358,8 @@ export function AmountBox() {
                 grand_total: Number(totalValue),
                 items: [],
                 accounting: [
-                    { amount: billType === 'Payment' ? totalValue : -totalValue, ledger: customer?.name ?? '', ledger_id: customer?.id ?? '', vouchar_id: '' },
-                    { amount: billType === 'Payment' ? -totalValue : totalValue, ledger: account?.name ?? '', ledger_id: account?.id ?? '', vouchar_id: '' },
+                    { amount: billType === 'Payment' ? totalValue : -totalValue, ledger: customer?.name ?? '', ledger_id: customer?.id ?? '', vouchar_id: '', order_index: 0 },
+                    { amount: billType === 'Payment' ? -totalValue : totalValue, ledger: account?.name ?? '', ledger_id: account?.id ?? '', vouchar_id: '', order_index: 1 },
                 ],
             };
 

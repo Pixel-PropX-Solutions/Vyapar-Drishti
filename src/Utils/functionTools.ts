@@ -226,6 +226,7 @@ interface AccountingEntry {
     ledger: string;
     ledger_id: string;
     amount: number;
+    order_index: number;
 }
 
 interface GenerateAccountingParams {
@@ -265,12 +266,14 @@ export function generateAccounting({
             ledger: party.name,
             ledger_id: party.id,
             amount: partyAmount,
+            order_index: 0,
         },
         {
             vouchar_id: '',
             ledger: counter.name,
             ledger_id: counter.id,
             amount: counterAmount,
+            order_index: 1,
         },
     ];
 }

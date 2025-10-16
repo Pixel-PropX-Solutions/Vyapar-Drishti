@@ -308,11 +308,12 @@ export function SaveJournal() {
     async function handleSave() {
         if (!canSave) { return; }
         setLoading(true);
-        const accounting = entries.map(e => ({
+        const accounting = entries.map((e, index) => ({
             amount: e.type === 'To' ? Number(e.amount) : -Number(e.amount),
             ledger: e.name,
             ledger_id: e.id,
             vouchar_id: '',
+            order_index: index,
         }));
         const customer = entries[0];
 

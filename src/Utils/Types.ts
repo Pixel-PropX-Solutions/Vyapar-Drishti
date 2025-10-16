@@ -258,7 +258,8 @@ export interface CreateInvoiceData {
     vouchar_id: string,
     ledger: string,
     ledger_id: string,
-    amount: number
+    amount: number,
+    order_index: number;
   }>,
   items: Array<{
     vouchar_id: string;
@@ -275,6 +276,7 @@ export interface CreateInvoiceData {
     total_amount: number;
     godown: string;
     godown_id: string;
+    order_index: number;
   }>
 }
 
@@ -312,7 +314,8 @@ export interface UpdateInvoice {
     vouchar_id: string,
     ledger: string,
     ledger_id: string,
-    amount: number
+    amount: number,
+    order_index: number;
   }>,
   items: Array<{
     entry_id: string,
@@ -326,6 +329,7 @@ export interface UpdateInvoice {
     total_amount: number,
     godown: string,
     godown_id: string,
+    order_index: number;
   }>
 }
 
@@ -363,6 +367,7 @@ export interface CreateInvoiceWithTAXData {
     ledger: string,
     ledger_id: string,
     amount: number
+    order_index: number
   }>,
   items: Array<{
     vouchar_id: string;
@@ -378,6 +383,7 @@ export interface CreateInvoiceWithTAXData {
     total_amount: number;
     godown: string;
     godown_id: string;
+    order_index: number;
   }>
 }
 
@@ -416,6 +422,7 @@ export interface UpdateTAXInvoice {
     ledger: string,
     ledger_id: string,
     amount: number
+    order_index: number;
   }>,
   items: Array<{
     entry_id: string,
@@ -432,6 +439,7 @@ export interface UpdateTAXInvoice {
     total_amount: number;
     godown: string;
     godown_id: string;
+    order_index: number;
   }>
 }
 
