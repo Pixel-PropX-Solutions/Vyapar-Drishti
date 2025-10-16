@@ -23,9 +23,9 @@ export default function CustomerCard({ item, onPress = () => { } }: CustomerCard
     const { ledger_name, parent, phone, total_amount } = item;
 
     const { primaryBackgroundColor, primaryColor } = useTheme();
-    const bgColor = total_amount === 0 ? `${primaryColor}1A` : total_amount < 0 ? 'rgba(200,0,0, .1)' : 'rgba(50,200,150, .1)';
-    const avatarColor = total_amount === 0 ? `${primaryColor}4A` : total_amount < 0 ? 'rgba(200,0,0, .4)' : 'rgba(50,200,150, .4)';
-    const borderColor = total_amount === 0 ? `${primaryColor}8A` : total_amount < 0 ? 'rgba(200,0,0, .8)' : 'rgba(50,200,150, .8)';
+    const bgColor = total_amount === 0 ? `${primaryColor}1A` : total_amount > 0 ? 'rgba(200,0,0, .1)' : 'rgba(50,200,150, .1)';
+    const avatarColor = total_amount === 0 ? `${primaryColor}4A` : total_amount > 0 ? 'rgba(200,0,0, .4)' : 'rgba(50,200,150, .4)';
+    const borderColor = total_amount === 0 ? `${primaryColor}8A` : total_amount > 0 ? 'rgba(200,0,0, .8)' : 'rgba(50,200,150, .8)';
 
     return (
         <ScaleAnimationView useRandomDelay={true} >
@@ -54,8 +54,8 @@ export default function CustomerCard({ item, onPress = () => { } }: CustomerCard
                         </ShowWhen>
 
                         <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }} >
-                            <TextTheme isPrimary={true} fontSize={14} fontWeight={900} color={total_amount === 0 ? `${primaryColor}8A` : total_amount < 0 ? 'rgba(200,0,0, .8)' : 'rgba(50,200,150, .8)'}>
-                                {total_amount === 0 ? '' : total_amount < 0 ? ' DR' : ' CR'} {formatNumberForUI(Math.abs(total_amount))} INR
+                            <TextTheme isPrimary={true} fontSize={14} fontWeight={900} color={total_amount === 0 ? `${primaryColor}8A` : total_amount > 0 ? 'rgba(200,0,0, .8)' : 'rgba(50,200,150, .8)'}>
+                                {total_amount === 0 ? '' : total_amount > 0 ? ' DR' : ' CR'} {formatNumberForUI(Math.abs(total_amount))} INR
                             </TextTheme>
                         </View>
                     </View>

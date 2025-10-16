@@ -28,18 +28,25 @@ export type BillCardProps = {
 }
 
 
-export default function BillCard({ createOn, totalAmount = 0, payAmount = 0, billNo, customerName, type, onPress, onShare, onPrint, onPayment, isPrimary = true }: BillCardProps) {
+export default function BillCard({ createOn, totalAmount, payAmount = 0, billNo, customerName, type, onPress, onShare, onPrint, onPayment, isPrimary = true }: BillCardProps) {
     const { currency } = useAppStorage();
 
-    const isPending = payAmount < totalAmount;
-    const status: 'paid' | 'pending' | 'partial' = totalAmount === payAmount ? 'paid' : payAmount === 0 ? 'pending' : 'partial';
+    const isPending = payAmount < Math.abs(totalAmount);
+    const status: 'paid' | 'pending' | 'partial' = Math.abs(totalAmount) === payAmount ? 'paid' : payAmount === 0 ? 'pending' : 'partial';
 
     const rgb = useMemo<string>(() => {
         if (status === 'pending') { return '200,50,50'; }
         if (status === 'partial') { return '200,150,50'; }
         if (['sales', 'receipt'].includes(type.toLowerCase())) { return '50,200,150'; }
+        if (['contra', 'journal'].includes(type.toLowerCase())) {
+            if (totalAmount < 0) {
+                return '50,200,150';
+            } else {
+                return '200,50,50';
+            }
+        }
         return '50,150,200';
-    }, [status, type]);
+    }, [status,totalAmount, type]);
 
 
     const formatDate = (dateString: string) => {

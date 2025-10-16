@@ -125,7 +125,7 @@ export function Account1SelectorModal({ visible, setVisible }: Props) {
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
                         <TextTheme>{item.ledger_name}</TextTheme>
                         <TextTheme isPrimary={false}>
-                            {(Math.abs(item?.total_amount ?? 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}{item.total_amount < 0 ? ' DR' : ' CR'}
+                            {(Math.abs(item?.total_amount ?? 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}{item.total_amount > 0 ? ' DR' : ' CR'}
                         </TextTheme>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
@@ -216,7 +216,7 @@ export function Account2SelectorModal({ visible, setVisible }: Props) {
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
                         <TextTheme>{item.ledger_name}</TextTheme>
                         <TextTheme isPrimary={false}>
-                            {(Math.abs(item?.total_amount ?? 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}{item.total_amount < 0 ? ' DR' : ' CR'}
+                            {(Math.abs(item?.total_amount ?? 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}{item.total_amount > 0 ? ' DR' : ' CR'}
                         </TextTheme>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
