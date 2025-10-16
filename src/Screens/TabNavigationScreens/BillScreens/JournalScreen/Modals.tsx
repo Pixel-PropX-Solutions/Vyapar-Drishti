@@ -46,7 +46,7 @@ export function LedgerSelectorModal({ visible, setVisible, onSelectLedger }: Led
                 setVisible={setVisible}
                 title="Select Ledger"
                 keyExtractor={item => item._id}
-                allItems={customersList}
+                allItems={customersList.filter((item)=>item.ledger_name !== 'Sales' && item.ledger_name !== 'Purchases')}
                 isItemSelected={false}
                 filter={item =>
                     item.ledger_name
